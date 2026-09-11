@@ -8,7 +8,7 @@ The canonical application source is TypeScript in `src/app.ts`. The production s
 
 The production `dist/index.html` contains the compiled application JavaScript and CSS inline. This deliberately removes the two failure points that affected the earlier prototype: a cached external stylesheet and a cached external JavaScript bundle.
 
-## Included in v1.1.0
+## Included in v1.1.1
 
 - Mobile-first light UI using Vivid Azure `#2455F5` and Cloud Violet `#F7DCFF`
 - Exact official Edituno icon supplied for the brand
@@ -68,4 +68,4 @@ Large 4K source files remain limited by device memory and browser media capabili
 
 ## Privacy
 
-Project metadata and imported media stay in the browser's local storage. Edituno v1.1.0 does not send project media to an Edituno backend.
+Project metadata and imported media stay in the browser's local storage. Edituno v1.1.1 does not send project media to an Edituno backend.

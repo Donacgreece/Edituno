@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v1.1.0 production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.1.1 production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -865,7 +865,7 @@ async function init() {
     }
 
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register = () => navigator.serviceWorker.register('./sw.js?v=1.1.0', { updateViaCache: 'none' })
+      const register = () => navigator.serviceWorker.register('./sw.js?v=1.1.1', { updateViaCache: 'none' })
         .then(reg => reg.update().catch(()=>{}))
         .catch(error => console.warn('Service worker registration failed:', error))
       if (document.readyState === 'complete') register()

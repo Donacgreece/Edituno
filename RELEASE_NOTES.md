@@ -1,17 +1,19 @@
-# Edituno v1.1.0 Production
+# Edituno v1.1.1
 
-This release replaces the temporary single-JavaScript prototype with a TypeScript source project and a hardened GitHub Pages production bundle.
+Hotfix focused on startup reliability.
 
-## Startup reliability
+## Fixed
 
-The visible app shell now renders before IndexedDB or service-worker work begins. The production JavaScript and CSS are embedded directly into `dist/index.html`, so stale or missing external bundle files cannot leave the app on a blank page after the splash screen.
+- Removed the redundant first splash screen.
+- Kept only the clean “Starting editor…” startup shell.
+- Fixed a production build bug where JavaScript `$$` identifiers were corrupted while being injected into HTML.
+- Added build-time JavaScript syntax validation.
+- Added generated-bundle validation so the same corruption cannot ship again.
+- Updated PWA cache version to v1.1.1.
+- Kept the official Edituno icon unchanged.
 
-A fatal startup fallback is also embedded in the HTML. If a runtime error occurs before the editor can render, the user sees a reload action instead of an empty page.
+## Root cause
 
-## PWA
+The build script used `String.replace(search, replacementString)` to inject compiled JavaScript into the HTML template. In JavaScript replacement strings, `$$` has special meaning and becomes a single `$`. The source helper named `$$` was therefore changed into `$` in production, producing two `const $` declarations and a parse error before the app could start.
 
-The service worker now handles navigation and PWA assets only. It no longer intercepts application CSS or JavaScript because those are part of the HTML itself.
-
-## Brand
-
-The 512px app icon is byte-for-byte the official icon supplied for Edituno. The same artwork is used for the in-app logo and Apple startup screens.
+The build now uses function replacers, which preserve JavaScript source literally.
