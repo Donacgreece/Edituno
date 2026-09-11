@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v1.5.0 Glass production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.6.0 Launch RC production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -111,7 +111,7 @@ const state = {
   view: 'home', projects: [], project: null, urls: {}, currentTime: 0, playing: false,
   selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
-  settingsOpen: false, installOpen: false, projectHubOpen: false, adjustKey: 'brightness',
+  settingsOpen: false, installOpen: false, projectHubOpen: false, homeMenuOpen: false, adjustKey: 'brightness',
   preferences: loadPreferences(), audioDrag: null
 }
 state.pxPerSec=Number(state.preferences.timelineScale)||48
@@ -689,50 +689,87 @@ function applyFilter(name) {
 }
 
 function svgIcon(name,size=20) {
+  /* Lucide-derived geometry, normalized to one Edituno stroke system. */
   const icons={
-    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
-    media:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m8 14 3-3 5 5 2-2 3 3"/><circle cx="9" cy="9" r="1"/>',
-    edit:'<path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
-    text:'<path d="M5 5h14M12 5v14M8 19h8"/>',
-    audio:'<path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>',
-    effects:'<path d="m12 3 1.2 4.1L17 9l-3.8 1.9L12 15l-1.2-4.1L7 9l3.8-1.9L12 3Z"/><path d="m5 14 .7 2.3L8 17l-2.3.7L5 20l-.7-2.3L2 17l2.3-.7L5 14Z"/>',
-    adjust:'<path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="13" cy="18" r="2"/>',
-    canvas:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 4v16M16 4v16"/>',
+    more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+    menu:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+    home:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    folder:'<path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/>',
+    projects:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+    media:'<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+    video:'<path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/>',
+    edit:'<circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/>',
+    split:'<circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/>',
+    copy:'<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+    trash:'<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 15H6L5 6"/><path d="M10 11v6M14 11v6"/>',
+    text:'<path d="M12 4v16"/><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2"/><path d="M9 20h6"/>',
+    captions:'<rect width="18" height="14" x="3" y="5" rx="2"/><path d="M7 15h4M15 15h2M7 11h2M13 11h4"/>',
+    audio:'<circle cx="8" cy="18" r="4"/><path d="M12 18V2l7 4"/>',
+    volume:'<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>',
+    mute:'<path d="M11 4.702a.7.7 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.7.7 0 0 0 11 19.298z"/><path d="m16.5 14.5 5-5"/><path d="m16.5 9.5 5 5"/>',
+    effects:'<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4M22 4h-4"/>',
+    adjust:'<path d="M10 5H3M12 19H3M14 3v4M16 17v4M21 12h-9M21 19h-5M21 5h-7M8 10v4M8 12H3"/>',
+    settings:'<path d="M14 17H5"/><path d="M19 7h-9"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>',
+    canvas:'<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',
     back:'<path d="m15 18-6-6 6-6"/>',
-    export:'<path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v5h14v-5"/>',
-    plus:'<path d="M12 5v14M5 12h14"/>',
-    play:'<path d="m9 7 8 5-8 5V7Z"/>',
-    projects:'<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+    export:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
+    share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>',
+    plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+    play:'<path d="m8 5 11 7-11 7z"/>',
     undo:'<path d="M9 7 4 12l5 5"/><path d="M5 12h8a6 6 0 0 1 6 6"/>',
     redo:'<path d="m15 7 5 5-5 5"/><path d="M19 12h-8a6 6 0 0 0-6 6"/>',
-    split:'<circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><path d="m8 8 10 7M8 16l10-7"/>',
     zoomin:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/>',
     zoomout:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6"/>',
-    transition:'<path d="M4 7h4c3 0 5 10 8 10h4"/><path d="M4 17h4c3 0 5-10 8-10h4"/>',
-    settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 15a1.7 1.7 0 0 0-1.55-1.03H5.4v-3h.07A1.7 1.7 0 0 0 7.02 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06L8.74 5.94l.06.06A1.7 1.7 0 0 0 10.68 6.34a1.7 1.7 0 0 0 1.03-1.55V4.7h3v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.55 1.03H21v3h-.05A1.7 1.7 0 0 0 19.4 15z"/>',
-    home:'<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>',
+    transition:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
     language:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
     check:'<path d="m5 12 4 4L19 6"/>',
-    timeline:'<path d="M4 7h16M4 12h16M4 17h16"/><path d="M8 5v4M15 10v4M11 15v4"/>',
-    install:'<path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 18v2h14v-2"/>',
-    close:'<path d="m6 6 12 12M18 6 6 18"/>'
+    timeline:'<path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 4v4M15 10v4M11 16v4"/>',
+    install:'<path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 19h14"/>',
+    close:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    left:'<path d="m15 18-6-6 6-6"/>',
+    right:'<path d="m9 18 6-6-6-6"/>',
+    movehorizontal:'<path d="m8 9-3 3 3 3M16 9l3 3-3 3M5 12h14"/>',
+    movevertical:'<path d="m9 8 3-3 3 3M9 16l3 3 3-3M12 5v14"/>',
+    expand:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+    circle:'<circle cx="12" cy="12" r="8"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+    half:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z"/>',
+    droplet:'<path d="M12 2.5s6 6.2 6 11a6 6 0 0 1-12 0c0-4.8 6-11 6-11z"/>',
+    thermo:'<path d="M10 14.8V5a2 2 0 0 1 4 0v9.8a4 4 0 1 1-4 0z"/><path d="M12 9v7"/>',
+    grain:'<circle cx="7" cy="7" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="17" cy="8" r="1"/><circle cx="8" cy="13" r="1"/><circle cx="14" cy="12" r="1"/><circle cx="17" cy="17" r="1"/><circle cx="10" cy="18" r="1"/>',
+    palette:'<circle cx="12" cy="12" r="8"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7" r="1"/><circle cx="16" cy="10" r="1"/><path d="M18 15c-2 0-3 1-3 2s1 2 3 2"/>',
+    rotate:'<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>'
   }
-  return `<svg class="ui-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.effects}</svg>`
+  return `<svg class="ui-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.effects}</svg>`
 }
 function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="${EDITUNO_ICON}" alt="Edituno"><span>Edituno</span></span>` }
+function homeMenuPopover(){
+  if(!state.homeMenuOpen)return''
+  const el=state.language==='el'
+  return `<div class="home-menu-scrim" data-action="home-menu-close"></div><aside class="home-menu-popover" role="dialog" aria-label="Edituno menu">
+    <div class="home-menu-language"><span>${el?'Γλώσσα':'Language'}</span><div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></div>
+    <div class="home-menu-divider"></div>
+    <button type="button" class="home-menu-row" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
+    <button type="button" class="home-menu-row" data-action="install">${svgIcon('install',18)}<span>${tr('install')}</span></button>
+    <div class="home-menu-note"><span class="status-dot"></span>${el?'Τα media μένουν στη συσκευή σου':'Media stays on your device'}</div>
+  </aside>`
+}
 function renderHome() {
   const app=$('#app'), projects=state.projects||[], last=projects[0]
-  const mobile=isMobileViewport()
-  const recent=projects.slice(0,mobile?6:8)
+  const mobile=isMobileViewport(), recent=projects.slice(0,mobile?6:8)
+  const el=state.language==='el'
+  const headline='Edit video. Simply.'
+  const subline=el?'Γρήγορο editing, χωρίς upload και watermark.':'Fast editing, without uploads or watermarks.'
   app.innerHTML=`<div class="landing-page ${mobile?'mobile-home':'desktop-home'}">
     <header class="landing-header">
       <div class="landing-header-inner">
         ${renderLogo()}
+        <nav class="desktop-nav desktop-home-only" aria-label="Edituno">
+          <button type="button" data-action="projects-scroll">${tr('projects')}</button>
+          <button type="button" data-action="create" data-ratio="16:9">${el?'Νέο project':'New project'}</button>
+        </nav>
         <div class="landing-actions">
-          <button type="button" class="lang-pill" data-action="language" aria-label="${tr('language')}">${state.language==='el'?'EN':'ΕΛ'}</button>
-          <button type="button" class="icon-btn home-settings" data-action="settings" aria-label="${tr('settings')}">${svgIcon('settings',19)}</button>
-          <button type="button" class="text-btn desktop-home-only" data-action="install">${tr('install')}</button>
-          <button type="button" class="primary-btn compact desktop-home-only" data-action="create" data-ratio="16:9">${svgIcon('plus',16)} ${tr('newProject')}</button>
+          <button type="button" class="home-more-btn" data-action="home-menu-toggle" aria-label="Menu">${svgIcon('more',20)}</button>
         </div>
       </div>
     </header>
@@ -740,59 +777,69 @@ function renderHome() {
     <main class="landing-main">
       <section class="mobile-home-dashboard">
         <div class="mobile-welcome">
-          <span class="mobile-eyebrow">${state.language==='el'?'EDITUNO STUDIO':'EDITUNO STUDIO'}</span>
-          <h1>${state.language==='el'?'Το επόμενο edit ξεκινά εδώ.':'Your next edit starts here.'}</h1>
-          <p>${state.language==='el'?'Γρήγορα, ιδιωτικά, χωρίς watermark.':'Fast, private, no watermark.'}</p>
+          <h1>${headline}</h1>
+          <p>${subline}</p>
         </div>
-        <div class="mobile-create-stack">
-          <button type="button" class="primary-btn mobile-create-primary" data-action="create" data-ratio="9:16">${svgIcon('plus',20)}<span><strong>${tr('newProject')}</strong><small>${state.language==='el'?'Κενό project':'Blank project'}</small></span></button>
-          <button type="button" class="secondary-btn mobile-create-secondary" data-action="create-import">${svgIcon('media',19)}<span><strong>${tr('import')}</strong><small>${state.language==='el'?'Video · Photo · Audio':'Video · Photo · Audio'}</small></span></button>
+        <div class="mobile-action-row">
+          <button type="button" class="home-action primary" data-action="create" data-ratio="9:16">${svgIcon('plus',18)}<span>${el?'Νέο project':'New project'}</span></button>
+          <button type="button" class="home-action" data-action="create-import">${svgIcon('folder',18)}<span>${el?'Import media':'Import media'}</span></button>
         </div>
-        ${last?`<button type="button" class="continue-card" data-action="open-project" data-id="${last.id}"><span class="continue-icon">${svgIcon('play',18)}</span><span><small>${tr('resume')}</small><strong>${escapeHtml(last.name)}</strong><em>${escapeHtml(last.ratio||'16:9')} · ${new Date(last.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</em></span><i>›</i></button>`:''}
+        ${last?`<button type="button" class="continue-card" data-action="open-project" data-id="${last.id}"><span class="continue-icon">${svgIcon('play',16)}</span><span><small>${tr('resume')}</small><strong>${escapeHtml(last.name)}</strong><em>${escapeHtml(last.ratio||'16:9')} · ${new Date(last.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</em></span><i>${svgIcon('right',17)}</i></button>`:''}
         <section class="mobile-section">
-          <div class="mobile-section-head"><div><strong>${tr('templates')}</strong><span>${state.language==='el'?'Format για κάθε πλατφόρμα':'Format for every platform'}</span></div></div>
+          <div class="mobile-section-head"><div><strong>${el?'Γρήγορη έναρξη':'Quick start'}</strong><span>${el?'Διάλεξε format':'Choose a format'}</span></div></div>
           <div class="mobile-format-strip">
-            ${mobileFormatCard('9:16','Vertical','Reels · TikTok')}
-            ${mobileFormatCard('16:9','Landscape','YouTube')}
-            ${mobileFormatCard('1:1','Square','Social')}
-            ${mobileFormatCard('4:5','Portrait','Feed')}
+            ${mobileFormatCard('9:16','Vertical','Reels · TikTok','phone')}
+            ${mobileFormatCard('16:9','Landscape','YouTube','landscape')}
+            ${mobileFormatCard('1:1','Square','Social','square')}
+            ${mobileFormatCard('4:5','Portrait','Feed','portrait')}
           </div>
         </section>
         <section class="mobile-section" id="projects-section">
           <div class="mobile-section-head"><div><strong>${tr('recent')}</strong><span>${projects.length?`${projects.length} ${tr('projects').toLowerCase()}`:tr('noProjects')}</span></div></div>
-          <div class="mobile-project-list">${recent.length?recent.map(mobileProjectCard).join(''):`<button type="button" class="mobile-empty-project" data-action="create" data-ratio="9:16">${svgIcon('plus',20)}<span><strong>${tr('newProject')}</strong><small>${tr('noUploadShort')}</small></span></button>`}</div>
+          <div class="mobile-project-list">${recent.length?recent.map(mobileProjectCard).join(''):`<button type="button" class="mobile-empty-project" data-action="create" data-ratio="9:16">${svgIcon('plus',18)}<span><strong>${el?'Δημιούργησε το πρώτο project':'Create your first project'}</strong><small>${tr('noUploadShort')}</small></span></button>`}</div>
         </section>
       </section>
 
       <section class="desktop-landing-content">
-        <section class="landing-hero">
-          <div class="landing-kicker">${tr('local')} · PWA</div>
-          <h1>${tr('editLocally')}</h1>
-          <p>${tr('free')} ${tr('privateSub')}</p>
-          <div class="landing-cta"><button type="button" class="primary-btn hero-cta" data-action="create" data-ratio="16:9">${svgIcon('plus',18)} ${tr('newProject')}</button><button type="button" class="secondary-btn hero-cta" data-action="create-import">${svgIcon('media',18)} ${tr('import')}</button></div>
-          <div class="landing-proof"><span>1080p</span><span>${tr('effects')}</span><span>${tr('transitions')}</span><span>${tr('captions')}</span><span>${tr('offline')}</span></div>
+        <section class="desktop-hero-grid">
+          <div class="desktop-hero-copy">
+            <span class="desktop-eyebrow">EDITUNO</span>
+            <h1>${headline}</h1>
+            <p>${subline}</p>
+            <div class="desktop-hero-actions"><button type="button" class="primary-btn desktop-primary" data-action="create" data-ratio="16:9">${svgIcon('plus',17)} ${el?'Νέο project':'New project'}</button><button type="button" class="secondary-btn desktop-secondary" data-action="create-import">${svgIcon('folder',17)} Import media</button></div>
+            <div class="desktop-trust"><span>${svgIcon('check',14)} ${el?'Χωρίς upload':'No uploads'}</span><span>${svgIcon('check',14)} ${el?'Χωρίς watermark':'No watermark'}</span><span>${svgIcon('check',14)} Offline</span></div>
+          </div>
+          <div class="desktop-start-panel">
+            <div class="desktop-start-head"><div><small>${el?'ΝΕΟ PROJECT':'NEW PROJECT'}</small><strong>${el?'Διάλεξε format':'Choose a format'}</strong></div>${svgIcon('video',20)}</div>
+            <div class="desktop-format-grid">
+              ${desktopFormatButton('9:16','Vertical','Reels · TikTok','phone')}
+              ${desktopFormatButton('16:9','Landscape','YouTube','landscape')}
+              ${desktopFormatButton('1:1','Square','Social','square')}
+              ${desktopFormatButton('4:5','Portrait','Feed','portrait')}
+            </div>
+            <button type="button" class="desktop-import-row" data-action="create-import">${svgIcon('folder',18)}<span><strong>Import media</strong><small>Video · Photo · Audio</small></span>${svgIcon('right',17)}</button>
+          </div>
         </section>
-        <section class="landing-formats">${templateCard('9:16','Vertical','TikTok · Reels','r916')}${templateCard('16:9','Landscape','YouTube','r169')}${templateCard('1:1','Square','Social','r11')}${templateCard('4:5','Portrait','Feed','r45')}</section>
-        <section class="landing-projects" id="projects-desktop"><div class="section-head"><div><h2>${tr('recent')}</h2><p>${projects.length?`${projects.length} ${tr('projects').toLowerCase()}`:tr('noProjects')}</p></div></div><div class="project-list">${projects.length?projects.map(projectCard).join(''):`<button type="button" class="empty-project-launch" data-action="create" data-ratio="16:9">${svgIcon('plus',22)}<strong>${tr('newProject')}</strong><span>${tr('noUploadShort')}</span></button>`}</div></section>
+        <section class="desktop-projects-section" id="projects-desktop">
+          <div class="desktop-section-title"><div><small>${el?'ΒΙΒΛΙΟΘΗΚΗ':'LIBRARY'}</small><h2>${tr('recent')}</h2></div>${projects.length?`<span>${projects.length}</span>`:''}</div>
+          <div class="project-list">${projects.length?projects.map(projectCard).join(''):`<button type="button" class="desktop-empty-project" data-action="create" data-ratio="16:9">${svgIcon('plus',20)}<span><strong>${el?'Νέο project':'New project'}</strong><small>${tr('noUploadShort')}</small></span></button>`}</div>
+        </section>
       </section>
     </main>
 
     <nav class="mobile-home-nav" aria-label="Edituno">
-      <button type="button" class="active" data-action="home-top">${svgIcon('home',19)}<span>${tr('home')}</span></button>
-      <button type="button" class="create-tab" data-action="create" data-ratio="9:16">${svgIcon('plus',21)}<span>${state.language==='el'?'Δημιουργία':'Create'}</span></button>
-      <button type="button" data-action="projects-scroll">${svgIcon('projects',19)}<span>${tr('projects')}</span></button>
-      <button type="button" data-action="settings">${svgIcon('settings',19)}<span>${tr('settings')}</span></button>
+      <button type="button" class="active" data-action="home-top">${svgIcon('home',18)}<span>${tr('home')}</span></button>
+      <button type="button" class="create-tab" data-action="create" data-ratio="9:16"><span class="create-tab-icon">${svgIcon('plus',21)}</span><span>${el?'Νέο':'Create'}</span></button>
+      <button type="button" data-action="projects-scroll">${svgIcon('projects',18)}<span>${tr('projects')}</span></button>
     </nav>
+    ${homeMenuPopover()}
     ${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
   </div><div class="toast-stack" id="toasts"></div>`
 }
-function mobileFormatCard(ratio,title,sub){return `<button type="button" class="mobile-format-card" data-action="create" data-ratio="${ratio}"><span class="mobile-ratio-box ratio-${ratio.replace(':','')}"></span><strong>${title}</strong><small>${sub}</small></button>`}
-function mobileProjectCard(p){return `<article class="mobile-project-card"><button type="button" class="mobile-project-open" data-action="open-project" data-id="${p.id}"><span class="mobile-project-thumb">${svgIcon('play',17)}</span><span class="mobile-project-copy"><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span><span class="mobile-project-arrow">›</span></button><button type="button" class="mobile-project-menu" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">${svgIcon('close',15)}</button></article>`}
-
-function templateCard(ratio,title,sub,cls){return `<button class="template-card" data-action="create" data-ratio="${ratio}"><span class="template-shape"><i class="${cls}"></i></span><strong>${title}</strong><span>${sub}</span></button>`}
-function trustCard(icon,title,sub){return `<div class="trust-card"><div class="trust-icon">${icon}</div><div><strong>${title}</strong><span>${sub}</span></div></div>`}
-function projectCard(p){return `<article class="project-card" data-action="open-project" data-id="${p.id}"><div class="project-thumb">▶</div><div class="project-copy"><strong>${escapeHtml(p.name)}</strong><span>${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')} · ${escapeHtml(p.ratio||'16:9')}</span></div><button class="project-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">⋯</button></article>`}
-
+function mobileFormatCard(ratio,title,sub,shape='phone'){return `<button type="button" class="mobile-format-card" data-action="create" data-ratio="${ratio}"><span class="format-symbol ${shape}"></span><strong>${title}</strong><small>${sub}</small></button>`}
+function desktopFormatButton(ratio,title,sub,shape='phone'){return `<button type="button" class="desktop-format-btn" data-action="create" data-ratio="${ratio}"><span class="format-symbol ${shape}"></span><span><strong>${title}</strong><small>${sub}</small></span></button>`}
+function mobileProjectCard(p){return `<article class="mobile-project-card"><button type="button" class="mobile-project-open" data-action="open-project" data-id="${p.id}"><span class="mobile-project-thumb">${svgIcon('video',18)}</span><span class="mobile-project-copy"><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span><span class="mobile-project-arrow">${svgIcon('right',16)}</span></button><button type="button" class="mobile-project-menu" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">${svgIcon('trash',15)}</button></article>`}
+function projectCard(p){return `<article class="project-card" data-action="open-project" data-id="${p.id}"><div class="project-thumb">${svgIcon('video',20)}</div><div class="project-copy"><strong>${escapeHtml(p.name)}</strong><span>${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')} · ${escapeHtml(p.ratio||'16:9')}</span></div><button class="project-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">${svgIcon('trash',15)}</button></article>`}
 function settingsModal(){
   const p=state.preferences
   return `<div class="modal-backdrop settings-backdrop" data-action="settings-close">
@@ -863,36 +910,36 @@ function desktopSidebar(){return `<h3 class="desktop-panel-title">${tr('desktopM
 function desktopInspector(){return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
 function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
 
-function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}"><div class="media-type">${a.type==='video'?'▶':a.type==='image'?'▧':'♫'}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
+function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}"><div class="media-type">${a.type==='video'?svgIcon('video',18):a.type==='image'?svgIcon('media',18):svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${svgIcon('plus',14)}<span>${tr('add')}</span></button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
 function textPanel(showAdd=true){const t=selectedText();return `<div class="panel-grid">${showAdd?`<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>✨</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>`:''}${t?`<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight==600?'selected':''}>600</option><option ${t.weight==700?'selected':''}>700</option><option ${t.weight==800?'selected':''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color,'#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background,'#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation==='none'?'selected':''}>${tr('none')}</option><option value="fade" ${t.animation==='fade'?'selected':''}>Fade</option><option value="pop" ${t.animation==='pop'?'selected':''}>Pop</option><option value="slide" ${t.animation==='slide'?'selected':''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x',t.x,0,1,.01,true,'text')}${rangeField('y',t.y,0,1,.01,true,'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>`:''}</div>`}
 function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
 function audioPanel(){
   const audios=state.project.assets.filter(a=>a.type==='audio'), c=selectedAudio()
-  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c?audioClipPanel():`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`
+  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">${svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c?audioClipPanel():`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`
 }
 function audioClipPanel(){
   const c=selectedAudio(),a=getAsset(c?.assetId);if(!c)return''
-  return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">♫</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?'🔇 '+(state.language==='el'?'Ενεργοποίηση':'Unmute'):'🔊 '+(state.language==='el'?'Σίγαση':'Mute')}</button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
+  return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">${svgIcon('audio',18)}</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?svgIcon('mute',16):svgIcon('volume',16)}<span>${c.muted?(state.language==='el'?'Ενεργοποίηση':'Unmute'):(state.language==='el'?'Σίγαση':'Mute')}</span></button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
 }
 
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
 function editPanel(){
   const c=selectedClip(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
-  return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',20)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>▣</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>←</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>→</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>⌫</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,4,.05,true,'clip')}${a?.type==='video'?rangeField('volume',c.volume,0,1,.01,true,'clip'):''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
+  return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy',19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left',19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right',19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash',19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,4,.05,true,'clip')}${a?.type==='video'?rangeField('volume',c.volume,0,1,.01,true,'clip'):''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
 }
 function effectsPanel(){
   const c=selectedClip(); if(!c)return effectsEmpty()
   const presets=['original','vivid','warm','cool','cinematic','film','dream','crisp','retro','soft','neon','matte','sunset','ice','noir','mono']
   return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
 }
-function motionGlyph(v){return ({none:'○',zoom:'＋',zoomout:'−',kenburns:'↗',panleft:'←',panright:'→',pulse:'◉',float:'↕',shake:'≈'})[v]||'✦'}
+function motionGlyph(v){const m={none:'circle',zoom:'zoomin',zoomout:'zoomout',kenburns:'expand',panleft:'left',panright:'right',pulse:'circle',float:'movevertical',shake:'movehorizontal'};return svgIcon(m[v]||'effects',20)}
 function adjustPanel(){
   const c=selectedClip(); if(!c)return effectsEmpty()
   const defs={brightness:[50,150,1],exposure:[-50,50,1],contrast:[50,160,1],saturation:[0,200,1],temperature:[-50,50,1],vignette:[0,100,1],grain:[0,100,1],hue:[-180,180,1],blur:[0,8,.1],grayscale:[0,100,1],sepia:[0,100,1],opacity:[0,1,.01]}
   const key=defs[state.adjustKey]?state.adjustKey:'brightness', [min,max,step]=defs[key], value=c[key]??(key==='opacity'?1:0)
   return `<div class="adjust-mobile"><div class="adjust-grid">${Object.keys(defs).map(k=>`<button class="adjust-tile ${key===k?'active':''}" data-action="adjust-select" data-key="${k}"><span>${adjustGlyph(k)}</span><strong>${tr(k)}</strong><small>${Number(c[k]??0).toFixed(step<1?1:0)}</small></button>`).join('')}</div><div class="adjust-focus"><div class="adjust-focus-head"><strong>${tr(key)}</strong><button data-action="reset-adjustment" data-key="${key}">${tr('reset')}</button></div>${rangeField(key,value,min,max,step,true,'clip')}</div></div>`
 }
-function adjustGlyph(k){return ({brightness:'☀',exposure:'◐',contrast:'◒',saturation:'◉',temperature:'◑',vignette:'◌',grain:'⠿',hue:'◍',blur:'◌',grayscale:'◑',sepia:'◒',opacity:'◐'})[k]||'◉'}
+function adjustGlyph(k){const m={brightness:'sun',exposure:'half',contrast:'half',saturation:'droplet',temperature:'thermo',vignette:'circle',grain:'grain',hue:'palette',blur:'droplet',grayscale:'half',sepia:'palette',opacity:'circle'};return svgIcon(m[k]||'adjust',19)}
 function transitionPanel(){
   const c=selectedClip(); if(!c)return effectsEmpty()
   const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')]]
@@ -987,7 +1034,7 @@ async function beginExport() {
   try{
     const result=await exportProjectLocal(q,fps,p=>{bar.style.width=`${Math.round(p*100)}%`;status.textContent=`${tr('exporting')} ${Math.round(p*100)}%`},state.exportController.signal)
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
-    const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>↓</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>↗</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>✓</i>${tr('close')}</button></div>`
+    const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){status.textContent=tr('exportFailed');toast(tr('exportFailed'),'error');console.error(e)}finally{btn.disabled=false;btn.textContent=tr('startExport')}
 }
 function exportFilename(){const name=(state.project?.name||'Edituno').replace(/[^a-z0-9\-_ ]/gi,'').trim().replace(/\s+/g,'-')||'Edituno';return `${name}.${state.exportResult?.extension||'webm'}`}
@@ -1000,16 +1047,18 @@ function bindGlobalEvents() {
   document.addEventListener('click',async e=>{
     const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action
     if((a==='settings-close'||a==='install-close'||a==='mobile-hub-close') && e.target!==el && (el.classList.contains('modal-backdrop')||el.classList.contains('project-hub-backdrop'))) return
+    if(a==='home-menu-toggle'){state.homeMenuOpen=!state.homeMenuOpen;renderHome();return}
+    if(a==='home-menu-close'){state.homeMenuOpen=false;renderHome();return}
     if(a==='create')return createProject(el.dataset.ratio||'16:9')
-    if(a==='create-import')return createProject('16:9',true)
-    if(a==='open-project'){state.projectHubOpen=false;return openProject(el.dataset.id)}
+    if(a==='create-import'){state.homeMenuOpen=false;return createProject(isMobileViewport()?'9:16':'16:9',true)}
+    if(a==='open-project'){state.projectHubOpen=false;state.homeMenuOpen=false;return openProject(el.dataset.id)}
     if(a==='delete-project'){e.stopPropagation();if(confirm(tr('delete')+'?')){await deleteProjectFull(el.dataset.id);state.projects=await listProjects();renderHome();toast(tr('deleted'))}return}
-    if(a==='language'){state.language=state.language==='el'?'en':'el';render();return}
-    if(a==='set-lang'){state.language=el.dataset.value;render();return}
+    if(a==='language'){state.language=state.language==='el'?'en':'el';state.homeMenuOpen=false;render();return}
+    if(a==='set-lang'){state.language=el.dataset.value;state.homeMenuOpen=false;render();return}
     if(a==='pref-toggle'){const key=el.dataset.key;state.preferences[key]=!state.preferences[key];if(key==='showWaveforms')renderEditor();savePreferences();render();return}
-    if(a==='settings'){state.settingsOpen=true;render();return}
+    if(a==='settings'){state.homeMenuOpen=false;state.settingsOpen=true;render();return}
     if(a==='settings-close'){state.settingsOpen=false;render();return}
-    if(a==='install'){state.installOpen=true;render();return}
+    if(a==='install'){state.homeMenuOpen=false;state.installOpen=true;render();return}
     if(a==='install-close'){state.installOpen=false;render();return}
     if(a==='install-confirm'&&state.installPrompt){await state.installPrompt.prompt();await state.installPrompt.userChoice;state.installPrompt=null;state.installOpen=false;render();return}
     if(a==='persist-storage'){const ok=await navigator.storage?.persist?.();toast(ok?'✓ '+tr('persistent'):tr('storage'));return}
@@ -1109,7 +1158,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.5.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.6.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

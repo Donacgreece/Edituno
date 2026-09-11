@@ -3,7 +3,7 @@
   "short_name": "Edituno",
   "description": "Professional mobile-first local video editor. No watermark, no account and no upload required.",
   "id": "./",
-  "start_url": "./?pwa=1.5.0",
+  "start_url": "./?pwa=1.6.0",
   "scope": "./",
   "display": "standalone",
   "display_override": [

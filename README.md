@@ -1,24 +1,7 @@
-# Edituno
+# Edituno v1.6.0 Launch RC
 
-Premium mobile-first local video editor PWA.
+Edituno is a mobile-first, local-first video editor PWA.
 
-## v1.5.0 Glass
+The launch candidate focuses on clarity, consistency and responsive behavior before expanding the feature surface. TypeScript remains the canonical source in `src/app.ts`; the prebuilt production app is in `dist/`.
 
-This release introduces a unified visual system inspired by premium native creative apps. It keeps the official Edituno blue and logo unchanged, while rebuilding the surrounding interface around restrained glass surfaces, consistent geometry, lighter typography, compact actions, stable bilingual layouts and a cleaner editor hierarchy.
-
-### Product principles
-
-- Mobile clarity comes before feature density.
-- Every tap must have an obvious result.
-- Controls use consistent sizing and alignment.
-- Greek and English layouts keep the same structure.
-- The project stays local-first, installable and watermark-free.
-- TypeScript in `src/app.ts` is the canonical application source.
-
-### Build
-
-```bash
-npm run build
-```
-
-GitHub Pages deploys the prebuilt `dist` directory.
+See `OPEN_SOURCE_STACK.md` for the reviewed open-source components planned for the next engine iteration.

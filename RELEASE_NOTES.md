@@ -1,18 +1,17 @@
-# Edituno v1.5.0 Glass
+# Edituno v1.6.0 Launch RC
 
-## Design system
+## Focus
 
-- New premium glass visual language with restrained transparency and blur.
-- Official Edituno blue and logo remain unchanged.
-- Rebalanced typography with lighter weights and tighter hierarchy.
-- Compact, consistent buttons and touch targets.
-- Stable bilingual layout so changing language does not visually jump the interface.
-- Redesigned mobile Home actions, format cards, project cards and floating navigation.
-- Redesigned Settings sheet with fixed segmented language control.
-- Unified editor header, stage, timeline, panels and tool dock.
-- Cleaner centered transition icon and consistent editor icon geometry.
-- Improved responsive spacing from 320px phones through large desktop screens.
+This release replaces the previous home and control styling with a calmer, more consistent native-style design system.
 
-## Existing editor capabilities retained
+## Highlights
 
-Multitrack video/audio/text timeline, local projects, effects, adjustments, transitions, SRT import, audio mixing, undo/redo, 720p/1080p export, PWA install and offline shell.
+- Compact mobile Home with equal-size actions and three-item floating tab bar.
+- New drop-down glass menu. Settings no longer uses a gear icon.
+- New desktop landing experience with functional quick-start panel and compact project library.
+- Lucide-derived line icon system with consistent stroke, optical size and centering.
+- Reduced typography weights and tighter type hierarchy.
+- Stable bilingual geometry.
+- Editor buttons, tool dock, transition control and panel icons normalized to the same geometry.
+- Official Edituno logo unchanged.
+- Existing PWA, local projects, multitrack audio, effects, transitions and export functionality preserved.
