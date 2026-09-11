@@ -1,8 +1,8 @@
 {
   "name": "edituno",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Apple-inspired mobile-first local video editor PWA",
+  "description": "Premium mobile-first local video editor PWA",
   "scripts": {
     "build": "tsc -p tsconfig.json && node tools/build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",

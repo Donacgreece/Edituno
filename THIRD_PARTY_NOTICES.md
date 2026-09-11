@@ -2,10 +2,8 @@
 
 ## Lucide
 
-Edituno uses icon geometry derived from the Lucide icon project. Lucide is licensed under the ISC License, with some icons originating from Feather under the MIT License.
+Lucide Icons and Contributors. ISC License. Some Lucide icons are derived from Feather and are available under the MIT License.
 
-Source: https://github.com/lucide-icons/lucide
+The Edituno UI uses adapted Lucide icon path geometry with a normalized stroke system.
 
-Copyright (c) Lucide contributors.
-
-The icon paths used by Edituno are embedded directly in the application and normalized to Edituno visual styling.
+No Moveable, WaveSurfer.js, Mediabunny or OpenCut source code is bundled in Edituno Studio v2.0.0. Those projects are documented in OPEN_SOURCE_STACK.md as approved candidates for later isolated integration.

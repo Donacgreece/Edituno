@@ -1,12 +1,30 @@
-# Open-source stack evaluation
+# Open-source stack decisions
 
-The following projects are approved candidates for Edituno. They are not all bundled in v1.6.0.
+## Used in v2.0
 
-- **Lucide** (ISC/MIT): icon system. Integrated in v1.6.0.
-- **OpenCut** (MIT): reference implementation and potential source for editor architecture/components. Do not wholesale-copy UI; selectively reuse proven subsystems with attribution.
-- **Moveable** (MIT): high-quality on-canvas drag/resize/rotate handles. Recommended next integration.
-- **WaveSurfer.js** (BSD-3-Clause): waveform visualization/regions. Recommended for advanced audio timeline.
-- **Mediabunny** (MPL-2.0): WebCodecs-oriented browser media toolkit for MP4/WebM/MOV and other formats. Recommended for the next rendering/export engine with MPL compliance.
-- **Fabric.js** (MIT): optional canvas object layer. Evaluate against Moveable before adding to avoid overlapping responsibilities.
+### Lucide
+License: ISC, with MIT ancestry for some icons.
+Use: normalized UI icon geometry.
+Reason: consistent stroke weight and optical proportions across mobile and desktop.
 
-Launch rule: only add a dependency when it improves a user-visible workflow and passes mobile Safari, Android Chrome, desktop Chromium and Firefox smoke tests.
+## Approved for the engine roadmap
+
+### Moveable 0.53.x
+License: MIT.
+Planned use: desktop and tablet on-canvas resize, rotate and snapping handles.
+Current v2.0 already provides dependency-free drag and pinch scaling so a new dependency does not block launch.
+
+### WaveSurfer.js 8.x
+License: BSD-3-Clause.
+Planned use: richer audio region editing and high-resolution waveform interaction.
+The current editor keeps its lightweight generated waveform for launch stability.
+
+### Mediabunny 1.56.x
+License: MPL-2.0.
+Planned use: WebCodecs-based parsing, encoding, transcoding and wider media format support.
+MPL obligations must be preserved for covered files.
+
+### OpenCut
+License: MIT.
+Use: architectural reference for a browser/mobile editor and possible isolated reusable subsystems after code-level review.
+We do not copy its product UI or branding.

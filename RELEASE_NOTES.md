@@ -1,17 +1,22 @@
-# Edituno v1.6.0 Launch RC
+# Edituno Studio v2.0.0
 
-## Focus
+This release replaces the previous visual system from scratch while preserving the media engine and official Edituno logo.
 
-This release replaces the previous home and control styling with a calmer, more consistent native-style design system.
+## Rebuilt
 
-## Highlights
+- New dark Studio design system for mobile and desktop
+- New application-style project Home instead of a marketing landing page
+- New iOS-style action sheet menu on mobile
+- New professional three-pane desktop editing workspace
+- New compact mobile editor layout
+- New transport and timeline chrome
+- Unified Lucide-derived icon grammar
+- New dark native-style splash screens
+- Direct preview drag and two-finger clip scaling
+- Stable bilingual geometry
 
-- Compact mobile Home with equal-size actions and three-item floating tab bar.
-- New drop-down glass menu. Settings no longer uses a gear icon.
-- New desktop landing experience with functional quick-start panel and compact project library.
-- Lucide-derived line icon system with consistent stroke, optical size and centering.
-- Reduced typography weights and tighter type hierarchy.
-- Stable bilingual geometry.
-- Editor buttons, tool dock, transition control and panel icons normalized to the same geometry.
-- Official Edituno logo unchanged.
-- Existing PWA, local projects, multitrack audio, effects, transitions and export functionality preserved.
+## Open source
+
+Lucide icon geometry is used under ISC/MIT terms. See THIRD_PARTY_NOTICES.md.
+
+Moveable, WaveSurfer.js, Mediabunny and OpenCut were evaluated for the next engine layer. They are not blindly bundled into this release because launch stability is more important than dependency count. See OPEN_SOURCE_STACK.md.

@@ -32,9 +32,9 @@ const requiredRuntimeMarkers = [
   'data-bind-audio',
   'function settingsModal()',
   'function mobileProjectCard(',
-  'mobile-home-dashboard',
+  'studio-home',
   'language-segment',
-  'editor-home-btn'
+  'editor-topbar'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -42,7 +42,7 @@ for (const marker of requiredRuntimeMarkers) {
 if (!template.includes('maximum-scale=1') || !template.includes('user-scalable=no')) {
   throw new Error('Mobile viewport lock is missing')
 }
-if (!css.includes('.timeline-audio') || !css.includes('.desktop-sidebar') || !css.includes('.mobile-home-dashboard')) {
+if (!css.includes('.timeline-audio') || !css.includes('.asset-browser') || !css.includes('.studio-home')) {
   throw new Error('Responsive multitrack/mobile-home CSS validation failed')
 }
 if (js.includes("isMobileViewport() && launch.get('home')!=='1'")) {
@@ -64,4 +64,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v1.6.0 -> ${dist}`)
+console.log(`Built Edituno v2.0.0 -> ${dist}`)

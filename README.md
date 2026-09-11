@@ -1,7 +1,27 @@
-# Edituno v1.6.0 Launch RC
+# Edituno Studio v2.0.0
 
-Edituno is a mobile-first, local-first video editor PWA.
+A ground-up visual rebuild of Edituno focused on mobile-first usability, professional desktop editing, and local-first privacy.
 
-The launch candidate focuses on clarity, consistency and responsive behavior before expanding the feature surface. TypeScript remains the canonical source in `src/app.ts`; the prebuilt production app is in `dist/`.
+## Product principles
 
-See `OPEN_SOURCE_STACK.md` for the reviewed open-source components planned for the next engine iteration.
+- Mobile must be immediately understandable without documentation.
+- Desktop must feel like a professional creative application rather than a website.
+- Every control uses one icon grammar, one spacing system and predictable states.
+- Media remains local by default.
+- The official Edituno logo is unchanged.
+
+## Included editor foundation
+
+- Local projects and autosave
+- Multi-clip visual timeline
+- Multitrack audio timeline
+- Text and caption track
+- Trim, split, duplicate, reorder, transforms
+- Effects, filters, adjustments and transitions
+- SRT import
+- Local export with MP4 when supported and WebM fallback
+- Greek and English UI
+- Installable PWA and Apple startup images
+- Direct drag and pinch scaling for selected preview clips
+
+Run `npm run build` to rebuild `dist`.

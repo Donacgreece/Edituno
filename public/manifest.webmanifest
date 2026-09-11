@@ -1,9 +1,9 @@
 {
-  "name": "Edituno Video Editor",
+  "name": "Edituno Studio",
   "short_name": "Edituno",
-  "description": "Professional mobile-first local video editor. No watermark, no account and no upload required.",
+  "description": "Premium mobile-first local video editor. No watermark. No upload required.",
   "id": "./",
-  "start_url": "./?pwa=1.6.0",
+  "start_url": "./?app=2.0.0",
   "scope": "./",
   "display": "standalone",
   "display_override": [
@@ -11,8 +11,8 @@
     "minimal-ui"
   ],
   "orientation": "any",
-  "background_color": "#ffffff",
-  "theme_color": "#2455F5",
+  "background_color": "#08090D",
+  "theme_color": "#08090D",
   "categories": [
     "photo",
     "video",
