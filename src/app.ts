@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v1.1.1 production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.2.0 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -60,7 +60,7 @@ const STRINGS = {
     timeline:'Timeline', share:'Share', download:'Save file', cancel:'Cancel', back:'Back', project:'Project', local:'Local editor',
     autoSave:'Autosaved', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.',
     selectedText:'Selected text', textStyle:'Text style', position:'Position', apply:'Apply', installHint:'Install Edituno',
-    desktopMedia:'Project media', inspector:'Properties'
+    desktopMedia:'Project media', inspector:'Properties', adjust:'Adjust', transitions:'Transitions', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide left', slideRight:'Slide right', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Reset', timelineZoom:'Timeline zoom', transitionDuration:'Duration', newBlank:'New blank project', resume:'Resume editing', editLocally:'Edit locally. Export anywhere.', chooseProject:'Choose project', mobileReady:'Ready to edit', noUploadShort:'No upload. No watermark.', blurFill:'Blur fill'
   },
   el: {
     create:'Δημιουργία project', import:'Εισαγωγή media', recent:'Πρόσφατα projects', noProjects:'Δεν υπάρχουν projects ακόμα',
@@ -88,7 +88,7 @@ const STRINGS = {
     timeline:'Timeline', share:'Κοινοποίηση', download:'Αποθήκευση αρχείου', cancel:'Ακύρωση', back:'Πίσω', project:'Project', local:'Τοπικός editor',
     autoSave:'Αυτόματη αποθήκευση', add:'Προσθήκη', noAudio:'Κάνε import αρχείο ήχου για μουσική.', noMedia:'Δεν υπάρχουν media ακόμα.',
     selectedText:'Επιλεγμένο κείμενο', textStyle:'Στυλ κειμένου', position:'Θέση', apply:'Εφαρμογή', installHint:'Εγκατάσταση Edituno',
-    desktopMedia:'Media project', inspector:'Ιδιότητες'
+    desktopMedia:'Media project', inspector:'Ιδιότητες', adjust:'Ρυθμίσεις', transitions:'Μεταβάσεις', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide αριστερά', slideRight:'Slide δεξιά', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Επαναφορά', timelineZoom:'Zoom timeline', transitionDuration:'Διάρκεια', newBlank:'Νέο κενό project', resume:'Συνέχεια επεξεργασίας', editLocally:'Επεξεργασία τοπικά. Export παντού.', chooseProject:'Επίλεξε project', mobileReady:'Έτοιμο για επεξεργασία', noUploadShort:'Χωρίς upload. Χωρίς watermark.', blurFill:'Blur fill'
   }
 }
 
@@ -97,14 +97,22 @@ const state = {
   view: 'home', projects: [], project: null, urls: {}, currentTime: 0, playing: false,
   selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
-  settingsOpen: false, installOpen: false
+  settingsOpen: false, installOpen: false, projectHubOpen: false, adjustKey: 'brightness'
 }
 const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key
+
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 979px)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+}
+
 
 const DB_NAME = 'edituno-db'
 const DB_VERSION = 2
 const PROJECTS = 'projects'
 const BLOBS = 'blobs'
+const memoryStores = { projects:new Map(), blobs:new Map() }
+let dbDisabled = false
+function memoryKey(store,value,key){ return key ?? (store===PROJECTS ? value?.id : undefined) }
 function openDb() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION)
@@ -118,39 +126,35 @@ function openDb() {
   })
 }
 async function dbPut(store, value, key) {
-  const db = await openDb()
-  await new Promise((resolve,reject) => {
-    const tx = db.transaction(store,'readwrite')
-    key === undefined ? tx.objectStore(store).put(value) : tx.objectStore(store).put(value,key)
-    tx.oncomplete = resolve
-    tx.onerror = () => reject(tx.error)
-  })
-  db.close()
+  const memKey=memoryKey(store,value,key)
+  if(dbDisabled){ if(memKey!==undefined) memoryStores[store].set(memKey,value); return }
+  try {
+    const db=await openDb()
+    await new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');key===undefined?tx.objectStore(store).put(value):tx.objectStore(store).put(value,key);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})
+    db.close()
+  } catch(error) {
+    dbDisabled=true; if(memKey!==undefined) memoryStores[store].set(memKey,value); console.warn('Edituno switched to session storage:',error)
+  }
 }
 async function dbGet(store, key) {
-  const db = await openDb()
-  const out = await new Promise((resolve,reject) => {
-    const req = db.transaction(store,'readonly').objectStore(store).get(key)
-    req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error)
-  })
-  db.close(); return out
+  if(dbDisabled)return memoryStores[store].get(key)
+  try {
+    const db=await openDb();const out=await new Promise((resolve,reject)=>{const req=db.transaction(store,'readonly').objectStore(store).get(key);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});db.close();return out
+  } catch(error){dbDisabled=true;console.warn('Edituno switched to session storage:',error);return memoryStores[store].get(key)}
 }
 async function dbAll(store) {
-  const db = await openDb()
-  const out = await new Promise((resolve,reject) => {
-    const req = db.transaction(store,'readonly').objectStore(store).getAll()
-    req.onsuccess = () => resolve(req.result || [])
-    req.onerror = () => reject(req.error)
-  })
-  db.close(); return out
+  if(dbDisabled)return [...memoryStores[store].values()]
+  try {
+    const db=await openDb();const out=await new Promise((resolve,reject)=>{const req=db.transaction(store,'readonly').objectStore(store).getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error)});db.close();return out
+  } catch(error){dbDisabled=true;console.warn('Edituno switched to session storage:',error);return [...memoryStores[store].values()]}
 }
 async function dbDelete(store,key) {
-  const db = await openDb()
-  await new Promise((resolve,reject)=>{
-    const tx=db.transaction(store,'readwrite'); tx.objectStore(store).delete(key); tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error)
-  }); db.close()
+  memoryStores[store].delete(key)
+  if(dbDisabled)return
+  try { const db=await openDb();await new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(key);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close() }
+  catch(error){dbDisabled=true;console.warn('Edituno switched to session storage:',error)}
 }
+
 async function saveProject(project) { await dbPut(PROJECTS, project) }
 async function listProjects() { return (await dbAll(PROJECTS)).sort((a,b)=>b.updatedAt-a.updatedAt) }
 async function getProject(id) { return dbGet(PROJECTS,id) }
@@ -257,6 +261,9 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
     case 'panleft': motionX=width*.08*(1-2*p); motionScale=1.08; break
     case 'panright': motionX=-width*.08*(1-2*p); motionScale=1.08; break
     case 'shake': motionX=Math.sin(p*80)*width*.006; motionY=Math.cos(p*67)*height*.005; motionRot=Math.sin(p*55)*.01; break
+    case 'kenburns': motionScale=1.03 + .14*p; motionX=width*.04*(2*p-1); motionY=height*.018*(1-2*p); break
+    case 'pulse': motionScale=1 + .035*Math.sin(p*Math.PI*4); break
+    case 'float': motionY=Math.sin(p*Math.PI*2)*height*.018; break
   }
   ctx.translate(motionX,motionY)
   ctx.rotate(((clip.rotation||0)*Math.PI/180)+motionRot)
@@ -308,22 +315,43 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
   }
 }
 
-function transitionAlpha(row,time) {
-  const clip=row.clip, d=Math.min(Number(clip.transitionDuration)||.3,row.duration/2)
-  if (!clip.transition || clip.transition==='none' || d<=0) return 1
+function transitionStyle(row,time,w,h) {
+  const clip=row.clip, d=Math.min(Number(clip.transitionDuration)||.35,row.duration/2)
+  const none={alpha:1,tx:0,ty:0,scale:1,blur:0,overlay:null,overlayAlpha:0}
+  if (!clip.transition || clip.transition==='none' || d<=0) return none
   const local=time-row.start
-  if (local<d) return local/d
-  if (row.end-time<d) return (row.end-time)/d
-  return 1
+  const atStart=local<d, atEnd=row.end-time<d
+  if (!atStart && !atEnd) return none
+  const progress=atStart ? clamp(local/d,0,1) : clamp((row.end-time)/d,0,1)
+  const edge=1-progress
+  const out={...none}
+  switch(clip.transition) {
+    case 'dissolve': out.alpha=progress; break
+    case 'fade': out.overlay='#000000'; out.overlayAlpha=edge; break
+    case 'flash': out.overlay='#ffffff'; out.overlayAlpha=edge*.9; break
+    case 'slideleft': out.tx=(atStart?1:-1)*w*edge; out.alpha=.35+.65*progress; break
+    case 'slideright': out.tx=(atStart?-1:1)*w*edge; out.alpha=.35+.65*progress; break
+    case 'zoom': out.scale=1 + .20*edge; out.alpha=.55+.45*progress; break
+    case 'blur': out.blur=10*edge; out.alpha=.72+.28*progress; break
+  }
+  return out
+}
+function transitionAlpha(row,time) { return transitionStyle(row,time,1,1).alpha }
+function drawClipWithTransition(ctx,source,asset,row,time,w,h,progress) {
+  const fx=transitionStyle(row,time,w,h)
+  ctx.save()
+  ctx.translate(fx.tx,fx.ty)
+  ctx.translate(w/2,h/2); ctx.scale(fx.scale,fx.scale); ctx.translate(-w/2,-h/2)
+  const clip = fx.blur ? {...row.clip, blur:(row.clip.blur||0)+fx.blur} : row.clip
+  applyClipDrawing(ctx,source,asset,clip,w,h,progress,fx.alpha)
+  ctx.restore()
+  if (fx.overlay && fx.overlayAlpha>0) {
+    ctx.save(); ctx.fillStyle=fx.overlay; ctx.globalAlpha=fx.overlayAlpha; ctx.fillRect(0,0,w,h); ctx.restore()
+  }
 }
 function drawTransitionOverlay(ctx,row,time,w,h) {
-  const clip=row.clip, d=Math.min(Number(clip.transitionDuration)||.3,row.duration/2)
-  if (!clip.transition || clip.transition==='none' || d<=0) return
-  const local=time-row.start
-  const edge = local<d ? 1-local/d : row.end-time<d ? 1-(row.end-time)/d : 0
-  if (edge<=0) return
-  if (clip.transition==='fade') { ctx.fillStyle=`rgba(0,0,0,${edge})`; ctx.fillRect(0,0,w,h) }
-  if (clip.transition==='flash') { ctx.fillStyle=`rgba(255,255,255,${edge})`; ctx.fillRect(0,0,w,h) }
+  const fx=transitionStyle(row,time,w,h)
+  if (fx.overlay && fx.overlayAlpha>0) { ctx.save(); ctx.fillStyle=fx.overlay; ctx.globalAlpha=fx.overlayAlpha; ctx.fillRect(0,0,w,h); ctx.restore() }
 }
 
 function drawTexts(ctx, project, time, width, height) {
@@ -366,11 +394,10 @@ async function drawPreview() {
       const progress=(state.currentTime-row.start)/row.duration
       if (asset.type==='video') {
         ensurePreviewVideo(row,asset,url)
-        if (previewVideo.readyState>=2) applyClipDrawing(ctx,previewVideo,asset,row.clip,w,h,progress,transitionAlpha(row,state.currentTime))
+        if (previewVideo.readyState>=2) drawClipWithTransition(ctx,previewVideo,asset,row,state.currentTime,w,h,progress)
       } else if (asset.type==='image') {
-        try { const img=await loadImage(url); applyClipDrawing(ctx,img,asset,row.clip,w,h,progress,transitionAlpha(row,state.currentTime)) } catch {}
+        try { const img=await loadImage(url); drawClipWithTransition(ctx,img,asset,row,state.currentTime,w,h,progress) } catch {}
       }
-      drawTransitionOverlay(ctx,row,state.currentTime,w,h)
     }
   }
   drawTexts(ctx,state.project,state.currentTime,w,h)
@@ -451,7 +478,7 @@ function defaultProject(ratio='16:9') {
 }
 function normalizeProject(p) {
   p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.texts ||= p.textOverlays || []; p.soundtrack ||= null
-  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.3,offsetX:0,offsetY:0,flipX:false,flipY:false},c)
+  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
   return p
 }
 async function createProject(ratio='16:9', importNow=false) {
@@ -506,15 +533,15 @@ async function importFiles(files, addVisuals=true) {
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
 }
 function defaultClip(asset) {
-  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.3 }
+  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
 }
 function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset||asset.type==='audio')return; mutate(p=>p.clips.push(defaultClip(asset))); }
 function setSoundtrack(id) { const asset=getAsset(id); if(!asset||asset.type!=='audio')return; mutate(p=>p.soundtrack={assetId:id,volume:.7,loop:true}); syncSoundtrack() }
 
 function selectedClip() { return state.selected?.type==='clip' ? state.project?.clips.find(c=>c.id===state.selected.id) : null }
 function selectedText() { return state.selected?.type==='text' ? state.project?.texts.find(t=>t.id===state.selected.id) : null }
-function selectClip(id) { state.selected={type:'clip',id}; state.tool='effects'; state.sheet='effects'; renderEditor() }
-function selectText(id) { state.selected={type:'text',id}; state.tool='text'; state.sheet='text'; renderEditor() }
+function selectClip(id) { state.selected={type:'clip',id}; state.tool='edit'; state.sheet=isMobileViewport()?'edit':null; renderEditor() }
+function selectText(id) { state.selected={type:'text',id}; state.tool='text'; state.sheet=isMobileViewport()?'text':null; renderEditor() }
 
 function splitAtPlayhead() {
   const row=activeAt(state.currentTime); if(!row) return
@@ -568,68 +595,64 @@ function applyFilter(name) {
     crisp:{brightness:101,exposure:0,contrast:124,saturation:112,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0},
     cinematic:{brightness:98,exposure:-4,contrast:118,saturation:92,temperature:8,vignette:34,grain:10,hue:0,blur:0,grayscale:0,sepia:8},
     retro:{brightness:104,exposure:0,contrast:96,saturation:88,temperature:18,vignette:25,grain:24,hue:-6,blur:0,grayscale:0,sepia:22},
-    soft:{brightness:108,exposure:2,contrast:90,saturation:96,temperature:3,vignette:8,grain:0,hue:0,blur:.6,grayscale:0,sepia:0}
+    soft:{brightness:108,exposure:2,contrast:90,saturation:96,temperature:3,vignette:8,grain:0,hue:0,blur:.6,grayscale:0,sepia:0},
+    neon:{brightness:104,exposure:2,contrast:126,saturation:155,temperature:-5,vignette:22,grain:6,hue:8,blur:0,grayscale:0,sepia:0},
+    matte:{brightness:106,exposure:3,contrast:86,saturation:82,temperature:5,vignette:12,grain:9,hue:0,blur:0,grayscale:0,sepia:5},
+    sunset:{brightness:104,exposure:2,contrast:108,saturation:126,temperature:28,vignette:18,grain:4,hue:-5,blur:0,grayscale:0,sepia:12},
+    ice:{brightness:103,exposure:1,contrast:114,saturation:104,temperature:-32,vignette:15,grain:3,hue:10,blur:0,grayscale:0,sepia:0},
+    noir:{brightness:96,exposure:-2,contrast:140,saturation:0,temperature:0,vignette:42,grain:18,hue:0,blur:0,grayscale:100,sepia:0}
   }
-  mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets.original,presets[name]||presets.original))
+  mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets.original,presets[name]||presets.original,{filterPreset:name}))
 }
 
+function svgIcon(name,size=20) {
+  const icons={
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    media:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m8 14 3-3 5 5 2-2 3 3"/><circle cx="9" cy="9" r="1"/>',
+    edit:'<path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
+    text:'<path d="M5 5h14M12 5v14M8 19h8"/>',
+    audio:'<path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>',
+    effects:'<path d="m12 3 1.2 4.1L17 9l-3.8 1.9L12 15l-1.2-4.1L7 9l3.8-1.9L12 3Z"/><path d="m5 14 .7 2.3L8 17l-2.3.7L5 20l-.7-2.3L2 17l2.3-.7L5 14Z"/>',
+    adjust:'<path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="13" cy="18" r="2"/>',
+    transition:'<path d="M3 7h8v10H3zM13 7h8v10h-8z"/><path d="m9 12 6 0M12 9l3 3-3 3"/>',
+    canvas:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 4v16M16 4v16"/>',
+    back:'<path d="m15 18-6-6 6-6"/>',
+    export:'<path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v5h14v-5"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    play:'<path d="m9 7 8 5-8 5V7Z"/>',
+    projects:'<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+    undo:'<path d="M9 7 4 12l5 5"/><path d="M5 12h8a6 6 0 0 1 6 6"/>',
+    redo:'<path d="m15 7 5 5-5 5"/><path d="M19 12h-8a6 6 0 0 0-6 6"/>',
+    split:'<circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><path d="m8 8 10 7M8 16l10-7"/>',
+    zoomin:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/>',
+    zoomout:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6"/>',
+    close:'<path d="m6 6 12 12M18 6 6 18"/>'
+  }
+  return `<svg class="ui-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.effects}</svg>`
+}
 function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="${EDITUNO_ICON}" alt="Edituno"><span>Edituno</span></span>` }
 function renderHome() {
-  const app=$('#app'); const projects=state.projects
-  app.innerHTML=`<div class="app-page">
-    <header class="mobile-header">
-      ${renderLogo()}
-      <div class="header-actions">
-        <button class="lang-pill" data-action="language">${state.language==='el'?'EN':'ΕΛ'}</button>
-        <button class="text-btn desktop-only" data-action="install">${tr('install')}</button>
-        <button class="icon-btn" aria-label="${tr('settings')}" data-action="settings">⚙</button>
-      </div>
+  const app=$('#app'), projects=state.projects
+  app.innerHTML=`<div class="landing-page">
+    <header class="landing-header">
+      <div class="landing-header-inner">${renderLogo()}<div class="landing-actions"><button class="lang-pill" data-action="language">${state.language==='el'?'EN':'ΕΛ'}</button><button class="text-btn" data-action="install">${tr('install')}</button><button class="primary-btn compact" data-action="create" data-ratio="16:9">${tr('open')} Edituno</button></div></div>
     </header>
-    <main class="home-main">
-      <section class="home-intro">
-        <div><div class="home-kicker">Edituno · ${tr('local')}</div><h1>${tr('homeLead')}</h1></div>
-        <div><p><strong>${tr('free')}</strong><br>${tr('homeBody')}</p></div>
+    <main class="landing-main">
+      <section class="landing-hero">
+        <div class="landing-kicker">${tr('local')} · PWA</div>
+        <h1>${tr('editLocally')}</h1>
+        <p>${tr('free')} ${tr('privateSub')}</p>
+        <div class="landing-cta"><button class="primary-btn hero-cta" data-action="create" data-ratio="16:9">${svgIcon('plus',18)} ${tr('newProject')}</button><button class="secondary-btn hero-cta" data-action="create-import">${svgIcon('media',18)} ${tr('import')}</button></div>
+        <div class="landing-proof"><span>1080p</span><span>${tr('effects')}</span><span>${tr('transitions')}</span><span>${tr('captions')}</span><span>${tr('offline')}</span></div>
       </section>
-
-      <section class="create-card">
-        <div class="create-card-top"><div class="create-badge">＋</div><div><h2>${tr('newProject')}</h2><p>${tr('privateSub')}</p></div></div>
-        <div class="create-actions">
-          <button class="primary-btn" data-action="create" data-ratio="16:9">＋ ${tr('create')}</button>
-          <button class="secondary-btn" data-action="create-import">▣ ${tr('import')}</button>
-        </div>
+      <section class="landing-formats">
+        ${templateCard('9:16','Vertical','TikTok · Reels','r916')}${templateCard('16:9','Landscape','YouTube','r169')}${templateCard('1:1','Square','Social','r11')}${templateCard('4:5','Portrait','Feed','r45')}
       </section>
-
-      <section class="home-section">
-        <div class="section-head"><div><h2>${tr('templates')}</h2><p>TikTok · Reels · Shorts · YouTube</p></div></div>
-        <div class="template-scroller">
-          ${templateCard('9:16','Vertical','TikTok · Reels','r916')}
-          ${templateCard('16:9','Landscape','YouTube','r169')}
-          ${templateCard('1:1','Square','Social','r11')}
-          ${templateCard('4:5','Portrait','Feed','r45')}
-        </div>
-      </section>
-
-      <section class="home-section" id="projects-section">
-        <div class="section-head"><div><h2>${tr('recent')}</h2><p>${projects.length ? `${projects.length} ${tr('projects').toLowerCase()}` : tr('noProjects')}</p></div></div>
-        <div class="project-list">
-          ${projects.length ? projects.map(projectCard).join('') : `<div class="empty-state"><b>${tr('noProjects')}</b><span>${tr('create')}</span></div>`}
-        </div>
-      </section>
-
-      <section class="home-section">
-        <div class="trust-grid">
-          ${trustCard('⌂',tr('private'),tr('privateSub'))}
-          ${trustCard('↻',tr('offline'),tr('offlineSub'))}
-          ${trustCard('○',tr('noAccount'),tr('noAccountSub'))}
-        </div>
+      <section class="landing-projects" id="projects-section">
+        <div class="section-head"><div><h2>${tr('recent')}</h2><p>${projects.length?`${projects.length} ${tr('projects').toLowerCase()}`:tr('noProjects')}</p></div></div>
+        <div class="project-list">${projects.length?projects.map(projectCard).join(''):`<button class="empty-project-launch" data-action="create" data-ratio="16:9">${svgIcon('plus',22)}<strong>${tr('newProject')}</strong><span>${tr('noUploadShort')}</span></button>`}</div>
       </section>
     </main>
-    <nav class="mobile-nav" aria-label="Main navigation">
-      <button class="nav-btn active" data-action="home-top"><span class="nav-icon">⌂</span><span>Home</span></button>
-      <button class="nav-btn" data-action="projects-scroll"><span class="nav-icon">▦</span><span>${tr('projects')}</span></button>
-      <button class="nav-btn create-nav" data-action="create" data-ratio="16:9"><span class="nav-icon">＋</span><span>${tr('create')}</span></button>
-      <button class="nav-btn" data-action="settings"><span class="nav-icon">⚙</span><span>${tr('settings')}</span></button>
-    </nav>
     ${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
   </div><div class="toast-stack" id="toasts"></div>`
 }
@@ -645,63 +668,83 @@ function settingsModal(){return `<div class="modal-backdrop" data-action="settin
 </div></div></section></div>`}
 function installModal(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);return `<div class="modal-backdrop" data-action="install-close"><section class="modal" onclick="event.stopPropagation()"><div class="modal-head"><h2>${tr('installTitle')}</h2><button class="sheet-close" data-action="install-close">×</button></div><div class="modal-body"><div class="install-card"><strong>Edituno</strong><p>${ios?tr('iosInstall'):tr('chromeInstall')}</p>${!ios&&state.installPrompt?`<button class="primary-btn full" data-action="install-confirm">${tr('installApp')}</button>`:''}</div></div></section></div>`}
 
+function mobileProjectHubModal(){
+  const projects=state.projects||[]
+  return `<div class="project-hub-backdrop" data-action="mobile-hub-close"><section class="project-hub" onclick="event.stopPropagation()"><div class="project-hub-head"><div>${renderLogo()}<span>${tr('projectHub')}</span></div><button class="icon-btn" data-action="mobile-hub-close">${svgIcon('close')}</button></div><div class="project-hub-body"><button class="primary-btn full" data-action="create" data-ratio="9:16">${svgIcon('plus',18)} ${tr('newBlank')}</button>${projects.length?`<div class="hub-project-list">${projects.slice(0,10).map(p=>`<button class="hub-project" data-action="open-project" data-id="${p.id}"><span class="hub-thumb">${svgIcon('play',18)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span></button>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noProjects')}</b></div>`}<div class="hub-footer"><button class="secondary-btn" data-action="language">${state.language==='el'?'English':'Ελληνικά'}</button><button class="secondary-btn" data-action="settings">${tr('settings')}</button></div></div></section></div>`
+}
+
 function renderEditor() {
   if(!state.project) return
-  const app=$('#app'), p=state.project, dur=projectDuration(), rows=clipTimeline()
+  const app=$('#app'), p=state.project, dur=projectDuration(), rows=clipTimeline(), mobile=isMobileViewport()
   const totalWidth=Math.max(320,Math.ceil(dur*state.pxPerSec)+60)
-  app.innerHTML=`<div class="editor-page">
+  app.innerHTML=`<div class="editor-page ${mobile?'mobile-editor':'desktop-editor'}">
     <header class="editor-header">
-      <button class="icon-btn" data-action="back" aria-label="${tr('back')}">‹</button>
+      <button class="icon-btn" data-action="${mobile?'mobile-hub':'back'}" aria-label="${mobile?tr('projectHub'):tr('back')}">${svgIcon(mobile?'projects':'back',20)}</button>
       <div class="editor-title-wrap"><input class="editor-title" id="project-name" aria-label="${tr('projectName')}" value="${escapeHtml(p.name)}" /></div>
       <span class="editor-save-state" id="save-state">${tr('save')}</span>
-      <div class="editor-header-actions"><button class="primary-btn" data-action="export">${tr('export')}</button></div>
+      <div class="editor-header-actions"><button class="primary-btn export-btn" data-action="export">${svgIcon('export',16)}<span>${tr('export')}</span></button></div>
     </header>
 
     <main class="editor-body">
       <aside class="desktop-sidebar">${desktopSidebar()}</aside>
       <section class="preview-zone">
-        <div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div class="preview-empty ${rows.length?'hidden':''}"><strong>${tr('emptyTimeline')}</strong><button class="secondary-btn" data-action="pick-media">＋ ${tr('addMedia')}</button></div><span class="preview-overlay-badge">${escapeHtml(p.ratio)}</span></div></div>
+        <div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div class="preview-empty ${rows.length?'hidden':''}"><span class="empty-preview-icon">${svgIcon('media',26)}</span><strong>${tr('mobileReady')}</strong><span>${tr('emptyTimeline')}</span><button class="primary-btn compact" data-action="pick-media">${svgIcon('plus',17)} ${tr('addMedia')}</button></div><span class="preview-overlay-badge">${escapeHtml(p.ratio)}</span></div></div>
       </section>
-      <div class="transport"><button class="icon-btn" data-action="jump-start" aria-label="Start">↤</button><button class="icon-btn" data-action="play-toggle" aria-label="${tr('play')}">▶</button><input id="seekbar" class="seekbar" type="range" min="0" max="${dur||1}" step="0.01" value="${state.currentTime}" /><span class="timecode" id="timecode">${fmtTime(state.currentTime)} / ${fmtTime(dur)}</span></div>
+      <div class="transport"><button class="icon-btn transport-home" data-action="jump-start" aria-label="Start">↤</button><button class="play-btn" data-action="play-toggle" aria-label="${tr('play')}">${svgIcon('play',19)}</button><input id="seekbar" class="seekbar" type="range" min="0" max="${dur||1}" step="0.01" value="${state.currentTime}" /><span class="timecode" id="timecode">${fmtTime(state.currentTime)} / ${fmtTime(dur)}</span></div>
       <section class="timeline-panel">
-        <div class="timeline-toolbar"><div class="timeline-toolbar-left"><strong style="font-size:11px">${tr('timeline')}</strong></div><div class="timeline-toolbar-right"><button data-action="undo" title="${tr('undo')}">↶</button><button data-action="redo" title="${tr('redo')}">↷</button><button data-action="split" title="${tr('split')}">✂</button></div></div>
-        <div class="timeline-scroll" id="timeline-scroll"><div style="width:${totalWidth}px;position:relative;min-height:126px"><div class="timeline-ruler">${timelineRuler(dur,totalWidth)}</div><div class="timeline-track">${rows.length?rows.map(r=>timelineClip(r)).join(''):`<div style="width:100%;border:1px dashed var(--line-2);border-radius:12px;display:grid;place-items:center;color:var(--muted);font-size:10px">${tr('emptyTimeline')}</div>`}</div><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div><div class="playhead" style="left:${10+state.currentTime*state.pxPerSec}px"></div></div></div>
+        <div class="timeline-toolbar"><div class="timeline-toolbar-left"><strong>${tr('timeline')}</strong></div><div class="timeline-toolbar-right"><button data-action="timeline-zoom" data-value="-1" title="${tr('timelineZoom')}">${svgIcon('zoomout',15)}</button><button data-action="timeline-zoom" data-value="1" title="${tr('timelineZoom')}">${svgIcon('zoomin',15)}</button><button data-action="undo" title="${tr('undo')}">${svgIcon('undo',15)}</button><button data-action="redo" title="${tr('redo')}">${svgIcon('redo',15)}</button><button data-action="split" title="${tr('split')}">${svgIcon('split',15)}</button></div></div>
+        <div class="timeline-scroll" id="timeline-scroll"><div style="width:${totalWidth}px;position:relative;min-height:126px"><div class="timeline-ruler">${timelineRuler(dur,totalWidth)}</div><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',18)} ${tr('addMedia')}</button>`}</div><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div><div class="playhead" style="left:${10+state.currentTime*state.pxPerSec}px"></div></div></div>
       </section>
       <aside class="desktop-inspector">${desktopInspector()}</aside>
     </main>
 
     <footer class="editor-bottom"><div class="editor-tools">
-      ${toolButton('media','▣',tr('media'))}${toolButton('text','T',tr('text'))}${toolButton('audio','♫',tr('audio'))}${toolButton('effects','✦',tr('effects'))}${toolButton('canvas','▱',tr('canvas'))}
+      ${toolButton('media','media',tr('media'))}${toolButton('edit','edit',tr('quickEdit'))}${toolButton('text','text',tr('text'))}${toolButton('audio','audio',tr('audio'))}${toolButton('effects','effects',tr('effects'))}${toolButton('adjust','adjust',tr('adjust'))}${toolButton('transitions','transition',tr('transitions'))}${toolButton('canvas','canvas',tr('canvas'))}
     </div></footer>
     <div class="sheet-backdrop ${state.sheet?'open':''}" data-action="sheet-close"></div>
-    <section class="bottom-sheet ${state.sheet?'open':''}" aria-modal="true"><div class="sheet-handle"></div><div class="sheet-head"><strong>${sheetTitle()}</strong><button class="sheet-close" data-action="sheet-close">×</button></div><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
-    ${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
+    <section class="bottom-sheet ${state.sheet?'open':''}" aria-modal="true"><div class="sheet-handle"></div><div class="sheet-head"><strong>${sheetTitle()}</strong><button class="sheet-close" data-action="sheet-close">${svgIcon('close',18)}</button></div><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
+    ${state.projectHubOpen?mobileProjectHubModal():''}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
   </div><div class="toast-stack" id="toasts"></div>`
   requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi() })
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${10+t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
-function timelineClip(row){const a=getAsset(row.clip.assetId),w=Math.max(64,row.duration*state.pxPerSec);return `<button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" style="width:${w}px" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>`}
+function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">◇</button>`:''}</div>`}
 function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${10+t.start*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
-function toolButton(tool,icon,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}"><span class="tool-icon">${icon}</span><span>${label}</span></button>`}
-function sheetTitle(){if(state.sheet==='effects'&&selectedClip())return tr('selectedClip');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
+function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}"><span class="tool-icon">${svgIcon(iconName,21)}</span><span>${label}</span></button>`}
+function sheetTitle(){if(state.sheet==='edit')return tr('quickEdit');if(state.sheet==='effects')return tr('effects');if(state.sheet==='adjust')return tr('adjust');if(state.sheet==='transitions')return tr('transitions');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
 function desktopSidebar(){return `<h3 class="desktop-panel-title">${tr('desktopMedia')}</h3><div class="desktop-tool-tabs"><button class="active" data-action="pick-media">＋ ${tr('media')}</button><button data-action="add-text" data-kind="title">T ${tr('text')}</button><button data-action="open-srt">CC</button></div>${mediaPanel()}`}
 function desktopInspector(){return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():canvasPanel()}`}
-function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='text')return textPanel(true);if(tool==='audio')return audioPanel();if(tool==='effects')return selectedClip()?clipPanel():effectsEmpty();if(tool==='canvas')return canvasPanel();return''}
+function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
 
 function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}"><div class="media-type">${a.type==='video'?'▶':a.type==='image'?'▧':'♫'}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type==='audio'?'set-soundtrack':'add-asset'}" data-id="${a.id}">${tr(a.type==='audio'?'useSoundtrack':'add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
 function textPanel(showAdd=true){const t=selectedText();return `<div class="panel-grid">${showAdd?`<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>✨</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>`:''}${t?`<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight==600?'selected':''}>600</option><option ${t.weight==700?'selected':''}>700</option><option ${t.weight==800?'selected':''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color,'#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background,'#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation==='none'?'selected':''}>${tr('none')}</option><option value="fade" ${t.animation==='fade'?'selected':''}>Fade</option><option value="pop" ${t.animation==='pop'?'selected':''}>Pop</option><option value="slide" ${t.animation==='slide'?'selected':''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x',t.x,0,1,.01,true,'text')}${rangeField('y',t.y,0,1,.01,true,'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>`:''}</div>`}
 function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
 function audioPanel(){const audios=state.project.assets.filter(a=>a.type==='audio'), st=state.project.soundtrack;return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)}</span></div><button class="media-action" data-action="set-soundtrack" data-id="${a.id}">${st?.assetId===a.id?'✓':tr('useSoundtrack')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${st?`<div class="panel-section"><h3>${tr('soundtrack')}</h3>${rangeField('soundtrack.volume',st.volume,0,1,.01,true,'project')}<div class="switch-row"><span>${tr('loop')}</span><button class="switch ${st.loop?'on':''}" data-action="toggle-loop"></button></div><button class="danger-btn" data-action="remove-soundtrack">${tr('remove')}</button></div>`:''}</div>`}
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
-function clipPanel(){const c=selectedClip(),a=getAsset(c?.assetId);if(!c)return effectsEmpty();return `<div class="panel-grid"><div class="panel-section soft"><h3>${tr('selectedClip')}</h3><p class="helper">${escapeHtml(a?.name||'')}</p><div class="action-row"><button class="sheet-action" data-action="split"><i>✂</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>▣</i>${tr('duplicate')}</button><button class="sheet-action danger" data-action="delete-selected"><i>⌫</i>${tr('delete')}</button></div></div>
-<div class="panel-section"><h3>${tr('filter')}</h3><div class="preset-grid">${['original','vivid','warm','cool','mono','film','dream','crisp','cinematic','retro','soft'].map(n=>`<button class="preset-card" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${tr(n)}</strong></button>`).join('')}</div></div>
-<div class="panel-section"><h3>${tr('effects')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}</div>
-<div class="panel-section"><h3>${tr('motion')}</h3><div class="effect-chip-row">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['panleft',tr('panLeft')],['panright',tr('panRight')],['shake',tr('shake')]].map(([v,l])=>`<button class="chip ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}">${l}</button>`).join('')}</div></div>
-<div class="panel-section"><h3>${tr('transition')}</h3><div class="effect-chip-row">${[['none',tr('none')],['fade',tr('fade')],['flash',tr('flash')]].map(([v,l])=>`<button class="chip ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}">${l}</button>`).join('')}</div>${rangeField('transitionDuration',c.transitionDuration,.1,1,.05,true,'clip')}</div>
-<div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,4,.05,true,'clip')}${a?.type==='video'?rangeField('volume',c.volume,0,1,.01,true,'clip'):''}</div>
-<div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}${rangeField('opacity',c.opacity,0,1,.01,true,'clip')}${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}<div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div>
-<div class="action-row"><button class="sheet-action" data-action="move" data-value="-1"><i>←</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>→</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>⌫</i>${tr('delete')}</button></div></div>`}
-function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)'};return f[n]||''}
+function editPanel(){
+  const c=selectedClip(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
+  return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',20)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>▣</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>←</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>→</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>⌫</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,4,.05,true,'clip')}${a?.type==='video'?rangeField('volume',c.volume,0,1,.01,true,'clip'):''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
+}
+function effectsPanel(){
+  const c=selectedClip(); if(!c)return effectsEmpty()
+  const presets=['original','vivid','warm','cool','cinematic','film','dream','crisp','retro','soft','neon','matte','sunset','ice','noir','mono']
+  return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
+}
+function motionGlyph(v){return ({none:'○',zoom:'＋',zoomout:'−',kenburns:'↗',panleft:'←',panright:'→',pulse:'◉',float:'↕',shake:'≈'})[v]||'✦'}
+function adjustPanel(){
+  const c=selectedClip(); if(!c)return effectsEmpty()
+  const defs={brightness:[50,150,1],exposure:[-50,50,1],contrast:[50,160,1],saturation:[0,200,1],temperature:[-50,50,1],vignette:[0,100,1],grain:[0,100,1],hue:[-180,180,1],blur:[0,8,.1],grayscale:[0,100,1],sepia:[0,100,1],opacity:[0,1,.01]}
+  const key=defs[state.adjustKey]?state.adjustKey:'brightness', [min,max,step]=defs[key], value=c[key]??(key==='opacity'?1:0)
+  return `<div class="adjust-mobile"><div class="adjust-grid">${Object.keys(defs).map(k=>`<button class="adjust-tile ${key===k?'active':''}" data-action="adjust-select" data-key="${k}"><span>${adjustGlyph(k)}</span><strong>${tr(k)}</strong><small>${Number(c[k]??0).toFixed(step<1?1:0)}</small></button>`).join('')}</div><div class="adjust-focus"><div class="adjust-focus-head"><strong>${tr(key)}</strong><button data-action="reset-adjustment" data-key="${key}">${tr('reset')}</button></div>${rangeField(key,value,min,max,step,true,'clip')}</div></div>`
+}
+function adjustGlyph(k){return ({brightness:'☀',exposure:'◐',contrast:'◒',saturation:'◉',temperature:'◑',vignette:'◌',grain:'⠿',hue:'◍',blur:'◌',grayscale:'◑',sepia:'◒',opacity:'◐'})[k]||'◉'}
+function transitionPanel(){
+  const c=selectedClip(); if(!c)return effectsEmpty()
+  const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')]]
+  return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v,l])=>`<button class="transition-card ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b></span><strong>${l}</strong></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration',c.transitionDuration,.1,1.5,.05,true,'clip')}</div></div>`
+}
+function clipPanel(){const c=selectedClip();if(!c)return effectsEmpty();return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}</div>${transitionPanel()}</div>`}
+function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)',neon:'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)',matte:'filter:saturate(.8) contrast(.86) brightness(1.07)',sunset:'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)',ice:'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)',noir:'filter:grayscale(1) contrast(1.45) brightness(.96)'};return f[n]||''}
 function rangeField(key,value,min,max,step,show,scope){return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show?Number(value).toFixed(step<1?2:0):Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`}
 function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9','9:16','1:1','4:5'].map(r=>`<button class="format-btn ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
 
@@ -735,9 +778,9 @@ async function exportProjectLocal(quality,fps,onProgress,signal) {
       if(asset.type==='video'){
         const v=document.createElement('video');v.src=url;v.playsInline=true;v.preload='auto';await waitLoaded(v);v.currentTime=Math.min(clip.start,Math.max(0,(v.duration||asset.duration)-.03));await waitSeek(v);v.playbackRate=clamp(clip.speed,.25,4)
         const src=audioContext.createMediaElementSource(v),gain=audioContext.createGain();gain.gain.value=clamp(clip.volume,0,1);src.connect(gain).connect(dest);await v.play()
-        await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};applyClipDrawing(ctx,v,asset,clip,w,h,elapsed/dur,transitionAlpha(row,global+elapsed));drawTransitionOverlay(ctx,row,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
+        await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/dur);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
       } else if(asset.type==='image'){
-        const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};applyClipDrawing(ctx,img,asset,clip,w,h,elapsed/dur,transitionAlpha(row,global+elapsed));drawTransitionOverlay(ctx,row,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
+        const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,img,asset,row,global+elapsed,w,h,elapsed/dur);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
       }
       global+=dur
     }
@@ -765,11 +808,13 @@ function downloadExport(){if(!state.exportUrl)return;const a=document.createElem
 async function shareExport(){if(!state.exportResult)return;const file=new File([state.exportResult.blob],exportFilename(),{type:state.exportResult.mime});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:state.project?.name||'Edituno'}).catch(()=>{})}else downloadExport()}
 
 function bindGlobalEvents() {
+  for (const name of ['gesturestart','gesturechange','gestureend']) document.addEventListener(name,e=>e.preventDefault(),{passive:false})
+  let lastTouchEnd=0; document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<280)e.preventDefault();lastTouchEnd=now},{passive:false})
   document.addEventListener('click',async e=>{
     const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action
     if(a==='create')return createProject(el.dataset.ratio||'16:9')
     if(a==='create-import')return createProject('16:9',true)
-    if(a==='open-project')return openProject(el.dataset.id)
+    if(a==='open-project'){state.projectHubOpen=false;return openProject(el.dataset.id)}
     if(a==='delete-project'){e.stopPropagation();if(confirm(tr('delete')+'?')){await deleteProjectFull(el.dataset.id);state.projects=await listProjects();renderHome();toast(tr('deleted'))}return}
     if(a==='language'){state.language=state.language==='el'?'en':'el';render();return}
     if(a==='set-lang'){state.language=el.dataset.value;render();return}
@@ -783,12 +828,18 @@ function bindGlobalEvents() {
     if(a==='home-top'){window.scrollTo({top:0,behavior:'smooth'});return}
     if(a==='projects-scroll'){$('#projects-section')?.scrollIntoView({behavior:'smooth'});return}
     if(a==='back')return goHome()
+    if(a==='mobile-hub'){state.projectHubOpen=true;renderEditor();return}
+    if(a==='mobile-hub-close'){state.projectHubOpen=false;renderEditor();return}
     if(a==='pick-media'){$('#media-picker')?.click();return}
     if(a==='add-asset')return addAssetToTimeline(el.dataset.id)
     if(a==='set-soundtrack')return setSoundtrack(el.dataset.id)
     if(a==='select-clip')return selectClip(el.dataset.id)
     if(a==='select-text')return selectText(el.dataset.id)
     if(a==='tool'){state.tool=el.dataset.tool;state.sheet=el.dataset.tool;renderEditor();return}
+    if(a==='select-transition'){state.selected={type:'clip',id:el.dataset.id};state.tool='transitions';state.sheet='transitions';renderEditor();return}
+    if(a==='timeline-zoom'){state.pxPerSec=clamp(state.pxPerSec+(+el.dataset.value)*12,24,120);renderEditor();return}
+    if(a==='adjust-select'){state.adjustKey=el.dataset.key;state.tool='adjust';state.sheet='adjust';renderEditor();return}
+    if(a==='reset-adjustment'){const c=selectedClip();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,opacity:1};mutate(p=>p.clips.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0);return}
     if(a==='sheet-close'){state.sheet=null;renderEditor();return}
     if(a==='play-toggle'){state.playing?stopPlayback():startPlayback();return}
     if(a==='jump-start'){seekTo(0);return}
@@ -843,44 +894,39 @@ function bindGlobalEvents() {
 function updateRangeLabel(el){const b=el.closest('.field')?.querySelector('b');if(b)b.textContent=Number(el.value).toFixed(+el.step<1?2:0)}
 
 async function init() {
+  const bootStarted=performance.now()
   try {
-    // Render first. Storage and PWA work must never block the visible application shell.
     bindGlobalEvents()
+    const launch=new URLSearchParams(location.search)
+    try { state.projects=await listProjects() } catch(storageError){ console.warn('Edituno local storage unavailable:',storageError);state.projects=[] }
+
+    if(launch.get('new')==='1') {
+      state.project=defaultProject(isMobileViewport()?'9:16':'16:9');state.view='editor';saveProject(state.project).catch(()=>{})
+    } else if(isMobileViewport() && launch.get('home')!=='1') {
+      if(state.projects.length) {
+        try {
+          const p=await getProject(state.projects[0].id)
+          if(p){state.project=normalizeProject(p);state.urls={};for(const asset of state.project.assets){const blob=await getBlob(asset.id);if(blob)state.urls[asset.id]=URL.createObjectURL(blob)}}
+        } catch(error){console.warn('Could not resume project:',error)}
+      }
+      if(!state.project){state.project=defaultProject('9:16');saveProject(state.project).catch(()=>{})}
+      state.view='editor';state.pxPerSec=36
+    } else {
+      state.view='home'
+    }
+
+    const remaining=Math.max(0,620-(performance.now()-bootStarted))
+    if(remaining) await new Promise(resolve=>setTimeout(resolve,remaining))
     render()
-    if (typeof window.__dismissEditunoSplash === 'function') {
-      requestAnimationFrame(() => window.__dismissEditunoSplash())
-    }
 
-    try {
-      state.projects = await listProjects()
-      if (state.view === 'home') renderHome()
-    } catch (storageError) {
-      console.warn('Edituno local storage unavailable:', storageError)
+    if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.2.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
-
-    const launch = new URLSearchParams(location.search)
-    if (launch.get('new') === '1') {
-      history.replaceState({}, '', location.pathname)
-      await createProject('16:9')
-    }
-
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register = () => navigator.serviceWorker.register('./sw.js?v=1.1.1', { updateViaCache: 'none' })
-        .then(reg => reg.update().catch(()=>{}))
-        .catch(error => console.warn('Service worker registration failed:', error))
-      if (document.readyState === 'complete') register()
-      else window.addEventListener('load', register, { once:true })
-    }
-  } catch (error) {
-    console.error('Edituno initialization failed:', error)
-    const app = $('#app')
-    if (app) {
-      app.innerHTML = `<main class="startup-error"><div><img src="${EDITUNO_ICON}" alt="Edituno" style="width:72px;height:72px;border-radius:18px"><strong>Edituno</strong><p>${state.language==='el'?'Η εφαρμογή δεν μπόρεσε να ξεκινήσει. Πάτησε επαναφόρτωση.':'The app could not start. Reload to retry.'}</p><button onclick="location.reload()" class="primary-btn">${state.language==='el'?'Επαναφόρτωση':'Reload'}</button></div></main>`
-    }
-  } finally {
-    if (typeof window.__dismissEditunoSplash === 'function') {
-      window.setTimeout(() => window.__dismissEditunoSplash(), 60)
-    }
+  } catch(error) {
+    console.error('Edituno initialization failed:',error)
+    const app=$('#app');if(app)app.innerHTML=`<main class="startup-error"><div><img src="${EDITUNO_ICON}" alt="Edituno" style="width:72px;height:72px;border-radius:18px"><strong>Edituno</strong><p>${state.language==='el'?'Η εφαρμογή δεν μπόρεσε να ξεκινήσει. Πάτησε επαναφόρτωση.':'The app could not start. Reload to retry.'}</p><button onclick="location.reload()" class="primary-btn">${state.language==='el'?'Επαναφόρτωση':'Reload'}</button></div></main>`
   }
 }
+
 init()

@@ -1,4 +1,4 @@
-const CACHE = 'edituno-production-v1.1.1'
+const CACHE = 'edituno-production-v1.2.0'
 const CORE = [
   './',
   './manifest.webmanifest',
