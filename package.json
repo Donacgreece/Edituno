@@ -1,0 +1,14 @@
+{
+  "name": "edituno",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Mobile-first local video editor PWA",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node tools/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "serve": "python -m http.server 4173 -d dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

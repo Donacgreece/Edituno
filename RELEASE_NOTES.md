@@ -1,57 +1,17 @@
-# Edituno v1.0 Live
+# Edituno v1.1.0 Production
 
-This release replaces the initial dark desktop-oriented prototype with a mobile-first light PWA.
+This release replaces the temporary single-JavaScript prototype with a TypeScript source project and a hardened GitHub Pages production bundle.
 
-## UX
+## Startup reliability
 
-- New light visual system based on Vivid Azure `#2455F5` and Cloud Violet `#F7DCFF`
-- Mobile-first dashboard and editor
-- Native-style bottom navigation and bottom sheets
-- 44px+ touch targets and iPhone safe-area support
-- Minimal product UI, without decorative fake-editor hero mockups
-- Responsive desktop workspace with media and property panels
-- Greek and English from first launch
+The visible app shell now renders before IndexedDB or service-worker work begins. The production JavaScript and CSS are embedded directly into `dist/index.html`, so stale or missing external bundle files cannot leave the app on a blank page after the splash screen.
+
+A fatal startup fallback is also embedded in the HTML. If a runtime error occurs before the editor can render, the user sees a reload action instead of an empty page.
 
 ## PWA
 
-- Standalone manifest
-- Offline application shell
-- Apple touch icon
-- iPhone startup images / splash screens
-- Light status bar and white launch background
-- Install flow for Chromium and instructions for iOS Add to Home Screen
-- Persistent-storage request in Settings
+The service worker now handles navigation and PWA assets only. It no longer intercepts application CSS or JavaScript because those are part of the HTML itself.
 
-## Editing
+## Brand
 
-- Video, image and audio import
-- Local IndexedDB project and media storage
-- Timeline with sequential clips and timed text layers
-- Trim, split, duplicate, move and delete
-- Speed, volume, opacity, rotation, scale, pan, contain/cover and mirror
-- Brightness, contrast, saturation, hue, blur, grayscale and sepia
-- Eight visual filter presets
-- Zoom, zoom-out, pan and shake motion effects
-- Fade and flash transitions
-- Titles, captions and sticker text
-- Text animations and styling
-- SRT subtitle import
-- Soundtrack selection, volume and looping
-- Undo and redo
-- Autosave
-- 16:9, 9:16, 1:1 and 4:5 canvases
-
-## Export
-
-- Local canvas rendering
-- 720p and 1080p
-- 24, 30 and 60 fps
-- MP4 where the browser exposes a compatible MediaRecorder encoder
-- WebM fallback
-- Local file save
-- Web Share on supported mobile browsers
-- No watermark
-
-## Deployment
-
-The production app is now static and dependency-free. GitHub Pages no longer requires npm, Vite, a package lock or a Node build job.
+The 512px app icon is byte-for-byte the official icon supplied for Edituno. The same artwork is used for the in-app logo and Apple startup screens.

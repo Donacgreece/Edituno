@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* Edituno v1.1.0 production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -13,6 +15,24 @@ const fmtTime = value => {
   return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${t}`
 }
 
+const EDITUNO_ICON = 'data:image/png;base64,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'
+
+function safeLanguage() {
+  try {
+    const saved = localStorage.getItem('edituno-language')
+    if (saved === 'el' || saved === 'en') return saved
+  } catch {}
+  try {
+    return navigator.language?.toLowerCase().startsWith('el') ? 'el' : 'en'
+  } catch {
+    return 'en'
+  }
+}
+
+function safeSetLanguage(value) {
+  try { localStorage.setItem('edituno-language', value) } catch {}
+}
+
 const STRINGS = {
   en: {
     create:'Create project', import:'Import media', recent:'Recent projects', noProjects:'No projects yet',
@@ -23,10 +43,10 @@ const STRINGS = {
     addMedia:'Add media', addTimeline:'Add', soundtrack:'Soundtrack', useSoundtrack:'Use', remove:'Remove', captions:'Captions', importSrt:'Import SRT',
     addTitle:'Add title', addCaption:'Add caption', addSticker:'Add sticker', selectedClip:'Selected clip', clip:'Clip', trim:'Trim', transform:'Transform',
     speed:'Speed', volume:'Volume', opacity:'Opacity', scale:'Scale', rotation:'Rotation', fit:'Fit', cover:'Cover', contain:'Contain', mirror:'Mirror',
-    split:'Split', duplicate:'Duplicate', moveLeft:'Left', moveRight:'Right', brightness:'Brightness', contrast:'Contrast', saturation:'Saturation',
+    split:'Split', duplicate:'Duplicate', moveLeft:'Left', moveRight:'Right', brightness:'Brightness', contrast:'Contrast', saturation:'Saturation', exposure:'Exposure', temperature:'Temperature', vignette:'Vignette', grain:'Film grain',
     hue:'Hue', blur:'Blur', grayscale:'Grayscale', sepia:'Sepia', filter:'Filter', motion:'Motion', transition:'Transition', duration:'Duration',
     none:'None', fade:'Fade', flash:'Flash', zoom:'Zoom', panLeft:'Pan left', panRight:'Pan right', zoomOut:'Zoom out', shake:'Shake',
-    original:'Original', vivid:'Vivid', warm:'Warm', cool:'Cool', mono:'Mono', film:'Film', dream:'Dream', crisp:'Crisp',
+    original:'Original', vivid:'Vivid', warm:'Warm', cool:'Cool', mono:'Mono', film:'Film', dream:'Dream', crisp:'Crisp', cinematic:'Cinematic', retro:'Retro', soft:'Soft',
     projectCanvas:'Project canvas', background:'Background', ratio:'Format', undo:'Undo', redo:'Redo', play:'Play', pause:'Pause',
     save:'Saved locally', exportTitle:'Export video', quality:'Quality', frameRate:'Frame rate', startExport:'Start export', exporting:'Exporting',
     exportLocal:'Rendering happens on your device. Keep Edituno open until it finishes.', install:'Install', installTitle:'Install Edituno',
@@ -51,10 +71,10 @@ const STRINGS = {
     addMedia:'Προσθήκη media', addTimeline:'Προσθήκη', soundtrack:'Μουσική', useSoundtrack:'Χρήση', remove:'Αφαίρεση', captions:'Υπότιτλοι', importSrt:'Εισαγωγή SRT',
     addTitle:'Προσθήκη τίτλου', addCaption:'Προσθήκη caption', addSticker:'Προσθήκη sticker', selectedClip:'Επιλεγμένο clip', clip:'Clip', trim:'Trim', transform:'Μετασχηματισμός',
     speed:'Ταχύτητα', volume:'Ένταση', opacity:'Διαφάνεια', scale:'Μέγεθος', rotation:'Περιστροφή', fit:'Προσαρμογή', cover:'Γέμισμα', contain:'Ολόκληρο', mirror:'Καθρέφτης',
-    split:'Κόψιμο', duplicate:'Αντιγραφή', moveLeft:'Αριστερά', moveRight:'Δεξιά', brightness:'Φωτεινότητα', contrast:'Αντίθεση', saturation:'Κορεσμός',
+    split:'Κόψιμο', duplicate:'Αντιγραφή', moveLeft:'Αριστερά', moveRight:'Δεξιά', brightness:'Φωτεινότητα', contrast:'Αντίθεση', saturation:'Κορεσμός', exposure:'Έκθεση', temperature:'Θερμοκρασία', vignette:'Vignette', grain:'Film grain',
     hue:'Απόχρωση', blur:'Θόλωμα', grayscale:'Ασπρόμαυρο', sepia:'Σέπια', filter:'Φίλτρο', motion:'Κίνηση', transition:'Μετάβαση', duration:'Διάρκεια',
     none:'Καμία', fade:'Fade', flash:'Flash', zoom:'Zoom', panLeft:'Pan αριστερά', panRight:'Pan δεξιά', zoomOut:'Zoom out', shake:'Shake',
-    original:'Original', vivid:'Vivid', warm:'Warm', cool:'Cool', mono:'Mono', film:'Film', dream:'Dream', crisp:'Crisp',
+    original:'Original', vivid:'Vivid', warm:'Warm', cool:'Cool', mono:'Mono', film:'Film', dream:'Dream', crisp:'Crisp', cinematic:'Cinematic', retro:'Retro', soft:'Soft',
     projectCanvas:'Καμβάς project', background:'Φόντο', ratio:'Format', undo:'Αναίρεση', redo:'Επανάληψη', play:'Play', pause:'Παύση',
     save:'Αποθηκεύτηκε τοπικά', exportTitle:'Εξαγωγή video', quality:'Ποιότητα', frameRate:'Καρέ ανά δευτερόλεπτο', startExport:'Έναρξη export', exporting:'Γίνεται export',
     exportLocal:'Το rendering γίνεται στη συσκευή σου. Κράτησε ανοιχτό το Edituno μέχρι να ολοκληρωθεί.', install:'Εγκατάσταση', installTitle:'Εγκατάσταση Edituno',
@@ -73,7 +93,7 @@ const STRINGS = {
 }
 
 const state = {
-  language: localStorage.getItem('edituno-language') || (navigator.language.toLowerCase().startsWith('el') ? 'el' : 'en'),
+  language: safeLanguage(),
   view: 'home', projects: [], project: null, urls: {}, currentTime: 0, playing: false,
   selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
@@ -224,8 +244,9 @@ function fitPreviewFrame() {
 
 function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress=0, globalAlpha=1) {
   ctx.save()
-  const b=clip.brightness ?? 100, c=clip.contrast ?? 100, s=clip.saturation ?? 100, h=clip.hue ?? 0, blur=clip.blur ?? 0, gray=clip.grayscale ?? 0, sep=clip.sepia ?? 0
-  ctx.filter=`brightness(${b}%) contrast(${c}%) saturate(${s}%) hue-rotate(${h}deg) blur(${blur}px) grayscale(${gray}%) sepia(${sep}%)`
+  const b=clip.brightness ?? 100, exposure=clip.exposure ?? 0, c=clip.contrast ?? 100, s=clip.saturation ?? 100, h=clip.hue ?? 0, blur=clip.blur ?? 0, gray=clip.grayscale ?? 0, sep=clip.sepia ?? 0
+  const exposureBrightness = b * Math.pow(2, exposure / 100)
+  ctx.filter=`brightness(${exposureBrightness}%) contrast(${c}%) saturate(${s}%) hue-rotate(${h}deg) blur(${blur}px) grayscale(${gray}%) sepia(${sep}%)`
   ctx.globalAlpha=(clip.opacity ?? 1)*globalAlpha
   ctx.translate(width/2,height/2)
   let motionScale=1, motionX=0, motionY=0, motionRot=0
@@ -249,6 +270,42 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
   const ox=(clip.offsetX||0)*width, oy=(clip.offsetY||0)*height
   ctx.drawImage(source,-dw/2+ox,-dh/2+oy,dw,dh)
   ctx.restore()
+
+  const temperature = clip.temperature ?? 0
+  if (temperature !== 0) {
+    ctx.save()
+    ctx.globalCompositeOperation = 'soft-light'
+    ctx.globalAlpha = Math.min(.28, Math.abs(temperature) / 180)
+    ctx.fillStyle = temperature > 0 ? '#ff9a5a' : '#5a8dff'
+    ctx.fillRect(0,0,width,height)
+    ctx.restore()
+  }
+
+  const vignette = clip.vignette ?? 0
+  if (vignette > 0) {
+    ctx.save()
+    const g = ctx.createRadialGradient(width/2,height/2,Math.min(width,height)*.18,width/2,height/2,Math.max(width,height)*.72)
+    g.addColorStop(0,'rgba(0,0,0,0)')
+    g.addColorStop(1,`rgba(0,0,0,${Math.min(.82,vignette/120)})`)
+    ctx.fillStyle=g
+    ctx.fillRect(0,0,width,height)
+    ctx.restore()
+  }
+
+  const grain = clip.grain ?? 0
+  if (grain > 0) {
+    ctx.save()
+    ctx.globalAlpha = Math.min(.18, grain / 500)
+    ctx.fillStyle = '#ffffff'
+    const count = Math.round(40 + grain * 2)
+    for (let i=0;i<count;i++) {
+      const gx = (Math.sin(i*12.9898 + localProgress*78.233)*43758.5453 % 1 + 1) % 1
+      const gy = (Math.sin(i*93.9898 + localProgress*11.133)*24634.6345 % 1 + 1) % 1
+      const size = 1 + (i % 3)
+      ctx.fillRect(gx*width,gy*height,size,size)
+    }
+    ctx.restore()
+  }
 }
 
 function transitionAlpha(row,time) {
@@ -394,7 +451,7 @@ function defaultProject(ratio='16:9') {
 }
 function normalizeProject(p) {
   p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.texts ||= p.textOverlays || []; p.soundtrack ||= null
-  for (const c of p.clips) Object.assign(c,{brightness:100,contrast:100,saturation:100,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.3,offsetX:0,offsetY:0,flipX:false,flipY:false},c)
+  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.3,offsetX:0,offsetY:0,flipX:false,flipY:false},c)
   return p
 }
 async function createProject(ratio='16:9', importNow=false) {
@@ -449,7 +506,7 @@ async function importFiles(files, addVisuals=true) {
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
 }
 function defaultClip(asset) {
-  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,contrast:100,saturation:100,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.3 }
+  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.3 }
 }
 function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset||asset.type==='audio')return; mutate(p=>p.clips.push(defaultClip(asset))); }
 function setSoundtrack(id) { const asset=getAsset(id); if(!asset||asset.type!=='audio')return; mutate(p=>p.soundtrack={assetId:id,volume:.7,loop:true}); syncSoundtrack() }
@@ -501,19 +558,22 @@ async function importSrt(file) {
 function applyFilter(name) {
   const c=selectedClip(); if(!c)return
   const presets={
-    original:{brightness:100,contrast:100,saturation:100,hue:0,blur:0,grayscale:0,sepia:0},
+    original:{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0},
     vivid:{brightness:104,contrast:112,saturation:135,hue:0,blur:0,grayscale:0,sepia:0},
     warm:{brightness:104,contrast:105,saturation:115,hue:-8,blur:0,grayscale:0,sepia:12},
     cool:{brightness:101,contrast:108,saturation:108,hue:12,blur:0,grayscale:0,sepia:0},
     mono:{brightness:102,contrast:116,saturation:100,hue:0,blur:0,grayscale:100,sepia:0},
     film:{brightness:96,contrast:112,saturation:88,hue:-4,blur:0,grayscale:0,sepia:20},
     dream:{brightness:109,contrast:92,saturation:108,hue:5,blur:1.2,grayscale:0,sepia:6},
-    crisp:{brightness:101,contrast:124,saturation:112,hue:0,blur:0,grayscale:0,sepia:0}
+    crisp:{brightness:101,exposure:0,contrast:124,saturation:112,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0},
+    cinematic:{brightness:98,exposure:-4,contrast:118,saturation:92,temperature:8,vignette:34,grain:10,hue:0,blur:0,grayscale:0,sepia:8},
+    retro:{brightness:104,exposure:0,contrast:96,saturation:88,temperature:18,vignette:25,grain:24,hue:-6,blur:0,grayscale:0,sepia:22},
+    soft:{brightness:108,exposure:2,contrast:90,saturation:96,temperature:3,vignette:8,grain:0,hue:0,blur:.6,grayscale:0,sepia:0}
   }
-  mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets[name]||presets.original))
+  mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets.original,presets[name]||presets.original))
 }
 
-function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="./icons/icon-192-v102.png" alt="Edituno"><span>Edituno</span></span>` }
+function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="${EDITUNO_ICON}" alt="Edituno"><span>Edituno</span></span>` }
 function renderHome() {
   const app=$('#app'); const projects=state.projects
   app.innerHTML=`<div class="app-page">
@@ -634,14 +694,14 @@ function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
 function audioPanel(){const audios=state.project.assets.filter(a=>a.type==='audio'), st=state.project.soundtrack;return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)}</span></div><button class="media-action" data-action="set-soundtrack" data-id="${a.id}">${st?.assetId===a.id?'✓':tr('useSoundtrack')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${st?`<div class="panel-section"><h3>${tr('soundtrack')}</h3>${rangeField('soundtrack.volume',st.volume,0,1,.01,true,'project')}<div class="switch-row"><span>${tr('loop')}</span><button class="switch ${st.loop?'on':''}" data-action="toggle-loop"></button></div><button class="danger-btn" data-action="remove-soundtrack">${tr('remove')}</button></div>`:''}</div>`}
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
 function clipPanel(){const c=selectedClip(),a=getAsset(c?.assetId);if(!c)return effectsEmpty();return `<div class="panel-grid"><div class="panel-section soft"><h3>${tr('selectedClip')}</h3><p class="helper">${escapeHtml(a?.name||'')}</p><div class="action-row"><button class="sheet-action" data-action="split"><i>✂</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>▣</i>${tr('duplicate')}</button><button class="sheet-action danger" data-action="delete-selected"><i>⌫</i>${tr('delete')}</button></div></div>
-<div class="panel-section"><h3>${tr('filter')}</h3><div class="preset-grid">${['original','vivid','warm','cool','mono','film','dream','crisp'].map(n=>`<button class="preset-card" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${tr(n)}</strong></button>`).join('')}</div></div>
-<div class="panel-section"><h3>${tr('effects')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}</div>
+<div class="panel-section"><h3>${tr('filter')}</h3><div class="preset-grid">${['original','vivid','warm','cool','mono','film','dream','crisp','cinematic','retro','soft'].map(n=>`<button class="preset-card" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${tr(n)}</strong></button>`).join('')}</div></div>
+<div class="panel-section"><h3>${tr('effects')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}</div>
 <div class="panel-section"><h3>${tr('motion')}</h3><div class="effect-chip-row">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['panleft',tr('panLeft')],['panright',tr('panRight')],['shake',tr('shake')]].map(([v,l])=>`<button class="chip ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}">${l}</button>`).join('')}</div></div>
 <div class="panel-section"><h3>${tr('transition')}</h3><div class="effect-chip-row">${[['none',tr('none')],['fade',tr('fade')],['flash',tr('flash')]].map(([v,l])=>`<button class="chip ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}">${l}</button>`).join('')}</div>${rangeField('transitionDuration',c.transitionDuration,.1,1,.05,true,'clip')}</div>
 <div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,4,.05,true,'clip')}${a?.type==='video'?rangeField('volume',c.volume,0,1,.01,true,'clip'):''}</div>
 <div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}${rangeField('opacity',c.opacity,0,1,.01,true,'clip')}${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}<div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div>
 <div class="action-row"><button class="sheet-action" data-action="move" data-value="-1"><i>←</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>→</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>⌫</i>${tr('delete')}</button></div></div>`}
-function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)'};return f[n]||''}
+function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)'};return f[n]||''}
 function rangeField(key,value,min,max,step,show,scope){return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show?Number(value).toFixed(step<1?2:0):Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`}
 function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9','9:16','1:1','4:5'].map(r=>`<button class="format-btn ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
 
@@ -650,7 +710,7 @@ function renderExportModal() {
   const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720">720p</option><option value="1080" selected>1080p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option>24</option><option selected>30</option><option>60</option></select></label></div><p class="helper">${tr('browserLimit')}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
 }
 
-function render() { document.documentElement.lang=state.language; localStorage.setItem('edituno-language',state.language); state.view==='editor'?renderEditor():renderHome() }
+function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); state.view==='editor'?renderEditor():renderHome() }
 
 function toast(message,type='') {
   let root=$('#toasts'); if(!root){root=document.createElement('div');root.id='toasts';root.className='toast-stack';document.body.append(root)}
@@ -784,33 +844,43 @@ function updateRangeLabel(el){const b=el.closest('.field')?.querySelector('b');i
 
 async function init() {
   try {
-    try { state.projects=await listProjects() } catch { state.projects=[] }
+    // Render first. Storage and PWA work must never block the visible application shell.
     bindGlobalEvents()
+    render()
+    if (typeof window.__dismissEditunoSplash === 'function') {
+      requestAnimationFrame(() => window.__dismissEditunoSplash())
+    }
+
+    try {
+      state.projects = await listProjects()
+      if (state.view === 'home') renderHome()
+    } catch (storageError) {
+      console.warn('Edituno local storage unavailable:', storageError)
+    }
+
     const launch = new URLSearchParams(location.search)
     if (launch.get('new') === '1') {
       history.replaceState({}, '', location.pathname)
       await createProject('16:9')
-    } else {
-      render()
     }
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
-          .then(reg => reg.update().catch(()=>{}))
-          .catch(()=>{})
-      }, { once:true })
+
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      const register = () => navigator.serviceWorker.register('./sw.js?v=1.1.0', { updateViaCache: 'none' })
+        .then(reg => reg.update().catch(()=>{}))
+        .catch(error => console.warn('Service worker registration failed:', error))
+      if (document.readyState === 'complete') register()
+      else window.addEventListener('load', register, { once:true })
     }
   } catch (error) {
     console.error('Edituno initialization failed:', error)
     const app = $('#app')
-    if (app && !app.innerHTML.trim()) {
-      app.innerHTML = `<main class="startup-error"><div><strong>Edituno</strong><p>The app could not finish starting. Refresh once to load the latest version.</p><button onclick="location.reload()" class="primary-btn">Refresh</button></div></main>`
+    if (app) {
+      app.innerHTML = `<main class="startup-error"><div><img src="${EDITUNO_ICON}" alt="Edituno" style="width:72px;height:72px;border-radius:18px"><strong>Edituno</strong><p>${state.language==='el'?'Η εφαρμογή δεν μπόρεσε να ξεκινήσει. Πάτησε επαναφόρτωση.':'The app could not start. Reload to retry.'}</p><button onclick="location.reload()" class="primary-btn">${state.language==='el'?'Επαναφόρτωση':'Reload'}</button></div></main>`
     }
   } finally {
-    setTimeout(() => {
-      if (typeof window.__dismissEditunoSplash === 'function') window.__dismissEditunoSplash()
-      else { $('#splash')?.classList.add('hide'); setTimeout(()=>$('#splash')?.remove(),380) }
-    }, 240)
+    if (typeof window.__dismissEditunoSplash === 'function') {
+      window.setTimeout(() => window.__dismissEditunoSplash(), 60)
+    }
   }
 }
 init()

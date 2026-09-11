@@ -324,3 +324,23 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 @media (max-width: 480px) { .boot-app-icon { width: 104px; height: 104px; border-radius:25px; } }
 
 .logo-img { width: 32px; height: 32px; border-radius: 9px; display:block; object-fit:contain; flex:0 0 auto; }
+
+/* v1.1 production hardening */
+html { background:#fff; }
+body { min-height:100dvh; background:#fff; overscroll-behavior-y:none; }
+#app { min-height:100dvh; }
+.startup-error { min-height:100dvh; display:grid; place-items:center; padding:24px; background:#fff; color:#111827; }
+.startup-error > div { width:min(420px,100%); display:grid; justify-items:center; gap:14px; text-align:center; }
+.startup-error strong { font-size:24px; }
+.startup-error p { margin:0; color:#667085; line-height:1.6; }
+@media (max-width: 979px) {
+  .editor-page { min-height:100dvh; height:100dvh; }
+  .editor-header { padding-top:max(8px, env(safe-area-inset-top)); }
+  .editor-bottom { padding-bottom:max(8px, env(safe-area-inset-bottom)); }
+  .sheet { padding-bottom:max(18px, env(safe-area-inset-bottom)); }
+}
+.startup-shell { min-height:100dvh; display:grid; place-items:center; background:#fff; color:#111827; }
+.startup-shell-inner { display:grid; justify-items:center; gap:10px; text-align:center; }
+.startup-shell-inner img { border-radius:16px; }
+.startup-shell-inner strong { font-size:20px; letter-spacing:-.4px; }
+.startup-shell-inner span { font-size:13px; color:#667085; }

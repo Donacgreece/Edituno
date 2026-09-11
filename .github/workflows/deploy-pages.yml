@@ -23,17 +23,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Prepare static site
+      - name: Verify production bundle
         run: |
-          mkdir -p _site
-          cp index.html manifest.webmanifest sw.js _site/
-          cp -R assets icons splash _site/
+          test -f dist/index.html
+          test -f dist/sw.js
+          test -f dist/manifest.webmanifest
+          test -f src/app.ts
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Upload static site
+      - name: Upload production site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: ./dist
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
