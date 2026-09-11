@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Professional mobile-first local video editor PWA",
   "scripts": {

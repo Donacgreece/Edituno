@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v1.3.0 Pro production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.4.0 Mobile Excellence production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -49,7 +49,7 @@ function preferenceLabel(key) {
 
 const STRINGS = {
   en: {
-    create:'Create project', import:'Import media', recent:'Recent projects', noProjects:'No projects yet',
+    create:'Create project', import:'Import media', recent:'Recent projects', noProjects:'No projects yet', home:'Home',
     homeLead:'Edit video. Keep control.', homeBody:'A fast, private editor built for mobile first. Cut clips, add text, music, effects and export without uploading your footage.',
     free:'Free. No watermark. No account.', newProject:'New project', templates:'Start with a format', projects:'Projects', settings:'Settings',
     private:'Local by default', privateSub:'Your media stays on this device.', offline:'Works offline', offlineSub:'Install once and keep editing.', noAccount:'No account', noAccountSub:'Open Edituno and start.',
@@ -77,7 +77,7 @@ const STRINGS = {
     desktopMedia:'Project media', inspector:'Properties', adjust:'Adjust', transitions:'Transitions', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide left', slideRight:'Slide right', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Reset', timelineZoom:'Timeline zoom', transitionDuration:'Duration', newBlank:'New blank project', resume:'Resume editing', editLocally:'Edit locally. Export anywhere.', chooseProject:'Choose project', mobileReady:'Ready to edit', noUploadShort:'No upload. No watermark.', blurFill:'Blur fill'
   },
   el: {
-    create:'Δημιουργία project', import:'Εισαγωγή media', recent:'Πρόσφατα projects', noProjects:'Δεν υπάρχουν projects ακόμα',
+    create:'Δημιουργία project', import:'Εισαγωγή media', recent:'Πρόσφατα projects', noProjects:'Δεν υπάρχουν projects ακόμα', home:'Αρχική',
     homeLead:'Επεξεργασία video. Χωρίς περιορισμούς.', homeBody:'Γρήγορος, ιδιωτικός editor σχεδιασμένος πρώτα για κινητό. Κόψε clips, βάλε κείμενο, μουσική, εφέ και κάνε export χωρίς upload.',
     free:'Δωρεάν. Χωρίς watermark. Χωρίς λογαριασμό.', newProject:'Νέο project', templates:'Ξεκίνα με format', projects:'Projects', settings:'Ρυθμίσεις',
     private:'Τοπικά από προεπιλογή', privateSub:'Τα αρχεία μένουν στη συσκευή σου.', offline:'Λειτουργεί offline', offlineSub:'Εγκατέστησέ το μία φορά και συνέχισε.', noAccount:'Χωρίς λογαριασμό', noAccountSub:'Άνοιξε το Edituno και ξεκίνα.',
@@ -261,14 +261,22 @@ async function loadImage(url) {
 function fitPreviewFrame() {
   const zone = $('.preview-zone'), frame = $('.preview-frame'), canvas = $('#preview-canvas')
   if (!zone || !frame || !canvas || !state.project) return
-  const rect=zone.getBoundingClientRect(), ratio=ratioValue(state.project.ratio)
-  const maxW=Math.max(100,rect.width-24), maxH=Math.max(100,rect.height-24-(window.innerWidth>=980?54:0))
-  let w=maxW, h=w/ratio
-  if (h>maxH) { h=maxH; w=h*ratio }
-  frame.style.width=`${Math.floor(w)}px`; frame.style.height=`${Math.floor(h)}px`
-  const [cw,ch]=previewDimensions(state.project.ratio)
-  if (canvas.width!==cw) canvas.width=cw
-  if (canvas.height!==ch) canvas.height=ch
+  const rect = zone.getBoundingClientRect()
+  const ratio = ratioValue(state.project.ratio)
+  const mobile = isMobileViewport()
+  const horizontalInset = mobile ? 16 : 52
+  const verticalInset = mobile ? 16 : 76
+  const maxW = Math.max(120, rect.width - horizontalInset)
+  const maxH = Math.max(110, rect.height - verticalInset)
+  let w = Math.min(maxW, maxH * ratio)
+  let h = w / ratio
+  if (h > maxH) { h = maxH; w = h * ratio }
+  frame.style.width = `${Math.max(110, Math.floor(w))}px`
+  frame.style.height = `${Math.max(90, Math.floor(h))}px`
+  frame.style.aspectRatio = `${ratio}`
+  const [cw,ch] = previewDimensions(state.project.ratio)
+  if (canvas.width !== cw) canvas.width = cw
+  if (canvas.height !== ch) canvas.height = ch
   drawPreview()
 }
 
@@ -689,7 +697,6 @@ function svgIcon(name,size=20) {
     audio:'<path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>',
     effects:'<path d="m12 3 1.2 4.1L17 9l-3.8 1.9L12 15l-1.2-4.1L7 9l3.8-1.9L12 3Z"/><path d="m5 14 .7 2.3L8 17l-2.3.7L5 20l-.7-2.3L2 17l2.3-.7L5 14Z"/>',
     adjust:'<path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="13" cy="18" r="2"/>',
-    transition:'<path d="M3 7h8v10H3zM13 7h8v10h-8z"/><path d="m9 12 6 0M12 9l3 3-3 3"/>',
     canvas:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 4v16M16 4v16"/>',
     back:'<path d="m15 18-6-6 6-6"/>',
     export:'<path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v5h14v-5"/>',
@@ -701,55 +708,114 @@ function svgIcon(name,size=20) {
     split:'<circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><path d="m8 8 10 7M8 16l10-7"/>',
     zoomin:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/>',
     zoomout:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6"/>',
+    transition:'<path d="M4 6h7l4 6-4 6H4z"/><path d="M20 6h-7l-4 6 4 6h7z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 15a1.7 1.7 0 0 0-1.55-1.03H5.4v-3h.07A1.7 1.7 0 0 0 7.02 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06L8.74 5.94l.06.06A1.7 1.7 0 0 0 10.68 6.34a1.7 1.7 0 0 0 1.03-1.55V4.7h3v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.55 1.03H21v3h-.05A1.7 1.7 0 0 0 19.4 15z"/>',
+    home:'<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>',
+    language:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+    check:'<path d="m5 12 4 4L19 6"/>',
+    timeline:'<path d="M4 7h16M4 12h16M4 17h16"/><path d="M8 5v4M15 10v4M11 15v4"/>',
+    install:'<path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 18v2h14v-2"/>',
     close:'<path d="m6 6 12 12M18 6 6 18"/>'
   }
   return `<svg class="ui-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.effects}</svg>`
 }
 function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="${EDITUNO_ICON}" alt="Edituno"><span>Edituno</span></span>` }
 function renderHome() {
-  const app=$('#app'), projects=state.projects
-  app.innerHTML=`<div class="landing-page">
+  const app=$('#app'), projects=state.projects||[], last=projects[0]
+  const mobile=isMobileViewport()
+  const recent=projects.slice(0,mobile?6:8)
+  app.innerHTML=`<div class="landing-page ${mobile?'mobile-home':'desktop-home'}">
     <header class="landing-header">
-      <div class="landing-header-inner">${renderLogo()}<div class="landing-actions"><button class="lang-pill" data-action="language">${state.language==='el'?'EN':'ΕΛ'}</button><button class="text-btn" data-action="settings">⚙ ${tr('settings')}</button><button class="text-btn" data-action="install">${tr('install')}</button><button class="primary-btn compact" data-action="create" data-ratio="16:9">${tr('open')} Edituno</button></div></div>
+      <div class="landing-header-inner">
+        ${renderLogo()}
+        <div class="landing-actions">
+          <button type="button" class="lang-pill" data-action="language" aria-label="${tr('language')}">${state.language==='el'?'EN':'ΕΛ'}</button>
+          <button type="button" class="icon-btn home-settings" data-action="settings" aria-label="${tr('settings')}">${svgIcon('settings',19)}</button>
+          <button type="button" class="text-btn desktop-home-only" data-action="install">${tr('install')}</button>
+          <button type="button" class="primary-btn compact desktop-home-only" data-action="create" data-ratio="16:9">${svgIcon('plus',16)} ${tr('newProject')}</button>
+        </div>
+      </div>
     </header>
+
     <main class="landing-main">
-      <section class="landing-hero">
-        <div class="landing-kicker">${tr('local')} · PWA</div>
-        <h1>${tr('editLocally')}</h1>
-        <p>${tr('free')} ${tr('privateSub')}</p>
-        <div class="landing-cta"><button class="primary-btn hero-cta" data-action="create" data-ratio="16:9">${svgIcon('plus',18)} ${tr('newProject')}</button><button class="secondary-btn hero-cta" data-action="create-import">${svgIcon('media',18)} ${tr('import')}</button></div>
-        <div class="landing-proof"><span>1080p</span><span>${tr('effects')}</span><span>${tr('transitions')}</span><span>${tr('captions')}</span><span>${tr('offline')}</span></div>
+      <section class="mobile-home-dashboard">
+        <div class="mobile-welcome">
+          <span class="mobile-eyebrow">${state.language==='el'?'Το studio σου':'Your studio'}</span>
+          <h1>${state.language==='el'?'Δημιούργησε κάτι εξαιρετικό.':'Create something great.'}</h1>
+          <p>${state.language==='el'?'Τοπική επεξεργασία, χωρίς watermark και χωρίς να ανεβάζεις τα αρχεία σου.':'Edit locally, without a watermark and without uploading your files.'}</p>
+        </div>
+        <div class="mobile-create-stack">
+          <button type="button" class="primary-btn mobile-create-primary" data-action="create" data-ratio="9:16">${svgIcon('plus',20)}<span><strong>${tr('newProject')}</strong><small>${state.language==='el'?'Ξεκίνα από κενό καμβά':'Start from a blank canvas'}</small></span></button>
+          <button type="button" class="secondary-btn mobile-create-secondary" data-action="create-import">${svgIcon('media',19)}<span><strong>${tr('import')}</strong><small>${state.language==='el'?'Διάλεξε video, φωτογραφία ή ήχο':'Choose video, photo or audio'}</small></span></button>
+        </div>
+        ${last?`<button type="button" class="continue-card" data-action="open-project" data-id="${last.id}"><span class="continue-icon">${svgIcon('play',18)}</span><span><small>${tr('resume')}</small><strong>${escapeHtml(last.name)}</strong><em>${escapeHtml(last.ratio||'16:9')} · ${new Date(last.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</em></span><i>›</i></button>`:''}
+        <section class="mobile-section">
+          <div class="mobile-section-head"><div><strong>${tr('templates')}</strong><span>${state.language==='el'?'Διάλεξε αναλογία και ξεκίνα':'Choose a format and start'}</span></div></div>
+          <div class="mobile-format-strip">
+            ${mobileFormatCard('9:16','Vertical','Reels · TikTok')}
+            ${mobileFormatCard('16:9','Landscape','YouTube')}
+            ${mobileFormatCard('1:1','Square','Social')}
+            ${mobileFormatCard('4:5','Portrait','Feed')}
+          </div>
+        </section>
+        <section class="mobile-section" id="projects-section">
+          <div class="mobile-section-head"><div><strong>${tr('recent')}</strong><span>${projects.length?`${projects.length} ${tr('projects').toLowerCase()}`:tr('noProjects')}</span></div></div>
+          <div class="mobile-project-list">${recent.length?recent.map(mobileProjectCard).join(''):`<button type="button" class="mobile-empty-project" data-action="create" data-ratio="9:16">${svgIcon('plus',20)}<span><strong>${tr('newProject')}</strong><small>${tr('noUploadShort')}</small></span></button>`}</div>
+        </section>
       </section>
-      <section class="landing-formats">
-        ${templateCard('9:16','Vertical','TikTok · Reels','r916')}${templateCard('16:9','Landscape','YouTube','r169')}${templateCard('1:1','Square','Social','r11')}${templateCard('4:5','Portrait','Feed','r45')}
-      </section>
-      <section class="landing-projects" id="projects-section">
-        <div class="section-head"><div><h2>${tr('recent')}</h2><p>${projects.length?`${projects.length} ${tr('projects').toLowerCase()}`:tr('noProjects')}</p></div></div>
-        <div class="project-list">${projects.length?projects.map(projectCard).join(''):`<button class="empty-project-launch" data-action="create" data-ratio="16:9">${svgIcon('plus',22)}<strong>${tr('newProject')}</strong><span>${tr('noUploadShort')}</span></button>`}</div>
+
+      <section class="desktop-landing-content">
+        <section class="landing-hero">
+          <div class="landing-kicker">${tr('local')} · PWA</div>
+          <h1>${tr('editLocally')}</h1>
+          <p>${tr('free')} ${tr('privateSub')}</p>
+          <div class="landing-cta"><button type="button" class="primary-btn hero-cta" data-action="create" data-ratio="16:9">${svgIcon('plus',18)} ${tr('newProject')}</button><button type="button" class="secondary-btn hero-cta" data-action="create-import">${svgIcon('media',18)} ${tr('import')}</button></div>
+          <div class="landing-proof"><span>1080p</span><span>${tr('effects')}</span><span>${tr('transitions')}</span><span>${tr('captions')}</span><span>${tr('offline')}</span></div>
+        </section>
+        <section class="landing-formats">${templateCard('9:16','Vertical','TikTok · Reels','r916')}${templateCard('16:9','Landscape','YouTube','r169')}${templateCard('1:1','Square','Social','r11')}${templateCard('4:5','Portrait','Feed','r45')}</section>
+        <section class="landing-projects" id="projects-desktop"><div class="section-head"><div><h2>${tr('recent')}</h2><p>${projects.length?`${projects.length} ${tr('projects').toLowerCase()}`:tr('noProjects')}</p></div></div><div class="project-list">${projects.length?projects.map(projectCard).join(''):`<button type="button" class="empty-project-launch" data-action="create" data-ratio="16:9">${svgIcon('plus',22)}<strong>${tr('newProject')}</strong><span>${tr('noUploadShort')}</span></button>`}</div></section>
       </section>
     </main>
+
+    <nav class="mobile-home-nav" aria-label="Edituno">
+      <button type="button" class="active" data-action="home-top">${svgIcon('home',19)}<span>${tr('home')}</span></button>
+      <button type="button" class="create-tab" data-action="create" data-ratio="9:16">${svgIcon('plus',21)}<span>${state.language==='el'?'Δημιουργία':'Create'}</span></button>
+      <button type="button" data-action="projects-scroll">${svgIcon('projects',19)}<span>${tr('projects')}</span></button>
+      <button type="button" data-action="settings">${svgIcon('settings',19)}<span>${tr('settings')}</span></button>
+    </nav>
     ${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
   </div><div class="toast-stack" id="toasts"></div>`
 }
+function mobileFormatCard(ratio,title,sub){return `<button type="button" class="mobile-format-card" data-action="create" data-ratio="${ratio}"><span class="mobile-ratio-box ratio-${ratio.replace(':','')}"></span><strong>${title}</strong><small>${sub}</small></button>`}
+function mobileProjectCard(p){return `<article class="mobile-project-card"><button type="button" class="mobile-project-open" data-action="open-project" data-id="${p.id}"><span class="mobile-project-thumb">${svgIcon('play',17)}</span><span class="mobile-project-copy"><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span><span class="mobile-project-arrow">›</span></button><button type="button" class="mobile-project-menu" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">${svgIcon('close',15)}</button></article>`}
+
 function templateCard(ratio,title,sub,cls){return `<button class="template-card" data-action="create" data-ratio="${ratio}"><span class="template-shape"><i class="${cls}"></i></span><strong>${title}</strong><span>${sub}</span></button>`}
 function trustCard(icon,title,sub){return `<div class="trust-card"><div class="trust-icon">${icon}</div><div><strong>${title}</strong><span>${sub}</span></div></div>`}
 function projectCard(p){return `<article class="project-card" data-action="open-project" data-id="${p.id}"><div class="project-thumb">▶</div><div class="project-copy"><strong>${escapeHtml(p.name)}</strong><span>${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')} · ${escapeHtml(p.ratio||'16:9')}</span></div><button class="project-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">⋯</button></article>`}
 
-function settingsModal(){const p=state.preferences;return `<div class="modal-backdrop" data-action="settings-close"><section class="modal settings-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><h2>${tr('settings')}</h2><small>${state.language==='el'?'Ρύθμισε τον editor στη ροή σου':'Tune the editor to your workflow'}</small></div><button class="sheet-close" data-action="settings-close">×</button></div><div class="modal-body"><div class="panel-grid">
-  <div class="panel-section"><h3>${tr('language')}</h3><div class="format-grid two-settings"><button class="format-btn ${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">Ελληνικά</button><button class="format-btn ${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">English</button></div></div>
-  <div class="panel-section"><h3>${state.language==='el'?'Timeline':'Timeline'}</h3><div class="switch-row"><span>${preferenceLabel('snap')}</span><button class="switch ${p.snap?'on':''}" data-action="pref-toggle" data-key="snap"></button></div><div class="switch-row"><span>${preferenceLabel('showWaveforms')}</span><button class="switch ${p.showWaveforms?'on':''}" data-action="pref-toggle" data-key="showWaveforms"></button></div><label class="field"><span>${preferenceLabel('timelineScale')}</span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></div>
-  <div class="panel-section"><h3>${state.language==='el'?'Απόδοση':'Performance'}</h3><label class="field"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></div>
-  <div class="panel-section"><h3>${tr('export')}</h3><div class="field-grid two"><label class="field"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="field"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24</option><option value="30" ${+p.defaultFps===30?'selected':''}>30</option><option value="60" ${+p.defaultFps===60?'selected':''}>60</option></select></label></div></div>
-  <div class="install-card"><strong>${tr('installHint')}</strong><p>${tr('chromeInstall')}</p><button class="primary-btn full" data-action="install">${tr('installApp')}</button></div>
-  <div class="panel-section"><h3>${tr('storage')}</h3><p class="helper">${tr('persistent')}</p><button class="secondary-btn" data-action="persist-storage">${tr('requestStorage')}</button></div>
-  <div class="panel-section"><button class="danger-btn" data-action="clear-all">${tr('clearAll')}</button></div>
-</div></div></section></div>`}
+function settingsModal(){
+  const p=state.preferences
+  return `<div class="modal-backdrop settings-backdrop" data-action="settings-close">
+    <section class="modal settings-modal" role="dialog" aria-modal="true" aria-label="${tr('settings')}">
+      <div class="modal-head settings-head"><div><h2>${tr('settings')}</h2><small>${state.language==='el'?'Προσαρμόζεις μόνο ό,τι χρειάζεσαι.':'Only tune what you actually need.'}</small></div><button type="button" class="sheet-close" data-action="settings-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div>
+      <div class="modal-body settings-body"><div class="settings-stack">
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('language',18)}</span><div><strong>${tr('language')}</strong><small>${state.language==='el'?'Γλώσσα περιβάλλοντος':'Interface language'}</small></div></div><div class="language-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span>${state.language==='el'?svgIcon('check',17):''}</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en"><span>English</span>${state.language==='en'?svgIcon('check',17):''}</button></div></section>
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('timeline',18)}</span><div><strong>Timeline</strong><small>${state.language==='el'?'Συμπεριφορά και εμφάνιση':'Behavior and appearance'}</small></div></div><button type="button" class="settings-toggle-row" data-action="pref-toggle" data-key="snap"><span><strong>${preferenceLabel('snap')}</strong><small>${state.language==='el'?'Ευθυγράμμιση clips σε κοντινά σημεία':'Align clips to nearby edit points'}</small></span><i class="switch ${p.snap?'on':''}"></i></button><button type="button" class="settings-toggle-row" data-action="pref-toggle" data-key="showWaveforms"><span><strong>${preferenceLabel('showWaveforms')}</strong><small>${state.language==='el'?'Εμφάνιση waveform στα audio clips':'Show waveforms on audio clips'}</small></span><i class="switch ${p.showWaveforms?'on':''}"></i></button><label class="settings-slider"><span><strong>${preferenceLabel('timelineScale')}</strong><b>${p.timelineScale||48}</b></span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></section>
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('effects',18)}</span><div><strong>${state.language==='el'?'Απόδοση':'Performance'}</strong><small>${state.language==='el'?'Προεπισκόπηση και ποιότητα':'Preview and quality'}</small></div></div><label class="settings-select"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></section>
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('export',18)}</span><div><strong>${tr('export')}</strong><small>${state.language==='el'?'Προεπιλογές νέων exports':'Default export choices'}</small></div></div><div class="settings-two"><label class="settings-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="settings-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24 fps</option><option value="30" ${+p.defaultFps===30?'selected':''}>30 fps</option><option value="60" ${+p.defaultFps===60?'selected':''}>60 fps</option></select></label></div></section>
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('install',18)}</span><div><strong>${tr('installHint')}</strong><small>${state.language==='el'?'Χρήση σαν κανονική εφαρμογή':'Use Edituno like a native app'}</small></div></div><button type="button" class="settings-action-row" data-action="install"><span>${tr('installApp')}</span><i>›</i></button><button type="button" class="settings-action-row" data-action="persist-storage"><span>${tr('requestStorage')}</span><i>›</i></button></section>
+        <section class="settings-group danger-zone"><button type="button" class="settings-danger-row" data-action="clear-all"><span>${tr('clearAll')}</span>${svgIcon('close',16)}</button></section>
+      </div></div>
+      <div class="settings-footer"><button type="button" class="primary-btn full" data-action="settings-close">${state.language==='el'?'Τέλος':'Done'}</button></div>
+    </section>
+  </div>`
+}
 
-function installModal(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);return `<div class="modal-backdrop" data-action="install-close"><section class="modal" onclick="event.stopPropagation()"><div class="modal-head"><h2>${tr('installTitle')}</h2><button class="sheet-close" data-action="install-close">×</button></div><div class="modal-body"><div class="install-card"><strong>Edituno</strong><p>${ios?tr('iosInstall'):tr('chromeInstall')}</p>${!ios&&state.installPrompt?`<button class="primary-btn full" data-action="install-confirm">${tr('installApp')}</button>`:''}</div></div></section></div>`}
+function installModal(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);return `<div class="modal-backdrop" data-action="install-close"><section class="modal"><div class="modal-head"><h2>${tr('installTitle')}</h2><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-card"><strong>Edituno</strong><p>${ios?tr('iosInstall'):tr('chromeInstall')}</p>${!ios&&state.installPrompt?`<button class="primary-btn full" data-action="install-confirm">${tr('installApp')}</button>`:''}</div></div></section></div>`}
 
 function mobileProjectHubModal(){
   const projects=state.projects||[]
-  return `<div class="project-hub-backdrop" data-action="mobile-hub-close"><section class="project-hub" onclick="event.stopPropagation()"><div class="project-hub-head"><div>${renderLogo()}<span>${tr('projectHub')}</span></div><button class="icon-btn" data-action="mobile-hub-close">${svgIcon('close')}</button></div><div class="project-hub-body"><button class="primary-btn full" data-action="create" data-ratio="9:16">${svgIcon('plus',18)} ${tr('newBlank')}</button>${projects.length?`<div class="hub-project-list">${projects.slice(0,10).map(p=>`<button class="hub-project" data-action="open-project" data-id="${p.id}"><span class="hub-thumb">${svgIcon('play',18)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span></button>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noProjects')}</b></div>`}<div class="hub-footer"><button class="secondary-btn" data-action="language">${state.language==='el'?'English':'Ελληνικά'}</button><button class="secondary-btn" data-action="settings">${tr('settings')}</button></div></div></section></div>`
+  return `<div class="project-hub-backdrop" data-action="mobile-hub-close"><section class="project-hub"><div class="project-hub-head"><div>${renderLogo()}<span>${tr('projectHub')}</span></div><button class="icon-btn" data-action="mobile-hub-close">${svgIcon('close')}</button></div><div class="project-hub-body"><button class="primary-btn full" data-action="create" data-ratio="9:16">${svgIcon('plus',18)} ${tr('newBlank')}</button>${projects.length?`<div class="hub-project-list">${projects.slice(0,10).map(p=>`<button class="hub-project" data-action="open-project" data-id="${p.id}"><span class="hub-thumb">${svgIcon('play',18)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span></button>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noProjects')}</b></div>`}<div class="hub-footer"><button class="secondary-btn" data-action="language">${state.language==='el'?'English':'Ελληνικά'}</button><button class="secondary-btn" data-action="settings">${tr('settings')}</button></div></div></section></div>`
 }
 
 function renderEditor() {
@@ -758,10 +824,10 @@ function renderEditor() {
   const totalWidth=Math.max(320,Math.ceil(dur*state.pxPerSec)+60)
   app.innerHTML=`<div class="editor-page ${mobile?'mobile-editor':'desktop-editor'}">
     <header class="editor-header">
-      <button class="icon-btn" data-action="${mobile?'mobile-hub':'back'}" aria-label="${mobile?tr('projectHub'):tr('back')}">${svgIcon(mobile?'projects':'back',20)}</button>
+      <button class="icon-btn editor-home-btn" data-action="back" aria-label="${tr('back')}">${svgIcon('back',20)}</button>
       <div class="editor-title-wrap"><input class="editor-title" id="project-name" aria-label="${tr('projectName')}" value="${escapeHtml(p.name)}" /></div>
       <span class="editor-save-state" id="save-state">${tr('save')}</span>
-      <div class="editor-header-actions"><button class="icon-btn editor-settings-btn" data-action="settings" aria-label="${tr('settings')}">⚙</button><button class="primary-btn export-btn" data-action="export">${svgIcon('export',16)}<span>${tr('export')}</span></button></div>
+      <div class="editor-header-actions"><button class="icon-btn editor-settings-btn" data-action="settings" aria-label="${tr('settings')}">${svgIcon('settings',19)}</button><button class="primary-btn export-btn" data-action="export">${svgIcon('export',16)}<span>${tr('export')}</span></button></div>
     </header>
 
     <main class="editor-body">
@@ -787,7 +853,7 @@ function renderEditor() {
   requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions() })
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
-function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">◇</button>`:''}</div>`}
+function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
 function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start||0)*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
 function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.preferences.showWaveforms)return'';let out='';for(let i=0;i<count;i++){const v=peaks.length?peaks[Math.floor(i*peaks.length/count)]:(.28+.6*Math.abs(Math.sin(i*1.73)));out+=`<i style="height:${Math.max(12,Math.round(v*86))}%"></i>`}return out}
 function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
@@ -930,9 +996,10 @@ async function shareExport(){if(!state.exportResult)return;const file=new File([
 
 function bindGlobalEvents() {
   for (const name of ['gesturestart','gesturechange','gestureend']) document.addEventListener(name,e=>e.preventDefault(),{passive:false})
-  let lastTouchEnd=0; document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<280)e.preventDefault();lastTouchEnd=now},{passive:false})
+  document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false})
   document.addEventListener('click',async e=>{
     const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action
+    if((a==='settings-close'||a==='install-close'||a==='mobile-hub-close') && e.target!==el && (el.classList.contains('modal-backdrop')||el.classList.contains('project-hub-backdrop'))) return
     if(a==='create')return createProject(el.dataset.ratio||'16:9')
     if(a==='create-import')return createProject('16:9',true)
     if(a==='open-project'){state.projectHubOpen=false;return openProject(el.dataset.id)}
@@ -1028,17 +1095,13 @@ async function init() {
 
     if(launch.get('new')==='1') {
       state.project=defaultProject(isMobileViewport()?'9:16':'16:9');state.view='editor';saveProject(state.project).catch(()=>{})
-    } else if(isMobileViewport() && launch.get('home')!=='1') {
-      if(state.projects.length) {
-        try {
-          const p=await getProject(state.projects[0].id)
-          if(p){state.project=normalizeProject(p);state.urls={};for(const asset of state.project.assets){const blob=await getBlob(asset.id);if(blob)state.urls[asset.id]=URL.createObjectURL(blob)}}
-        } catch(error){console.warn('Could not resume project:',error)}
-      }
-      if(!state.project){state.project=defaultProject('9:16');saveProject(state.project).catch(()=>{})}
-      state.view='editor';state.pxPerSec=36
     } else {
+      // Home is always the entry point on every device. The user explicitly chooses
+      // a project or creates a new one before entering the editor.
       state.view='home'
+      state.project=null
+      state.selected=null
+      state.sheet=null
     }
 
     const remaining=Math.max(0,620-(performance.now()-bootStarted))
@@ -1046,7 +1109,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.3.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.4.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

@@ -30,7 +30,11 @@ const requiredRuntimeMarkers = [
   'function bindTimelineInteractions()',
   'function scheduleAudioTracks(',
   'data-bind-audio',
-  'function settingsModal()'
+  'function settingsModal()',
+  'function mobileProjectCard(',
+  'mobile-home-dashboard',
+  'language-segment',
+  'editor-home-btn'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -38,8 +42,14 @@ for (const marker of requiredRuntimeMarkers) {
 if (!template.includes('maximum-scale=1') || !template.includes('user-scalable=no')) {
   throw new Error('Mobile viewport lock is missing')
 }
-if (!css.includes('.timeline-audio') || !css.includes('.desktop-sidebar')) {
-  throw new Error('Responsive multitrack CSS validation failed')
+if (!css.includes('.timeline-audio') || !css.includes('.desktop-sidebar') || !css.includes('.mobile-home-dashboard')) {
+  throw new Error('Responsive multitrack/mobile-home CSS validation failed')
+}
+if (js.includes("isMobileViewport() && launch.get('home')!=='1'")) {
+  throw new Error('Mobile must not auto-enter the editor')
+}
+if (js.includes('onclick=\"event.stopPropagation()\"')) {
+  throw new Error('Inline modal propagation blockers are forbidden')
 }
 fs.writeFileSync(path.join(dist, 'index.html'), html)
 
@@ -54,4 +64,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v1.3.0 -> ${dist}`)
+console.log(`Built Edituno v1.4.0 -> ${dist}`)
