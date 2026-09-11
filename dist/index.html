@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="Edituno" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.webmanifest?v=1.4.0" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=1.4.0" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=1.4.0" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=1.4.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=1.4.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=1.4.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=1.4.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=1.4.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=1.4.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=1.5.0" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=1.5.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=1.5.0" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=1.5.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=1.5.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=1.5.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=1.5.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=1.5.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=1.5.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno · Video editor</title>
   <style>
 :root {
@@ -691,7 +691,7 @@ h1,h2,h3,.brand-word,.logo-lockup,.editor-title { font-family:"SF Pro Display","
 }
 
 /* ==========================================================
-   Edituno v1.4.0 Mobile Excellence
+   Edituno v1.5.0 Glass
    Interaction-first mobile product polish
    ========================================================== */
 :root {
@@ -923,6 +923,673 @@ h1,h2,h3,strong { font-weight:600; }
   .settings-two { grid-template-columns:1fr; }
 }
 
+/* ==========================================================
+   Edituno v1.5.0 Glass
+   Premium native-feeling visual system
+   ========================================================== */
+:root {
+  --azure: #2455F5;
+  --azure-600: #1f49da;
+  --azure-100: #dfe8ff;
+  --azure-50: #f1f5ff;
+  --violet: #F7DCFF;
+  --ink: #111318;
+  --ink-2: #303846;
+  --muted: #747c8c;
+  --muted-2: #9aa1ad;
+  --line: rgba(37, 46, 67, .10);
+  --line-strong: rgba(37, 46, 67, .16);
+  --soft: rgba(244, 246, 251, .78);
+  --surface: rgba(255,255,255,.82);
+  --surface-solid: #ffffff;
+  --glass: rgba(255,255,255,.68);
+  --glass-strong: rgba(255,255,255,.86);
+  --glass-dark: rgba(26,31,43,.80);
+  --shadow: 0 12px 38px rgba(31, 42, 70, .08);
+  --shadow-lg: 0 24px 70px rgba(31, 42, 70, .12);
+  --shadow-glass: 0 16px 50px rgba(40, 53, 88, .10), inset 0 1px 0 rgba(255,255,255,.84);
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 30px;
+}
+
+html { scrollbar-gutter: stable; }
+html, body, #app { width:100%; min-height:100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: -.012em;
+  background: #f8faff;
+  color: var(--ink);
+}
+button, input, select, textarea { letter-spacing: -.012em; }
+button { -webkit-tap-highlight-color: transparent; }
+button:active { transform: scale(.975); }
+
+.logo-lockup { gap:9px; font-size:18px; font-weight:650; letter-spacing:-.035em; }
+.logo-img { width:32px; height:32px; border-radius:10px; box-shadow:0 6px 18px rgba(36,85,245,.14); }
+
+.ui-icon { stroke-width: 1.8; }
+.icon-btn {
+  width:40px; height:40px; min-width:40px; min-height:40px;
+  border-radius:14px;
+  background:rgba(255,255,255,.58);
+  border:1px solid rgba(255,255,255,.72);
+  color:#495267;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72);
+}
+.icon-btn:hover { background:rgba(255,255,255,.88); color:#111827; }
+.text-btn { font-weight:500; }
+.primary-btn,.secondary-btn {
+  min-height:44px;
+  border-radius:14px;
+  padding:0 15px;
+  font-size:13px;
+  font-weight:600;
+  box-shadow:none;
+}
+.primary-btn {
+  background:linear-gradient(180deg,#3262ff 0%,#2455F5 100%);
+  border:1px solid rgba(24,66,219,.16);
+  box-shadow:0 8px 22px rgba(36,85,245,.18), inset 0 1px 0 rgba(255,255,255,.24);
+}
+.primary-btn:hover { background:linear-gradient(180deg,#2f5df2 0%,#204de4 100%); }
+.secondary-btn {
+  background:rgba(255,255,255,.70);
+  border:1px solid rgba(47,58,85,.11);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(18px) saturate(130%);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
+}
+
+/* Shared ambient background. Fixed so language changes never move the visual field. */
+.landing-page,
+.editor-page {
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(36,85,245,.10), transparent 30%),
+    radial-gradient(circle at 92% 8%, rgba(247,220,255,.62), transparent 26%),
+    linear-gradient(180deg,#fbfcff 0%,#f7f9fd 56%,#fbfbfe 100%);
+}
+.landing-page::before,
+.editor-page::before {
+  content:"";
+  position:fixed;
+  z-index:-1;
+  left:-90px;
+  top:24vh;
+  width:290px;
+  height:290px;
+  border-radius:50%;
+  background:rgba(36,85,245,.075);
+  filter:blur(52px);
+  pointer-events:none;
+}
+
+/* Desktop / global landing */
+.landing-header {
+  height:68px;
+  border-bottom:1px solid rgba(41,50,73,.075);
+  background:rgba(249,251,255,.67);
+  backdrop-filter:blur(30px) saturate(165%);
+  -webkit-backdrop-filter:blur(30px) saturate(165%);
+}
+.landing-header-inner { width:min(1180px,calc(100% - 48px)); }
+.landing-actions { gap:7px; }
+.lang-pill {
+  width:40px; height:40px; min-width:40px;
+  border:1px solid rgba(44,54,79,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.58);
+  color:#596175;
+  font-size:11px;
+  font-weight:600;
+  backdrop-filter:blur(18px);
+}
+.landing-main { width:min(1180px,calc(100% - 48px)); padding:74px 0 78px; }
+.desktop-landing-content { position:relative; }
+.landing-hero {
+  max-width:900px;
+  min-height:330px;
+  align-content:center;
+  padding:48px 34px;
+  border:1px solid rgba(255,255,255,.78);
+  border-radius:34px;
+  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(255,255,255,.52));
+  box-shadow:var(--shadow-glass);
+  backdrop-filter:blur(30px) saturate(155%);
+  -webkit-backdrop-filter:blur(30px) saturate(155%);
+}
+.landing-kicker {
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(36,85,245,.08);
+  border:1px solid rgba(36,85,245,.10);
+  color:#2455F5;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.08em;
+}
+.landing-hero h1 {
+  min-height:96px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:18px 0 12px;
+  max-width:820px;
+  font-size:clamp(44px,5.8vw,74px);
+  line-height:.98;
+  font-weight:620;
+  letter-spacing:-.058em;
+}
+.landing-hero p { min-height:54px; max-width:620px; font-size:15px; line-height:1.65; color:#70798b; }
+.landing-cta { margin-top:24px; gap:9px; }
+.hero-cta { min-width:168px; min-height:46px; }
+.landing-proof { margin-top:21px; gap:7px; }
+.landing-proof span {
+  min-height:28px;
+  display:inline-flex;
+  align-items:center;
+  padding:0 10px;
+  background:rgba(255,255,255,.58);
+  border:1px solid rgba(49,59,86,.08);
+  border-radius:999px;
+  color:#818898;
+  font-size:10px;
+  font-weight:500;
+}
+.landing-formats { max-width:720px; margin-top:18px; gap:9px; }
+.template-card {
+  min-height:116px;
+  border-radius:20px;
+  background:rgba(255,255,255,.64);
+  border:1px solid rgba(255,255,255,.82);
+  box-shadow:0 10px 28px rgba(39,51,83,.055), inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter:blur(20px) saturate(130%);
+  -webkit-backdrop-filter:blur(20px) saturate(130%);
+}
+.template-card strong { font-weight:600; }
+.landing-projects { margin-top:46px; }
+.project-card,.empty-project-launch {
+  border-color:rgba(255,255,255,.86);
+  background:rgba(255,255,255,.64);
+  box-shadow:0 10px 30px rgba(39,51,83,.05), inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter:blur(18px) saturate(135%);
+  -webkit-backdrop-filter:blur(18px) saturate(135%);
+}
+
+/* Mobile Home */
+@media (max-width: 1099px) {
+  .landing-page.mobile-home { min-height:100dvh; padding-bottom:calc(88px + var(--safe-bottom)); }
+  .mobile-home .landing-header {
+    height:calc(58px + var(--safe-top));
+    padding-top:var(--safe-top);
+    border-bottom:0;
+    background:rgba(250,251,255,.64);
+    backdrop-filter:blur(28px) saturate(165%);
+    -webkit-backdrop-filter:blur(28px) saturate(165%);
+  }
+  .mobile-home .landing-header-inner { padding:0 13px 0 16px; }
+  .mobile-home .logo-lockup { font-size:17px; }
+  .mobile-home .landing-actions { gap:5px; }
+  .mobile-home .lang-pill,.mobile-home .home-settings { width:38px; height:38px; min-width:38px; min-height:38px; border-radius:13px; }
+  .landing-main { width:100%; padding:0; }
+  .mobile-home-dashboard { padding:26px 14px 16px; }
+  .mobile-welcome {
+    min-height:132px;
+    margin-bottom:16px;
+    padding:2px 2px 0;
+  }
+  .mobile-eyebrow {
+    display:inline-flex;
+    min-height:24px;
+    align-items:center;
+    padding:0 8px;
+    border-radius:999px;
+    background:rgba(36,85,245,.075);
+    border:1px solid rgba(36,85,245,.08);
+    color:#2455F5;
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:.08em;
+  }
+  .mobile-welcome h1 {
+    min-height:61px;
+    display:flex;
+    align-items:flex-end;
+    margin:11px 0 0;
+    max-width:340px;
+    font-size:29px;
+    line-height:1.04;
+    font-weight:620;
+    letter-spacing:-.05em;
+  }
+  .mobile-welcome p {
+    min-height:40px;
+    margin:8px 0 0;
+    max-width:350px;
+    color:#747c8c;
+    font-size:13px;
+    line-height:1.5;
+  }
+  .mobile-create-stack {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+  .mobile-create-primary,.mobile-create-secondary {
+    min-height:94px;
+    width:100%;
+    display:grid;
+    grid-template-columns:36px minmax(0,1fr);
+    align-content:center;
+    justify-content:start;
+    gap:10px;
+    padding:12px;
+    border-radius:20px;
+    text-align:left;
+  }
+  .mobile-create-primary {
+    background:linear-gradient(150deg,#3564ff 0%,#2455F5 100%);
+    border:1px solid rgba(24,67,221,.14);
+    box-shadow:0 12px 28px rgba(36,85,245,.18), inset 0 1px 0 rgba(255,255,255,.22);
+  }
+  .mobile-create-secondary {
+    background:rgba(255,255,255,.66);
+    border:1px solid rgba(255,255,255,.88);
+    color:#273042;
+    box-shadow:0 12px 30px rgba(39,51,83,.055), inset 0 1px 0 rgba(255,255,255,.92);
+    backdrop-filter:blur(20px) saturate(140%);
+    -webkit-backdrop-filter:blur(20px) saturate(140%);
+  }
+  .mobile-create-primary > .ui-icon,.mobile-create-secondary > .ui-icon {
+    width:36px; height:36px;
+    padding:8px;
+    border-radius:12px;
+    background:rgba(255,255,255,.15);
+    align-self:center;
+  }
+  .mobile-create-secondary > .ui-icon { background:rgba(36,85,245,.08); color:#2455F5; }
+  .mobile-create-primary span,.mobile-create-secondary span { min-width:0; gap:2px; }
+  .mobile-create-primary strong,.mobile-create-secondary strong { font-size:13px; font-weight:600; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mobile-create-primary small,.mobile-create-secondary small { font-size:10px; font-weight:400; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .continue-card {
+    min-height:64px;
+    margin-top:10px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.88);
+    background:rgba(255,255,255,.63);
+    box-shadow:0 9px 26px rgba(39,51,83,.045), inset 0 1px 0 rgba(255,255,255,.92);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+  }
+  .continue-icon { border-radius:12px; background:rgba(36,85,245,.075); }
+  .mobile-section { margin-top:25px; }
+  .mobile-section-head { min-height:40px; margin-bottom:9px; }
+  .mobile-section-head strong { font-size:13px; font-weight:600; }
+  .mobile-section-head span { margin-top:3px; font-size:10px; color:#959ba7; }
+  .mobile-format-strip {
+    display:flex;
+    gap:8px;
+    margin-right:-14px;
+    padding:1px 14px 6px 1px;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+  }
+  .mobile-format-card {
+    flex:0 0 92px;
+    min-width:92px;
+    min-height:104px;
+    scroll-snap-align:start;
+    gap:5px;
+    padding:9px 7px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.88);
+    background:rgba(255,255,255,.62);
+    box-shadow:0 8px 24px rgba(39,51,83,.045), inset 0 1px 0 rgba(255,255,255,.92);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+  }
+  .mobile-format-card strong { font-size:10.5px; font-weight:600; }
+  .mobile-format-card small { font-size:8.5px; color:#9aA1ad; }
+  .mobile-ratio-box { border-color:rgba(36,85,245,.30); background:linear-gradient(150deg,rgba(36,85,245,.08),rgba(247,220,255,.30)); }
+  .mobile-project-list { gap:8px; }
+  .mobile-project-card {
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.90);
+    background:rgba(255,255,255,.64);
+    box-shadow:0 9px 25px rgba(39,51,83,.045), inset 0 1px 0 rgba(255,255,255,.92);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+  }
+  .mobile-project-open { min-height:66px; grid-template-columns:40px minmax(0,1fr) 14px; gap:10px; padding:10px 46px 10px 10px; }
+  .mobile-project-thumb { width:40px; height:40px; border-radius:12px; background:rgba(36,85,245,.075); }
+  .mobile-project-copy strong { font-size:12px; font-weight:600; }
+  .mobile-project-copy small { font-size:9.5px; color:#989fac; }
+  .mobile-project-menu { top:13px; right:6px; width:38px; height:38px; min-width:38px; min-height:38px; border-radius:12px; }
+  .mobile-empty-project {
+    min-height:68px;
+    border-radius:18px;
+    border:1px dashed rgba(47,58,85,.16);
+    background:rgba(255,255,255,.50);
+  }
+  .mobile-home-nav {
+    left:10px;
+    right:10px;
+    bottom:max(9px,var(--safe-bottom));
+    height:62px;
+    padding:5px;
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+    border:1px solid rgba(255,255,255,.78);
+    border-radius:22px;
+    background:rgba(249,250,254,.70);
+    box-shadow:0 16px 42px rgba(29,39,70,.13), inset 0 1px 0 rgba(255,255,255,.95);
+    backdrop-filter:blur(30px) saturate(170%);
+    -webkit-backdrop-filter:blur(30px) saturate(170%);
+  }
+  .mobile-home-nav button {
+    min-height:50px;
+    border-radius:17px;
+    gap:3px;
+    font-size:9px;
+    font-weight:500;
+    color:#7d8594;
+  }
+  .mobile-home-nav button .ui-icon { width:18px; height:18px; }
+  .mobile-home-nav button.active { color:#2455F5; background:rgba(255,255,255,.72); box-shadow:0 2px 12px rgba(36,85,245,.07), inset 0 1px 0 rgba(255,255,255,.94); }
+  .mobile-home-nav .create-tab { color:#2455F5; }
+}
+
+/* Settings: fixed geometry across EL / EN */
+.modal-backdrop {
+  background:rgba(34,41,58,.18);
+  backdrop-filter:blur(12px) saturate(120%);
+  -webkit-backdrop-filter:blur(12px) saturate(120%);
+}
+.settings-modal {
+  background:rgba(249,250,253,.91);
+  border:1px solid rgba(255,255,255,.84);
+  box-shadow:0 24px 80px rgba(26,35,62,.18), inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter:blur(30px) saturate(155%);
+  -webkit-backdrop-filter:blur(30px) saturate(155%);
+}
+.settings-head { min-height:64px; }
+.settings-head h2 { font-size:17px; font-weight:620; letter-spacing:-.035em; }
+.settings-head small { height:16px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.settings-stack { gap:10px; }
+.settings-group {
+  border:1px solid rgba(255,255,255,.88);
+  background:rgba(255,255,255,.68);
+  box-shadow:0 7px 22px rgba(36,47,77,.035), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(16px) saturate(135%);
+  -webkit-backdrop-filter:blur(16px) saturate(135%);
+}
+.settings-group-title { min-height:38px; }
+.settings-group-title > div { min-width:0; }
+.settings-group-title strong { font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.settings-group-title small { display:block; height:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.settings-group-icon { width:34px; height:34px; border-radius:11px; background:rgba(36,85,245,.07); }
+.language-segment {
+  height:44px;
+  padding:3px;
+  gap:3px;
+  border-radius:14px;
+  background:rgba(111,122,148,.09);
+  border:1px solid rgba(44,54,79,.06);
+}
+.language-segment button {
+  min-height:36px;
+  height:36px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 18px;
+  align-items:center;
+  justify-items:start;
+  padding:0 10px;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  color:#646c7b;
+  font-size:11.5px;
+  font-weight:500;
+}
+.language-segment button.active {
+  background:rgba(255,255,255,.92);
+  color:#2455F5;
+  box-shadow:0 2px 9px rgba(31,43,75,.08), inset 0 1px 0 #fff;
+}
+.segment-check { width:18px; height:18px; display:grid; place-items:center; }
+.settings-toggle-row,.settings-action-row,.settings-select { min-height:50px; }
+.settings-toggle-row strong,.settings-action-row span,.settings-select > span { font-size:11.5px; font-weight:550; }
+.settings-toggle-row small { height:14px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.switch { width:44px; height:26px; }
+.switch::after { width:20px; height:20px; }
+.switch.on::after { transform:translateX(18px); }
+.settings-footer { background:linear-gradient(180deg,rgba(249,250,253,.25),rgba(249,250,253,.98) 34%); }
+.settings-footer .primary-btn { font-weight:600; }
+
+/* Editor glass hierarchy */
+.editor-page { background:linear-gradient(180deg,#f8faff 0%,#f5f7fb 100%); }
+.editor-header {
+  border-bottom:1px solid rgba(41,50,73,.07);
+  background:rgba(248,250,254,.70);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+}
+.editor-title { font-weight:600; letter-spacing:-.025em; }
+.editor-save-state { font-weight:400; color:#8b93a1; }
+.preview-zone { background:linear-gradient(150deg,#eef1f7,#f7f8fc 60%,#f3eff7); }
+.preview-frame {
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.82);
+  box-shadow:0 18px 45px rgba(30,38,64,.14), inset 0 1px 0 rgba(255,255,255,.35);
+  overflow:hidden;
+}
+.transport {
+  border-top:1px solid rgba(41,50,73,.06);
+  background:rgba(249,250,254,.72);
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+}
+.play-btn {
+  background:#151922;
+  color:#fff;
+  box-shadow:0 5px 16px rgba(15,20,32,.17), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.timeline-panel { background:rgba(248,249,252,.88); }
+.timeline-toolbar { background:rgba(255,255,255,.72); border-bottom:1px solid rgba(41,50,73,.06); }
+.timeline-scroll { background:rgba(247,248,252,.72); }
+.timeline-clip {
+  border-radius:11px;
+  border-color:rgba(36,85,245,.24);
+  background:linear-gradient(145deg,rgba(36,85,245,.82),rgba(65,101,245,.66));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.19);
+}
+.timeline-clip.selected { box-shadow:0 0 0 2px rgba(36,85,245,.20), inset 0 0 0 1px rgba(255,255,255,.54); }
+.timeline-audio { border-radius:10px; background:linear-gradient(145deg,rgba(157,91,187,.17),rgba(247,220,255,.60)); border-color:rgba(143,80,173,.18); }
+.timeline-transition {
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  min-height:30px !important;
+  right:-15px !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  border-radius:10px !important;
+  border:1px solid rgba(48,58,83,.10) !important;
+  background:rgba(255,255,255,.88) !important;
+  color:#6f7788 !important;
+  box-shadow:0 5px 16px rgba(23,31,57,.10), inset 0 1px 0 rgba(255,255,255,.96) !important;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.timeline-transition .ui-icon { width:16px !important; height:16px !important; stroke-width:1.75; }
+.timeline-transition.active { background:#2455F5 !important; color:#fff !important; border-color:rgba(36,85,245,.24) !important; }
+
+.editor-bottom {
+  background:rgba(248,250,254,.78);
+  border-top:1px solid rgba(41,50,73,.07);
+  backdrop-filter:blur(26px) saturate(160%);
+  -webkit-backdrop-filter:blur(26px) saturate(160%);
+}
+.editor-tools { gap:3px; }
+.tool-btn {
+  flex:0 0 66px;
+  min-width:66px;
+  min-height:58px;
+  border:0;
+  border-radius:16px;
+  background:transparent;
+  color:#747c8b;
+  font-size:8.8px;
+  font-weight:500;
+}
+.tool-btn .tool-icon {
+  width:34px;
+  height:34px;
+  min-width:34px;
+  min-height:34px;
+  border-radius:12px;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.58);
+  color:#596276;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72);
+}
+.tool-btn .tool-icon .ui-icon { width:19px; height:19px; }
+.tool-btn.active { color:#2455F5; background:rgba(255,255,255,.52); }
+.tool-btn.active .tool-icon {
+  color:#2455F5;
+  background:rgba(36,85,245,.09);
+  border-color:rgba(36,85,245,.08);
+  box-shadow:0 3px 12px rgba(36,85,245,.07), inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.sheet-backdrop { background:rgba(28,34,49,.14); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+.bottom-sheet,.sheet {
+  background:rgba(249,250,253,.91);
+  border:1px solid rgba(255,255,255,.86);
+  box-shadow:0 -18px 52px rgba(29,39,68,.14), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(30px) saturate(160%);
+  -webkit-backdrop-filter:blur(30px) saturate(160%);
+}
+.sheet-head { border-bottom:1px solid rgba(41,50,73,.065); }
+.sheet-head strong { font-weight:600; }
+.sheet-close { width:38px; height:38px; border-radius:13px; background:rgba(255,255,255,.64); color:#626b7d; }
+.panel-section {
+  border:1px solid rgba(255,255,255,.90);
+  border-radius:18px;
+  background:rgba(255,255,255,.65);
+  box-shadow:0 6px 18px rgba(39,51,83,.03), inset 0 1px 0 rgba(255,255,255,.94);
+}
+.panel-section h3 { font-size:12px; font-weight:600; }
+.field > span { font-weight:500; }
+.field b { font-weight:500; }
+.field input[type="number"],.field input[type="text"],.field textarea,.field select {
+  border-color:rgba(48,58,83,.10);
+  background:rgba(255,255,255,.72);
+}
+.chip {
+  min-height:34px;
+  padding:0 11px;
+  border-radius:12px;
+  border-color:rgba(48,58,83,.09);
+  background:rgba(255,255,255,.62);
+  font-size:10px;
+  font-weight:500;
+}
+.chip.active { background:#2455F5; border-color:#2455F5; }
+.preset-card,.transition-card,.sheet-action,.format-btn,.media-row {
+  border-color:rgba(255,255,255,.90);
+  background:rgba(255,255,255,.64);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92);
+}
+.preset-card strong,.transition-card strong,.sheet-action,.format-btn,.media-action { font-weight:550; }
+
+/* Desktop editor */
+@media (min-width:1100px) {
+  .editor-page { padding:12px; gap:0; grid-template-rows:58px minmax(0,1fr); }
+  .editor-header {
+    height:58px;
+    border:1px solid rgba(255,255,255,.84);
+    border-bottom:0;
+    border-radius:22px 22px 0 0;
+    padding:0 12px;
+    background:rgba(255,255,255,.68);
+    box-shadow:0 10px 32px rgba(39,51,83,.06), inset 0 1px 0 rgba(255,255,255,.92);
+  }
+  .editor-body {
+    border:1px solid rgba(255,255,255,.84);
+    border-top:1px solid rgba(41,50,73,.06);
+    border-radius:0 0 22px 22px;
+    overflow:hidden;
+    box-shadow:0 18px 55px rgba(39,51,83,.075), inset 0 1px 0 rgba(255,255,255,.78);
+    background:rgba(255,255,255,.43);
+    backdrop-filter:blur(24px) saturate(135%);
+    -webkit-backdrop-filter:blur(24px) saturate(135%);
+  }
+  .desktop-sidebar,.desktop-inspector { background:rgba(251,252,255,.62); border-color:rgba(41,50,73,.065); }
+  .desktop-panel-title { font-weight:600; }
+  .desktop-tool-tabs button {
+    min-height:36px;
+    border-radius:11px;
+    background:rgba(255,255,255,.58);
+    border:1px solid rgba(48,58,83,.06);
+    color:#777f8e;
+    font-weight:500;
+  }
+  .desktop-tool-tabs button.active { background:rgba(36,85,245,.08); color:#2455F5; }
+  .preview-zone { background:linear-gradient(150deg,#e9edf4,#f5f6fa 65%,#eeeaf3); }
+  .timeline-panel { border-color:rgba(41,50,73,.065); }
+}
+
+/* Extreme phone widths. Keep geometry precise instead of shrinking randomly. */
+@media (max-width:359px) {
+  .mobile-home-dashboard { padding-left:11px; padding-right:11px; }
+  .mobile-create-stack { gap:7px; }
+  .mobile-create-primary,.mobile-create-secondary { min-height:90px; padding:10px; grid-template-columns:32px minmax(0,1fr); gap:8px; }
+  .mobile-create-primary > .ui-icon,.mobile-create-secondary > .ui-icon { width:32px; height:32px; padding:7px; }
+  .mobile-welcome h1 { font-size:27px; }
+  .mobile-format-card { flex-basis:86px; min-width:86px; }
+  .mobile-home-nav { left:7px; right:7px; }
+  .tool-btn { flex-basis:61px; min-width:61px; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .landing-header,.mobile-home-nav,.secondary-btn,.settings-modal,.settings-group,.editor-header,.transport,.editor-bottom,.bottom-sheet,.sheet,.project-card,.template-card,.mobile-format-card,.mobile-project-card { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:#fff !important; }
+}
+
+/* v1.5.0 geometry lock: text changes must not move controls */
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+.landing-cta > button { width:176px; min-width:176px; }
+.desktop-home-only.text-btn { width:92px; justify-content:center; }
+.desktop-home-only.primary-btn.compact { width:132px; justify-content:center; }
+.tool-btn > span:last-child,
+.mobile-home-nav button > span,
+.format-btn,
+.desktop-tool-tabs button {
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.tool-btn > span:last-child { width:100%; text-align:center; }
+.mobile-home-nav button > span { max-width:68px; }
+.settings-two { min-height:72px; }
+.settings-select { min-width:0; }
+.settings-select > span { min-height:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+@media (max-width:1099px) {
+  .mobile-welcome { min-height:116px; }
+  .mobile-welcome h1 { min-height:52px; font-size:27px; }
+  .mobile-welcome p { min-height:34px; }
+  .mobile-create-primary,.mobile-create-secondary { min-height:80px; grid-template-columns:32px minmax(0,1fr); gap:9px; }
+  .mobile-create-primary > .ui-icon,.mobile-create-secondary > .ui-icon { width:32px; height:32px; padding:7px; }
+  .mobile-create-primary strong,.mobile-create-secondary strong { font-size:12.5px; }
+  .mobile-create-primary small,.mobile-create-secondary small { font-size:9.5px; }
+}
+
   </style>
 </head>
 <body>
@@ -971,7 +1638,7 @@ h1,h2,h3,strong { font-weight:600; }
 
       try {
 // @ts-nocheck
-/* Edituno v1.4.0 Mobile Excellence production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.5.0 Glass production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)));
@@ -1030,7 +1697,7 @@ function preferenceLabel(key) {
 const STRINGS = {
     en: {
         create: 'Create project', import: 'Import media', recent: 'Recent projects', noProjects: 'No projects yet', home: 'Home',
-        homeLead: 'Edit video. Keep control.', homeBody: 'A fast, private editor built for mobile first. Cut clips, add text, music, effects and export without uploading your footage.',
+        homeLead: 'Create. Cut. Share.', homeBody: 'A private studio that feels native on every screen. No upload. No watermark.',
         free: 'Free. No watermark. No account.', newProject: 'New project', templates: 'Start with a format', projects: 'Projects', settings: 'Settings',
         private: 'Local by default', privateSub: 'Your media stays on this device.', offline: 'Works offline', offlineSub: 'Install once and keep editing.', noAccount: 'No account', noAccountSub: 'Open Edituno and start.',
         open: 'Open', delete: 'Delete', edit: 'Edit', export: 'Export', media: 'Media', text: 'Text', audio: 'Audio', effects: 'Effects', canvas: 'Canvas',
@@ -1058,7 +1725,7 @@ const STRINGS = {
     },
     el: {
         create: 'Δημιουργία project', import: 'Εισαγωγή media', recent: 'Πρόσφατα projects', noProjects: 'Δεν υπάρχουν projects ακόμα', home: 'Αρχική',
-        homeLead: 'Επεξεργασία video. Χωρίς περιορισμούς.', homeBody: 'Γρήγορος, ιδιωτικός editor σχεδιασμένος πρώτα για κινητό. Κόψε clips, βάλε κείμενο, μουσική, εφέ και κάνε export χωρίς upload.',
+        homeLead: 'Δημιούργησε. Κόψε. Μοιράσου.', homeBody: 'Ένα ιδιωτικό studio που νιώθει φυσικό σε κάθε οθόνη. Χωρίς upload. Χωρίς watermark.',
         free: 'Δωρεάν. Χωρίς watermark. Χωρίς λογαριασμό.', newProject: 'Νέο project', templates: 'Ξεκίνα με format', projects: 'Projects', settings: 'Ρυθμίσεις',
         private: 'Τοπικά από προεπιλογή', privateSub: 'Τα αρχεία μένουν στη συσκευή σου.', offline: 'Λειτουργεί offline', offlineSub: 'Εγκατέστησέ το μία φορά και συνέχισε.', noAccount: 'Χωρίς λογαριασμό', noAccountSub: 'Άνοιξε το Edituno και ξεκίνα.',
         open: 'Άνοιγμα', delete: 'Διαγραφή', edit: 'Επεξεργασία', export: 'Export', media: 'Media', text: 'Κείμενο', audio: 'Ήχος', effects: 'Εφέ', canvas: 'Καμβάς',
@@ -2009,7 +2676,7 @@ function svgIcon(name, size = 20) {
         split: '<circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><path d="m8 8 10 7M8 16l10-7"/>',
         zoomin: '<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/>',
         zoomout: '<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6"/>',
-        transition: '<path d="M4 6h7l4 6-4 6H4z"/><path d="M20 6h-7l-4 6 4 6h7z"/>',
+        transition: '<path d="M4 7h4c3 0 5 10 8 10h4"/><path d="M4 17h4c3 0 5-10 8-10h4"/>',
         settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 15a1.7 1.7 0 0 0-1.55-1.03H5.4v-3h.07A1.7 1.7 0 0 0 7.02 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06L8.74 5.94l.06.06A1.7 1.7 0 0 0 10.68 6.34a1.7 1.7 0 0 0 1.03-1.55V4.7h3v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.55 1.03H21v3h-.05A1.7 1.7 0 0 0 19.4 15z"/>',
         home: '<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>',
         language: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
@@ -2041,17 +2708,17 @@ function renderHome() {
     <main class="landing-main">
       <section class="mobile-home-dashboard">
         <div class="mobile-welcome">
-          <span class="mobile-eyebrow">${state.language === 'el' ? 'Το studio σου' : 'Your studio'}</span>
-          <h1>${state.language === 'el' ? 'Δημιούργησε κάτι εξαιρετικό.' : 'Create something great.'}</h1>
-          <p>${state.language === 'el' ? 'Τοπική επεξεργασία, χωρίς watermark και χωρίς να ανεβάζεις τα αρχεία σου.' : 'Edit locally, without a watermark and without uploading your files.'}</p>
+          <span class="mobile-eyebrow">${state.language === 'el' ? 'EDITUNO STUDIO' : 'EDITUNO STUDIO'}</span>
+          <h1>${state.language === 'el' ? 'Το επόμενο edit ξεκινά εδώ.' : 'Your next edit starts here.'}</h1>
+          <p>${state.language === 'el' ? 'Γρήγορα, ιδιωτικά, χωρίς watermark.' : 'Fast, private, no watermark.'}</p>
         </div>
         <div class="mobile-create-stack">
-          <button type="button" class="primary-btn mobile-create-primary" data-action="create" data-ratio="9:16">${svgIcon('plus', 20)}<span><strong>${tr('newProject')}</strong><small>${state.language === 'el' ? 'Ξεκίνα από κενό καμβά' : 'Start from a blank canvas'}</small></span></button>
-          <button type="button" class="secondary-btn mobile-create-secondary" data-action="create-import">${svgIcon('media', 19)}<span><strong>${tr('import')}</strong><small>${state.language === 'el' ? 'Διάλεξε video, φωτογραφία ή ήχο' : 'Choose video, photo or audio'}</small></span></button>
+          <button type="button" class="primary-btn mobile-create-primary" data-action="create" data-ratio="9:16">${svgIcon('plus', 20)}<span><strong>${tr('newProject')}</strong><small>${state.language === 'el' ? 'Κενό project' : 'Blank project'}</small></span></button>
+          <button type="button" class="secondary-btn mobile-create-secondary" data-action="create-import">${svgIcon('media', 19)}<span><strong>${tr('import')}</strong><small>${state.language === 'el' ? 'Video · Photo · Audio' : 'Video · Photo · Audio'}</small></span></button>
         </div>
         ${last ? `<button type="button" class="continue-card" data-action="open-project" data-id="${last.id}"><span class="continue-icon">${svgIcon('play', 18)}</span><span><small>${tr('resume')}</small><strong>${escapeHtml(last.name)}</strong><em>${escapeHtml(last.ratio || '16:9')} · ${new Date(last.updatedAt).toLocaleDateString(state.language === 'el' ? 'el-GR' : 'en-US')}</em></span><i>›</i></button>` : ''}
         <section class="mobile-section">
-          <div class="mobile-section-head"><div><strong>${tr('templates')}</strong><span>${state.language === 'el' ? 'Διάλεξε αναλογία και ξεκίνα' : 'Choose a format and start'}</span></div></div>
+          <div class="mobile-section-head"><div><strong>${tr('templates')}</strong><span>${state.language === 'el' ? 'Format για κάθε πλατφόρμα' : 'Format for every platform'}</span></div></div>
           <div class="mobile-format-strip">
             ${mobileFormatCard('9:16', 'Vertical', 'Reels · TikTok')}
             ${mobileFormatCard('16:9', 'Landscape', 'YouTube')}
@@ -2098,7 +2765,7 @@ function settingsModal() {
     <section class="modal settings-modal" role="dialog" aria-modal="true" aria-label="${tr('settings')}">
       <div class="modal-head settings-head"><div><h2>${tr('settings')}</h2><small>${state.language === 'el' ? 'Προσαρμόζεις μόνο ό,τι χρειάζεσαι.' : 'Only tune what you actually need.'}</small></div><button type="button" class="sheet-close" data-action="settings-close" aria-label="${tr('close')}">${svgIcon('close', 18)}</button></div>
       <div class="modal-body settings-body"><div class="settings-stack">
-        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('language', 18)}</span><div><strong>${tr('language')}</strong><small>${state.language === 'el' ? 'Γλώσσα περιβάλλοντος' : 'Interface language'}</small></div></div><div class="language-segment"><button type="button" class="${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span>${state.language === 'el' ? svgIcon('check', 17) : ''}</button><button type="button" class="${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en"><span>English</span>${state.language === 'en' ? svgIcon('check', 17) : ''}</button></div></section>
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('language', 18)}</span><div><strong>${tr('language')}</strong><small>${state.language === 'el' ? 'Γλώσσα περιβάλλοντος' : 'Interface language'}</small></div></div><div class="language-segment"><button type="button" class="${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span><i class="segment-check">${state.language === 'el' ? svgIcon('check', 15) : ''}</i></button><button type="button" class="${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en"><span>English</span><i class="segment-check">${state.language === 'en' ? svgIcon('check', 15) : ''}</i></button></div></section>
         <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('timeline', 18)}</span><div><strong>Timeline</strong><small>${state.language === 'el' ? 'Συμπεριφορά και εμφάνιση' : 'Behavior and appearance'}</small></div></div><button type="button" class="settings-toggle-row" data-action="pref-toggle" data-key="snap"><span><strong>${preferenceLabel('snap')}</strong><small>${state.language === 'el' ? 'Ευθυγράμμιση clips σε κοντινά σημεία' : 'Align clips to nearby edit points'}</small></span><i class="switch ${p.snap ? 'on' : ''}"></i></button><button type="button" class="settings-toggle-row" data-action="pref-toggle" data-key="showWaveforms"><span><strong>${preferenceLabel('showWaveforms')}</strong><small>${state.language === 'el' ? 'Εμφάνιση waveform στα audio clips' : 'Show waveforms on audio clips'}</small></span><i class="switch ${p.showWaveforms ? 'on' : ''}"></i></button><label class="settings-slider"><span><strong>${preferenceLabel('timelineScale')}</strong><b>${p.timelineScale || 48}</b></span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale || 48}"></label></section>
         <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('effects', 18)}</span><div><strong>${state.language === 'el' ? 'Απόδοση' : 'Performance'}</strong><small>${state.language === 'el' ? 'Προεπισκόπηση και ποιότητα' : 'Preview and quality'}</small></div></div><label class="settings-select"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality === 'performance' ? 'selected' : ''}>Performance</option><option value="balanced" ${p.previewQuality === 'balanced' ? 'selected' : ''}>Balanced</option><option value="quality" ${p.previewQuality === 'quality' ? 'selected' : ''}>Quality</option></select></label></section>
         <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('export', 18)}</span><div><strong>${tr('export')}</strong><small>${state.language === 'el' ? 'Προεπιλογές νέων exports' : 'Default export choices'}</small></div></div><div class="settings-two"><label class="settings-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality === 720 ? 'selected' : ''}>720p</option><option value="1080" ${+p.defaultQuality === 1080 ? 'selected' : ''}>1080p</option></select></label><label class="settings-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps === 24 ? 'selected' : ''}>24 fps</option><option value="30" ${+p.defaultFps === 30 ? 'selected' : ''}>30 fps</option><option value="60" ${+p.defaultFps === 60 ? 'selected' : ''}>60 fps</option></select></label></div></section>
@@ -2152,7 +2819,7 @@ function renderEditor() {
 function timelineRuler(dur, width) { if (!dur)
     return ''; const every = dur > 180 ? 30 : dur > 60 ? 10 : dur > 20 ? 5 : 2; let out = ''; for (let t = 0; t <= dur + .001; t += every)
     out += `<span style="left:${t * state.pxPerSec}px">${fmtTime(t).slice(0, 5)}</span>`; return out; }
-function timelineClip(row, index) { const a = getAsset(row.clip.assetId), w = Math.max(68, row.duration * state.pxPerSec); const transition = row.clip.transition && row.clip.transition !== 'none'; return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type === 'image' ? 'image' : ''} ${state.selected?.type === 'clip' && state.selected.id === row.clip.id ? 'selected' : ''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name || 'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index < state.project.clips.length - 1 ? `<button class="timeline-transition ${transition ? 'active' : ''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition', 14)}</button>` : ''}</div>`; }
+function timelineClip(row, index) { const a = getAsset(row.clip.assetId), w = Math.max(68, row.duration * state.pxPerSec); const transition = row.clip.transition && row.clip.transition !== 'none'; return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type === 'image' ? 'image' : ''} ${state.selected?.type === 'clip' && state.selected.id === row.clip.id ? 'selected' : ''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name || 'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index < state.project.clips.length - 1 ? `<button class="timeline-transition ${transition ? 'active' : ''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition', 16)}</button>` : ''}</div>`; }
 function timelineText(t) { const w = Math.max(54, (t.end - t.start) * state.pxPerSec); return `<button class="timeline-text ${state.selected?.type === 'text' && state.selected.id === t.id ? 'selected' : ''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start || 0) * state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`; }
 function waveformBars(asset, count = 36) { const peaks = asset?.waveform || []; if (!state.preferences.showWaveforms)
     return ''; let out = ''; for (let i = 0; i < count; i++) {
@@ -2160,7 +2827,7 @@ function waveformBars(asset, count = 36) { const peaks = asset?.waveform || []; 
     out += `<i style="height:${Math.max(12, Math.round(v * 86))}%"></i>`;
 } return out; }
 function timelineAudio(c) { const a = getAsset(c.assetId), w = Math.max(72, audioClipDuration(c) * state.pxPerSec), left = (c.timelineStart || 0) * state.pxPerSec; return `<button class="timeline-audio ${state.selected?.type === 'audio' && state.selected.id === c.id ? 'selected' : ''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name || 'Audio')}</strong><small>${Math.round((c.volume ?? .8) * 100)}%</small></button>`; }
-function toolButton(tool, iconName, label) { return `<button class="tool-btn ${state.tool === tool ? 'active' : ''}" data-action="tool" data-tool="${tool}"><span class="tool-icon">${svgIcon(iconName, 21)}</span><span>${label}</span></button>`; }
+function toolButton(tool, iconName, label) { return `<button class="tool-btn ${state.tool === tool ? 'active' : ''}" data-action="tool" data-tool="${tool}" aria-pressed="${state.tool === tool ? 'true' : 'false'}"><span class="tool-icon">${svgIcon(iconName, 20)}</span><span>${label}</span></button>`; }
 function sheetTitle() { if (state.sheet === 'edit')
     return tr('quickEdit'); if (state.sheet === 'effects')
     return tr('effects'); if (state.sheet === 'adjust')
@@ -2854,7 +3521,7 @@ async function init() {
             await new Promise(resolve => setTimeout(resolve, remaining));
         render();
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=1.4.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=1.5.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

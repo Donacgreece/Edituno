@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v1.4.0 Mobile Excellence production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.5.0 Glass production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -50,7 +50,7 @@ function preferenceLabel(key) {
 const STRINGS = {
   en: {
     create:'Create project', import:'Import media', recent:'Recent projects', noProjects:'No projects yet', home:'Home',
-    homeLead:'Edit video. Keep control.', homeBody:'A fast, private editor built for mobile first. Cut clips, add text, music, effects and export without uploading your footage.',
+    homeLead:'Create. Cut. Share.', homeBody:'A private studio that feels native on every screen. No upload. No watermark.',
     free:'Free. No watermark. No account.', newProject:'New project', templates:'Start with a format', projects:'Projects', settings:'Settings',
     private:'Local by default', privateSub:'Your media stays on this device.', offline:'Works offline', offlineSub:'Install once and keep editing.', noAccount:'No account', noAccountSub:'Open Edituno and start.',
     open:'Open', delete:'Delete', edit:'Edit', export:'Export', media:'Media', text:'Text', audio:'Audio', effects:'Effects', canvas:'Canvas',
@@ -78,7 +78,7 @@ const STRINGS = {
   },
   el: {
     create:'Δημιουργία project', import:'Εισαγωγή media', recent:'Πρόσφατα projects', noProjects:'Δεν υπάρχουν projects ακόμα', home:'Αρχική',
-    homeLead:'Επεξεργασία video. Χωρίς περιορισμούς.', homeBody:'Γρήγορος, ιδιωτικός editor σχεδιασμένος πρώτα για κινητό. Κόψε clips, βάλε κείμενο, μουσική, εφέ και κάνε export χωρίς upload.',
+    homeLead:'Δημιούργησε. Κόψε. Μοιράσου.', homeBody:'Ένα ιδιωτικό studio που νιώθει φυσικό σε κάθε οθόνη. Χωρίς upload. Χωρίς watermark.',
     free:'Δωρεάν. Χωρίς watermark. Χωρίς λογαριασμό.', newProject:'Νέο project', templates:'Ξεκίνα με format', projects:'Projects', settings:'Ρυθμίσεις',
     private:'Τοπικά από προεπιλογή', privateSub:'Τα αρχεία μένουν στη συσκευή σου.', offline:'Λειτουργεί offline', offlineSub:'Εγκατέστησέ το μία φορά και συνέχισε.', noAccount:'Χωρίς λογαριασμό', noAccountSub:'Άνοιξε το Edituno και ξεκίνα.',
     open:'Άνοιγμα', delete:'Διαγραφή', edit:'Επεξεργασία', export:'Export', media:'Media', text:'Κείμενο', audio:'Ήχος', effects:'Εφέ', canvas:'Καμβάς',
@@ -708,7 +708,7 @@ function svgIcon(name,size=20) {
     split:'<circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><path d="m8 8 10 7M8 16l10-7"/>',
     zoomin:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/>',
     zoomout:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6"/>',
-    transition:'<path d="M4 6h7l4 6-4 6H4z"/><path d="M20 6h-7l-4 6 4 6h7z"/>',
+    transition:'<path d="M4 7h4c3 0 5 10 8 10h4"/><path d="M4 17h4c3 0 5-10 8-10h4"/>',
     settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7.02 15a1.7 1.7 0 0 0-1.55-1.03H5.4v-3h.07A1.7 1.7 0 0 0 7.02 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06L8.74 5.94l.06.06A1.7 1.7 0 0 0 10.68 6.34a1.7 1.7 0 0 0 1.03-1.55V4.7h3v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.12 2.12-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.55 1.03H21v3h-.05A1.7 1.7 0 0 0 19.4 15z"/>',
     home:'<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>',
     language:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
@@ -740,17 +740,17 @@ function renderHome() {
     <main class="landing-main">
       <section class="mobile-home-dashboard">
         <div class="mobile-welcome">
-          <span class="mobile-eyebrow">${state.language==='el'?'Το studio σου':'Your studio'}</span>
-          <h1>${state.language==='el'?'Δημιούργησε κάτι εξαιρετικό.':'Create something great.'}</h1>
-          <p>${state.language==='el'?'Τοπική επεξεργασία, χωρίς watermark και χωρίς να ανεβάζεις τα αρχεία σου.':'Edit locally, without a watermark and without uploading your files.'}</p>
+          <span class="mobile-eyebrow">${state.language==='el'?'EDITUNO STUDIO':'EDITUNO STUDIO'}</span>
+          <h1>${state.language==='el'?'Το επόμενο edit ξεκινά εδώ.':'Your next edit starts here.'}</h1>
+          <p>${state.language==='el'?'Γρήγορα, ιδιωτικά, χωρίς watermark.':'Fast, private, no watermark.'}</p>
         </div>
         <div class="mobile-create-stack">
-          <button type="button" class="primary-btn mobile-create-primary" data-action="create" data-ratio="9:16">${svgIcon('plus',20)}<span><strong>${tr('newProject')}</strong><small>${state.language==='el'?'Ξεκίνα από κενό καμβά':'Start from a blank canvas'}</small></span></button>
-          <button type="button" class="secondary-btn mobile-create-secondary" data-action="create-import">${svgIcon('media',19)}<span><strong>${tr('import')}</strong><small>${state.language==='el'?'Διάλεξε video, φωτογραφία ή ήχο':'Choose video, photo or audio'}</small></span></button>
+          <button type="button" class="primary-btn mobile-create-primary" data-action="create" data-ratio="9:16">${svgIcon('plus',20)}<span><strong>${tr('newProject')}</strong><small>${state.language==='el'?'Κενό project':'Blank project'}</small></span></button>
+          <button type="button" class="secondary-btn mobile-create-secondary" data-action="create-import">${svgIcon('media',19)}<span><strong>${tr('import')}</strong><small>${state.language==='el'?'Video · Photo · Audio':'Video · Photo · Audio'}</small></span></button>
         </div>
         ${last?`<button type="button" class="continue-card" data-action="open-project" data-id="${last.id}"><span class="continue-icon">${svgIcon('play',18)}</span><span><small>${tr('resume')}</small><strong>${escapeHtml(last.name)}</strong><em>${escapeHtml(last.ratio||'16:9')} · ${new Date(last.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</em></span><i>›</i></button>`:''}
         <section class="mobile-section">
-          <div class="mobile-section-head"><div><strong>${tr('templates')}</strong><span>${state.language==='el'?'Διάλεξε αναλογία και ξεκίνα':'Choose a format and start'}</span></div></div>
+          <div class="mobile-section-head"><div><strong>${tr('templates')}</strong><span>${state.language==='el'?'Format για κάθε πλατφόρμα':'Format for every platform'}</span></div></div>
           <div class="mobile-format-strip">
             ${mobileFormatCard('9:16','Vertical','Reels · TikTok')}
             ${mobileFormatCard('16:9','Landscape','YouTube')}
@@ -799,7 +799,7 @@ function settingsModal(){
     <section class="modal settings-modal" role="dialog" aria-modal="true" aria-label="${tr('settings')}">
       <div class="modal-head settings-head"><div><h2>${tr('settings')}</h2><small>${state.language==='el'?'Προσαρμόζεις μόνο ό,τι χρειάζεσαι.':'Only tune what you actually need.'}</small></div><button type="button" class="sheet-close" data-action="settings-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div>
       <div class="modal-body settings-body"><div class="settings-stack">
-        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('language',18)}</span><div><strong>${tr('language')}</strong><small>${state.language==='el'?'Γλώσσα περιβάλλοντος':'Interface language'}</small></div></div><div class="language-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span>${state.language==='el'?svgIcon('check',17):''}</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en"><span>English</span>${state.language==='en'?svgIcon('check',17):''}</button></div></section>
+        <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('language',18)}</span><div><strong>${tr('language')}</strong><small>${state.language==='el'?'Γλώσσα περιβάλλοντος':'Interface language'}</small></div></div><div class="language-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span><i class="segment-check">${state.language==='el'?svgIcon('check',15):''}</i></button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en"><span>English</span><i class="segment-check">${state.language==='en'?svgIcon('check',15):''}</i></button></div></section>
         <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('timeline',18)}</span><div><strong>Timeline</strong><small>${state.language==='el'?'Συμπεριφορά και εμφάνιση':'Behavior and appearance'}</small></div></div><button type="button" class="settings-toggle-row" data-action="pref-toggle" data-key="snap"><span><strong>${preferenceLabel('snap')}</strong><small>${state.language==='el'?'Ευθυγράμμιση clips σε κοντινά σημεία':'Align clips to nearby edit points'}</small></span><i class="switch ${p.snap?'on':''}"></i></button><button type="button" class="settings-toggle-row" data-action="pref-toggle" data-key="showWaveforms"><span><strong>${preferenceLabel('showWaveforms')}</strong><small>${state.language==='el'?'Εμφάνιση waveform στα audio clips':'Show waveforms on audio clips'}</small></span><i class="switch ${p.showWaveforms?'on':''}"></i></button><label class="settings-slider"><span><strong>${preferenceLabel('timelineScale')}</strong><b>${p.timelineScale||48}</b></span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></section>
         <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('effects',18)}</span><div><strong>${state.language==='el'?'Απόδοση':'Performance'}</strong><small>${state.language==='el'?'Προεπισκόπηση και ποιότητα':'Preview and quality'}</small></div></div><label class="settings-select"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></section>
         <section class="settings-group"><div class="settings-group-title"><span class="settings-group-icon">${svgIcon('export',18)}</span><div><strong>${tr('export')}</strong><small>${state.language==='el'?'Προεπιλογές νέων exports':'Default export choices'}</small></div></div><div class="settings-two"><label class="settings-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="settings-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24 fps</option><option value="30" ${+p.defaultFps===30?'selected':''}>30 fps</option><option value="60" ${+p.defaultFps===60?'selected':''}>60 fps</option></select></label></div></section>
@@ -853,11 +853,11 @@ function renderEditor() {
   requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions() })
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
-function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
+function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',16)}</button>`:''}</div>`}
 function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start||0)*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
 function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.preferences.showWaveforms)return'';let out='';for(let i=0;i<count;i++){const v=peaks.length?peaks[Math.floor(i*peaks.length/count)]:(.28+.6*Math.abs(Math.sin(i*1.73)));out+=`<i style="height:${Math.max(12,Math.round(v*86))}%"></i>`}return out}
 function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
-function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}"><span class="tool-icon">${svgIcon(iconName,21)}</span><span>${label}</span></button>`}
+function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}" aria-pressed="${state.tool===tool?'true':'false'}"><span class="tool-icon">${svgIcon(iconName,20)}</span><span>${label}</span></button>`}
 function sheetTitle(){if(state.sheet==='edit')return tr('quickEdit');if(state.sheet==='effects')return tr('effects');if(state.sheet==='adjust')return tr('adjust');if(state.sheet==='transitions')return tr('transitions');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
 function desktopSidebar(){return `<h3 class="desktop-panel-title">${tr('desktopMedia')}</h3><div class="desktop-tool-tabs"><button class="active" data-action="pick-media">＋ ${tr('media')}</button><button data-action="add-text" data-kind="title">T ${tr('text')}</button><button data-action="open-srt">CC</button></div>${mediaPanel()}`}
 function desktopInspector(){return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
@@ -1109,7 +1109,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.4.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.5.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

@@ -64,4 +64,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v1.4.0 -> ${dist}`)
+console.log(`Built Edituno v1.5.0 -> ${dist}`)

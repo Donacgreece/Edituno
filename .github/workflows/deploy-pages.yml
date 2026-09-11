@@ -35,6 +35,9 @@ jobs:
           grep -q "timeline-audio" dist/index.html
           grep -q "audioClipPanel" dist/index.html
           grep -q "scheduleAudioTracks" dist/index.html
+          grep -q "Edituno v1.5.0 Glass" dist/index.html
+          grep -q "segment-check" dist/index.html
+          grep -q "shadow-glass" dist/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
