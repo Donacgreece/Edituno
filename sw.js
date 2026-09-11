@@ -1,4 +1,4 @@
-const CACHE = 'edituno-live-v1.0.0'
+const CACHE = 'edituno-live-v1.0.1'
 const CORE = [
   './', './index.html', './assets/app.css', './assets/app.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/maskable-512.png'

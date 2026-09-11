@@ -513,7 +513,7 @@ function applyFilter(name) {
   mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets[name]||presets.original))
 }
 
-function renderLogo() { return `<span class="logo-lockup"><span class="logo-mark"><span></span><i></i></span><span>Edituno</span></span>` }
+function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="./icons/icon-192.png?v=1.0.1" alt=""><span>Edituno</span></span>` }
 function renderHome() {
   const app=$('#app'); const projects=state.projects
   app.innerHTML=`<div class="app-page">
@@ -783,17 +783,34 @@ function bindGlobalEvents() {
 function updateRangeLabel(el){const b=el.closest('.field')?.querySelector('b');if(b)b.textContent=Number(el.value).toFixed(+el.step<1?2:0)}
 
 async function init() {
-  try { state.projects=await listProjects() } catch { state.projects=[] }
-  bindGlobalEvents()
-  const launch = new URLSearchParams(location.search)
-  if (launch.get('new') === '1') {
-    history.replaceState({}, '', location.pathname)
-    await createProject('16:9')
-  } else {
-    render()
+  try {
+    try { state.projects=await listProjects() } catch { state.projects=[] }
+    bindGlobalEvents()
+    const launch = new URLSearchParams(location.search)
+    if (launch.get('new') === '1') {
+      history.replaceState({}, '', location.pathname)
+      await createProject('16:9')
+    } else {
+      render()
+    }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+          .then(reg => reg.update().catch(()=>{}))
+          .catch(()=>{})
+      }, { once:true })
+    }
+  } catch (error) {
+    console.error('Edituno initialization failed:', error)
+    const app = $('#app')
+    if (app && !app.innerHTML.trim()) {
+      app.innerHTML = `<main class="startup-error"><div><strong>Edituno</strong><p>The app could not finish starting. Refresh once to load the latest version.</p><button onclick="location.reload()" class="primary-btn">Refresh</button></div></main>`
+    }
+  } finally {
+    setTimeout(() => {
+      if (typeof window.__dismissEditunoSplash === 'function') window.__dismissEditunoSplash()
+      else { $('#splash')?.classList.add('hide'); setTimeout(()=>$('#splash')?.remove(),380) }
+    }, 240)
   }
-  if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))
-  setTimeout(()=>$('#splash')?.classList.add('hide'),450)
-  setTimeout(()=>$('#splash')?.remove(),900)
 }
 init()

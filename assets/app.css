@@ -318,3 +318,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* v1.0.1 splash + brand asset consistency */
+.boot-app-icon { width: 116px; height: 116px; display:block; object-fit:contain; border-radius:28px; box-shadow:0 14px 36px rgba(36,85,245,.10); }
+@media (max-width: 480px) { .boot-app-icon { width: 104px; height: 104px; border-radius:25px; } }
+
+.logo-img { width: 32px; height: 32px; border-radius: 9px; display:block; object-fit:contain; flex:0 0 auto; }

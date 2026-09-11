@@ -12,9 +12,9 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
 
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  <link rel="manifest" href="./manifest.webmanifest?v=1.0.1" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=1.0.1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=1.0.1" />
 
   <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
   <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
@@ -24,12 +24,12 @@
   <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
 
   <title>Edituno · Video editor</title>
-  <link rel="stylesheet" href="./assets/app.css" />
+  <link rel="stylesheet" href="./assets/app.css?v=1.0.1" />
 </head>
 <body>
   <div id="splash" class="boot-splash" aria-hidden="true">
     <div class="boot-logo">
-      <div class="logo-mark large"><span></span><i></i></div>
+      <img class="boot-app-icon" src="./icons/icon-192.png?v=1.0.1" alt="" />
       <div class="boot-word">Edituno</div>
     </div>
   </div>
@@ -39,6 +39,24 @@
   <input id="media-picker" class="visually-hidden" type="file" accept="video/*,image/*,audio/*" multiple />
   <input id="subtitle-picker" class="visually-hidden" type="file" accept=".srt,text/plain" />
 
-  <script type="module" src="./assets/app.js"></script>
+  <script>
+    // Splash dismissal is intentionally independent from the app module.
+    // Even if a browser rejects a modern API, the user never gets trapped on the splash screen.
+    (function () {
+      var dismissed = false;
+      function dismissSplash() {
+        if (dismissed) return;
+        dismissed = true;
+        var splash = document.getElementById('splash');
+        if (!splash) return;
+        splash.classList.add('hide');
+        window.setTimeout(function () { if (splash && splash.parentNode) splash.parentNode.removeChild(splash); }, 380);
+      }
+      window.__dismissEditunoSplash = dismissSplash;
+      window.addEventListener('load', function () { window.setTimeout(dismissSplash, 180); }, { once: true });
+      window.setTimeout(dismissSplash, 1600);
+    }());
+  </script>
+  <script type="module" src="./assets/app.js?v=1.0.1"></script>
 </body>
 </html>
