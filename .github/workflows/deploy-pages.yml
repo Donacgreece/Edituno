@@ -48,6 +48,12 @@ jobs:
           grep -Fq "normalizeViewportAfterKeyboard" dist/index.html
           grep -Fq "lastStableHeight" dist/index.html
           grep -Fq "scrollbar-thumb" dist/index.html
+          grep -Fq "timeline-overlay-row" dist/index.html
+          grep -Fq "canvas-ratio-grid" dist/index.html
+          grep -Fq "transition-card" dist/index.html
+          grep -Fq "preset-card" dist/index.html
+          grep -Fq "element-library" dist/index.html
+          grep -Fq "function addAssetToOverlay" dist/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

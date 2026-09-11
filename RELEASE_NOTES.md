@@ -1,23 +1,10 @@
-# Edituno Studio v2.0.3
+# Edituno Studio v2.1.0 — Layers
 
-Focused editor-engine and mobile interaction release.
-
-## Fixed
-- Editor Import now opens the native picker reliably on iOS, Android and desktop.
-- Empty preview interaction overlay no longer blocks the Import button.
-- Audio imports start in parallel with the visual timeline instead of being appended after it.
-- Audio clips can be dragged horizontally with touch, pen or mouse.
-- Imported media rows can be dragged from the media sheet/library directly onto V1 or A1.
-- Timeline transition control is larger, optically centered and uses a symmetric icon.
-- Canvas format controls have improved spacing, centering and touch targets.
-
-## Expanded controls
-- More video filter presets.
-- More motion effects.
-- More transitions.
-- Invert adjustment.
-- Video audio fade-in and fade-out.
-- Audio quick actions for Fit to video, Move to playhead and Align to clip.
-- Audio speed now includes 0.5x.
-
-The official Edituno logo remains unchanged.
+- Adds V2 and V3 overlay video/image tracks for simultaneous composition.
+- Mobile touch drag can move imported visual assets to V2/V3 and can convert a V1 clip into an overlay track.
+- Overlay clips can be dragged horizontally and between V2/V3 on touch or mouse.
+- Direct preview manipulation now works for primary clips, overlays and built-in elements, including drag, pinch-to-scale and resize handle.
+- Adds an Elements library with creator CTAs, arrows, highlights, lower thirds and labels. PNG/JPG/WebP/GIF files can be imported and added as overlays.
+- Rebuilds filter and transition controls as visual cards instead of text lists.
+- Canvas ratio selector is horizontal, spaced, centered and visually communicates each format.
+- Preserves multitrack audio, effects, transitions, custom scrollbars, iOS keyboard stabilization and local-first storage.

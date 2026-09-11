@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.0.3 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.1.0 Layers production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -293,6 +293,8 @@ async function duplicateProjectFull(id) {
     copy.assets.push({...clone(asset), id:newId})
   }
   copy.clips = (original.clips || []).map(c=>({...clone(c), id:uid(), assetId:assetMap.get(c.assetId)||c.assetId}))
+  copy.overlays = (original.overlays || []).map(c=>({...clone(c), id:uid(), assetId:assetMap.get(c.assetId)||c.assetId}))
+  copy.elements = (original.elements || []).map(c=>({...clone(c), id:uid()}))
   copy.audioClips = (original.audioClips || []).map(c=>({...clone(c), id:uid(), assetId:assetMap.get(c.assetId)||c.assetId}))
   copy.texts = (original.texts || []).map(t=>({...clone(t), id:uid()}))
   copy.soundtrack = null
@@ -332,6 +334,7 @@ previewAudio.preload = 'auto'
 previewAudio.style.display = 'none'
 document.body.append(previewAudio)
 const audioPreviewNodes = new Map()
+const overlayPreviewNodes = new Map()
 const imageCache = new Map()
 let rafId = 0
 let playStartPerf = 0
@@ -341,13 +344,16 @@ function visualDuration(project = state.project) {
   return (project?.clips || []).reduce((sum,c)=>sum + clipDuration(c),0)
 }
 function audioClipDuration(c) { return Math.max(.05,(c.sourceEnd-c.sourceStart)/Math.max(.05,c.speed||1)) }
+function clipDuration(c) { return Math.max(.05, (c.end-c.start) / Math.max(.05,c.speed || 1)) }
+function overlayDuration(c){ return clipDuration(c) }
 function projectDuration(project = state.project) {
   const visual=visualDuration(project)
+  const overlays=Math.max(0,...(project?.overlays||[]).map(c=>(c.timelineStart||0)+overlayDuration(c)))
+  const elements=Math.max(0,...(project?.elements||[]).map(c=>(c.timelineStart||0)+(c.duration||3)))
   const audio=Math.max(0,...(project?.audioClips||[]).map(c=>(c.timelineStart||0)+audioClipDuration(c)))
   const text=Math.max(0,...(project?.texts||[]).map(t=>t.end||0))
-  return Math.max(visual,audio,text)
+  return Math.max(visual,overlays,elements,audio,text)
 }
-function clipDuration(c) { return Math.max(.05, (c.end-c.start) / Math.max(.05,c.speed || 1)) }
 function clipTimeline(project = state.project) {
   let cursor = 0
   return (project?.clips || []).map((clip,index)=>{
@@ -359,6 +365,12 @@ function activeAt(time, project = state.project) {
   return rows.find((r,i)=> time >= r.start && (time < r.end || (i===rows.length-1 && time<=r.end))) || null
 }
 function sourceTime(row,time) { return row.clip.start + Math.max(0,time-row.start)*(row.clip.speed||1) }
+function activeOverlaysAt(time, project=state.project){
+  return (project?.overlays||[]).filter(c=>time>=(c.timelineStart||0)&&time<=((c.timelineStart||0)+overlayDuration(c))).sort((a,b)=>(a.lane||2)-(b.lane||2))
+}
+function activeElementsAt(time, project=state.project){
+  return (project?.elements||[]).filter(c=>time>=(c.timelineStart||0)&&time<=((c.timelineStart||0)+(c.duration||3))).sort((a,b)=>(a.z||20)-(b.z||20))
+}
 function getAsset(id, project = state.project) { return project?.assets?.find(a=>a.id===id) }
 
 function ratioValue(ratio) {
@@ -526,6 +538,58 @@ function drawTransitionOverlay(ctx,row,time,w,h) {
   if (fx.overlay && fx.overlayAlpha>0) { ctx.save(); ctx.fillStyle=fx.overlay; ctx.globalAlpha=fx.overlayAlpha; ctx.fillRect(0,0,w,h); ctx.restore() }
 }
 
+function drawBuiltInElement(ctx,item,width,height){
+  const x=(item.x??.5)*width,y=(item.y??.5)*height,scale=item.scale??1,rot=(item.rotation||0)*Math.PI/180
+  ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.scale(scale,scale);ctx.globalAlpha=item.opacity??1
+  const w=width*.22,h=Math.max(28,height*.065),accent=item.color||'#2455F5'
+  if(item.kind==='emoji'){ctx.font=`${Math.max(34,h*1.3)}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(item.label||'✨',0,0)}else if(item.kind==='subscribe'){
+    ctx.fillStyle='#ff2d2d';roundedRect(ctx,-w/2,-h/2,w,h,h/2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`700 ${Math.max(12,h*.34)}px -apple-system,system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(item.label||'SUBSCRIBE',0,1)
+  }else if(item.kind==='like'){
+    ctx.fillStyle=accent;ctx.beginPath();ctx.arc(0,0,h*.48,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`700 ${h*.46}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('♥',0,1)
+  }else if(item.kind==='bell'){
+    ctx.fillStyle=accent;ctx.beginPath();ctx.arc(0,0,h*.48,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`700 ${h*.42}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('●',0,-2);ctx.fillRect(-h*.16,h*.16,h*.32,h*.08)
+  }else if(item.kind==='lowerthird'){
+    ctx.fillStyle='rgba(10,12,17,.86)';roundedRect(ctx,-w,-h*.75,w*2,h*1.5,h*.18);ctx.fill();ctx.fillStyle=accent;ctx.fillRect(-w,-h*.75,Math.max(4,w*.04),h*1.5);ctx.fillStyle='#fff';ctx.font=`650 ${Math.max(11,h*.34)}px -apple-system,system-ui`;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(item.label||'Your title',-w+h*.28,0)
+  }else if(item.kind==='arrow'){
+    ctx.strokeStyle=accent;ctx.lineWidth=Math.max(4,h*.12);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(-w*.55,0);ctx.lineTo(w*.45,0);ctx.lineTo(w*.15,-h*.35);ctx.moveTo(w*.45,0);ctx.lineTo(w*.15,h*.35);ctx.stroke()
+  }else if(item.kind==='circle'){
+    ctx.strokeStyle=accent;ctx.lineWidth=Math.max(4,h*.1);ctx.beginPath();ctx.arc(0,0,h*.55,0,Math.PI*2);ctx.stroke()
+  }else if(item.kind==='label'){
+    ctx.fillStyle=accent;roundedRect(ctx,-w*.55,-h*.52,w*1.1,h*1.04,h*.2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`650 ${Math.max(11,h*.34)}px -apple-system,system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(item.label||'NEW',0,1)
+  }
+  ctx.restore()
+}
+
+function drawElements(ctx,project,time,width,height){
+  for(const item of activeElementsAt(time,project))drawBuiltInElement(ctx,item,width,height)
+}
+
+function overlayVideoFor(clip,url){
+  let el=overlayPreviewNodes.get(clip.id)
+  if(!el){el=document.createElement('video');el.preload='auto';el.playsInline=true;el.muted=true;el.style.display='none';document.body.append(el);overlayPreviewNodes.set(clip.id,el)}
+  if(el.src!==url){el.src=url;el.load()}
+  return el
+}
+function stopOverlayVideos(){for(const el of overlayPreviewNodes.values())el.pause()}
+async function drawOverlays(ctx,project,time,width,height){
+  const active=activeOverlaysAt(time,project), alive=new Set((project?.overlays||[]).map(c=>c.id))
+  for(const [id,el] of overlayPreviewNodes){if(!alive.has(id)){el.pause();el.remove();overlayPreviewNodes.delete(id)}}
+  for(const clip of active){
+    const asset=getAsset(clip.assetId,project),url=state.urls[clip.assetId];if(!asset||!url)continue
+    const local=Math.max(0,time-(clip.timelineStart||0)),progress=local/Math.max(.05,overlayDuration(clip))
+    if(asset.type==='image'){
+      try{const img=await loadImage(url);applyClipDrawing(ctx,img,asset,clip,width,height,progress,1)}catch{}
+    }else if(asset.type==='video'){
+      const el=overlayVideoFor(clip,url),target=(clip.start||0)+local*(clip.speed||1)
+      el.playbackRate=clamp(clip.speed||1,.25,4)
+      if(el.readyState>=1&&(!state.playing||Math.abs((el.currentTime||0)-target)>.3))el.currentTime=clamp(target,clip.start||0,Math.max(clip.start||0,(clip.end||asset.duration)-.03))
+      if(state.playing&&el.paused&&el.readyState>=2)el.play().catch(()=>{})
+      if(!state.playing&&!el.paused)el.pause()
+      if(el.readyState>=2)applyClipDrawing(ctx,el,asset,clip,width,height,progress,1)
+    }
+  }
+}
+
 function drawTexts(ctx, project, time, width, height) {
   for (const item of project.texts || []) {
     if (time < item.start || time > item.end) continue
@@ -572,8 +636,12 @@ async function drawPreview() {
       }
     }
   }
+  await drawOverlays(ctx,state.project,state.currentTime,w,h)
+  drawElements(ctx,state.project,state.currentTime,w,h)
   drawTexts(ctx,state.project,state.currentTime,w,h)
-  const empty=$('.preview-empty'); if (empty) empty.classList.toggle('hidden',Boolean(row))
+  const hasVisual=Boolean(row)||activeOverlaysAt(state.currentTime).length||activeElementsAt(state.currentTime).length
+  const empty=$('.preview-empty'); if (empty) empty.classList.toggle('hidden',hasVisual)
+  updatePreviewSelectionOverlay()
 }
 
 function ensurePreviewVideo(row,asset,url) {
@@ -656,7 +724,7 @@ function startPlayback() {
   updatePlaybackUi(); cancelAnimationFrame(rafId); rafId=requestAnimationFrame(playbackLoop)
 }
 function stopPlayback(atEnd=false) {
-  state.playing=false; cancelAnimationFrame(rafId); previewVideo.pause(); previewAudio.pause(); stopAudioTracks()
+  state.playing=false; cancelAnimationFrame(rafId); previewVideo.pause(); previewAudio.pause(); stopAudioTracks(); stopOverlayVideos()
   if (atEnd) state.currentTime=projectDuration()
   updatePlaybackUi(); drawPreview()
 }
@@ -667,13 +735,14 @@ function seekTo(value) {
 
 function defaultProject(ratio='16:9') {
   const now=Date.now()
-  return { id:uid(), name:state.language==='el'?'Νέο project':'Untitled project', createdAt:now, updatedAt:now, ratio, background:'#0b0d12', assets:[], clips:[], audioClips:[], texts:[], soundtrack:null }
+  return { id:uid(), name:state.language==='el'?'Νέο project':'Untitled project', createdAt:now, updatedAt:now, ratio, background:'#0b0d12', assets:[], clips:[], overlays:[], elements:[], audioClips:[], texts:[], soundtrack:null }
 }
 function normalizeProject(p) {
-  p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.texts ||= p.textOverlays || []; p.audioClips ||= []
+  p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.overlays ||= []; p.elements ||= []; p.texts ||= p.textOverlays || []; p.audioClips ||= []
   if(p.soundtrack && !p.audioClips.length){const a=p.assets.find(x=>x.id===p.soundtrack.assetId);if(a)p.audioClips.push({id:uid(),assetId:a.id,timelineStart:0,sourceStart:0,sourceEnd:a.duration||30,volume:p.soundtrack.volume??.7,speed:1,fadeIn:0,fadeOut:0,muted:false})}
   p.soundtrack=null
   for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
+  for (const c of p.overlays) Object.assign(c,{timelineStart:0,lane:2,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,motion:'none',offsetX:0,offsetY:0,scale:.36,fit:'contain',opacity:1,flipX:false,flipY:false,volume:0},c)
   return p
 }
 async function createProject(ratio='16:9') {
@@ -685,7 +754,7 @@ async function openProject(id) {
   for (const asset of state.project.assets) { const blob=await getBlob(asset.id); if(blob) state.urls[asset.id]=URL.createObjectURL(blob) }
   state.history=[];state.future=[];state.currentTime=0;state.selected=null;state.view='editor';render()
 }
-function revokeUrls() { Object.values(state.urls).forEach(url=>URL.revokeObjectURL(url)); state.urls={}; imageCache.clear() }
+function revokeUrls() { Object.values(state.urls).forEach(url=>URL.revokeObjectURL(url)); state.urls={}; imageCache.clear();for(const el of overlayPreviewNodes.values()){el.pause();el.remove()}overlayPreviewNodes.clear() }
 async function goHome() { stopPlayback(); if(state.project) await saveProject(state.project); revokeUrls(); state.project=null;state.view='home';state.projects=await listProjects();render() }
 
 function pushHistory() {
@@ -770,17 +839,33 @@ async function importFiles(files, addVisuals=true) {
 function defaultClip(asset) {
   return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
 }
+function nextOverlayLane(at=state.currentTime){
+  const occupied=lane=>(state.project?.overlays||[]).some(c=>(c.lane||2)===lane&&at<(c.timelineStart||0)+overlayDuration(c)&&at+0.05>=(c.timelineStart||0))
+  return occupied(2)&&!occupied(3)?3:2
+}
+function defaultOverlayClip(asset,timelineStart=state.currentTime,lane=nextOverlayLane(timelineStart)){
+  const end=asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4)
+  return {id:uid(),assetId:asset.id,timelineStart:Math.max(0,timelineStart||0),lane,start:0,end,speed:1,volume:0,scale:.38,rotation:0,opacity:1,fit:'contain',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,motion:'none',filterPreset:'original'}
+}
+function addAssetToOverlay(id,at=state.currentTime,lane){const asset=getAsset(id);if(!asset||asset.type==='audio')return;mutate(p=>{const c=defaultOverlayClip(asset,Math.max(0,at||0),lane||nextOverlayLane(at));p.overlays.push(c);state.selected={type:'overlay',id:c.id};state.tool='edit';state.sheet=isMobileViewport()?'edit':null})}
 function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset)return; if(asset.type==='audio')return addAudioToTimeline(id); mutate(p=>p.clips.push(defaultClip(asset))); }
 function setSoundtrack(id) { addAudioToTimeline(id,0) }
 
 function selectedClip() { return state.selected?.type==='clip' ? state.project?.clips.find(c=>c.id===state.selected.id) : null }
+function selectedOverlay(){ return state.selected?.type==='overlay' ? state.project?.overlays?.find(c=>c.id===state.selected.id) : null }
+function selectedElement(){ return state.selected?.type==='element' ? state.project?.elements?.find(c=>c.id===state.selected.id) : null }
+function selectedVisual(){ return selectedClip() || selectedOverlay() }
 function selectedText() { return state.selected?.type==='text' ? state.project?.texts.find(t=>t.id===state.selected.id) : null }
 function selectedAudio() { return state.selected?.type==='audio' ? state.project?.audioClips.find(c=>c.id===state.selected.id) : null }
 function selectClip(id) { state.selected={type:'clip',id}; state.tool='edit'; state.sheet=isMobileViewport()?'edit':null; renderEditor() }
+function selectOverlay(id){state.selected={type:'overlay',id};state.tool='edit';state.sheet=isMobileViewport()?'edit':null;renderEditor()}
+function selectElement(id){state.selected={type:'element',id};state.tool='elements';state.sheet=isMobileViewport()?'elements':null;renderEditor()}
 function selectText(id) { state.selected={type:'text',id}; state.tool='text'; state.sheet=isMobileViewport()?'text':null; renderEditor() }
 function selectAudio(id) { state.selected={type:'audio',id}; state.tool='audio'; state.sheet=isMobileViewport()?'audio':null; renderEditor() }
 
 function splitAtPlayhead() {
+  const overlay=selectedOverlay()
+  if(overlay){const startT=overlay.timelineStart||0,endT=startT+overlayDuration(overlay);if(state.currentTime<=startT+.05||state.currentTime>=endT-.05)return;const sourceSplit=overlay.start+(state.currentTime-startT)*(overlay.speed||1);return mutate(p=>{const i=p.overlays.findIndex(c=>c.id===overlay.id);const left={...clone(overlay),id:uid(),end:sourceSplit};const right={...clone(overlay),id:uid(),start:sourceSplit,timelineStart:state.currentTime};p.overlays.splice(i,1,left,right);state.selected={type:'overlay',id:right.id}})}
   const audio=selectedAudio()
   if(audio){
     const startT=audio.timelineStart||0,endT=startT+audioClipDuration(audio)
@@ -799,14 +884,18 @@ function splitAtPlayhead() {
 
 function duplicateSelected() {
   const clip=selectedClip(); if(clip)return mutate(p=>{const idx=p.clips.findIndex(c=>c.id===clip.id); const c={...clone(clip),id:uid()};p.clips.splice(idx+1,0,c);state.selected={type:'clip',id:c.id}})
+  const overlay=selectedOverlay();if(overlay)return mutate(p=>{const c={...clone(overlay),id:uid(),timelineStart:(overlay.timelineStart||0)+.25};p.overlays.push(c);state.selected={type:'overlay',id:c.id}})
+  const element=selectedElement();if(element)return mutate(p=>{const c={...clone(element),id:uid(),timelineStart:(element.timelineStart||0)+.25};p.elements.push(c);state.selected={type:'element',id:c.id}})
   const audio=selectedAudio(); if(audio)return mutate(p=>{const c={...clone(audio),id:uid(),timelineStart:(audio.timelineStart||0)+.25};p.audioClips.push(c);state.selected={type:'audio',id:c.id}})
 }
 function deleteSelected() {
   if(state.selected?.type==='clip') mutate(p=>{p.clips=p.clips.filter(c=>c.id!==state.selected.id);state.selected=null})
+  else if(state.selected?.type==='overlay') {const id=state.selected.id;mutate(p=>{p.overlays=p.overlays.filter(c=>c.id!==id);state.selected=null});const el=overlayPreviewNodes.get(id);if(el){el.pause();el.remove();overlayPreviewNodes.delete(id)}}
+  else if(state.selected?.type==='element') mutate(p=>{p.elements=p.elements.filter(c=>c.id!==state.selected.id);state.selected=null})
   else if(state.selected?.type==='text') mutate(p=>{p.texts=p.texts.filter(t=>t.id!==state.selected.id);state.selected=null})
   else if(state.selected?.type==='audio') { const id=state.selected.id; mutate(p=>{p.audioClips=p.audioClips.filter(c=>c.id!==id);state.selected=null});const el=audioPreviewNodes.get(id);if(el){el.pause();el.remove();audioPreviewNodes.delete(id)} }
 }
-function moveSelected(delta) { const clip=selectedClip(); if(clip)return mutate(p=>{const i=p.clips.findIndex(c=>c.id===clip.id),j=clamp(i+delta,0,p.clips.length-1);if(i!==j){const [x]=p.clips.splice(i,1);p.clips.splice(j,0,x)}});const audio=selectedAudio();if(audio)return mutate(p=>{const x=p.audioClips.find(c=>c.id===audio.id);x.timelineStart=Math.max(0,(x.timelineStart||0)+delta*(state.preferences.snap?.25:.1))}) }
+function moveSelected(delta) { const clip=selectedClip(); if(clip)return mutate(p=>{const i=p.clips.findIndex(c=>c.id===clip.id),j=clamp(i+delta,0,p.clips.length-1);if(i!==j){const [x]=p.clips.splice(i,1);p.clips.splice(j,0,x)}});const overlay=selectedOverlay();if(overlay)return mutate(p=>{const x=p.overlays.find(c=>c.id===overlay.id);x.timelineStart=Math.max(0,(x.timelineStart||0)+delta*(state.preferences.snap?.25:.1))});const element=selectedElement();if(element)return mutate(p=>{const x=p.elements.find(c=>c.id===element.id);x.timelineStart=Math.max(0,(x.timelineStart||0)+delta*(state.preferences.snap?.25:.1))});const audio=selectedAudio();if(audio)return mutate(p=>{const x=p.audioClips.find(c=>c.id===audio.id);x.timelineStart=Math.max(0,(x.timelineStart||0)+delta*(state.preferences.snap?.25:.1))}) }
 
 function addText(kind='title') {
   if(!state.project) return
@@ -832,7 +921,7 @@ async function importSrt(file) {
 }
 
 function applyFilter(name) {
-  const c=selectedClip(); if(!c)return
+  const c=selectedVisual(); if(!c)return
   const presets={
     original:{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0},
     vivid:{brightness:104,contrast:112,saturation:135,hue:0,blur:0,grayscale:0,sepia:0},
@@ -859,7 +948,7 @@ function applyFilter(name) {
     lowkey:{brightness:82,exposure:-8,contrast:136,saturation:92,temperature:-4,vignette:48,grain:10,hue:0,blur:0,grayscale:0,sepia:0,invert:0},
     cyber:{brightness:102,exposure:1,contrast:132,saturation:170,temperature:-18,vignette:28,grain:7,hue:28,blur:0,grayscale:0,sepia:0,invert:0}
   }
-  mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets.original,presets[name]||presets.original,{filterPreset:name}))
+  mutate(p=>{const list=state.selected?.type==='overlay'?p.overlays:p.clips;Object.assign(list.find(x=>x.id===c.id),presets.original,presets[name]||presets.original,{filterPreset:name})})
 }
 
 function svgIcon(name,size=20) {
@@ -1066,26 +1155,41 @@ function mobileProjectHubModal(){
   return `<div class="project-hub-backdrop" data-action="mobile-hub-close"><section class="project-hub"><div class="project-hub-head"><div>${renderLogo()}<span>${tr('projectHub')}</span></div><button class="icon-btn" data-action="mobile-hub-close">${svgIcon('close')}</button></div><div class="project-hub-body"><button class="primary-btn full" data-action="create" data-ratio="9:16">${svgIcon('plus',18)} ${tr('newBlank')}</button>${projects.length?`<div class="hub-project-list">${projects.slice(0,10).map(p=>`<button class="hub-project" data-action="open-project" data-id="${p.id}"><span class="hub-thumb">${svgIcon('play',18)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span></button>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noProjects')}</b></div>`}<div class="hub-footer"><button class="secondary-btn" data-action="language">${state.language==='el'?'English':'Ελληνικά'}</button><button class="secondary-btn" data-action="settings">${tr('settings')}</button></div></div></section></div>`
 }
 
+function selectedTransformTarget(){return selectedVisual()||selectedElement()}
+function updatePreviewSelectionOverlay(){
+  const box=$('#preview-selection-box'),frame=$('.preview-frame'),target=selectedTransformTarget();if(!box||!frame||!target){box?.classList.add('hidden');return}
+  box.classList.remove('hidden')
+  const fr=frame.getBoundingClientRect(),scale=target.scale??1
+  const base=state.selected?.type==='overlay'?Math.min(fr.width,fr.height)*.72:state.selected?.type==='element'?Math.min(fr.width,fr.height)*.34:Math.min(fr.width,fr.height)*1.02
+  const size=Math.max(34,base*scale),x=fr.width/2+(target.offsetX??((target.x??.5)-.5))*fr.width,y=fr.height/2+(target.offsetY??((target.y??.5)-.5))*fr.height
+  box.style.width=`${size}px`;box.style.height=`${size}px`;box.style.left=`${x-size/2}px`;box.style.top=`${y-size/2}px`;box.style.transform=`rotate(${target.rotation||0}deg)`
+}
 function bindPreviewInteractions(){
-  const layer=$('#preview-interaction-layer'), frame=$('.preview-frame'), clip=selectedClip()
-  if(!layer||!frame||!clip)return
-  const pointers=new Map(); let origin=null, pinch=null
+  const layer=$('#preview-interaction-layer'), frame=$('.preview-frame'), target=selectedTransformTarget()
+  if(!layer||!frame||!target)return
+  const pointers=new Map(); let origin=null,pinch=null,resizing=false
   const point=e=>({x:e.clientX,y:e.clientY})
   layer.addEventListener('pointerdown',e=>{
+    const c=selectedTransformTarget();if(!c)return
     e.preventDefault();layer.setPointerCapture?.(e.pointerId);pointers.set(e.pointerId,point(e))
-    const c=selectedClip();if(!c)return
-    if(pointers.size===1)origin={x:e.clientX,y:e.clientY,offsetX:c.offsetX||0,offsetY:c.offsetY||0,scale:c.scale||1}
+    resizing=Boolean(e.target.closest?.('.selection-handle'))
+    if(pointers.size===1)origin={x:e.clientX,y:e.clientY,offsetX:c.offsetX??((c.x??.5)-.5),offsetY:c.offsetY??((c.y??.5)-.5),scale:c.scale||1,distance:Math.hypot(e.clientX-frame.getBoundingClientRect().left-frame.clientWidth/2,e.clientY-frame.getBoundingClientRect().top-frame.clientHeight/2)}
     if(pointers.size===2){const ps=[...pointers.values()];pinch={distance:Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y),scale:c.scale||1}}
   },{passive:false})
   layer.addEventListener('pointermove',e=>{
-    if(!pointers.has(e.pointerId))return;e.preventDefault();pointers.set(e.pointerId,point(e));const c=selectedClip();if(!c)return
+    if(!pointers.has(e.pointerId))return;e.preventDefault();pointers.set(e.pointerId,point(e));const c=selectedTransformTarget();if(!c)return
     const rect=frame.getBoundingClientRect()
-    if(pointers.size===1&&origin){c.offsetX=clamp(origin.offsetX+(e.clientX-origin.x)/Math.max(1,rect.width),-.7,.7);c.offsetY=clamp(origin.offsetY+(e.clientY-origin.y)/Math.max(1,rect.height),-.7,.7);queueSave();drawPreview()}
-    if(pointers.size===2&&pinch){const ps=[...pointers.values()],d=Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y);c.scale=clamp(pinch.scale*(d/Math.max(1,pinch.distance)),.2,3);queueSave();drawPreview()}
+    if(pointers.size===1&&origin){
+      if(resizing){const d=Math.hypot(e.clientX-(rect.left+rect.width/2),e.clientY-(rect.top+rect.height/2));c.scale=clamp(origin.scale*(d/Math.max(20,origin.distance)),.08,4)}
+      else {const ox=clamp(origin.offsetX+(e.clientX-origin.x)/Math.max(1,rect.width),-.95,.95),oy=clamp(origin.offsetY+(e.clientY-origin.y)/Math.max(1,rect.height),-.95,.95);if(state.selected?.type==='element'){c.x=.5+ox;c.y=.5+oy}else{c.offsetX=ox;c.offsetY=oy}}
+      queueSave();drawPreview();updatePreviewSelectionOverlay()
+    }
+    if(pointers.size===2&&pinch){const ps=[...pointers.values()],d=Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y);c.scale=clamp(pinch.scale*(d/Math.max(1,pinch.distance)),.08,4);queueSave();drawPreview();updatePreviewSelectionOverlay()}
   },{passive:false})
-  const end=e=>{pointers.delete(e.pointerId);if(!pointers.size){origin=null;pinch=null}}
+  const end=e=>{pointers.delete(e.pointerId);if(!pointers.size){origin=null;pinch=null;resizing=false}}
   layer.addEventListener('pointerup',end);layer.addEventListener('pointercancel',end)
 }
+
 
 function renderEditor() {
   if(!state.project) return
@@ -1106,20 +1210,20 @@ function renderEditor() {
       <section class="editor-center">
         <div class="viewer-shell">
           <div class="viewer-toolbar"><div><span class="viewer-ratio">${escapeHtml(p.ratio)}</span><span class="viewer-quality">${state.preferences.previewQuality}</span></div><div class="viewer-actions"><button data-action="undo" aria-label="${tr('undo')}">${svgIcon('undo',15)}</button><button data-action="redo" aria-label="${tr('redo')}">${svgIcon('redo',15)}</button></div></div>
-          <div class="preview-zone"><div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div id="preview-interaction-layer" class="preview-interaction-layer ${state.selected?.type==='clip'?'active':''}" aria-label="Canvas interaction layer"></div><div class="preview-empty ${rows.length?'hidden':''}"><span>${svgIcon('media',25)}</span><strong>${state.language==='el'?'Πρόσθεσε media':'Add media'}</strong><small>${state.language==='el'?'Video, φωτογραφίες ή audio':'Video, photos or audio'}</small><button class="viewer-add" data-action="pick-media">${svgIcon('plus',16)}<span>Import</span></button></div></div></div></div>
+          <div class="preview-zone"><div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div id="preview-interaction-layer" class="preview-interaction-layer ${['clip','overlay','element'].includes(state.selected?.type)?'active':''}" aria-label="Canvas interaction layer"><div id="preview-selection-box" class="preview-selection-box hidden"><i class="selection-handle"></i></div></div><div class="preview-empty ${rows.length?'hidden':''}"><span>${svgIcon('media',25)}</span><strong>${state.language==='el'?'Πρόσθεσε media':'Add media'}</strong><small>${state.language==='el'?'Video, φωτογραφίες ή audio':'Video, photos or audio'}</small><button class="viewer-add" data-action="pick-media">${svgIcon('plus',16)}<span>Import</span></button></div></div></div></div>
           <div class="transport-bar"><button class="transport-btn" data-action="jump-start" aria-label="Start">${svgIcon('back',17)}</button><button class="transport-play" data-action="play-toggle" aria-label="${tr('play')}"><span id="play-icon">${state.playing?'Ⅱ':svgIcon('play',18)}</span></button><span class="timecode" id="timecode">${fmtTime(state.currentTime)} <i>/</i> ${fmtTime(dur)}</span><input class="viewer-seek" id="seekbar" type="range" min="0" max="${Math.max(.01,dur)}" step="0.01" value="${state.currentTime}"></div>
         </div>
 
         <section class="timeline-shell">
           <header class="timeline-header"><div><strong>Timeline</strong><span>${dur?fmtTime(dur):'00:00.0'}</span></div><div class="timeline-actions"><button data-action="timeline-zoom" data-value="-1">${svgIcon('zoomout',15)}</button><button data-action="timeline-zoom" data-value="1">${svgIcon('zoomin',15)}</button><button data-action="split">${svgIcon('split',15)}<span class="desktop-editor-only">${tr('split')}</span></button></div></header>
-          <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur,totalWidth)}</div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',17)}<span>${tr('addMedia')}</span></button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips||[]).map(timelineAudio).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42+state.currentTime*state.pxPerSec}px"><i></i></div></div></div>
+          <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur,totalWidth)}</div><div class="track-row overlay-row" data-lane="3"><span class="track-label">V3</span><div class="timeline-overlay-row">${(p.overlays||[]).filter(c=>(c.lane||2)===3).map(timelineOverlay).join('')}</div></div><div class="track-row overlay-row" data-lane="2"><span class="track-label">V2</span><div class="timeline-overlay-row">${(p.overlays||[]).filter(c=>(c.lane||2)===2).map(timelineOverlay).join('')}</div></div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',17)}<span>${tr('addMedia')}</span></button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips||[]).map(timelineAudio).join('')}</div></div><div class="track-row element-row"><span class="track-label">E1</span><div class="timeline-element-row">${(p.elements||[]).map(timelineElement).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42+state.currentTime*state.pxPerSec}px"><i></i></div></div></div>
         </section>
       </section>
 
-      <aside class="inspector-panel desktop-editor-only"><div class="panel-top"><span class="eyebrow">INSPECTOR</span><strong>${state.selected?.type==='clip'?tr('selectedClip'):state.selected?.type==='audio'?tr('audio'):state.selected?.type==='text'?tr('text'):tr('canvas')}</strong></div>${desktopInspector()}</aside>
+      <aside class="inspector-panel desktop-editor-only"><div class="panel-top"><span class="eyebrow">INSPECTOR</span><strong>${state.selected?.type==='clip'?tr('selectedClip'):state.selected?.type==='overlay'?'Overlay':state.selected?.type==='element'?(state.language==='el'?'Στοιχείο':'Element'):state.selected?.type==='audio'?tr('audio'):state.selected?.type==='text'?tr('text'):tr('canvas')}</strong></div>${desktopInspector()}</aside>
     </main>
 
-    <footer class="mobile-tool-dock mobile-editor-only"><div class="tool-scroller">${toolButton('media','media',tr('media'))}${toolButton('edit','edit',tr('quickEdit'))}${toolButton('text','text',tr('text'))}${toolButton('audio','audio',tr('audio'))}${toolButton('effects','effects',tr('effects'))}${toolButton('adjust','adjust',tr('adjust'))}${toolButton('transitions','transition',tr('transitions'))}${toolButton('canvas','canvas',tr('canvas'))}</div></footer>
+    <footer class="mobile-tool-dock mobile-editor-only"><div class="tool-scroller">${toolButton('media','media',tr('media'))}${toolButton('edit','edit',tr('quickEdit'))}${toolButton('text','text',tr('text'))}${toolButton('elements','effects',state.language==='el'?'Στοιχεία':'Elements')}${toolButton('audio','audio',tr('audio'))}${toolButton('effects','effects',tr('effects'))}${toolButton('adjust','adjust',tr('adjust'))}${toolButton('transitions','transition',tr('transitions'))}${toolButton('canvas','canvas',tr('canvas'))}</div></footer>
 
     <div class="sheet-backdrop ${state.sheet?'open':''}" data-action="sheet-close"></div>
     <section class="bottom-sheet ${state.sheet?'open':''}" aria-modal="true"><div class="sheet-grabber"></div><header class="sheet-header"><div><span class="eyebrow">EDITUNO</span><strong>${sheetTitle()}</strong></div><button class="round-icon" data-action="sheet-close">${svgIcon('close',17)}</button></header><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
@@ -1129,16 +1233,18 @@ function renderEditor() {
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
 function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
+function timelineOverlay(c){const a=getAsset(c.assetId),w=Math.max(54,overlayDuration(c)*state.pxPerSec),left=Math.max(0,(c.timelineStart||0)*state.pxPerSec);return `<button class="timeline-overlay ${a?.type==='image'?'image':''} ${state.selected?.type==='overlay'&&state.selected.id===c.id?'selected':''}" data-action="select-overlay" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(a?.name||'Overlay')}</strong><small>V${c.lane||2} · ${fmtTime(overlayDuration(c))}</small></button>`}
+function timelineElement(c){const w=Math.max(48,(c.duration||3)*state.pxPerSec),left=Math.max(0,(c.timelineStart||0)*state.pxPerSec);return `<button class="timeline-element ${state.selected?.type==='element'&&state.selected.id===c.id?'selected':''}" data-action="select-element" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(c.label||c.kind||'Element')}</strong><small>E1 · ${fmtTime(c.duration||3)}</small></button>`}
 function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start||0)*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
 function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.preferences.showWaveforms)return'';let out='';for(let i=0;i<count;i++){const v=peaks.length?peaks[Math.floor(i*peaks.length/count)]:(.28+.6*Math.abs(Math.sin(i*1.73)));out+=`<i style="height:${Math.max(12,Math.round(v*86))}%"></i>`}return out}
 function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
 function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}" aria-pressed="${state.tool===tool?'true':'false'}"><span class="tool-icon">${svgIcon(iconName,20)}</span><span>${label}</span></button>`}
 function sheetTitle(){if(state.sheet==='edit')return tr('quickEdit');if(state.sheet==='effects')return tr('effects');if(state.sheet==='adjust')return tr('adjust');if(state.sheet==='transitions')return tr('transitions');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
 function desktopSidebar(){return `<div class="desktop-tool-tabs"><button class="active" data-action="pick-media">${svgIcon('plus',14)}<span>${tr('media')}</span></button><button data-action="add-text" data-kind="title">${svgIcon('text',14)}<span>${tr('text')}</span></button><button data-action="open-srt">${svgIcon('captions',14)}<span>SRT</span></button></div>${mediaPanel()}`}
-function desktopInspector(){return `${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
-function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
+function desktopInspector(){return `${state.selected?.type==='clip'||state.selected?.type==='overlay'?clipPanel():state.selected?.type==='element'?elementPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
+function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='elements')return elementPanel();if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
 
-function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type==='video'?svgIcon('video',18):a.type==='image'?svgIcon('media',18):svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${svgIcon('plus',14)}<span>${tr('add')}</span></button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
+function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type==='video'?svgIcon('video',18):a.type==='image'?svgIcon('media',18):svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><div class="media-actions"><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${svgIcon('plus',14)}<span>${tr('add')}</span></button>${a.type!=='audio'?`<button class="media-action overlay-add" data-action="add-overlay" data-id="${a.id}">${svgIcon('copy',14)}<span>${state.language==='el'?'Overlay':'Overlay'}</span></button>`:''}</div></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
 function textPanel(showAdd=true){const t=selectedText();return `<div class="panel-grid">${showAdd?`<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>${svgIcon('effects',17)}</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>`:''}${t?`<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight==600?'selected':''}>600</option><option ${t.weight==700?'selected':''}>700</option><option ${t.weight==800?'selected':''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color,'#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background,'#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation==='none'?'selected':''}>${tr('none')}</option><option value="fade" ${t.animation==='fade'?'selected':''}>Fade</option><option value="pop" ${t.animation==='pop'?'selected':''}>Pop</option><option value="slide" ${t.animation==='slide'?'selected':''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x',t.x,0,1,.01,true,'text')}${rangeField('y',t.y,0,1,.01,true,'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>`:''}</div>`}
 function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
 function audioPanel(){
@@ -1152,31 +1258,44 @@ function audioClipPanel(){
 
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
 function editPanel(){
-  const c=selectedClip(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
+  const c=selectedVisual(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
   return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy',19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left',19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right',19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash',19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,8,.05,true,'clip')}${a?.type==='video'?`${rangeField('volume',c.volume,0,1,.01,true,'clip')}${rangeField('audioFadeIn',c.audioFadeIn||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}${rangeField('audioFadeOut',c.audioFadeOut||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}`:''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
 }
 function effectsPanel(){
-  const c=selectedClip(); if(!c)return effectsEmpty()
+  const c=selectedVisual(); if(!c)return effectsEmpty()
   const presets=['original','vivid','warm','cool','cinematic','film','dream','crisp','retro','soft','neon','matte','sunset','ice','noir','mono','tealorange','bleach','rose','forest','gold','highkey','lowkey','cyber']
   return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')],['driftup',tr('driftUp')],['driftdown',tr('driftDown')],['spin',tr('spin')],['bounce',tr('bounce')],['swing',tr('swing')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
 }
 function motionGlyph(v){const m={none:'circle',zoom:'zoomin',zoomout:'zoomout',kenburns:'expand',panleft:'left',panright:'right',pulse:'circle',float:'movevertical',shake:'movehorizontal',driftup:'movevertical',driftdown:'movevertical',spin:'rotate',bounce:'movevertical',swing:'rotate'};return svgIcon(m[v]||'effects',20)}
 function adjustPanel(){
-  const c=selectedClip(); if(!c)return effectsEmpty()
+  const c=selectedVisual(); if(!c)return effectsEmpty()
   const defs={brightness:[50,150,1],exposure:[-50,50,1],contrast:[50,160,1],saturation:[0,200,1],temperature:[-50,50,1],vignette:[0,100,1],grain:[0,100,1],hue:[-180,180,1],blur:[0,8,.1],grayscale:[0,100,1],sepia:[0,100,1],invert:[0,100,1],opacity:[0,1,.01]}
   const key=defs[state.adjustKey]?state.adjustKey:'brightness', [min,max,step]=defs[key], value=c[key]??(key==='opacity'?1:0)
   return `<div class="adjust-mobile"><div class="adjust-grid">${Object.keys(defs).map(k=>`<button class="adjust-tile ${key===k?'active':''}" data-action="adjust-select" data-key="${k}"><span>${adjustGlyph(k)}</span><strong>${tr(k)}</strong><small>${Number(c[k]??0).toFixed(step<1?1:0)}</small></button>`).join('')}</div><div class="adjust-focus"><div class="adjust-focus-head"><strong>${tr(key)}</strong><button data-action="reset-adjustment" data-key="${key}">${tr('reset')}</button></div>${rangeField(key,value,min,max,step,true,'clip')}</div></div>`
 }
 function adjustGlyph(k){const m={brightness:'sun',exposure:'half',contrast:'half',saturation:'droplet',temperature:'thermo',vignette:'circle',grain:'grain',hue:'palette',blur:'droplet',grayscale:'half',sepia:'palette',invert:'half',opacity:'circle'};return svgIcon(m[k]||'adjust',19)}
 function transitionPanel(){
-  const c=selectedClip(); if(!c)return effectsEmpty()
+  const c=selectedClip(); if(!c)return `<div class="empty-state"><b>${state.language==='el'?'Μεταβάσεις V1':'V1 transitions'}</b><span>${state.language==='el'?'Οι μεταβάσεις εφαρμόζονται ανάμεσα στα κύρια clips της V1.':'Transitions are applied between primary V1 clips.'}</span></div>`
   const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')],['slideup',tr('slideUp')],['slidedown',tr('slideDown')],['spin',tr('spin')],['dipblack',tr('dipBlack')],['dipwhite',tr('dipWhite')]]
-  return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v,l])=>`<button class="transition-card ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b></span><strong>${l}</strong></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration',c.transitionDuration,.1,1.5,.05,true,'clip')}</div></div>`
+  return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v,l])=>`<button class="transition-card ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b><em>${svgIcon(v==='zoom'?'zoomin':v==='spin'?'rotate':v.includes('slide')?'right':v==='flash'?'sun':v==='blur'?'droplet':'transition',18)}</em></span><strong>${l}</strong><small>${c.transition===v?(state.language==='el'?'Επιλεγμένο':'Selected'):''}</small></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration',c.transitionDuration,.1,1.5,.05,true,'clip')}</div></div>`
 }
-function clipPanel(){const c=selectedClip();if(!c)return effectsEmpty();return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}${rangeField('invert',c.invert||0,0,100,1,false,'clip')}</div>${transitionPanel()}</div>`}
+const ELEMENT_PRESETS=[
+  {kind:'subscribe',name:'Subscribe',icon:'play',color:'#ff2d2d'},
+  {kind:'like',name:'Like',icon:'effects',color:'#2455F5'},
+  {kind:'bell',name:'Bell',icon:'audio',color:'#f5b82e'},
+  {kind:'lowerthird',name:'Lower third',icon:'text',color:'#2455F5'},
+  {kind:'arrow',name:'Arrow',icon:'right',color:'#F7DCFF'},
+  {kind:'circle',name:'Highlight',icon:'circle',color:'#ff4e67'},
+  {kind:'label',name:'NEW',icon:'text',color:'#7c5cff'}
+]
+const EMOJI_PRESETS=['🔥','✨','❤️','🚀','⭐','👀','💯','🎉','👍','👏','😍','😎','😂','🤯','✅','❌','⚡','💡','🎮','🎬','🎵','📌','👉','⬇️']
+function addElement(kind){const isEmoji=String(kind).startsWith('emoji:');const preset=isEmoji?{kind:'emoji',name:String(kind).slice(6)||'✨',color:'#ffffff'}:(ELEMENT_PRESETS.find(x=>x.kind===kind)||ELEMENT_PRESETS[0]);const dur=Math.max(3,Math.min(6,visualDuration()||3)),item={id:uid(),kind:preset.kind,label:isEmoji?preset.name:(preset.name==='Subscribe'?'SUBSCRIBE':preset.name),timelineStart:Math.max(0,state.currentTime||0),duration:Math.min(dur,Math.max(1,(visualDuration()||dur)-(state.currentTime||0))||dur),x:.5,y:preset.kind==='lowerthird'?.8:.5,scale:isEmoji?.9:1,rotation:0,opacity:1,color:preset.color,z:20};mutate(p=>{p.elements.push(item);state.selected={type:'element',id:item.id};state.tool='elements';state.sheet=isMobileViewport()?'elements':null})}
+function elementPanel(){const selected=selectedElement();return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language==='el'?'Creator στοιχεία':'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e=>`<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon,20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>Stickers</h3><div class="emoji-library">${EMOJI_PRESETS.map(e=>`<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div><p class="helper">${state.language==='el'?'Μπορείς επίσης να κάνεις import PNG, JPG, WebP ή GIF και να το προσθέσεις ως overlay.':'You can also import PNG, JPG, WebP or GIF and add it as an overlay.'}</p></div>${selected?`<div class="panel-section"><h3>${state.language==='el'?'Επιλεγμένο στοιχείο':'Selected element'}</h3>${rangeField('scale',selected.scale,.2,3,.01,true,'element')}${rangeField('rotation',selected.rotation,-180,180,1,true,'element')}${rangeField('opacity',selected.opacity,0,1,.01,true,'element')}${selected.kind!=='emoji'?`<label class="field"><span>${state.language==='el'?'Χρώμα':'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color,'#2455F5')}"></label>`:''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>`:''}</div>`}
+
+function clipPanel(){const c=selectedVisual();if(!c)return effectsEmpty();return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}${rangeField('invert',c.invert||0,0,100,1,false,'clip')}</div>${transitionPanel()}</div>`}
 function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)',neon:'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)',matte:'filter:saturate(.8) contrast(.86) brightness(1.07)',sunset:'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)',ice:'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)',noir:'filter:grayscale(1) contrast(1.45) brightness(.96)',tealorange:'filter:saturate(1.22) contrast(1.2) hue-rotate(-16deg)',bleach:'filter:saturate(.62) contrast(1.34) brightness(1.1)',rose:'filter:saturate(1.18) sepia(.12) hue-rotate(-12deg)',forest:'filter:saturate(1.08) hue-rotate(18deg) contrast(1.12)',gold:'filter:sepia(.18) saturate(1.16) brightness(1.05)',highkey:'filter:brightness(1.18) contrast(.88)',lowkey:'filter:brightness(.82) contrast(1.36)',cyber:'filter:saturate(1.7) contrast(1.32) hue-rotate(28deg)'};return f[n]||''}
 function rangeField(key,value,min,max,step,show,scope){return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show?Number(value).toFixed(step<1?2:0):Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`}
-function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9','9:16','1:1','4:5'].map(r=>`<button class="format-btn ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
+function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="canvas-ratio-grid">${[['16:9','Landscape'],['9:16','Vertical'],['1:1','Square'],['4:5','Portrait']].map(([r,label])=>`<button class="canvas-ratio-card ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}"><span class="ratio-shape ratio-${r.replace(':','-')}"></span><strong>${r}</strong><small>${label}</small></button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
 
 function snapTime(value){if(!state.preferences.snap)return Math.max(0,value);const step=.25;return Math.max(0,Math.round(value/step)*step)}
 function bindTimelineInteractions(){
@@ -1224,6 +1343,41 @@ function bindTimelineInteractions(){
     },{passive:false})
   })
 
+  $$('.timeline-element').forEach(el=>{
+    el.addEventListener('pointerdown',e=>{
+      if(e.button!==undefined&&e.pointerType==='mouse'&&e.button!==0)return
+      const item=state.project?.elements?.find(c=>c.id===el.dataset.id);if(!item)return
+      e.preventDefault();e.stopPropagation();const startX=e.clientX,original=item.timelineStart||0;let moved=false,lastX=startX
+      el.setPointerCapture?.(e.pointerId);el.classList.add('dragging')
+      const move=ev=>{if(ev.pointerId!==e.pointerId)return;ev.preventDefault();lastX=ev.clientX;if(Math.abs(lastX-startX)>2)moved=true;const next=Math.max(0,original+(lastX-startX)/state.pxPerSec);el.style.left=`${next*state.pxPerSec}px`}
+      const finish=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);el.classList.remove('dragging');if(moved){pushHistory();item.timelineStart=snapTime(original+(lastX-startX)/state.pxPerSec);state.project.updatedAt=Date.now();queueSave();renderEditor()}}
+      window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',finish,{passive:false});window.addEventListener('pointercancel',finish,{passive:false})
+    },{passive:false})
+  })
+
+  $$('.timeline-overlay').forEach(el=>{
+    el.addEventListener('pointerdown',e=>{
+      if(e.button!==undefined&&e.pointerType==='mouse'&&e.button!==0)return
+      const clip=state.project?.overlays?.find(c=>c.id===el.dataset.id);if(!clip)return
+      e.preventDefault();e.stopPropagation();const startX=e.clientX,original=clip.timelineStart||0;let moved=false,lastX=startX,lastY=e.clientY
+      el.setPointerCapture?.(e.pointerId);el.classList.add('dragging')
+      const move=ev=>{if(ev.pointerId!==e.pointerId)return;ev.preventDefault();lastX=ev.clientX;lastY=ev.clientY;if(Math.abs(lastX-startX)>2)moved=true;const next=Math.max(0,original+(lastX-startX)/state.pxPerSec);el.style.left=`${next*state.pxPerSec}px`;const r=scroll.getBoundingClientRect(),edge=42;if(lastX<r.left+edge)scroll.scrollLeft=Math.max(0,scroll.scrollLeft-8);else if(lastX>r.right-edge)scroll.scrollLeft+=8;$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));document.elementFromPoint(lastX,lastY)?.closest('.overlay-row')?.classList.add('drop-target')}
+      const finish=ev=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);el.classList.remove('dragging');$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));if(moved){const target=document.elementFromPoint(lastX,lastY)?.closest('.overlay-row');pushHistory();clip.timelineStart=snapTime(original+(lastX-startX)/state.pxPerSec);if(target)clip.lane=+target.dataset.lane||clip.lane;state.project.updatedAt=Date.now();queueSave();renderEditor()}}
+      window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',finish,{passive:false});window.addEventListener('pointercancel',finish,{passive:false})
+    },{passive:false})
+  })
+
+  // On touch, dragging a V1 clip onto V2/V3 converts it into a simultaneous overlay.
+  $$('.timeline-clip').forEach(el=>{el.addEventListener('pointerdown',e=>{
+    if(!isMobileViewport()||e.target.closest('.timeline-transition'))return
+    const clip=state.project?.clips.find(c=>c.id===el.dataset.id);if(!clip)return
+    const sx=e.clientX,sy=e.clientY;let active=false,last={x:sx,y:sy},ghost=null
+    const clean=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);ghost?.remove();$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'))}
+    const move=ev=>{if(ev.pointerId!==e.pointerId)return;last={x:ev.clientX,y:ev.clientY};if(!active&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>10){active=true;ghost=document.createElement('div');ghost.className='asset-drag-ghost video';ghost.innerHTML=`${svgIcon('video',17)}<span>${escapeHtml(getAsset(clip.assetId)?.name||'Video')}</span>`;document.body.append(ghost)}if(!active)return;ev.preventDefault();ghost.style.transform=`translate3d(${ev.clientX+10}px,${ev.clientY-24}px,0)`;$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.overlay-row')?.classList.add('drop-target')}
+    const up=ev=>{if(active){ev.preventDefault();const target=document.elementFromPoint(last.x,last.y)?.closest('.overlay-row');if(target){const lane=+target.dataset.lane||2,track=target.querySelector('.timeline-overlay-row'),rect=track?.getBoundingClientRect(),at=rect?snapTime(Math.max(0,(last.x-rect.left)/state.pxPerSec)):state.currentTime;mutate(p=>{const idx=p.clips.findIndex(c=>c.id===clip.id);if(idx>=0)p.clips.splice(idx,1);const converted={...clip,id:uid(),timelineStart:at,lane,fit:'contain',scale:Math.min(.55,clip.scale||.38),volume:0,transition:'none'};p.overlays.push(converted);state.selected={type:'overlay',id:converted.id}})}}clean()}
+    window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',up,{passive:false});window.addEventListener('pointercancel',up,{passive:false})
+  },{passive:false})})
+
   $$('.timeline-clip').forEach(el=>{el.draggable=!isMobileViewport();el.addEventListener('dragstart',e=>{e.dataTransfer?.setData('text/edituno-clip',el.dataset.id);el.classList.add('dragging')});el.addEventListener('dragend',()=>el.classList.remove('dragging'));el.addEventListener('dragover',e=>e.preventDefault());el.addEventListener('drop',e=>{e.preventDefault();const source=e.dataTransfer?.getData('text/edituno-clip'),target=el.dataset.id;if(!source||!target||source===target)return;mutate(p=>{const from=p.clips.findIndex(c=>c.id===source),to=p.clips.findIndex(c=>c.id===target);if(from<0||to<0)return;const [clip]=p.clips.splice(from,1);p.clips.splice(to,0,clip);state.selected={type:'clip',id:clip.id}})})})
 
   bindAssetDragInteractions()
@@ -1259,13 +1413,13 @@ function bindAssetDragInteractions(){
         ev.preventDefault()
         ghost.style.transform=`translate3d(${ev.clientX+10}px,${ev.clientY-24}px,0)`
         $$('.track-row.drop-target').forEach(x=>x.classList.remove('drop-target'))
-        const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(type==='audio'?'.audio-row':'.video-row')
+        const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(type==='audio'?'.audio-row':'.video-row,.overlay-row')
         target?.classList.add('drop-target')
       }
       const up=ev=>{
         if(active){
           ev.preventDefault()
-          const target=document.elementFromPoint(last.x,last.y)?.closest(type==='audio'?'.audio-row':'.video-row')
+          const target=document.elementFromPoint(last.x,last.y)?.closest(type==='audio'?'.audio-row':'.video-row,.overlay-row')
           $$('.track-row.drop-target').forEach(x=>x.classList.remove('drop-target'))
           if(target){
             if(type==='audio'){
@@ -1275,7 +1429,8 @@ function bindAssetDragInteractions(){
               addAudioToTimeline(id,at)
             } else {
               state.sheet=null
-              addAssetToTimeline(id)
+              if(target.classList.contains('overlay-row')){const track=target.querySelector('.timeline-overlay-row'),rect=track?.getBoundingClientRect(),at=rect?snapTime(Math.max(0,(last.x-rect.left)/state.pxPerSec)):state.currentTime;addAssetToOverlay(id,at,+target.dataset.lane||2)}
+              else addAssetToTimeline(id)
             }
           }
         }
@@ -1316,7 +1471,7 @@ async function scheduleAudioTracks(project,audioContext,dest){
 }
 
 async function exportProjectLocal(quality,fps,onProgress,signal) {
-  const project=state.project; if(!project?.clips.length)throw new Error('empty')
+  const project=state.project; if(!project||(project.clips?.length||0)+(project.overlays?.length||0)+(project.elements?.length||0)===0)throw new Error('empty')
   const [w,h]=exportDimensions(project.ratio,quality),canvas=document.createElement('canvas');canvas.width=w;canvas.height=h
   const ctx=canvas.getContext('2d',{alpha:false}), stream=canvas.captureStream(fps)
   const audioContext=new AudioContext(), dest=audioContext.createMediaStreamDestination(); const atrack=dest.stream.getAudioTracks()[0]; if(atrack)stream.addTrack(atrack)
@@ -1331,13 +1486,13 @@ async function exportProjectLocal(quality,fps,onProgress,signal) {
       if(asset.type==='video'){
         const v=document.createElement('video');v.src=url;v.playsInline=true;v.preload='auto';await waitLoaded(v);v.currentTime=Math.min(clip.start,Math.max(0,(v.duration||asset.duration)-.03));await waitSeek(v);v.playbackRate=clamp(clip.speed,.25,4)
         const src=audioContext.createMediaElementSource(v),gain=audioContext.createGain(),now=audioContext.currentTime,clipVol=clamp(clip.volume,0,1),fi=Math.min(clip.audioFadeIn||0,dur/2),fo=Math.min(clip.audioFadeOut||0,dur/2);gain.gain.setValueAtTime(fi?0:clipVol,now);if(fi)gain.gain.linearRampToValueAtTime(clipVol,now+fi);if(fo){gain.gain.setValueAtTime(clipVol,now+dur-fo);gain.gain.linearRampToValueAtTime(0,now+dur)};src.connect(gain).connect(dest);await v.play()
-        await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/dur);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
+        await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/dur);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
       } else if(asset.type==='image'){
-        const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,img,asset,row,global+elapsed,w,h,elapsed/dur);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
+        const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,img,asset,row,global+elapsed,w,h,elapsed/dur);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
       }
       global+=dur
     }
-    if(global<total){const rest=total-global;await renderSegment(rest,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)}
+    if(global<total){const rest=total-global;await renderSegment(rest,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)}
   } finally { for(const n of audioNodes||[])try{n.stop()}catch{}; if(recorder.state!=='inactive')recorder.stop(); await audioContext.close().catch(()=>{}) }
   const blob=await done;onProgress(1);return {blob,extension:mime.includes('mp4')?'mp4':'webm',mime}
 }
@@ -1406,15 +1561,19 @@ function bindGlobalEvents() {
     if(a==='mobile-hub-close'){state.projectHubOpen=false;renderEditor();return}
     if(a==='pick-media'){openMediaPicker('editor');return}
     if(a==='add-asset')return addAssetToTimeline(el.dataset.id)
+    if(a==='add-overlay')return addAssetToOverlay(el.dataset.id,state.currentTime)
     if(a==='add-audio'||a==='set-soundtrack')return addAudioToTimeline(el.dataset.id)
     if(a==='select-audio')return selectAudio(el.dataset.id)
     if(a==='select-clip')return selectClip(el.dataset.id)
+    if(a==='select-overlay')return selectOverlay(el.dataset.id)
+    if(a==='select-element')return selectElement(el.dataset.id)
+    if(a==='add-element')return addElement(el.dataset.value)
     if(a==='select-text')return selectText(el.dataset.id)
     if(a==='tool'){state.tool=el.dataset.tool;state.sheet=el.dataset.tool;renderEditor();return}
     if(a==='select-transition'){state.selected={type:'clip',id:el.dataset.id};state.tool='transitions';state.sheet='transitions';renderEditor();return}
     if(a==='timeline-zoom'){state.pxPerSec=clamp(state.pxPerSec+(+el.dataset.value)*12,24,120);state.preferences.timelineScale=state.pxPerSec;savePreferences();renderEditor();return}
     if(a==='adjust-select'){state.adjustKey=el.dataset.key;state.tool='adjust';state.sheet='adjust';renderEditor();return}
-    if(a==='reset-adjustment'){const c=selectedClip();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,opacity:1};mutate(p=>p.clips.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0);return}
+    if(a==='reset-adjustment'){const c=selectedVisual();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,opacity:1};mutate(p=>{const list=state.selected?.type==='overlay'?p.overlays:p.clips;list.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0});return}
     if(a==='sheet-close'){state.sheet=null;renderEditor();return}
     if(a==='play-toggle'){state.playing?stopPlayback():startPlayback();return}
     if(a==='jump-start'){seekTo(0);return}
@@ -1425,8 +1584,8 @@ function bindGlobalEvents() {
     if(a==='delete-selected')return deleteSelected()
     if(a==='move')return moveSelected(+el.dataset.value)
     if(a==='filter')return applyFilter(el.dataset.value)
-    if(a==='clip-set'){const c=selectedClip();if(!c)return;mutate(p=>p.clips.find(x=>x.id===c.id)[el.dataset.key]=el.dataset.value);return}
-    if(a==='clip-toggle'){const c=selectedClip();if(!c)return;mutate(p=>{const x=p.clips.find(y=>y.id===c.id);x[el.dataset.key]=!x[el.dataset.key]});return}
+    if(a==='clip-set'){const c=selectedVisual();if(!c)return;mutate(p=>{const list=state.selected?.type==='overlay'?p.overlays:p.clips;list.find(x=>x.id===c.id)[el.dataset.key]=el.dataset.value});return}
+    if(a==='clip-toggle'){const c=selectedVisual();if(!c)return;mutate(p=>{const list=state.selected?.type==='overlay'?p.overlays:p.clips;const x=list.find(y=>y.id===c.id);x[el.dataset.key]=!x[el.dataset.key]});return}
     if(a==='add-text')return addText(el.dataset.kind)
     if(a==='open-srt'){$('#subtitle-picker')?.click();return}
     if(a==='toggle-loop')return mutate(p=>p.soundtrack.loop=!p.soundtrack.loop)
@@ -1447,16 +1606,17 @@ function bindGlobalEvents() {
     const el=e.target
     if(el.id==='seekbar'){seekTo(+el.value);return}
     if(el.id==='project-name'&&state.project){state.project.name=el.value;queueSave();return}
-    const clipKey=el.dataset.bindClip,textKey=el.dataset.bindText,audioKey=el.dataset.bindAudio,projectKey=el.dataset.bindProject,prefKey=el.dataset.pref
+    const clipKey=el.dataset.bindClip,textKey=el.dataset.bindText,audioKey=el.dataset.bindAudio,elementKey=el.dataset.bindElement,projectKey=el.dataset.bindProject,prefKey=el.dataset.pref
     if(prefKey){let val=(el.type==='range'||el.type==='number'||el.tagName==='SELECT'&&/^\d/.test(el.value))?+el.value:el.value;state.preferences[prefKey]=val;if(prefKey==='timelineScale')state.pxPerSec=+val;savePreferences();if(state.view==='editor'){fitPreviewFrame();if(prefKey==='timelineScale'||prefKey==='showWaveforms')renderEditor()}return}
-    if(clipKey){const c=selectedClip();if(!c)return;const val=el.type==='range'||el.type==='number'?+el.value:el.value;const obj=state.project.clips.find(x=>x.id===c.id);obj[clipKey]=val;if(clipKey==='start')obj.start=Math.min(obj.start,obj.end-.05);if(clipKey==='end')obj.end=Math.max(obj.end,obj.start+.05);queueSave();drawPreview();updateRangeLabel(el);return}
+    if(clipKey){const c=selectedVisual();if(!c)return;const val=el.type==='range'||el.type==='number'?+el.value:el.value;const list=state.selected?.type==='overlay'?state.project.overlays:state.project.clips;const obj=list.find(x=>x.id===c.id);obj[clipKey]=val;if(clipKey==='start')obj.start=Math.min(obj.start,obj.end-.05);if(clipKey==='end')obj.end=Math.max(obj.end,obj.start+.05);queueSave();drawPreview();updateRangeLabel(el);return}
     if(textKey){const t=selectedText();if(!t)return;let val=(el.type==='range'||el.type==='number')?+el.value:el.value;if(textKey==='weight')val=+val;const obj=state.project.texts.find(x=>x.id===t.id);obj[textKey]=val;if(textKey==='start')obj.start=Math.max(0,Math.min(obj.start,obj.end-.05));if(textKey==='end')obj.end=Math.max(obj.end,obj.start+.05);queueSave();drawPreview();updateRangeLabel(el);return}
     if(audioKey){const c=selectedAudio();if(!c)return;let val=(el.type==='range'||el.type==='number'||el.tagName==='SELECT')?+el.value:el.value;const obj=state.project.audioClips.find(x=>x.id===c.id);obj[audioKey]=val;if(audioKey==='sourceStart')obj.sourceStart=Math.max(0,Math.min(obj.sourceStart,obj.sourceEnd-.05));if(audioKey==='sourceEnd')obj.sourceEnd=Math.max(obj.sourceStart+.05,obj.sourceEnd);if(audioKey==='timelineStart')obj.timelineStart=snapTime(obj.timelineStart);queueSave();syncAudioTracks(true);updateRangeLabel(el);return}
+    if(elementKey){const c=selectedElement();if(!c)return;const val=el.type==='range'||el.type==='number'?+el.value:el.value;c[elementKey]=val;queueSave();drawPreview();updateRangeLabel(el);return}
     if(projectKey&&state.project){state.project[projectKey]=el.value;queueSave();drawPreview();return}
   })
   document.addEventListener('change',e=>{
     const el=e.target
-    if(el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-project]')&&state.view==='editor')setTimeout(()=>renderEditor(),0);if(el.matches('[data-pref]')){savePreferences();if(state.view==='editor')setTimeout(()=>renderEditor(),0)}
+    if(el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-element],[data-bind-project]')&&state.view==='editor')setTimeout(()=>renderEditor(),0);if(el.matches('[data-pref]')){savePreferences();if(state.view==='editor')setTimeout(()=>renderEditor(),0)}
   })
   $('#media-picker').addEventListener('change',async e=>{
     const files=[...e.target.files], context=state.mediaImportContext
@@ -1535,7 +1695,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.0.3',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.1.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

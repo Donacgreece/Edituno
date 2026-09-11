@@ -28,3 +28,5 @@ MPL obligations must be preserved for covered files.
 License: MIT.
 Use: architectural reference for a browser/mobile editor and possible isolated reusable subsystems after code-level review.
 We do not copy its product UI or branding.
+
+- Fluent Emoji (MIT): approved source for a future large built-in sticker/emoji library. Full pack is not bundled in v2.1 to keep the launch PWA small.

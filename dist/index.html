@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="Edituno" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.webmanifest?v=2.0.3" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.0.3" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.0.3" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.0.3" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.0.3" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.0.3" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.0.3" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.0.3" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.0.3" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.1.0" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.1.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.1.0" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.1.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.1.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.1.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.1.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.1.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.1.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno Studio · Video editor</title>
   <style>
 
@@ -113,7 +113,7 @@ img{display:block;max-width:100%}
 
 /* EDITOR */
 .studio-editor{height:100dvh;background:#08090D;display:grid;grid-template-rows:58px minmax(0,1fr);overflow:hidden}.editor-topbar{height:58px;border-bottom:1px solid var(--line);background:#0D0F14;display:grid;grid-template-columns:minmax(170px,1fr) minmax(220px,440px) minmax(170px,1fr);align-items:center;padding:0 12px;z-index:30}.editor-topbar-left,.editor-topbar-right{display:flex;align-items:center;gap:10px}.editor-topbar-right{justify-content:flex-end}.editor-brand .logo-img{width:27px;height:27px;border-radius:8px}.editor-brand .logo-lockup{font-size:13px;gap:8px}.project-title-shell{justify-self:center;width:min(100%,420px);position:relative}.project-title{width:100%;height:36px;border:0;background:transparent;text-align:center;font-weight:560;font-size:13px;color:#E9EBEF;border-radius:9px;padding:0 70px}.project-title:hover,.project-title:focus{background:rgba(255,255,255,.04)}.save-chip{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:9px;color:var(--muted-2);pointer-events:none}.export-pill{min-height:34px;height:34px;border-radius:10px;padding:0 12px;font-size:11px}.editor-workspace{min-height:0;display:grid;grid-template-columns:250px minmax(0,1fr) 290px;grid-template-rows:minmax(0,1fr);overflow:hidden}.asset-browser,.inspector-panel{min-width:0;background:#0D0F14;overflow:auto;scrollbar-width:thin}.asset-browser{border-right:1px solid var(--line)}.inspector-panel{border-left:1px solid var(--line)}.panel-top{height:58px;padding:12px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:4px;position:sticky;top:0;background:#0D0F14;z-index:2}.panel-top strong{font-size:12px;font-weight:600}.editor-center{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(260px,1fr) 270px;background:#090A0E}.viewer-shell{min-height:0;display:grid;grid-template-rows:42px minmax(0,1fr) 48px;overflow:hidden}.viewer-toolbar{display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.04);background:#0A0C10}.viewer-toolbar>div{display:flex;align-items:center;gap:8px}.viewer-ratio,.viewer-quality{font-size:10px;color:var(--muted);background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:8px;padding:4px 7px}.viewer-quality{text-transform:capitalize}.viewer-actions button,.timeline-actions button{height:28px;min-width:28px;border-radius:8px;background:transparent;color:#8E95A2;display:inline-flex;align-items:center;justify-content:center;gap:6px}.viewer-actions button:hover,.timeline-actions button:hover{background:rgba(255,255,255,.055);color:white}.preview-zone{min-height:0;display:grid;place-items:center;padding:18px;overflow:hidden;background:radial-gradient(circle at 50% 45%,#141721 0,#0B0D12 56%,#08090D 100%)}.preview-wrap{display:grid;place-items:center;max-width:100%;max-height:100%}.preview-frame{position:relative;display:grid;place-items:center;background:#000;border:1px solid rgba(255,255,255,.08);box-shadow:0 28px 60px rgba(0,0,0,.38);overflow:hidden}.preview-frame canvas{display:block;max-width:100%;max-height:100%}.preview-interaction-layer{position:absolute;inset:0;z-index:6;touch-action:none;cursor:default;pointer-events:none}.preview-interaction-layer.active{pointer-events:auto}.preview-interaction-layer.active{cursor:move}.preview-interaction-layer.active:after{content:"";position:absolute;inset:3px;border:1px solid rgba(111,141,255,.72);pointer-events:none}.preview-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#676D78;text-align:center}.preview-empty.hidden{display:none}.preview-empty>span{width:42px;height:42px;border-radius:13px;background:#11141A;display:grid;place-items:center}.preview-empty strong{font-size:12px;color:#BFC4CD;font-weight:550}.preview-empty small{font-size:10px}.viewer-add{margin-top:5px;min-height:32px;height:32px;font-size:10px}.transport-bar{display:grid;grid-template-columns:32px 38px auto minmax(100px,320px);gap:8px;align-items:center;justify-content:center;padding:0 14px;border-top:1px solid var(--line);background:#0B0D12}.transport-btn,.transport-play{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:transparent;color:#B0B5BF}.transport-play{width:36px;height:36px;background:#F2F3F5;color:#0A0C11;border-radius:50%}.timecode{font-family:"SF Mono","Cascadia Mono",ui-monospace,monospace;font-size:10px;color:#A4A9B3;white-space:nowrap}.timecode i{color:#4E535E;font-style:normal}.viewer-seek{width:100%}
-.timeline-shell{min-height:0;border-top:1px solid var(--line);background:#0C0E13;display:grid;grid-template-rows:40px minmax(0,1fr)}.timeline-header{display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--line)}.timeline-header>div{display:flex;align-items:center;gap:8px}.timeline-header strong{font-size:11px;font-weight:600}.timeline-header span{font-size:9px;color:var(--muted)}.timeline-actions{display:flex;gap:3px}.timeline-scroll{overflow:auto;min-height:0;background:#0A0C10;scrollbar-width:thin}.timeline-canvas{position:relative;min-height:202px;padding-top:28px}.timeline-ruler{height:24px;position:absolute;top:0;left:42px;right:0;border-bottom:1px solid var(--line)}.timeline-ruler span{position:absolute;top:7px;font-size:8px;color:#555B66;transform:translateX(-50%)}.track-row{min-height:56px;display:grid;grid-template-columns:42px 1fr;border-bottom:1px solid rgba(255,255,255,.04)}.track-label{display:flex;align-items:center;justify-content:center;font-size:9px;color:#5C626D;border-right:1px solid var(--line);position:sticky;left:0;background:#0B0D12;z-index:4}.timeline-track,.timeline-audio-row,.timeline-text-row{position:relative;min-height:56px;display:flex;align-items:center}.timeline-audio-row,.timeline-text-row{display:block}.timeline-clip-wrap{height:42px;position:relative;flex:none;margin-right:2px}.timeline-clip{width:100%;height:42px;border-radius:7px;background:linear-gradient(180deg,#263D80,#1D2F62);border:1px solid rgba(102,136,255,.24);color:#EAF0FF;padding:6px 8px;text-align:left;overflow:hidden}.timeline-clip.image{background:linear-gradient(180deg,#5E4270,#463353)}.timeline-clip.selected,.timeline-audio.selected,.timeline-text.selected{box-shadow:0 0 0 1.5px #7D9AFF inset,0 0 0 1px rgba(125,154,255,.35)}.timeline-clip strong{display:block;font-size:9px;font-weight:580;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.timeline-clip small{display:block;font-size:8px;color:#B9C7F2;margin-top:3px}.timeline-transition{position:absolute;right:-14px;top:7px;z-index:8;width:28px;height:28px;border-radius:9px;background:#171B23;border:1px solid rgba(255,255,255,.14);color:#A9B0BC;display:grid;place-items:center;padding:0;box-shadow:0 4px 14px rgba(0,0,0,.28)}.timeline-transition .ui-icon{display:block;width:14px;height:14px;margin:auto}.timeline-transition:active{transform:scale(.94)}.timeline-transition.active{background:var(--brand);color:white;border-color:transparent}.timeline-audio,.timeline-text{position:absolute;top:7px;height:42px;border-radius:7px;overflow:hidden;text-align:left;padding:5px 7px;color:#DFF8ED}.timeline-audio{background:linear-gradient(180deg,#173D35,#123129);border:1px solid rgba(72,213,151,.2);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}.timeline-audio.dragging{cursor:grabbing;z-index:20;box-shadow:0 0 0 1.5px #63D9A8 inset,0 12px 26px rgba(0,0,0,.32)}.timeline-text{background:#272235;border:1px solid rgba(247,220,255,.12);color:#F3E9F7}.timeline-audio strong,.timeline-text{font-size:8px;font-weight:570}.timeline-audio small{font-size:7px;opacity:.7}.audio-wave{position:absolute;inset:0;display:flex;align-items:center;gap:1px;opacity:.18}.audio-wave i{width:2px;background:#7BE0B5;border-radius:2px}.timeline-empty-add{height:36px;margin:10px;border-radius:9px;padding:0 12px;background:rgba(255,255,255,.045);border:1px dashed rgba(255,255,255,.12);color:#868C98;display:flex;align-items:center;gap:7px;font-size:10px}.playhead{position:absolute;top:0;bottom:0;width:1px;background:#FF5D69;z-index:12;pointer-events:none}.playhead i{position:absolute;top:0;left:-4px;width:9px;height:9px;background:#FF5D69;border-radius:3px}
+.timeline-shell{min-height:0;border-top:1px solid var(--line);background:#0C0E13;display:grid;grid-template-rows:40px minmax(0,1fr)}.timeline-header{display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--line)}.timeline-header>div{display:flex;align-items:center;gap:8px}.timeline-header strong{font-size:11px;font-weight:600}.timeline-header span{font-size:9px;color:var(--muted)}.timeline-actions{display:flex;gap:3px}.timeline-scroll{overflow:auto;min-height:0;background:#0A0C10;scrollbar-width:thin}.timeline-canvas{position:relative;min-height:364px;padding-top:28px}.timeline-ruler{height:24px;position:absolute;top:0;left:42px;right:0;border-bottom:1px solid var(--line)}.timeline-ruler span{position:absolute;top:7px;font-size:8px;color:#555B66;transform:translateX(-50%)}.track-row{min-height:56px;display:grid;grid-template-columns:42px 1fr;border-bottom:1px solid rgba(255,255,255,.04)}.track-label{display:flex;align-items:center;justify-content:center;font-size:9px;color:#5C626D;border-right:1px solid var(--line);position:sticky;left:0;background:#0B0D12;z-index:4}.timeline-track,.timeline-audio-row,.timeline-text-row{position:relative;min-height:56px;display:flex;align-items:center}.timeline-audio-row,.timeline-text-row{display:block}.timeline-clip-wrap{height:42px;position:relative;flex:none;margin-right:2px}.timeline-clip{width:100%;height:42px;border-radius:7px;background:linear-gradient(180deg,#263D80,#1D2F62);border:1px solid rgba(102,136,255,.24);color:#EAF0FF;padding:6px 8px;text-align:left;overflow:hidden}.timeline-clip.image{background:linear-gradient(180deg,#5E4270,#463353)}.timeline-clip.selected,.timeline-audio.selected,.timeline-text.selected{box-shadow:0 0 0 1.5px #7D9AFF inset,0 0 0 1px rgba(125,154,255,.35)}.timeline-clip strong{display:block;font-size:9px;font-weight:580;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.timeline-clip small{display:block;font-size:8px;color:#B9C7F2;margin-top:3px}.timeline-transition{position:absolute;right:-14px;top:7px;z-index:8;width:28px;height:28px;border-radius:9px;background:#171B23;border:1px solid rgba(255,255,255,.14);color:#A9B0BC;display:grid;place-items:center;padding:0;box-shadow:0 4px 14px rgba(0,0,0,.28)}.timeline-transition .ui-icon{display:block;width:14px;height:14px;margin:auto}.timeline-transition:active{transform:scale(.94)}.timeline-transition.active{background:var(--brand);color:white;border-color:transparent}.timeline-audio,.timeline-text{position:absolute;top:7px;height:42px;border-radius:7px;overflow:hidden;text-align:left;padding:5px 7px;color:#DFF8ED}.timeline-audio{background:linear-gradient(180deg,#173D35,#123129);border:1px solid rgba(72,213,151,.2);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}.timeline-audio.dragging{cursor:grabbing;z-index:20;box-shadow:0 0 0 1.5px #63D9A8 inset,0 12px 26px rgba(0,0,0,.32)}.timeline-text{background:#272235;border:1px solid rgba(247,220,255,.12);color:#F3E9F7}.timeline-audio strong,.timeline-text{font-size:8px;font-weight:570}.timeline-audio small{font-size:7px;opacity:.7}.audio-wave{position:absolute;inset:0;display:flex;align-items:center;gap:1px;opacity:.18}.audio-wave i{width:2px;background:#7BE0B5;border-radius:2px}.timeline-empty-add{height:36px;margin:10px;border-radius:9px;padding:0 12px;background:rgba(255,255,255,.045);border:1px dashed rgba(255,255,255,.12);color:#868C98;display:flex;align-items:center;gap:7px;font-size:10px}.playhead{position:absolute;top:0;bottom:0;width:1px;background:#FF5D69;z-index:12;pointer-events:none}.playhead i{position:absolute;top:0;left:-4px;width:9px;height:9px;background:#FF5D69;border-radius:3px}
 .desktop-tool-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:10px}.desktop-tool-tabs button{height:34px;border-radius:9px;background:#14171E;color:#7E8490;display:flex;align-items:center;justify-content:center;gap:5px;font-size:9px;border:1px solid var(--line)}.desktop-tool-tabs button.active{background:#1D2230;color:white}.panel-grid{display:grid;gap:10px;padding:10px}.panel-section{background:#11141A;border:1px solid var(--line);border-radius:12px;padding:11px;display:grid;gap:10px}.panel-section.soft{background:#0F1116}.panel-section h3{font-size:10px;font-weight:620;color:#B6BBC5;margin:0;text-transform:uppercase;letter-spacing:.07em}.helper{font-size:10px;color:var(--muted);margin:0}.field-grid{display:grid;gap:9px}.field-grid.two,.format-grid,.settings-two{grid-template-columns:1fr 1fr}.format-grid{gap:10px}.field{display:grid;gap:6px;min-width:0}.field>span{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#8F95A0}.field b{font-size:9px;color:#666D78;font-weight:500}.field input[type=number],.field textarea,.field select,.field input[type=color],.settings-select select{width:100%;border-radius:9px;border:1px solid var(--line);background:#0A0C10;color:#DDE0E6;min-height:34px;padding:0 9px}.field textarea{min-height:70px;padding-top:8px;resize:vertical}.field input[type=color]{padding:4px}.field input[type=range],.setting-slider input[type=range],.viewer-seek{accent-color:var(--brand)}.format-btn{min-height:42px;border-radius:12px;background:#0B0D12;border:1px solid var(--line);color:#A4AAB5;font-size:11px;font-weight:560;display:flex;align-items:center;justify-content:center;padding:0 10px}.format-btn.active{background:#202538;color:white;border-color:#43558F}.media-list{display:grid;gap:6px}.media-row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:8px;padding:6px;border-radius:10px;background:#101318;border:1px solid var(--line)}.media-type{width:34px;height:34px;border-radius:9px;background:#191D26;display:grid;place-items:center;color:#8B93A1}.media-copy{min-width:0;display:grid;gap:2px}.media-copy strong{font-size:10px;font-weight:560;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.media-copy span{font-size:8px;color:var(--muted)}.media-action{height:28px;border-radius:8px;background:#1A2130;color:#AFC0FF;display:flex;align-items:center;gap:4px;padding:0 8px;font-size:9px}.empty-state{min-height:88px;border:1px dashed var(--line-strong);border-radius:11px;display:grid;place-items:center;text-align:center;padding:12px;color:var(--muted);font-size:10px}.action-row,.mobile-quick-actions,.audio-actions{display:flex;gap:6px;overflow-x:auto}.sheet-action{min-width:70px;min-height:52px;border-radius:10px;background:#11141A;border:1px solid var(--line);color:#A6ACB7;display:grid;place-items:center;gap:4px;font-size:9px}.sheet-action i{font-style:normal}.sheet-action.danger{color:#FF858E}.filter-grid,.motion-grid,.adjust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.filter-card,.motion-card,.adjust-card{min-width:0;min-height:60px;border-radius:10px;background:#11141A;border:1px solid var(--line);color:#AEB4BF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:9px}.filter-card.active,.motion-card.active,.adjust-card.active{background:#1A2131;border-color:#425992;color:white}.filter-preview{width:36px;height:22px;border-radius:6px;background:linear-gradient(135deg,#F7DCFF,#2455F5)}
 
 /* sheets */
@@ -173,7 +173,7 @@ img{display:block;max-width:100%}
   .studio-home.is-mobile{position:relative;display:block;width:100%;height:100%;min-height:0;padding-bottom:0;overflow:hidden}.studio-home.is-mobile .home-surface{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden}.studio-home.is-mobile .home-main{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(94px + env(safe-area-inset-bottom))}.home-topbar{height:64px;padding:calc(env(safe-area-inset-top) + 8px) 16px 8px;box-sizing:content-box;position:sticky}.mobile-brand .logo-img{width:31px;height:31px;border-radius:9px}.mobile-brand .logo-lockup{font-size:15px;gap:8px}.home-main{width:auto;margin:0;padding:24px 16px 24px}.home-intro{display:block}.home-intro-copy .eyebrow{display:none}.home-intro h1{font-size:30px;line-height:1.05;letter-spacing:-.04em;margin:0 0 8px;font-weight:660}.home-intro p{font-size:13px;max-width:320px}.home-primary-actions{grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}.create-main,.import-main{min-height:74px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;padding:11px;border-radius:15px}.create-main>svg,.import-main>svg{display:none}.create-main-icon,.import-main-icon{width:30px;height:30px;border-radius:9px}.create-main strong,.import-main strong{font-size:12px}.create-main small,.import-main small{font-size:9px;line-height:1.2}.resume-strip{margin-top:10px}.resume-strip button{width:100%;min-height:58px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:inherit;display:grid;grid-template-columns:34px 1fr auto 16px;align-items:center;gap:9px;padding:8px 11px;text-align:left}.resume-thumb{width:34px;height:34px;border-radius:10px;background:#1A2131;color:#91A7FF;display:grid;place-items:center}.resume-copy{min-width:0;display:grid;gap:2px}.resume-copy small{font-size:9px;color:var(--muted)}.resume-copy strong{font-size:11px;font-weight:580;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.resume-meta{font-size:9px;color:#777E8A}.create-section,.projects-section{margin-top:30px}.section-heading{margin-bottom:12px;align-items:center}.section-heading h2{font-size:16px}.section-heading>span{font-size:9px}.format-gallery{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;padding-bottom:2px;margin-right:-16px;padding-right:16px;scrollbar-width:none}.format-gallery::-webkit-scrollbar{display:none}.studio-format-card{flex:0 0 132px;padding:12px;border-radius:15px;scroll-snap-align:start}.format-preview{height:80px;border-radius:11px}.format-symbol.phone{width:20px;height:36px}.format-symbol.landscape{width:39px;height:22px}.format-symbol.square{width:29px;height:29px}.format-symbol.portrait{width:24px;height:32px}.format-copy{margin-top:8px}.format-copy strong{font-size:11px}.format-copy small{font-size:9px}.studio-project-grid{grid-template-columns:1fr;gap:7px}.studio-project-card{display:grid;grid-template-columns:1fr auto;border-radius:13px}.project-card-main{display:grid;grid-template-columns:62px 1fr;align-items:center}.project-poster{width:62px;height:50px;border-radius:10px;margin:6px}.project-poster i{width:28px;height:28px;border-radius:8px}.project-poster b{font-size:7px;bottom:4px;right:5px}.project-card-copy{padding:8px 4px 8px 8px}.project-card-copy strong{font-size:11px}.project-card-copy small{font-size:9px}.project-card-more{position:static;align-self:center;margin-right:7px;width:34px;height:34px}.empty-library{min-height:74px}.mobile-dock{position:absolute;z-index:60;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%) translateZ(0);will-change:transform,opacity;transition:opacity .14s ease,transform .14s ease;width:min(270px,calc(100vw - 34px));height:58px;border-radius:18px;background:rgba(23,26,34,.88);border:1px solid rgba(255,255,255,.11);box-shadow:0 18px 50px rgba(0,0,0,.42);backdrop-filter:blur(24px);align-items:center;justify-content:space-around;padding:5px 10px}.mobile-dock button{min-width:62px;height:46px;border-radius:13px;background:transparent;color:#7D8490;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:8px}.mobile-dock button.active{color:#F3F5F8}.mobile-dock .dock-create{min-width:50px;width:50px;height:50px;margin-top:-20px;border-radius:16px;background:var(--brand);color:white;box-shadow:0 10px 26px rgba(36,85,245,.35)}.mobile-dock .dock-create span{display:grid}.home-menu-popover{top:auto;right:0;left:0;bottom:0;width:100%;border-radius:22px 22px 0 0;padding:8px 14px max(16px,env(safe-area-inset-bottom));animation:sheetUp .22s var(--ease)}@keyframes sheetUp{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}.home-menu-grabber{display:block;width:34px;height:4px;border-radius:99px;background:#484D58;margin:1px auto 9px}.home-menu-head{padding:5px 2px 11px}.home-menu-language{padding:10px 2px}.home-menu-row{min-height:56px}.settings-panel{left:0;top:auto;bottom:0;transform:none;width:100%;max-height:92dvh;border-radius:22px 22px 0 0;border-left:0;border-right:0;border-bottom:0}.settings-grabber{display:block;width:34px;height:4px;border-radius:99px;background:#474C57;margin:8px auto 0}.settings-header{height:62px}.settings-scroll{padding-bottom:max(16px,env(safe-area-inset-bottom))}.settings-split{grid-template-columns:1fr 1fr}
 
   /* mobile editor */
-  .studio-editor{position:relative;inset:auto;width:100%;height:100%;min-height:0;grid-template-rows:auto minmax(0,1fr);background:#08090D;overflow:hidden;overscroll-behavior:none}.editor-topbar{height:auto;min-height:54px;padding:calc(env(safe-area-inset-top) + 6px) 9px 6px;grid-template-columns:42px minmax(0,1fr) auto;box-sizing:content-box}.editor-topbar-left{gap:0}.project-title-shell{width:100%;justify-self:stretch}.project-title{height:36px;text-align:left;padding:0 6px;font-size:12px}.save-chip{display:none}.editor-topbar-right{gap:6px}.export-pill{height:34px;min-height:34px;padding:0 10px;border-radius:10px}.export-pill span{font-size:10px}.editor-workspace{display:block;overflow:hidden;min-height:0;height:100%;padding-bottom:calc(64px + env(safe-area-inset-bottom));overscroll-behavior:none}.editor-center{height:100%;min-height:0;display:grid;grid-template-rows:minmax(200px,44dvh) minmax(170px,1fr);overflow:hidden}.viewer-shell{grid-template-rows:34px minmax(0,1fr) 42px}.viewer-toolbar{padding:0 9px}.viewer-ratio,.viewer-quality{font-size:8px;padding:3px 6px;border-radius:7px}.viewer-actions{display:none!important}.preview-zone{padding:8px;min-height:0}.preview-frame{max-width:100%;max-height:100%;box-shadow:0 16px 34px rgba(0,0,0,.35)}.preview-interaction-layer.active:after{inset:2px}.transport-bar{grid-template-columns:30px 34px auto minmax(70px,1fr);padding:0 9px;gap:6px}.transport-btn{width:30px;height:30px}.transport-play{width:34px;height:34px}.timecode{font-size:8px}.timeline-shell{grid-template-rows:34px minmax(0,1fr)}.timeline-header{padding:0 8px}.timeline-header strong{font-size:10px}.timeline-actions button{height:26px;min-width:26px}.timeline-canvas{min-height:170px}.track-row{min-height:46px}.timeline-clip-wrap,.timeline-clip,.timeline-audio,.timeline-text{height:34px}.timeline-clip-wrap{margin-top:6px}.timeline-transition{top:3px;width:28px;height:28px}.timeline-audio,.timeline-text{top:6px}.mobile-tool-dock{position:absolute;z-index:88;left:0;right:0;bottom:0;width:100%;height:calc(64px + env(safe-area-inset-bottom));will-change:transform,opacity;transition:opacity .14s ease,transform .14s ease;background:rgba(13,15,20,.96);border-top:1px solid var(--line);padding:4px 0 env(safe-area-inset-bottom);overflow:hidden;overscroll-behavior:none;touch-action:pan-x;transform:translateZ(0);backdrop-filter:blur(22px)}.tool-scroller{width:100%;height:60px;display:flex;align-items:center;gap:2px;overflow-x:auto;overflow-y:hidden;padding:4px 8px;scrollbar-width:none;touch-action:pan-x;overscroll-behavior-x:contain;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}.tool-scroller::-webkit-scrollbar{display:none}.tool-btn{flex:0 0 58px;height:52px;scroll-snap-align:center;border-radius:12px;background:transparent;color:#777E8A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px}.tool-icon{width:28px;height:24px;display:grid;place-items:center}.tool-btn.active{background:#171B24;color:#F3F5F8}.tool-btn.active .tool-icon{color:#7E99FF}.bottom-sheet{max-height:66dvh}.sheet-content{padding-bottom:max(12px,env(safe-area-inset-bottom))}.filter-grid,.motion-grid,.adjust-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.panel-grid{padding:10px}.panel-section{padding:10px}.mobile-quick-actions{scrollbar-width:none}.sheet-action{min-width:68px}.toast-stack{left:12px;right:12px;bottom:82px}.toast{justify-self:center}
+  .studio-editor{position:relative;inset:auto;width:100%;height:100%;min-height:0;grid-template-rows:auto minmax(0,1fr);background:#08090D;overflow:hidden;overscroll-behavior:none}.editor-topbar{height:auto;min-height:54px;padding:calc(env(safe-area-inset-top) + 6px) 9px 6px;grid-template-columns:42px minmax(0,1fr) auto;box-sizing:content-box}.editor-topbar-left{gap:0}.project-title-shell{width:100%;justify-self:stretch}.project-title{height:36px;text-align:left;padding:0 6px;font-size:12px}.save-chip{display:none}.editor-topbar-right{gap:6px}.export-pill{height:34px;min-height:34px;padding:0 10px;border-radius:10px}.export-pill span{font-size:10px}.editor-workspace{display:block;overflow:hidden;min-height:0;height:100%;padding-bottom:calc(64px + env(safe-area-inset-bottom));overscroll-behavior:none}.editor-center{height:100%;min-height:0;display:grid;grid-template-rows:minmax(200px,44dvh) minmax(170px,1fr);overflow:hidden}.viewer-shell{grid-template-rows:34px minmax(0,1fr) 42px}.viewer-toolbar{padding:0 9px}.viewer-ratio,.viewer-quality{font-size:8px;padding:3px 6px;border-radius:7px}.viewer-actions{display:none!important}.preview-zone{padding:8px;min-height:0}.preview-frame{max-width:100%;max-height:100%;box-shadow:0 16px 34px rgba(0,0,0,.35)}.preview-interaction-layer.active:after{inset:2px}.transport-bar{grid-template-columns:30px 34px auto minmax(70px,1fr);padding:0 9px;gap:6px}.transport-btn{width:30px;height:30px}.transport-play{width:34px;height:34px}.timecode{font-size:8px}.timeline-shell{grid-template-rows:34px minmax(0,1fr)}.timeline-header{padding:0 8px}.timeline-header strong{font-size:10px}.timeline-actions button{height:26px;min-width:26px}.timeline-canvas{min-height:318px}.track-row{min-height:46px}.timeline-clip-wrap,.timeline-clip,.timeline-audio,.timeline-text{height:34px}.timeline-clip-wrap{margin-top:6px}.timeline-transition{top:3px;width:28px;height:28px}.timeline-audio,.timeline-text{top:6px}.mobile-tool-dock{position:absolute;z-index:88;left:0;right:0;bottom:0;width:100%;height:calc(64px + env(safe-area-inset-bottom));will-change:transform,opacity;transition:opacity .14s ease,transform .14s ease;background:rgba(13,15,20,.96);border-top:1px solid var(--line);padding:4px 0 env(safe-area-inset-bottom);overflow:hidden;overscroll-behavior:none;touch-action:pan-x;transform:translateZ(0);backdrop-filter:blur(22px)}.tool-scroller{width:100%;height:60px;display:flex;align-items:center;gap:2px;overflow-x:auto;overflow-y:hidden;padding:4px 8px;scrollbar-width:none;touch-action:pan-x;overscroll-behavior-x:contain;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}.tool-scroller::-webkit-scrollbar{display:none}.tool-btn{flex:0 0 58px;height:52px;scroll-snap-align:center;border-radius:12px;background:transparent;color:#777E8A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px}.tool-icon{width:28px;height:24px;display:grid;place-items:center}.tool-btn.active{background:#171B24;color:#F3F5F8}.tool-btn.active .tool-icon{color:#7E99FF}.bottom-sheet{max-height:66dvh}.sheet-content{padding-bottom:max(12px,env(safe-area-inset-bottom))}.filter-grid,.motion-grid,.adjust-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.panel-grid{padding:10px}.panel-section{padding:10px}.mobile-quick-actions{scrollbar-width:none}.sheet-action{min-width:68px}.toast-stack{left:12px;right:12px;bottom:82px}.toast{justify-self:center}
 
   .app-modal-backdrop{place-items:end center;padding:0;touch-action:none}
   .project-action-sheet{width:100%;border-radius:22px 22px 0 0;border-left:0;border-right:0;border-bottom:0;padding-bottom:max(8px,env(safe-area-inset-bottom));animation:sheetUp .2s var(--ease)}
@@ -187,7 +187,7 @@ img{display:block;max-width:100%}
 @media(min-width:821px) and (max-width:1180px){.studio-home.is-desktop{grid-template-columns:190px minmax(0,1fr)}.home-main{width:calc(100% - 44px)}.format-gallery,.studio-project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.editor-workspace{grid-template-columns:220px minmax(0,1fr) 250px}}
 @media(min-width:1600px){.editor-workspace{grid-template-columns:280px minmax(0,1fr) 320px}.editor-center{grid-template-rows:minmax(0,1fr) 300px}.home-main{width:min(1320px,calc(100% - 80px))}}
 
-/* v2.0.3 pointer drag/drop and precision polish */
+/* v2.1.0 pointer drag/drop and precision polish */
 .media-row[data-drag-asset]{touch-action:pan-y;position:relative}
 .media-row[data-drag-asset]:active{background:#141923}
 .drag-hint{font-style:normal;color:#596170}
@@ -199,6 +199,34 @@ img{display:block;max-width:100%}
 .audio-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .audio-quick-grid .secondary-btn{min-width:0;min-height:38px;height:auto;padding:7px 8px;font-size:9px;line-height:1.15;white-space:normal;text-align:center}
 .timeline-audio-row{touch-action:pan-x}
+
+
+/* v2.1.0 Layers, visual controls and mobile precision */
+.canvas-ratio-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.canvas-ratio-card{min-width:0;min-height:92px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:#0c0f15;color:#8f96a3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px;transition:.16s var(--ease)}
+.canvas-ratio-card:hover{background:#121722;border-color:rgba(255,255,255,.15);color:#dfe3ea}.canvas-ratio-card.active{background:linear-gradient(180deg,rgba(74,103,196,.25),rgba(36,85,245,.11));border-color:#526fc4;color:white;box-shadow:inset 0 0 0 1px rgba(114,145,255,.12)}
+.canvas-ratio-card strong{font-size:11px;font-weight:610;line-height:1}.canvas-ratio-card small{font-size:8px;color:#707887;line-height:1}
+.ratio-shape{display:block;border:1.5px solid currentColor;border-radius:4px;opacity:.9}.ratio-16-9{width:34px;height:19px}.ratio-9-16{width:19px;height:34px}.ratio-1-1{width:28px;height:28px}.ratio-4-5{width:23px;height:29px}
+.preset-carousel{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.preset-card{min-width:0;border:1px solid var(--line);background:#0c0f14;border-radius:13px;padding:7px;display:grid;gap:6px;color:#8f96a2;text-align:left}.preset-card.active{border-color:#536fc5;background:#151b2b;color:#fff;box-shadow:inset 0 0 0 1px rgba(111,141,255,.13)}.preset-preview{height:48px;border-radius:9px;background:linear-gradient(135deg,#e9b483 0%,#927195 45%,#314a82 100%);position:relative;overflow:hidden}.preset-preview:after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.17),transparent 38%,rgba(0,0,0,.15))}.preset-card strong{font-size:9px;font-weight:560;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.transition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.transition-card{min-height:92px;border:1px solid var(--line);background:#0c0f14;border-radius:14px;color:#8f96a2;padding:8px;display:grid;grid-template-rows:50px auto 10px;align-items:center;justify-items:center;gap:4px}.transition-card.active{border-color:#5876d6;background:#151c2d;color:#fff;box-shadow:inset 0 0 0 1px rgba(111,141,255,.16)}.transition-card strong{font-size:9px;font-weight:570;line-height:1.1;text-align:center}.transition-card small{font-size:7px;color:#7593ff;line-height:1}.transition-preview{width:100%;height:50px;border-radius:9px;position:relative;overflow:hidden;background:#111621;display:grid;place-items:center}.transition-preview i,.transition-preview b{position:absolute;top:0;bottom:0;width:50%;opacity:.78}.transition-preview i{left:0;background:linear-gradient(135deg,#263d80,#7b5d8c)}.transition-preview b{right:0;background:linear-gradient(135deg,#bd7b58,#3a547e)}.transition-preview em{position:relative;z-index:3;width:28px;height:28px;border-radius:9px;background:rgba(7,9,13,.72);display:grid;place-items:center;color:white;font-style:normal;box-shadow:0 5px 16px rgba(0,0,0,.3)}
+.timeline-overlay-row{position:relative;min-height:56px;display:block;touch-action:pan-x}.timeline-overlay{position:absolute;top:7px;height:42px;border-radius:8px;padding:5px 8px;text-align:left;overflow:hidden;color:#f1e7ff;background:linear-gradient(180deg,#49315e,#30233f);border:1px solid rgba(216,158,255,.26);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}.timeline-overlay.image{background:linear-gradient(180deg,#563d68,#392a47)}.timeline-overlay.dragging{cursor:grabbing;z-index:22;box-shadow:0 0 0 1.5px #d59cff inset,0 12px 28px rgba(0,0,0,.35)}.timeline-overlay.selected{box-shadow:0 0 0 1.5px #d59cff inset,0 0 0 1px rgba(213,156,255,.4)}.timeline-overlay strong{display:block;font-size:8px;font-weight:580;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.timeline-overlay small{display:block;font-size:7px;color:#d6b9e8;margin-top:3px}.overlay-row.drop-target{background:rgba(201,135,255,.075);box-shadow:inset 0 0 0 1px rgba(201,135,255,.35)}
+.media-actions{display:flex;gap:4px;align-items:center}.media-action.overlay-add{background:#2a1d35;color:#e2bcff}.media-row{grid-template-columns:34px minmax(0,1fr) auto}.media-actions .media-action span{display:none}
+.preview-selection-box{position:absolute;border:1.5px solid #8da5ff;box-shadow:0 0 0 1px rgba(0,0,0,.4),0 0 0 4px rgba(68,101,222,.08);pointer-events:none}.preview-selection-box.hidden{display:none}.selection-handle{position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;border-radius:50%;background:#f7f8fa;border:3px solid #5575e8;box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:auto;touch-action:none}.preview-interaction-layer.active:after{display:none}
+.element-library{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.element-card{min-height:76px;border-radius:13px;background:#0c0f14;border:1px solid var(--line);color:#9097a3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px}.element-card:hover{background:#121722;color:white}.element-card span{width:34px;height:34px;border-radius:11px;background:color-mix(in srgb,var(--element-color) 18%,#12151c);color:var(--element-color);display:grid;place-items:center}.element-card strong{font-size:8px;font-weight:570}
+
+@media(max-width:820px){
+  .canvas-ratio-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.canvas-ratio-card{min-height:78px;border-radius:13px;padding:8px 4px;gap:5px}.canvas-ratio-card strong{font-size:10px}.canvas-ratio-card small{font-size:7px}.ratio-16-9{width:30px;height:17px}.ratio-9-16{width:17px;height:30px}.ratio-1-1{width:25px;height:25px}.ratio-4-5{width:21px;height:26px}
+  .preset-carousel{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.preset-preview{height:44px}.preset-card{padding:6px;border-radius:12px}.preset-card strong{font-size:8px;text-align:center}
+  .transition-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.transition-card{min-height:86px;padding:7px}.transition-preview{height:44px}.transition-card strong{font-size:8px}.transition-card small{font-size:6px}
+  .element-library{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.element-card{min-height:68px}.element-card strong{font-size:7px}
+  .timeline-canvas{min-height:318px}.timeline-overlay-row{min-height:46px}.timeline-overlay{top:6px;height:34px}.timeline-overlay strong{font-size:8px}.timeline-overlay small{font-size:6px}
+}
+@media(max-width:380px){.canvas-ratio-grid{gap:7px}.canvas-ratio-card{min-height:74px}.canvas-ratio-card small{display:none}.preset-carousel,.transition-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.element-library{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.timeline-element-row{position:relative;min-height:56px;display:block;touch-action:pan-x}.timeline-element{position:absolute;top:7px;height:42px;border-radius:8px;padding:5px 8px;text-align:left;overflow:hidden;color:#fff4d5;background:linear-gradient(180deg,#5d481d,#3e3016);border:1px solid rgba(255,205,99,.24);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}.timeline-element.selected{box-shadow:0 0 0 1.5px #ffd374 inset,0 0 0 1px rgba(255,211,116,.3)}.timeline-element.dragging{cursor:grabbing;z-index:22;box-shadow:0 0 0 1.5px #ffd374 inset,0 12px 28px rgba(0,0,0,.35)}.timeline-element strong{display:block;font-size:8px;font-weight:580;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.timeline-element small{display:block;font-size:7px;color:#e8c984;margin-top:3px}
+@media(max-width:820px){.timeline-element-row{min-height:46px}.timeline-element{top:6px;height:34px}.timeline-element strong{font-size:8px}.timeline-element small{font-size:6px}}
+
+.emoji-library{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}.emoji-card{aspect-ratio:1;border-radius:11px;background:#0c0f14;border:1px solid var(--line);display:grid;place-items:center;font-size:21px;line-height:1}.emoji-card:hover{background:#151a24;border-color:var(--line-strong)}@media(max-width:820px){.emoji-library{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.emoji-card{font-size:20px}}
 
   </style>
 </head>
@@ -248,7 +276,7 @@ img{display:block;max-width:100%}
 
       try {
 // @ts-nocheck
-/* Edituno v2.0.3 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.1.0 Layers production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)));
@@ -585,6 +613,8 @@ async function duplicateProjectFull(id) {
         copy.assets.push({ ...clone(asset), id: newId });
     }
     copy.clips = (original.clips || []).map(c => ({ ...clone(c), id: uid(), assetId: assetMap.get(c.assetId) || c.assetId }));
+    copy.overlays = (original.overlays || []).map(c => ({ ...clone(c), id: uid(), assetId: assetMap.get(c.assetId) || c.assetId }));
+    copy.elements = (original.elements || []).map(c => ({ ...clone(c), id: uid() }));
     copy.audioClips = (original.audioClips || []).map(c => ({ ...clone(c), id: uid(), assetId: assetMap.get(c.assetId) || c.assetId }));
     copy.texts = (original.texts || []).map(t => ({ ...clone(t), id: uid() }));
     copy.soundtrack = null;
@@ -626,6 +656,7 @@ previewAudio.preload = 'auto';
 previewAudio.style.display = 'none';
 document.body.append(previewAudio);
 const audioPreviewNodes = new Map();
+const overlayPreviewNodes = new Map();
 const imageCache = new Map();
 let rafId = 0;
 let playStartPerf = 0;
@@ -634,13 +665,16 @@ function visualDuration(project = state.project) {
     return (project?.clips || []).reduce((sum, c) => sum + clipDuration(c), 0);
 }
 function audioClipDuration(c) { return Math.max(.05, (c.sourceEnd - c.sourceStart) / Math.max(.05, c.speed || 1)); }
+function clipDuration(c) { return Math.max(.05, (c.end - c.start) / Math.max(.05, c.speed || 1)); }
+function overlayDuration(c) { return clipDuration(c); }
 function projectDuration(project = state.project) {
     const visual = visualDuration(project);
+    const overlays = Math.max(0, ...(project?.overlays || []).map(c => (c.timelineStart || 0) + overlayDuration(c)));
+    const elements = Math.max(0, ...(project?.elements || []).map(c => (c.timelineStart || 0) + (c.duration || 3)));
     const audio = Math.max(0, ...(project?.audioClips || []).map(c => (c.timelineStart || 0) + audioClipDuration(c)));
     const text = Math.max(0, ...(project?.texts || []).map(t => t.end || 0));
-    return Math.max(visual, audio, text);
+    return Math.max(visual, overlays, elements, audio, text);
 }
-function clipDuration(c) { return Math.max(.05, (c.end - c.start) / Math.max(.05, c.speed || 1)); }
 function clipTimeline(project = state.project) {
     let cursor = 0;
     return (project?.clips || []).map((clip, index) => {
@@ -655,6 +689,12 @@ function activeAt(time, project = state.project) {
     return rows.find((r, i) => time >= r.start && (time < r.end || (i === rows.length - 1 && time <= r.end))) || null;
 }
 function sourceTime(row, time) { return row.clip.start + Math.max(0, time - row.start) * (row.clip.speed || 1); }
+function activeOverlaysAt(time, project = state.project) {
+    return (project?.overlays || []).filter(c => time >= (c.timelineStart || 0) && time <= ((c.timelineStart || 0) + overlayDuration(c))).sort((a, b) => (a.lane || 2) - (b.lane || 2));
+}
+function activeElementsAt(time, project = state.project) {
+    return (project?.elements || []).filter(c => time >= (c.timelineStart || 0) && time <= ((c.timelineStart || 0) + (c.duration || 3))).sort((a, b) => (a.z || 20) - (b.z || 20));
+}
 function getAsset(id, project = state.project) { return project?.assets?.find(a => a.id === id); }
 function ratioValue(ratio) {
     return ({ '16:9': 16 / 9, '9:16': 9 / 16, '1:1': 1, '4:5': 4 / 5 })[ratio] || 16 / 9;
@@ -921,6 +961,155 @@ function drawTransitionOverlay(ctx, row, time, w, h) {
         ctx.restore();
     }
 }
+function drawBuiltInElement(ctx, item, width, height) {
+    const x = (item.x ?? .5) * width, y = (item.y ?? .5) * height, scale = item.scale ?? 1, rot = (item.rotation || 0) * Math.PI / 180;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = item.opacity ?? 1;
+    const w = width * .22, h = Math.max(28, height * .065), accent = item.color || '#2455F5';
+    if (item.kind === 'emoji') {
+        ctx.font = `${Math.max(34, h * 1.3)}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.label || '✨', 0, 0);
+    }
+    else if (item.kind === 'subscribe') {
+        ctx.fillStyle = '#ff2d2d';
+        roundedRect(ctx, -w / 2, -h / 2, w, h, h / 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = `700 ${Math.max(12, h * .34)}px -apple-system,system-ui`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.label || 'SUBSCRIBE', 0, 1);
+    }
+    else if (item.kind === 'like') {
+        ctx.fillStyle = accent;
+        ctx.beginPath();
+        ctx.arc(0, 0, h * .48, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = `700 ${h * .46}px system-ui`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('♥', 0, 1);
+    }
+    else if (item.kind === 'bell') {
+        ctx.fillStyle = accent;
+        ctx.beginPath();
+        ctx.arc(0, 0, h * .48, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = `700 ${h * .42}px system-ui`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('●', 0, -2);
+        ctx.fillRect(-h * .16, h * .16, h * .32, h * .08);
+    }
+    else if (item.kind === 'lowerthird') {
+        ctx.fillStyle = 'rgba(10,12,17,.86)';
+        roundedRect(ctx, -w, -h * .75, w * 2, h * 1.5, h * .18);
+        ctx.fill();
+        ctx.fillStyle = accent;
+        ctx.fillRect(-w, -h * .75, Math.max(4, w * .04), h * 1.5);
+        ctx.fillStyle = '#fff';
+        ctx.font = `650 ${Math.max(11, h * .34)}px -apple-system,system-ui`;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.label || 'Your title', -w + h * .28, 0);
+    }
+    else if (item.kind === 'arrow') {
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = Math.max(4, h * .12);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-w * .55, 0);
+        ctx.lineTo(w * .45, 0);
+        ctx.lineTo(w * .15, -h * .35);
+        ctx.moveTo(w * .45, 0);
+        ctx.lineTo(w * .15, h * .35);
+        ctx.stroke();
+    }
+    else if (item.kind === 'circle') {
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = Math.max(4, h * .1);
+        ctx.beginPath();
+        ctx.arc(0, 0, h * .55, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    else if (item.kind === 'label') {
+        ctx.fillStyle = accent;
+        roundedRect(ctx, -w * .55, -h * .52, w * 1.1, h * 1.04, h * .2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = `650 ${Math.max(11, h * .34)}px -apple-system,system-ui`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.label || 'NEW', 0, 1);
+    }
+    ctx.restore();
+}
+function drawElements(ctx, project, time, width, height) {
+    for (const item of activeElementsAt(time, project))
+        drawBuiltInElement(ctx, item, width, height);
+}
+function overlayVideoFor(clip, url) {
+    let el = overlayPreviewNodes.get(clip.id);
+    if (!el) {
+        el = document.createElement('video');
+        el.preload = 'auto';
+        el.playsInline = true;
+        el.muted = true;
+        el.style.display = 'none';
+        document.body.append(el);
+        overlayPreviewNodes.set(clip.id, el);
+    }
+    if (el.src !== url) {
+        el.src = url;
+        el.load();
+    }
+    return el;
+}
+function stopOverlayVideos() { for (const el of overlayPreviewNodes.values())
+    el.pause(); }
+async function drawOverlays(ctx, project, time, width, height) {
+    const active = activeOverlaysAt(time, project), alive = new Set((project?.overlays || []).map(c => c.id));
+    for (const [id, el] of overlayPreviewNodes) {
+        if (!alive.has(id)) {
+            el.pause();
+            el.remove();
+            overlayPreviewNodes.delete(id);
+        }
+    }
+    for (const clip of active) {
+        const asset = getAsset(clip.assetId, project), url = state.urls[clip.assetId];
+        if (!asset || !url)
+            continue;
+        const local = Math.max(0, time - (clip.timelineStart || 0)), progress = local / Math.max(.05, overlayDuration(clip));
+        if (asset.type === 'image') {
+            try {
+                const img = await loadImage(url);
+                applyClipDrawing(ctx, img, asset, clip, width, height, progress, 1);
+            }
+            catch { }
+        }
+        else if (asset.type === 'video') {
+            const el = overlayVideoFor(clip, url), target = (clip.start || 0) + local * (clip.speed || 1);
+            el.playbackRate = clamp(clip.speed || 1, .25, 4);
+            if (el.readyState >= 1 && (!state.playing || Math.abs((el.currentTime || 0) - target) > .3))
+                el.currentTime = clamp(target, clip.start || 0, Math.max(clip.start || 0, (clip.end || asset.duration) - .03));
+            if (state.playing && el.paused && el.readyState >= 2)
+                el.play().catch(() => { });
+            if (!state.playing && !el.paused)
+                el.pause();
+            if (el.readyState >= 2)
+                applyClipDrawing(ctx, el, asset, clip, width, height, progress, 1);
+        }
+    }
+}
 function drawTexts(ctx, project, time, width, height) {
     for (const item of project.texts || []) {
         if (time < item.start || time > item.end)
@@ -994,10 +1183,14 @@ async function drawPreview() {
             }
         }
     }
+    await drawOverlays(ctx, state.project, state.currentTime, w, h);
+    drawElements(ctx, state.project, state.currentTime, w, h);
     drawTexts(ctx, state.project, state.currentTime, w, h);
+    const hasVisual = Boolean(row) || activeOverlaysAt(state.currentTime).length || activeElementsAt(state.currentTime).length;
     const empty = $('.preview-empty');
     if (empty)
-        empty.classList.toggle('hidden', Boolean(row));
+        empty.classList.toggle('hidden', hasVisual);
+    updatePreviewSelectionOverlay();
 }
 function ensurePreviewVideo(row, asset, url) {
     const desired = sourceTime(row, state.currentTime);
@@ -1142,6 +1335,7 @@ function stopPlayback(atEnd = false) {
     previewVideo.pause();
     previewAudio.pause();
     stopAudioTracks();
+    stopOverlayVideos();
     if (atEnd)
         state.currentTime = projectDuration();
     updatePlaybackUi();
@@ -1162,12 +1356,14 @@ function seekTo(value) {
 }
 function defaultProject(ratio = '16:9') {
     const now = Date.now();
-    return { id: uid(), name: state.language === 'el' ? 'Νέο project' : 'Untitled project', createdAt: now, updatedAt: now, ratio, background: '#0b0d12', assets: [], clips: [], audioClips: [], texts: [], soundtrack: null };
+    return { id: uid(), name: state.language === 'el' ? 'Νέο project' : 'Untitled project', createdAt: now, updatedAt: now, ratio, background: '#0b0d12', assets: [], clips: [], overlays: [], elements: [], audioClips: [], texts: [], soundtrack: null };
 }
 function normalizeProject(p) {
     p.background || (p.background = '#0b0d12');
     p.assets || (p.assets = []);
     p.clips || (p.clips = []);
+    p.overlays || (p.overlays = []);
+    p.elements || (p.elements = []);
     p.texts || (p.texts = p.textOverlays || []);
     p.audioClips || (p.audioClips = []);
     if (p.soundtrack && !p.audioClips.length) {
@@ -1178,6 +1374,8 @@ function normalizeProject(p) {
     p.soundtrack = null;
     for (const c of p.clips)
         Object.assign(c, { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', transition: 'none', transitionDuration: .35, offsetX: 0, offsetY: 0, flipX: false, flipY: false, audioFadeIn: 0, audioFadeOut: 0 }, c);
+    for (const c of p.overlays)
+        Object.assign(c, { timelineStart: 0, lane: 2, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', offsetX: 0, offsetY: 0, scale: .36, fit: 'contain', opacity: 1, flipX: false, flipY: false, volume: 0 }, c);
     return p;
 }
 async function createProject(ratio = '16:9') {
@@ -1213,7 +1411,10 @@ async function openProject(id) {
     state.view = 'editor';
     render();
 }
-function revokeUrls() { Object.values(state.urls).forEach(url => URL.revokeObjectURL(url)); state.urls = {}; imageCache.clear(); }
+function revokeUrls() { Object.values(state.urls).forEach(url => URL.revokeObjectURL(url)); state.urls = {}; imageCache.clear(); for (const el of overlayPreviewNodes.values()) {
+    el.pause();
+    el.remove();
+} overlayPreviewNodes.clear(); }
 async function goHome() { stopPlayback(); if (state.project)
     await saveProject(state.project); revokeUrls(); state.project = null; state.view = 'home'; state.projects = await listProjects(); render(); }
 function pushHistory() {
@@ -1348,17 +1549,40 @@ async function importFiles(files, addVisuals = true) {
 function defaultClip(asset) {
     return { id: uid(), assetId: asset.id, start: 0, end: asset.type === 'image' ? Math.max(1, asset.duration || 4) : Math.max(.1, asset.duration || 4), speed: 1, volume: 1, scale: 1, rotation: 0, opacity: 1, fit: 'cover', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', transition: 'none', transitionDuration: .35, audioFadeIn: 0, audioFadeOut: 0 };
 }
+function nextOverlayLane(at = state.currentTime) {
+    const occupied = lane => (state.project?.overlays || []).some(c => (c.lane || 2) === lane && at < (c.timelineStart || 0) + overlayDuration(c) && at + 0.05 >= (c.timelineStart || 0));
+    return occupied(2) && !occupied(3) ? 3 : 2;
+}
+function defaultOverlayClip(asset, timelineStart = state.currentTime, lane = nextOverlayLane(timelineStart)) {
+    const end = asset.type === 'image' ? Math.max(1, asset.duration || 4) : Math.max(.1, asset.duration || 4);
+    return { id: uid(), assetId: asset.id, timelineStart: Math.max(0, timelineStart || 0), lane, start: 0, end, speed: 1, volume: 0, scale: .38, rotation: 0, opacity: 1, fit: 'contain', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', filterPreset: 'original' };
+}
+function addAssetToOverlay(id, at = state.currentTime, lane) { const asset = getAsset(id); if (!asset || asset.type === 'audio')
+    return; mutate(p => { const c = defaultOverlayClip(asset, Math.max(0, at || 0), lane || nextOverlayLane(at)); p.overlays.push(c); state.selected = { type: 'overlay', id: c.id }; state.tool = 'edit'; state.sheet = isMobileViewport() ? 'edit' : null; }); }
 function addAssetToTimeline(id) { const asset = getAsset(id); if (!asset)
     return; if (asset.type === 'audio')
     return addAudioToTimeline(id); mutate(p => p.clips.push(defaultClip(asset))); }
 function setSoundtrack(id) { addAudioToTimeline(id, 0); }
 function selectedClip() { return state.selected?.type === 'clip' ? state.project?.clips.find(c => c.id === state.selected.id) : null; }
+function selectedOverlay() { return state.selected?.type === 'overlay' ? state.project?.overlays?.find(c => c.id === state.selected.id) : null; }
+function selectedElement() { return state.selected?.type === 'element' ? state.project?.elements?.find(c => c.id === state.selected.id) : null; }
+function selectedVisual() { return selectedClip() || selectedOverlay(); }
 function selectedText() { return state.selected?.type === 'text' ? state.project?.texts.find(t => t.id === state.selected.id) : null; }
 function selectedAudio() { return state.selected?.type === 'audio' ? state.project?.audioClips.find(c => c.id === state.selected.id) : null; }
 function selectClip(id) { state.selected = { type: 'clip', id }; state.tool = 'edit'; state.sheet = isMobileViewport() ? 'edit' : null; renderEditor(); }
+function selectOverlay(id) { state.selected = { type: 'overlay', id }; state.tool = 'edit'; state.sheet = isMobileViewport() ? 'edit' : null; renderEditor(); }
+function selectElement(id) { state.selected = { type: 'element', id }; state.tool = 'elements'; state.sheet = isMobileViewport() ? 'elements' : null; renderEditor(); }
 function selectText(id) { state.selected = { type: 'text', id }; state.tool = 'text'; state.sheet = isMobileViewport() ? 'text' : null; renderEditor(); }
 function selectAudio(id) { state.selected = { type: 'audio', id }; state.tool = 'audio'; state.sheet = isMobileViewport() ? 'audio' : null; renderEditor(); }
 function splitAtPlayhead() {
+    const overlay = selectedOverlay();
+    if (overlay) {
+        const startT = overlay.timelineStart || 0, endT = startT + overlayDuration(overlay);
+        if (state.currentTime <= startT + .05 || state.currentTime >= endT - .05)
+            return;
+        const sourceSplit = overlay.start + (state.currentTime - startT) * (overlay.speed || 1);
+        return mutate(p => { const i = p.overlays.findIndex(c => c.id === overlay.id); const left = { ...clone(overlay), id: uid(), end: sourceSplit }; const right = { ...clone(overlay), id: uid(), start: sourceSplit, timelineStart: state.currentTime }; p.overlays.splice(i, 1, left, right); state.selected = { type: 'overlay', id: right.id }; });
+    }
     const audio = selectedAudio();
     if (audio) {
         const startT = audio.timelineStart || 0, endT = startT + audioClipDuration(audio);
@@ -1385,6 +1609,12 @@ function duplicateSelected() {
     const clip = selectedClip();
     if (clip)
         return mutate(p => { const idx = p.clips.findIndex(c => c.id === clip.id); const c = { ...clone(clip), id: uid() }; p.clips.splice(idx + 1, 0, c); state.selected = { type: 'clip', id: c.id }; });
+    const overlay = selectedOverlay();
+    if (overlay)
+        return mutate(p => { const c = { ...clone(overlay), id: uid(), timelineStart: (overlay.timelineStart || 0) + .25 }; p.overlays.push(c); state.selected = { type: 'overlay', id: c.id }; });
+    const element = selectedElement();
+    if (element)
+        return mutate(p => { const c = { ...clone(element), id: uid(), timelineStart: (element.timelineStart || 0) + .25 }; p.elements.push(c); state.selected = { type: 'element', id: c.id }; });
     const audio = selectedAudio();
     if (audio)
         return mutate(p => { const c = { ...clone(audio), id: uid(), timelineStart: (audio.timelineStart || 0) + .25 }; p.audioClips.push(c); state.selected = { type: 'audio', id: c.id }; });
@@ -1392,6 +1622,18 @@ function duplicateSelected() {
 function deleteSelected() {
     if (state.selected?.type === 'clip')
         mutate(p => { p.clips = p.clips.filter(c => c.id !== state.selected.id); state.selected = null; });
+    else if (state.selected?.type === 'overlay') {
+        const id = state.selected.id;
+        mutate(p => { p.overlays = p.overlays.filter(c => c.id !== id); state.selected = null; });
+        const el = overlayPreviewNodes.get(id);
+        if (el) {
+            el.pause();
+            el.remove();
+            overlayPreviewNodes.delete(id);
+        }
+    }
+    else if (state.selected?.type === 'element')
+        mutate(p => { p.elements = p.elements.filter(c => c.id !== state.selected.id); state.selected = null; });
     else if (state.selected?.type === 'text')
         mutate(p => { p.texts = p.texts.filter(t => t.id !== state.selected.id); state.selected = null; });
     else if (state.selected?.type === 'audio') {
@@ -1409,7 +1651,9 @@ function moveSelected(delta) { const clip = selectedClip(); if (clip)
     return mutate(p => { const i = p.clips.findIndex(c => c.id === clip.id), j = clamp(i + delta, 0, p.clips.length - 1); if (i !== j) {
         const [x] = p.clips.splice(i, 1);
         p.clips.splice(j, 0, x);
-    } }); const audio = selectedAudio(); if (audio)
+    } }); const overlay = selectedOverlay(); if (overlay)
+    return mutate(p => { const x = p.overlays.find(c => c.id === overlay.id); x.timelineStart = Math.max(0, (x.timelineStart || 0) + delta * (state.preferences.snap ? .25 : .1)); }); const element = selectedElement(); if (element)
+    return mutate(p => { const x = p.elements.find(c => c.id === element.id); x.timelineStart = Math.max(0, (x.timelineStart || 0) + delta * (state.preferences.snap ? .25 : .1)); }); const audio = selectedAudio(); if (audio)
     return mutate(p => { const x = p.audioClips.find(c => c.id === audio.id); x.timelineStart = Math.max(0, (x.timelineStart || 0) + delta * (state.preferences.snap ? .25 : .1)); }); }
 function addText(kind = 'title') {
     if (!state.project)
@@ -1445,7 +1689,7 @@ async function importSrt(file) {
     toast(tr('srtImported'), 'success');
 }
 function applyFilter(name) {
-    const c = selectedClip();
+    const c = selectedVisual();
     if (!c)
         return;
     const presets = {
@@ -1474,7 +1718,7 @@ function applyFilter(name) {
         lowkey: { brightness: 82, exposure: -8, contrast: 136, saturation: 92, temperature: -4, vignette: 48, grain: 10, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0 },
         cyber: { brightness: 102, exposure: 1, contrast: 132, saturation: 170, temperature: -18, vignette: 28, grain: 7, hue: 28, blur: 0, grayscale: 0, sepia: 0, invert: 0 }
     };
-    mutate(p => Object.assign(p.clips.find(x => x.id === c.id), presets.original, presets[name] || presets.original, { filterPreset: name }));
+    mutate(p => { const list = state.selected?.type === 'overlay' ? p.overlays : p.clips; Object.assign(list.find(x => x.id === c.id), presets.original, presets[name] || presets.original, { filterPreset: name }); });
 }
 function svgIcon(name, size = 20) {
     /* Lucide-derived geometry, normalized to one Edituno stroke system. */
@@ -1678,22 +1922,40 @@ function mobileProjectHubModal() {
     const projects = state.projects || [];
     return `<div class="project-hub-backdrop" data-action="mobile-hub-close"><section class="project-hub"><div class="project-hub-head"><div>${renderLogo()}<span>${tr('projectHub')}</span></div><button class="icon-btn" data-action="mobile-hub-close">${svgIcon('close')}</button></div><div class="project-hub-body"><button class="primary-btn full" data-action="create" data-ratio="9:16">${svgIcon('plus', 18)} ${tr('newBlank')}</button>${projects.length ? `<div class="hub-project-list">${projects.slice(0, 10).map(p => `<button class="hub-project" data-action="open-project" data-id="${p.id}"><span class="hub-thumb">${svgIcon('play', 18)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio || '16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language === 'el' ? 'el-GR' : 'en-US')}</small></span></button>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noProjects')}</b></div>`}<div class="hub-footer"><button class="secondary-btn" data-action="language">${state.language === 'el' ? 'English' : 'Ελληνικά'}</button><button class="secondary-btn" data-action="settings">${tr('settings')}</button></div></div></section></div>`;
 }
+function selectedTransformTarget() { return selectedVisual() || selectedElement(); }
+function updatePreviewSelectionOverlay() {
+    const box = $('#preview-selection-box'), frame = $('.preview-frame'), target = selectedTransformTarget();
+    if (!box || !frame || !target) {
+        box?.classList.add('hidden');
+        return;
+    }
+    box.classList.remove('hidden');
+    const fr = frame.getBoundingClientRect(), scale = target.scale ?? 1;
+    const base = state.selected?.type === 'overlay' ? Math.min(fr.width, fr.height) * .72 : state.selected?.type === 'element' ? Math.min(fr.width, fr.height) * .34 : Math.min(fr.width, fr.height) * 1.02;
+    const size = Math.max(34, base * scale), x = fr.width / 2 + (target.offsetX ?? ((target.x ?? .5) - .5)) * fr.width, y = fr.height / 2 + (target.offsetY ?? ((target.y ?? .5) - .5)) * fr.height;
+    box.style.width = `${size}px`;
+    box.style.height = `${size}px`;
+    box.style.left = `${x - size / 2}px`;
+    box.style.top = `${y - size / 2}px`;
+    box.style.transform = `rotate(${target.rotation || 0}deg)`;
+}
 function bindPreviewInteractions() {
-    const layer = $('#preview-interaction-layer'), frame = $('.preview-frame'), clip = selectedClip();
-    if (!layer || !frame || !clip)
+    const layer = $('#preview-interaction-layer'), frame = $('.preview-frame'), target = selectedTransformTarget();
+    if (!layer || !frame || !target)
         return;
     const pointers = new Map();
-    let origin = null, pinch = null;
+    let origin = null, pinch = null, resizing = false;
     const point = e => ({ x: e.clientX, y: e.clientY });
     layer.addEventListener('pointerdown', e => {
+        const c = selectedTransformTarget();
+        if (!c)
+            return;
         e.preventDefault();
         layer.setPointerCapture?.(e.pointerId);
         pointers.set(e.pointerId, point(e));
-        const c = selectedClip();
-        if (!c)
-            return;
+        resizing = Boolean(e.target.closest?.('.selection-handle'));
         if (pointers.size === 1)
-            origin = { x: e.clientX, y: e.clientY, offsetX: c.offsetX || 0, offsetY: c.offsetY || 0, scale: c.scale || 1 };
+            origin = { x: e.clientX, y: e.clientY, offsetX: c.offsetX ?? ((c.x ?? .5) - .5), offsetY: c.offsetY ?? ((c.y ?? .5) - .5), scale: c.scale || 1, distance: Math.hypot(e.clientX - frame.getBoundingClientRect().left - frame.clientWidth / 2, e.clientY - frame.getBoundingClientRect().top - frame.clientHeight / 2) };
         if (pointers.size === 2) {
             const ps = [...pointers.values()];
             pinch = { distance: Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y), scale: c.scale || 1 };
@@ -1704,26 +1966,42 @@ function bindPreviewInteractions() {
             return;
         e.preventDefault();
         pointers.set(e.pointerId, point(e));
-        const c = selectedClip();
+        const c = selectedTransformTarget();
         if (!c)
             return;
         const rect = frame.getBoundingClientRect();
         if (pointers.size === 1 && origin) {
-            c.offsetX = clamp(origin.offsetX + (e.clientX - origin.x) / Math.max(1, rect.width), -.7, .7);
-            c.offsetY = clamp(origin.offsetY + (e.clientY - origin.y) / Math.max(1, rect.height), -.7, .7);
+            if (resizing) {
+                const d = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
+                c.scale = clamp(origin.scale * (d / Math.max(20, origin.distance)), .08, 4);
+            }
+            else {
+                const ox = clamp(origin.offsetX + (e.clientX - origin.x) / Math.max(1, rect.width), -.95, .95), oy = clamp(origin.offsetY + (e.clientY - origin.y) / Math.max(1, rect.height), -.95, .95);
+                if (state.selected?.type === 'element') {
+                    c.x = .5 + ox;
+                    c.y = .5 + oy;
+                }
+                else {
+                    c.offsetX = ox;
+                    c.offsetY = oy;
+                }
+            }
             queueSave();
             drawPreview();
+            updatePreviewSelectionOverlay();
         }
         if (pointers.size === 2 && pinch) {
             const ps = [...pointers.values()], d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
-            c.scale = clamp(pinch.scale * (d / Math.max(1, pinch.distance)), .2, 3);
+            c.scale = clamp(pinch.scale * (d / Math.max(1, pinch.distance)), .08, 4);
             queueSave();
             drawPreview();
+            updatePreviewSelectionOverlay();
         }
     }, { passive: false });
     const end = e => { pointers.delete(e.pointerId); if (!pointers.size) {
         origin = null;
         pinch = null;
+        resizing = false;
     } };
     layer.addEventListener('pointerup', end);
     layer.addEventListener('pointercancel', end);
@@ -1748,20 +2026,20 @@ function renderEditor() {
       <section class="editor-center">
         <div class="viewer-shell">
           <div class="viewer-toolbar"><div><span class="viewer-ratio">${escapeHtml(p.ratio)}</span><span class="viewer-quality">${state.preferences.previewQuality}</span></div><div class="viewer-actions"><button data-action="undo" aria-label="${tr('undo')}">${svgIcon('undo', 15)}</button><button data-action="redo" aria-label="${tr('redo')}">${svgIcon('redo', 15)}</button></div></div>
-          <div class="preview-zone"><div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div id="preview-interaction-layer" class="preview-interaction-layer ${state.selected?.type === 'clip' ? 'active' : ''}" aria-label="Canvas interaction layer"></div><div class="preview-empty ${rows.length ? 'hidden' : ''}"><span>${svgIcon('media', 25)}</span><strong>${state.language === 'el' ? 'Πρόσθεσε media' : 'Add media'}</strong><small>${state.language === 'el' ? 'Video, φωτογραφίες ή audio' : 'Video, photos or audio'}</small><button class="viewer-add" data-action="pick-media">${svgIcon('plus', 16)}<span>Import</span></button></div></div></div></div>
+          <div class="preview-zone"><div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div id="preview-interaction-layer" class="preview-interaction-layer ${['clip', 'overlay', 'element'].includes(state.selected?.type) ? 'active' : ''}" aria-label="Canvas interaction layer"><div id="preview-selection-box" class="preview-selection-box hidden"><i class="selection-handle"></i></div></div><div class="preview-empty ${rows.length ? 'hidden' : ''}"><span>${svgIcon('media', 25)}</span><strong>${state.language === 'el' ? 'Πρόσθεσε media' : 'Add media'}</strong><small>${state.language === 'el' ? 'Video, φωτογραφίες ή audio' : 'Video, photos or audio'}</small><button class="viewer-add" data-action="pick-media">${svgIcon('plus', 16)}<span>Import</span></button></div></div></div></div>
           <div class="transport-bar"><button class="transport-btn" data-action="jump-start" aria-label="Start">${svgIcon('back', 17)}</button><button class="transport-play" data-action="play-toggle" aria-label="${tr('play')}"><span id="play-icon">${state.playing ? 'Ⅱ' : svgIcon('play', 18)}</span></button><span class="timecode" id="timecode">${fmtTime(state.currentTime)} <i>/</i> ${fmtTime(dur)}</span><input class="viewer-seek" id="seekbar" type="range" min="0" max="${Math.max(.01, dur)}" step="0.01" value="${state.currentTime}"></div>
         </div>
 
         <section class="timeline-shell">
           <header class="timeline-header"><div><strong>Timeline</strong><span>${dur ? fmtTime(dur) : '00:00.0'}</span></div><div class="timeline-actions"><button data-action="timeline-zoom" data-value="-1">${svgIcon('zoomout', 15)}</button><button data-action="timeline-zoom" data-value="1">${svgIcon('zoomin', 15)}</button><button data-action="split">${svgIcon('split', 15)}<span class="desktop-editor-only">${tr('split')}</span></button></div></header>
-          <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur, totalWidth)}</div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length ? rows.map((r, i) => timelineClip(r, i)).join('') : `<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus', 17)}<span>${tr('addMedia')}</span></button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips || []).map(timelineAudio).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts || []).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42 + state.currentTime * state.pxPerSec}px"><i></i></div></div></div>
+          <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur, totalWidth)}</div><div class="track-row overlay-row" data-lane="3"><span class="track-label">V3</span><div class="timeline-overlay-row">${(p.overlays || []).filter(c => (c.lane || 2) === 3).map(timelineOverlay).join('')}</div></div><div class="track-row overlay-row" data-lane="2"><span class="track-label">V2</span><div class="timeline-overlay-row">${(p.overlays || []).filter(c => (c.lane || 2) === 2).map(timelineOverlay).join('')}</div></div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length ? rows.map((r, i) => timelineClip(r, i)).join('') : `<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus', 17)}<span>${tr('addMedia')}</span></button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips || []).map(timelineAudio).join('')}</div></div><div class="track-row element-row"><span class="track-label">E1</span><div class="timeline-element-row">${(p.elements || []).map(timelineElement).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts || []).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42 + state.currentTime * state.pxPerSec}px"><i></i></div></div></div>
         </section>
       </section>
 
-      <aside class="inspector-panel desktop-editor-only"><div class="panel-top"><span class="eyebrow">INSPECTOR</span><strong>${state.selected?.type === 'clip' ? tr('selectedClip') : state.selected?.type === 'audio' ? tr('audio') : state.selected?.type === 'text' ? tr('text') : tr('canvas')}</strong></div>${desktopInspector()}</aside>
+      <aside class="inspector-panel desktop-editor-only"><div class="panel-top"><span class="eyebrow">INSPECTOR</span><strong>${state.selected?.type === 'clip' ? tr('selectedClip') : state.selected?.type === 'overlay' ? 'Overlay' : state.selected?.type === 'element' ? (state.language === 'el' ? 'Στοιχείο' : 'Element') : state.selected?.type === 'audio' ? tr('audio') : state.selected?.type === 'text' ? tr('text') : tr('canvas')}</strong></div>${desktopInspector()}</aside>
     </main>
 
-    <footer class="mobile-tool-dock mobile-editor-only"><div class="tool-scroller">${toolButton('media', 'media', tr('media'))}${toolButton('edit', 'edit', tr('quickEdit'))}${toolButton('text', 'text', tr('text'))}${toolButton('audio', 'audio', tr('audio'))}${toolButton('effects', 'effects', tr('effects'))}${toolButton('adjust', 'adjust', tr('adjust'))}${toolButton('transitions', 'transition', tr('transitions'))}${toolButton('canvas', 'canvas', tr('canvas'))}</div></footer>
+    <footer class="mobile-tool-dock mobile-editor-only"><div class="tool-scroller">${toolButton('media', 'media', tr('media'))}${toolButton('edit', 'edit', tr('quickEdit'))}${toolButton('text', 'text', tr('text'))}${toolButton('elements', 'effects', state.language === 'el' ? 'Στοιχεία' : 'Elements')}${toolButton('audio', 'audio', tr('audio'))}${toolButton('effects', 'effects', tr('effects'))}${toolButton('adjust', 'adjust', tr('adjust'))}${toolButton('transitions', 'transition', tr('transitions'))}${toolButton('canvas', 'canvas', tr('canvas'))}</div></footer>
 
     <div class="sheet-backdrop ${state.sheet ? 'open' : ''}" data-action="sheet-close"></div>
     <section class="bottom-sheet ${state.sheet ? 'open' : ''}" aria-modal="true"><div class="sheet-grabber"></div><header class="sheet-header"><div><span class="eyebrow">EDITUNO</span><strong>${sheetTitle()}</strong></div><button class="round-icon" data-action="sheet-close">${svgIcon('close', 17)}</button></header><div class="sheet-content">${state.sheet ? panelContent(state.sheet) : ''}</div></section>
@@ -1773,6 +2051,8 @@ function timelineRuler(dur, width) { if (!dur)
     return ''; const every = dur > 180 ? 30 : dur > 60 ? 10 : dur > 20 ? 5 : 2; let out = ''; for (let t = 0; t <= dur + .001; t += every)
     out += `<span style="left:${t * state.pxPerSec}px">${fmtTime(t).slice(0, 5)}</span>`; return out; }
 function timelineClip(row, index) { const a = getAsset(row.clip.assetId), w = Math.max(68, row.duration * state.pxPerSec); const transition = row.clip.transition && row.clip.transition !== 'none'; return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type === 'image' ? 'image' : ''} ${state.selected?.type === 'clip' && state.selected.id === row.clip.id ? 'selected' : ''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name || 'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index < state.project.clips.length - 1 ? `<button class="timeline-transition ${transition ? 'active' : ''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition', 14)}</button>` : ''}</div>`; }
+function timelineOverlay(c) { const a = getAsset(c.assetId), w = Math.max(54, overlayDuration(c) * state.pxPerSec), left = Math.max(0, (c.timelineStart || 0) * state.pxPerSec); return `<button class="timeline-overlay ${a?.type === 'image' ? 'image' : ''} ${state.selected?.type === 'overlay' && state.selected.id === c.id ? 'selected' : ''}" data-action="select-overlay" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(a?.name || 'Overlay')}</strong><small>V${c.lane || 2} · ${fmtTime(overlayDuration(c))}</small></button>`; }
+function timelineElement(c) { const w = Math.max(48, (c.duration || 3) * state.pxPerSec), left = Math.max(0, (c.timelineStart || 0) * state.pxPerSec); return `<button class="timeline-element ${state.selected?.type === 'element' && state.selected.id === c.id ? 'selected' : ''}" data-action="select-element" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(c.label || c.kind || 'Element')}</strong><small>E1 · ${fmtTime(c.duration || 3)}</small></button>`; }
 function timelineText(t) { const w = Math.max(54, (t.end - t.start) * state.pxPerSec); return `<button class="timeline-text ${state.selected?.type === 'text' && state.selected.id === t.id ? 'selected' : ''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start || 0) * state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`; }
 function waveformBars(asset, count = 36) { const peaks = asset?.waveform || []; if (!state.preferences.showWaveforms)
     return ''; let out = ''; for (let i = 0; i < count; i++) {
@@ -1788,17 +2068,18 @@ function sheetTitle() { if (state.sheet === 'edit')
     return tr('transitions'); if (state.sheet === 'text' && selectedText())
     return tr('selectedText'); return tr(state.sheet || 'project'); }
 function desktopSidebar() { return `<div class="desktop-tool-tabs"><button class="active" data-action="pick-media">${svgIcon('plus', 14)}<span>${tr('media')}</span></button><button data-action="add-text" data-kind="title">${svgIcon('text', 14)}<span>${tr('text')}</span></button><button data-action="open-srt">${svgIcon('captions', 14)}<span>SRT</span></button></div>${mediaPanel()}`; }
-function desktopInspector() { return `${state.selected?.type === 'clip' ? clipPanel() : state.selected?.type === 'text' ? textPanel() : state.selected?.type === 'audio' ? audioClipPanel() : canvasPanel()}`; }
+function desktopInspector() { return `${state.selected?.type === 'clip' || state.selected?.type === 'overlay' ? clipPanel() : state.selected?.type === 'element' ? elementPanel() : state.selected?.type === 'text' ? textPanel() : state.selected?.type === 'audio' ? audioClipPanel() : canvasPanel()}`; }
 function panelContent(tool) { if (tool === 'media')
     return mediaPanel(); if (tool === 'edit')
     return editPanel(); if (tool === 'text')
-    return textPanel(true); if (tool === 'audio')
+    return textPanel(true); if (tool === 'elements')
+    return elementPanel(); if (tool === 'audio')
     return audioPanel(); if (tool === 'effects')
     return effectsPanel(); if (tool === 'adjust')
     return adjustPanel(); if (tool === 'transitions')
     return transitionPanel(); if (tool === 'canvas')
     return canvasPanel(); return ''; }
-function mediaPanel() { const list = state.project.assets || []; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length ? `<div class="media-list">${list.map(a => `<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type === 'video' ? svgIcon('video', 18) : a.type === 'image' ? svgIcon('media', 18) : svgIcon('audio', 18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration ? fmtTime(a.duration) : ''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><button class="media-action" data-action="${a.type === 'audio' ? 'add-audio' : 'add-asset'}" data-id="${a.id}">${svgIcon('plus', 14)}<span>${tr('add')}</span></button></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`; }
+function mediaPanel() { const list = state.project.assets || []; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length ? `<div class="media-list">${list.map(a => `<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type === 'video' ? svgIcon('video', 18) : a.type === 'image' ? svgIcon('media', 18) : svgIcon('audio', 18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration ? fmtTime(a.duration) : ''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><div class="media-actions"><button class="media-action" data-action="${a.type === 'audio' ? 'add-audio' : 'add-asset'}" data-id="${a.id}">${svgIcon('plus', 14)}<span>${tr('add')}</span></button>${a.type !== 'audio' ? `<button class="media-action overlay-add" data-action="add-overlay" data-id="${a.id}">${svgIcon('copy', 14)}<span>${state.language === 'el' ? 'Overlay' : 'Overlay'}</span></button>` : ''}</div></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`; }
 function textPanel(showAdd = true) { const t = selectedText(); return `<div class="panel-grid">${showAdd ? `<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>${svgIcon('effects', 17)}</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>` : ''}${t ? `<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight == 600 ? 'selected' : ''}>600</option><option ${t.weight == 700 ? 'selected' : ''}>700</option><option ${t.weight == 800 ? 'selected' : ''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color, '#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background, '#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation === 'none' ? 'selected' : ''}>${tr('none')}</option><option value="fade" ${t.animation === 'fade' ? 'selected' : ''}>Fade</option><option value="pop" ${t.animation === 'pop' ? 'selected' : ''}>Pop</option><option value="slide" ${t.animation === 'slide' ? 'selected' : ''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x', t.x, 0, 1, .01, true, 'text')}${rangeField('y', t.y, 0, 1, .01, true, 'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>` : ''}</div>`; }
 function safeColor(v, fallback) { return /^#[0-9a-f]{6}$/i.test(v || '') ? v : fallback; }
 function audioPanel() {
@@ -1813,13 +2094,13 @@ function audioClipPanel() {
 }
 function effectsEmpty() { return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language === 'el' ? 'Επίλεξε clip από το timeline.' : 'Select a clip on the timeline.'}</span></div>`; }
 function editPanel() {
-    const c = selectedClip(), a = getAsset(c?.assetId);
+    const c = selectedVisual(), a = getAsset(c?.assetId);
     if (!c)
         return effectsEmpty();
     return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split', 19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy', 19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left', 19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right', 19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash', 19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0, (a?.duration || c.end) - .05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start + .05}" max="${a?.duration || c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed', c.speed, .25, 8, .05, true, 'clip')}${a?.type === 'video' ? `${rangeField('volume', c.volume, 0, 1, .01, true, 'clip')}${rangeField('audioFadeIn', c.audioFadeIn || 0, 0, Math.min(5, clipDuration(c) / 2), .05, true, 'clip')}${rangeField('audioFadeOut', c.audioFadeOut || 0, 0, Math.min(5, clipDuration(c) / 2), .05, true, 'clip')}` : ''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale', c.scale, .2, 3, .01, true, 'clip')}${rangeField('rotation', c.rotation, -180, 180, 1, true, 'clip')}<div class="field-grid two">${rangeField('offsetX', c.offsetX, -.7, .7, .01, true, 'clip')}${rangeField('offsetY', c.offsetY, -.7, .7, .01, true, 'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit === 'cover' ? 'active' : ''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit === 'contain' ? 'active' : ''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX ? 'active' : ''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY ? 'active' : ''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`;
 }
 function effectsPanel() {
-    const c = selectedClip();
+    const c = selectedVisual();
     if (!c)
         return effectsEmpty();
     const presets = ['original', 'vivid', 'warm', 'cool', 'cinematic', 'film', 'dream', 'crisp', 'retro', 'soft', 'neon', 'matte', 'sunset', 'ice', 'noir', 'mono', 'tealorange', 'bleach', 'rose', 'forest', 'gold', 'highkey', 'lowkey', 'cyber'];
@@ -1827,7 +2108,7 @@ function effectsPanel() {
 }
 function motionGlyph(v) { const m = { none: 'circle', zoom: 'zoomin', zoomout: 'zoomout', kenburns: 'expand', panleft: 'left', panright: 'right', pulse: 'circle', float: 'movevertical', shake: 'movehorizontal', driftup: 'movevertical', driftdown: 'movevertical', spin: 'rotate', bounce: 'movevertical', swing: 'rotate' }; return svgIcon(m[v] || 'effects', 20); }
 function adjustPanel() {
-    const c = selectedClip();
+    const c = selectedVisual();
     if (!c)
         return effectsEmpty();
     const defs = { brightness: [50, 150, 1], exposure: [-50, 50, 1], contrast: [50, 160, 1], saturation: [0, 200, 1], temperature: [-50, 50, 1], vignette: [0, 100, 1], grain: [0, 100, 1], hue: [-180, 180, 1], blur: [0, 8, .1], grayscale: [0, 100, 1], sepia: [0, 100, 1], invert: [0, 100, 1], opacity: [0, 1, .01] };
@@ -1838,15 +2119,27 @@ function adjustGlyph(k) { const m = { brightness: 'sun', exposure: 'half', contr
 function transitionPanel() {
     const c = selectedClip();
     if (!c)
-        return effectsEmpty();
+        return `<div class="empty-state"><b>${state.language === 'el' ? 'Μεταβάσεις V1' : 'V1 transitions'}</b><span>${state.language === 'el' ? 'Οι μεταβάσεις εφαρμόζονται ανάμεσα στα κύρια clips της V1.' : 'Transitions are applied between primary V1 clips.'}</span></div>`;
     const opts = [['none', tr('none')], ['dissolve', tr('dissolve')], ['fade', tr('fade')], ['flash', tr('flash')], ['slideleft', tr('slideLeft')], ['slideright', tr('slideRight')], ['zoom', tr('zoom')], ['blur', tr('blurTransition')], ['slideup', tr('slideUp')], ['slidedown', tr('slideDown')], ['spin', tr('spin')], ['dipblack', tr('dipBlack')], ['dipwhite', tr('dipWhite')]];
-    return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v, l]) => `<button class="transition-card ${c.transition === v ? 'active' : ''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b></span><strong>${l}</strong></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration', c.transitionDuration, .1, 1.5, .05, true, 'clip')}</div></div>`;
+    return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v, l]) => `<button class="transition-card ${c.transition === v ? 'active' : ''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b><em>${svgIcon(v === 'zoom' ? 'zoomin' : v === 'spin' ? 'rotate' : v.includes('slide') ? 'right' : v === 'flash' ? 'sun' : v === 'blur' ? 'droplet' : 'transition', 18)}</em></span><strong>${l}</strong><small>${c.transition === v ? (state.language === 'el' ? 'Επιλεγμένο' : 'Selected') : ''}</small></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration', c.transitionDuration, .1, 1.5, .05, true, 'clip')}</div></div>`;
 }
-function clipPanel() { const c = selectedClip(); if (!c)
+const ELEMENT_PRESETS = [
+    { kind: 'subscribe', name: 'Subscribe', icon: 'play', color: '#ff2d2d' },
+    { kind: 'like', name: 'Like', icon: 'effects', color: '#2455F5' },
+    { kind: 'bell', name: 'Bell', icon: 'audio', color: '#f5b82e' },
+    { kind: 'lowerthird', name: 'Lower third', icon: 'text', color: '#2455F5' },
+    { kind: 'arrow', name: 'Arrow', icon: 'right', color: '#F7DCFF' },
+    { kind: 'circle', name: 'Highlight', icon: 'circle', color: '#ff4e67' },
+    { kind: 'label', name: 'NEW', icon: 'text', color: '#7c5cff' }
+];
+const EMOJI_PRESETS = ['🔥', '✨', '❤️', '🚀', '⭐', '👀', '💯', '🎉', '👍', '👏', '😍', '😎', '😂', '🤯', '✅', '❌', '⚡', '💡', '🎮', '🎬', '🎵', '📌', '👉', '⬇️'];
+function addElement(kind) { const isEmoji = String(kind).startsWith('emoji:'); const preset = isEmoji ? { kind: 'emoji', name: String(kind).slice(6) || '✨', color: '#ffffff' } : (ELEMENT_PRESETS.find(x => x.kind === kind) || ELEMENT_PRESETS[0]); const dur = Math.max(3, Math.min(6, visualDuration() || 3)), item = { id: uid(), kind: preset.kind, label: isEmoji ? preset.name : (preset.name === 'Subscribe' ? 'SUBSCRIBE' : preset.name), timelineStart: Math.max(0, state.currentTime || 0), duration: Math.min(dur, Math.max(1, (visualDuration() || dur) - (state.currentTime || 0)) || dur), x: .5, y: preset.kind === 'lowerthird' ? .8 : .5, scale: isEmoji ? .9 : 1, rotation: 0, opacity: 1, color: preset.color, z: 20 }; mutate(p => { p.elements.push(item); state.selected = { type: 'element', id: item.id }; state.tool = 'elements'; state.sheet = isMobileViewport() ? 'elements' : null; }); }
+function elementPanel() { const selected = selectedElement(); return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Creator στοιχεία' : 'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e => `<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon, 20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>Stickers</h3><div class="emoji-library">${EMOJI_PRESETS.map(e => `<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div><p class="helper">${state.language === 'el' ? 'Μπορείς επίσης να κάνεις import PNG, JPG, WebP ή GIF και να το προσθέσεις ως overlay.' : 'You can also import PNG, JPG, WebP or GIF and add it as an overlay.'}</p></div>${selected ? `<div class="panel-section"><h3>${state.language === 'el' ? 'Επιλεγμένο στοιχείο' : 'Selected element'}</h3>${rangeField('scale', selected.scale, .2, 3, .01, true, 'element')}${rangeField('rotation', selected.rotation, -180, 180, 1, true, 'element')}${rangeField('opacity', selected.opacity, 0, 1, .01, true, 'element')}${selected.kind !== 'emoji' ? `<label class="field"><span>${state.language === 'el' ? 'Χρώμα' : 'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color, '#2455F5')}"></label>` : ''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>` : ''}</div>`; }
+function clipPanel() { const c = selectedVisual(); if (!c)
     return effectsEmpty(); return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness', c.brightness, 50, 150, 1, false, 'clip')}${rangeField('exposure', c.exposure, -50, 50, 1, false, 'clip')}${rangeField('contrast', c.contrast, 50, 160, 1, false, 'clip')}${rangeField('saturation', c.saturation, 0, 200, 1, false, 'clip')}${rangeField('temperature', c.temperature, -50, 50, 1, false, 'clip')}${rangeField('vignette', c.vignette, 0, 100, 1, false, 'clip')}${rangeField('grain', c.grain, 0, 100, 1, false, 'clip')}${rangeField('hue', c.hue, -180, 180, 1, false, 'clip')}${rangeField('blur', c.blur, 0, 8, .1, false, 'clip')}${rangeField('grayscale', c.grayscale, 0, 100, 1, false, 'clip')}${rangeField('sepia', c.sepia, 0, 100, 1, false, 'clip')}${rangeField('invert', c.invert || 0, 0, 100, 1, false, 'clip')}</div>${transitionPanel()}</div>`; }
 function filterPreviewStyle(n) { const f = { original: '', vivid: 'filter:saturate(1.4) contrast(1.1)', warm: 'filter:sepia(.25) saturate(1.2)', cool: 'filter:hue-rotate(18deg)', mono: 'filter:grayscale(1) contrast(1.15)', film: 'filter:sepia(.3) saturate(.8) contrast(1.1)', dream: 'filter:brightness(1.15) saturate(1.05);opacity:.82', crisp: 'filter:contrast(1.3) saturate(1.12)', cinematic: 'filter:contrast(1.2) saturate(.9) sepia(.08)', retro: 'filter:sepia(.3) saturate(.85) contrast(.95)', soft: 'filter:brightness(1.1) contrast(.9)', neon: 'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)', matte: 'filter:saturate(.8) contrast(.86) brightness(1.07)', sunset: 'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)', ice: 'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)', noir: 'filter:grayscale(1) contrast(1.45) brightness(.96)', tealorange: 'filter:saturate(1.22) contrast(1.2) hue-rotate(-16deg)', bleach: 'filter:saturate(.62) contrast(1.34) brightness(1.1)', rose: 'filter:saturate(1.18) sepia(.12) hue-rotate(-12deg)', forest: 'filter:saturate(1.08) hue-rotate(18deg) contrast(1.12)', gold: 'filter:sepia(.18) saturate(1.16) brightness(1.05)', highkey: 'filter:brightness(1.18) contrast(.88)', lowkey: 'filter:brightness(.82) contrast(1.36)', cyber: 'filter:saturate(1.7) contrast(1.32) hue-rotate(28deg)' }; return f[n] || ''; }
 function rangeField(key, value, min, max, step, show, scope) { return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show ? Number(value).toFixed(step < 1 ? 2 : 0) : Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`; }
-function canvasPanel() { const p = state.project; return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9', '9:16', '1:1', '4:5'].map(r => `<button class="format-btn ${p.ratio === r ? 'active' : ''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background, '#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`; }
+function canvasPanel() { const p = state.project; return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="canvas-ratio-grid">${[['16:9', 'Landscape'], ['9:16', 'Vertical'], ['1:1', 'Square'], ['4:5', 'Portrait']].map(([r, label]) => `<button class="canvas-ratio-card ${p.ratio === r ? 'active' : ''}" data-action="ratio" data-value="${r}"><span class="ratio-shape ratio-${r.replace(':', '-')}"></span><strong>${r}</strong><small>${label}</small></button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background, '#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`; }
 function snapTime(value) { if (!state.preferences.snap)
     return Math.max(0, value); const step = .25; return Math.max(0, Math.round(value / step) * step); }
 function bindTimelineInteractions() {
@@ -1905,6 +2198,102 @@ function bindTimelineInteractions() {
             window.addEventListener('pointercancel', finish, { passive: false });
         }, { passive: false });
     });
+    $$('.timeline-element').forEach(el => {
+        el.addEventListener('pointerdown', e => {
+            if (e.button !== undefined && e.pointerType === 'mouse' && e.button !== 0)
+                return;
+            const item = state.project?.elements?.find(c => c.id === el.dataset.id);
+            if (!item)
+                return;
+            e.preventDefault();
+            e.stopPropagation();
+            const startX = e.clientX, original = item.timelineStart || 0;
+            let moved = false, lastX = startX;
+            el.setPointerCapture?.(e.pointerId);
+            el.classList.add('dragging');
+            const move = ev => { if (ev.pointerId !== e.pointerId)
+                return; ev.preventDefault(); lastX = ev.clientX; if (Math.abs(lastX - startX) > 2)
+                moved = true; const next = Math.max(0, original + (lastX - startX) / state.pxPerSec); el.style.left = `${next * state.pxPerSec}px`; };
+            const finish = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish); el.classList.remove('dragging'); if (moved) {
+                pushHistory();
+                item.timelineStart = snapTime(original + (lastX - startX) / state.pxPerSec);
+                state.project.updatedAt = Date.now();
+                queueSave();
+                renderEditor();
+            } };
+            window.addEventListener('pointermove', move, { passive: false });
+            window.addEventListener('pointerup', finish, { passive: false });
+            window.addEventListener('pointercancel', finish, { passive: false });
+        }, { passive: false });
+    });
+    $$('.timeline-overlay').forEach(el => {
+        el.addEventListener('pointerdown', e => {
+            if (e.button !== undefined && e.pointerType === 'mouse' && e.button !== 0)
+                return;
+            const clip = state.project?.overlays?.find(c => c.id === el.dataset.id);
+            if (!clip)
+                return;
+            e.preventDefault();
+            e.stopPropagation();
+            const startX = e.clientX, original = clip.timelineStart || 0;
+            let moved = false, lastX = startX, lastY = e.clientY;
+            el.setPointerCapture?.(e.pointerId);
+            el.classList.add('dragging');
+            const move = ev => { if (ev.pointerId !== e.pointerId)
+                return; ev.preventDefault(); lastX = ev.clientX; lastY = ev.clientY; if (Math.abs(lastX - startX) > 2)
+                moved = true; const next = Math.max(0, original + (lastX - startX) / state.pxPerSec); el.style.left = `${next * state.pxPerSec}px`; const r = scroll.getBoundingClientRect(), edge = 42; if (lastX < r.left + edge)
+                scroll.scrollLeft = Math.max(0, scroll.scrollLeft - 8);
+            else if (lastX > r.right - edge)
+                scroll.scrollLeft += 8; $$('.overlay-row.drop-target').forEach(x => x.classList.remove('drop-target')); document.elementFromPoint(lastX, lastY)?.closest('.overlay-row')?.classList.add('drop-target'); };
+            const finish = ev => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish); el.classList.remove('dragging'); $$('.overlay-row.drop-target').forEach(x => x.classList.remove('drop-target')); if (moved) {
+                const target = document.elementFromPoint(lastX, lastY)?.closest('.overlay-row');
+                pushHistory();
+                clip.timelineStart = snapTime(original + (lastX - startX) / state.pxPerSec);
+                if (target)
+                    clip.lane = +target.dataset.lane || clip.lane;
+                state.project.updatedAt = Date.now();
+                queueSave();
+                renderEditor();
+            } };
+            window.addEventListener('pointermove', move, { passive: false });
+            window.addEventListener('pointerup', finish, { passive: false });
+            window.addEventListener('pointercancel', finish, { passive: false });
+        }, { passive: false });
+    });
+    // On touch, dragging a V1 clip onto V2/V3 converts it into a simultaneous overlay.
+    $$('.timeline-clip').forEach(el => {
+        el.addEventListener('pointerdown', e => {
+            if (!isMobileViewport() || e.target.closest('.timeline-transition'))
+                return;
+            const clip = state.project?.clips.find(c => c.id === el.dataset.id);
+            if (!clip)
+                return;
+            const sx = e.clientX, sy = e.clientY;
+            let active = false, last = { x: sx, y: sy }, ghost = null;
+            const clean = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); ghost?.remove(); $$('.overlay-row.drop-target').forEach(x => x.classList.remove('drop-target')); };
+            const move = ev => { if (ev.pointerId !== e.pointerId)
+                return; last = { x: ev.clientX, y: ev.clientY }; if (!active && Math.hypot(ev.clientX - sx, ev.clientY - sy) > 10) {
+                active = true;
+                ghost = document.createElement('div');
+                ghost.className = 'asset-drag-ghost video';
+                ghost.innerHTML = `${svgIcon('video', 17)}<span>${escapeHtml(getAsset(clip.assetId)?.name || 'Video')}</span>`;
+                document.body.append(ghost);
+            } if (!active)
+                return; ev.preventDefault(); ghost.style.transform = `translate3d(${ev.clientX + 10}px,${ev.clientY - 24}px,0)`; $$('.overlay-row.drop-target').forEach(x => x.classList.remove('drop-target')); document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.overlay-row')?.classList.add('drop-target'); };
+            const up = ev => { if (active) {
+                ev.preventDefault();
+                const target = document.elementFromPoint(last.x, last.y)?.closest('.overlay-row');
+                if (target) {
+                    const lane = +target.dataset.lane || 2, track = target.querySelector('.timeline-overlay-row'), rect = track?.getBoundingClientRect(), at = rect ? snapTime(Math.max(0, (last.x - rect.left) / state.pxPerSec)) : state.currentTime;
+                    mutate(p => { const idx = p.clips.findIndex(c => c.id === clip.id); if (idx >= 0)
+                        p.clips.splice(idx, 1); const converted = { ...clip, id: uid(), timelineStart: at, lane, fit: 'contain', scale: Math.min(.55, clip.scale || .38), volume: 0, transition: 'none' }; p.overlays.push(converted); state.selected = { type: 'overlay', id: converted.id }; });
+                }
+            } clean(); };
+            window.addEventListener('pointermove', move, { passive: false });
+            window.addEventListener('pointerup', up, { passive: false });
+            window.addEventListener('pointercancel', up, { passive: false });
+        }, { passive: false });
+    });
     $$('.timeline-clip').forEach(el => { el.draggable = !isMobileViewport(); el.addEventListener('dragstart', e => { e.dataTransfer?.setData('text/edituno-clip', el.dataset.id); el.classList.add('dragging'); }); el.addEventListener('dragend', () => el.classList.remove('dragging')); el.addEventListener('dragover', e => e.preventDefault()); el.addEventListener('drop', e => { e.preventDefault(); const source = e.dataTransfer?.getData('text/edituno-clip'), target = el.dataset.id; if (!source || !target || source === target)
         return; mutate(p => { const from = p.clips.findIndex(c => c.id === source), to = p.clips.findIndex(c => c.id === target); if (from < 0 || to < 0)
         return; const [clip] = p.clips.splice(from, 1); p.clips.splice(to, 0, clip); state.selected = { type: 'clip', id: clip.id }; }); }); });
@@ -1951,13 +2340,13 @@ function bindAssetDragInteractions() {
                 ev.preventDefault();
                 ghost.style.transform = `translate3d(${ev.clientX + 10}px,${ev.clientY - 24}px,0)`;
                 $$('.track-row.drop-target').forEach(x => x.classList.remove('drop-target'));
-                const target = document.elementFromPoint(ev.clientX, ev.clientY)?.closest(type === 'audio' ? '.audio-row' : '.video-row');
+                const target = document.elementFromPoint(ev.clientX, ev.clientY)?.closest(type === 'audio' ? '.audio-row' : '.video-row,.overlay-row');
                 target?.classList.add('drop-target');
             };
             const up = ev => {
                 if (active) {
                     ev.preventDefault();
-                    const target = document.elementFromPoint(last.x, last.y)?.closest(type === 'audio' ? '.audio-row' : '.video-row');
+                    const target = document.elementFromPoint(last.x, last.y)?.closest(type === 'audio' ? '.audio-row' : '.video-row,.overlay-row');
                     $$('.track-row.drop-target').forEach(x => x.classList.remove('drop-target'));
                     if (target) {
                         if (type === 'audio') {
@@ -1968,7 +2357,12 @@ function bindAssetDragInteractions() {
                         }
                         else {
                             state.sheet = null;
-                            addAssetToTimeline(id);
+                            if (target.classList.contains('overlay-row')) {
+                                const track = target.querySelector('.timeline-overlay-row'), rect = track?.getBoundingClientRect(), at = rect ? snapTime(Math.max(0, (last.x - rect.left) / state.pxPerSec)) : state.currentTime;
+                                addAssetToOverlay(id, at, +target.dataset.lane || 2);
+                            }
+                            else
+                                addAssetToTimeline(id);
                         }
                     }
                 }
@@ -2039,7 +2433,7 @@ async function scheduleAudioTracks(project, audioContext, dest) {
 }
 async function exportProjectLocal(quality, fps, onProgress, signal) {
     const project = state.project;
-    if (!project?.clips.length)
+    if (!project || (project.clips?.length || 0) + (project.overlays?.length || 0) + (project.elements?.length || 0) === 0)
         throw new Error('empty');
     const [w, h] = exportDimensions(project.ratio, quality), canvas = document.createElement('canvas');
     canvas.width = w;
@@ -2088,20 +2482,20 @@ async function exportProjectLocal(quality, fps, onProgress, signal) {
                 ;
                 src.connect(gain).connect(dest);
                 await v.play();
-                await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; drawClipWithTransition(ctx, v, asset, row, global + elapsed, w, h, elapsed / dur); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
+                await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; drawClipWithTransition(ctx, v, asset, row, global + elapsed, w, h, elapsed / dur); await drawOverlays(ctx, project, global + elapsed, w, h); drawElements(ctx, project, global + elapsed, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
                 v.pause();
                 src.disconnect();
                 gain.disconnect();
             }
             else if (asset.type === 'image') {
                 const img = await loadImage(url);
-                await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; drawClipWithTransition(ctx, img, asset, row, global + elapsed, w, h, elapsed / dur); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
+                await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; drawClipWithTransition(ctx, img, asset, row, global + elapsed, w, h, elapsed / dur); await drawOverlays(ctx, project, global + elapsed, w, h); drawElements(ctx, project, global + elapsed, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
             }
             global += dur;
         }
         if (global < total) {
             const rest = total - global;
-            await renderSegment(rest, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
+            await renderSegment(rest, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); await drawOverlays(ctx, project, global + elapsed, w, h); drawElements(ctx, project, global + elapsed, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
         }
     }
     finally {
@@ -2377,12 +2771,20 @@ function bindGlobalEvents() {
         }
         if (a === 'add-asset')
             return addAssetToTimeline(el.dataset.id);
+        if (a === 'add-overlay')
+            return addAssetToOverlay(el.dataset.id, state.currentTime);
         if (a === 'add-audio' || a === 'set-soundtrack')
             return addAudioToTimeline(el.dataset.id);
         if (a === 'select-audio')
             return selectAudio(el.dataset.id);
         if (a === 'select-clip')
             return selectClip(el.dataset.id);
+        if (a === 'select-overlay')
+            return selectOverlay(el.dataset.id);
+        if (a === 'select-element')
+            return selectElement(el.dataset.id);
+        if (a === 'add-element')
+            return addElement(el.dataset.value);
         if (a === 'select-text')
             return selectText(el.dataset.id);
         if (a === 'tool') {
@@ -2413,11 +2815,11 @@ function bindGlobalEvents() {
             return;
         }
         if (a === 'reset-adjustment') {
-            const c = selectedClip();
+            const c = selectedVisual();
             if (!c)
                 return;
             const defaults = { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, opacity: 1 };
-            mutate(p => p.clips.find(x => x.id === c.id)[el.dataset.key] = defaults[el.dataset.key] ?? 0);
+            mutate(p => { const list = state.selected?.type === 'overlay' ? p.overlays : p.clips; list.find(x => x.id === c.id)[el.dataset.key] = defaults[el.dataset.key] ?? 0; });
             return;
         }
         if (a === 'sheet-close') {
@@ -2448,17 +2850,17 @@ function bindGlobalEvents() {
         if (a === 'filter')
             return applyFilter(el.dataset.value);
         if (a === 'clip-set') {
-            const c = selectedClip();
+            const c = selectedVisual();
             if (!c)
                 return;
-            mutate(p => p.clips.find(x => x.id === c.id)[el.dataset.key] = el.dataset.value);
+            mutate(p => { const list = state.selected?.type === 'overlay' ? p.overlays : p.clips; list.find(x => x.id === c.id)[el.dataset.key] = el.dataset.value; });
             return;
         }
         if (a === 'clip-toggle') {
-            const c = selectedClip();
+            const c = selectedVisual();
             if (!c)
                 return;
-            mutate(p => { const x = p.clips.find(y => y.id === c.id); x[el.dataset.key] = !x[el.dataset.key]; });
+            mutate(p => { const list = state.selected?.type === 'overlay' ? p.overlays : p.clips; const x = list.find(y => y.id === c.id); x[el.dataset.key] = !x[el.dataset.key]; });
             return;
         }
         if (a === 'add-text')
@@ -2541,7 +2943,7 @@ function bindGlobalEvents() {
             queueSave();
             return;
         }
-        const clipKey = el.dataset.bindClip, textKey = el.dataset.bindText, audioKey = el.dataset.bindAudio, projectKey = el.dataset.bindProject, prefKey = el.dataset.pref;
+        const clipKey = el.dataset.bindClip, textKey = el.dataset.bindText, audioKey = el.dataset.bindAudio, elementKey = el.dataset.bindElement, projectKey = el.dataset.bindProject, prefKey = el.dataset.pref;
         if (prefKey) {
             let val = (el.type === 'range' || el.type === 'number' || el.tagName === 'SELECT' && /^\d/.test(el.value)) ? +el.value : el.value;
             state.preferences[prefKey] = val;
@@ -2556,11 +2958,12 @@ function bindGlobalEvents() {
             return;
         }
         if (clipKey) {
-            const c = selectedClip();
+            const c = selectedVisual();
             if (!c)
                 return;
             const val = el.type === 'range' || el.type === 'number' ? +el.value : el.value;
-            const obj = state.project.clips.find(x => x.id === c.id);
+            const list = state.selected?.type === 'overlay' ? state.project.overlays : state.project.clips;
+            const obj = list.find(x => x.id === c.id);
             obj[clipKey] = val;
             if (clipKey === 'start')
                 obj.start = Math.min(obj.start, obj.end - .05);
@@ -2607,6 +3010,17 @@ function bindGlobalEvents() {
             updateRangeLabel(el);
             return;
         }
+        if (elementKey) {
+            const c = selectedElement();
+            if (!c)
+                return;
+            const val = el.type === 'range' || el.type === 'number' ? +el.value : el.value;
+            c[elementKey] = val;
+            queueSave();
+            drawPreview();
+            updateRangeLabel(el);
+            return;
+        }
         if (projectKey && state.project) {
             state.project[projectKey] = el.value;
             queueSave();
@@ -2616,7 +3030,7 @@ function bindGlobalEvents() {
     });
     document.addEventListener('change', e => {
         const el = e.target;
-        if (el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-project]') && state.view === 'editor')
+        if (el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-element],[data-bind-project]') && state.view === 'editor')
             setTimeout(() => renderEditor(), 0);
         if (el.matches('[data-pref]')) {
             savePreferences();
@@ -2735,7 +3149,7 @@ async function init() {
             await new Promise(resolve => setTimeout(resolve, remaining));
         render();
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=2.0.3', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=2.1.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else
