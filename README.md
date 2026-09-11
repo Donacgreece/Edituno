@@ -1,57 +1,53 @@
 # Edituno
 
-**Create without limits.**
+Edituno is a mobile-first, local-first PWA video editor.
 
-Edituno is a local-first, installable browser video editor built for creators. Media is processed on the user's device and is not uploaded to an Edituno server.
+## Product principles
 
-## v0.1.0
-
-The first market-ready foundation includes:
-
-- PWA installation and offline app shell
-- English and Greek interface
-- Local project storage with IndexedDB
-- Video, image and audio import
-- Sequential multi-clip timeline
-- Trim controls
-- Clip speed, volume, scale, rotation, opacity and fit controls
-- 16:9, 9:16, 1:1 and 4:5 canvases
-- Text, title and caption overlays
-- Background soundtrack with volume and loop controls
-- 720p and 1080p local export
-- 24, 30 and 60 fps export options
-- MP4 export when supported by the browser, with WebM fallback
-- No watermark
+- Light, minimal interface using Vivid Azure `#2455F5` and Cloud Violet `#F7DCFF`
+- Mobile-first editor with safe-area support and native-style bottom sheets
 - No account required
+- No watermark
+- Media files remain local to the browser/device
+- PWA installation with Apple touch icon and iOS startup images
+- Greek and English UI
 
-## Run locally
+## Editing features
 
-```bash
-npm install
-npm run dev
-```
+- Import video, image and audio files
+- Sequential multi-clip timeline
+- Trim, split, duplicate, reorder and delete clips
+- Speed and volume controls
+- Scale, position, rotation, opacity, contain/cover and mirror controls
+- Brightness, contrast, saturation, hue, blur, grayscale and sepia adjustments
+- Filter presets: Original, Vivid, Warm, Cool, Mono, Film, Dream and Crisp
+- Motion presets: zoom, zoom out, pan left, pan right and shake
+- Fade and flash transitions
+- Titles, captions and sticker-style text layers
+- Text position, color, size, weight, background and animation controls
+- SRT subtitle import
+- Background soundtrack with volume and loop controls
+- 16:9, 9:16, 1:1 and 4:5 canvases
+- Undo/redo history
+- Local IndexedDB autosave
+- 720p or 1080p export at 24, 30 or 60 fps
+- MP4 when supported by MediaRecorder, WebM fallback otherwise
+- Web Share support on compatible mobile browsers
 
-## Production build
+## Deployment
 
-```bash
-npm run build
-npm run preview
-```
+This release is intentionally static and dependency-free. There is no Node build step required for production. GitHub Pages deploys the repository root directly using `.github/workflows/deploy-pages.yml`.
 
-## GitHub Pages
+In GitHub repository settings, set **Pages > Build and deployment > Source** to **GitHub Actions**.
 
-A GitHub Actions workflow is included in `.github/workflows/deploy-pages.yml`. In the repository settings, choose **GitHub Actions** as the Pages source. Every push to `main` then builds and deploys Edituno automatically.
+The public URL for this repository is expected to be:
 
-## Browser notes
+`https://donacgreece.github.io/Edituno/`
 
-Edituno uses modern browser APIs including Canvas, MediaRecorder, IndexedDB and Service Workers. Chromium-based desktop browsers currently provide the best editing and export experience. Export is intentionally local and currently runs in real time for maximum compatibility.
+## Browser support
 
-## Privacy
+Modern Chromium, Safari and Firefox browsers are targeted. Browser codec support determines whether export is MP4 or WebM. Real-time local rendering can take approximately the project duration and can consume significant battery on mobile devices.
 
-Imported media is stored locally in the browser using IndexedDB. Edituno v0.1.0 does not upload project media to a backend.
+## Privacy note
 
-## Roadmap
-
-The architecture is prepared for a richer non-destructive timeline, transitions, keyframes, WebCodecs accelerated rendering, automatic captions, waveform editing and rhythm-aware tools.
-
-Copyright © 2026 Edituno. All rights reserved.
+Project metadata and imported media are stored locally in IndexedDB. Edituno does not include a media upload backend in this release.
