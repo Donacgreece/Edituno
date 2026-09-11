@@ -1,4 +1,4 @@
-name: Deploy Edituno to GitHub Pages
+﻿name: Deploy Edituno to GitHub Pages
 
 on:
   push:
@@ -20,24 +20,35 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify production bundle
+      - name: Verify Edituno Studio v2 production bundle
+        shell: bash
         run: |
+          set -euo pipefail
+
           test -f dist/index.html
           test -f dist/sw.js
           test -f dist/manifest.webmanifest
           test -f dist/icons/icon-512.png
           test -f src/app.ts
-          grep -q "maximum-scale=1" dist/index.html
-          grep -q "timeline-audio" dist/index.html
-          grep -q "audioClipPanel" dist/index.html
-          grep -q "scheduleAudioTracks" dist/index.html
-          grep -q "Edituno v1.6.0 Launch RC" dist/index.html
-          grep -q "home-menu-popover" dist/index.html
-          grep -q "create-tab-icon" dist/index.html
+
+          grep -Fq "maximum-scale=1" dist/index.html
+          grep -Fq "user-scalable=no" dist/index.html
+          grep -Fq "timeline-audio" dist/index.html
+          grep -Fq "audioClipPanel" dist/index.html
+          grep -Fq "scheduleAudioTracks" dist/index.html
+          grep -Fq "studio-home" dist/index.html
+          grep -Fq "home-rail" dist/index.html
+          grep -Fq "studio-project-grid" dist/index.html
+          grep -Fq "editor-topbar" dist/index.html
+          grep -Fq "asset-browser" dist/index.html
+          grep -Fq "inspector-panel" dist/index.html
+          grep -Fq "mobile-tool-dock" dist/index.html
+          grep -Fq "preview-interaction-layer" dist/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
