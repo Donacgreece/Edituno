@@ -513,7 +513,7 @@ function applyFilter(name) {
   mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets[name]||presets.original))
 }
 
-function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="./icons/icon-192.png?v=1.0.1" alt=""><span>Edituno</span></span>` }
+function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="./icons/icon-192-v102.png" alt="Edituno"><span>Edituno</span></span>` }
 function renderHome() {
   const app=$('#app'); const projects=state.projects
   app.innerHTML=`<div class="app-page">

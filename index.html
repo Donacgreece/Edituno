@@ -12,24 +12,24 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
 
-  <link rel="manifest" href="./manifest.webmanifest?v=1.0.1" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=1.0.1" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=1.0.1" />
+  <link rel="manifest" href="./manifest.webmanifest?v=1.0.2" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192-v102.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v102.png" />
 
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556-v102.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796-v102.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532-v102.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436-v102.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688-v102.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792-v102.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
 
   <title>Edituno · Video editor</title>
-  <link rel="stylesheet" href="./assets/app.css?v=1.0.1" />
+  <link rel="stylesheet" href="./assets/app-v102.css" />
 </head>
 <body>
   <div id="splash" class="boot-splash" aria-hidden="true">
     <div class="boot-logo">
-      <img class="boot-app-icon" src="./icons/icon-192.png?v=1.0.1" alt="" />
+      <img class="boot-app-icon" src="./icons/icon-192-v102.png" alt="" />
       <div class="boot-word">Edituno</div>
     </div>
   </div>
@@ -57,6 +57,24 @@
       window.setTimeout(dismissSplash, 1600);
     }());
   </script>
-  <script type="module" src="./assets/app.js?v=1.0.1"></script>
+  <script>
+    // v1.0.2 cache migration. Old Edituno caches are removed without touching local projects.
+    if ('caches' in window) {
+      caches.keys().then(function(keys) {
+        return Promise.all(keys.filter(function(k) { return k.indexOf('edituno') === 0 && k !== 'edituno-live-v1.0.2'; })
+          .map(function(k) { return caches.delete(k); }));
+      }).catch(function(){});
+    }
+
+    // If the application module cannot render for any reason, never leave the user on a splash screen.
+    window.setTimeout(function () {
+      var app = document.getElementById('app');
+      if (app && !app.innerHTML.trim()) {
+        if (typeof window.__dismissEditunoSplash === 'function') window.__dismissEditunoSplash();
+        app.innerHTML = '<main class="startup-error"><div><img src="./icons/icon-192-v102.png" alt="Edituno" style="width:72px;height:72px;border-radius:18px"><strong>Edituno</strong><p>Η εφαρμογή δεν μπόρεσε να ολοκληρώσει την εκκίνηση. Κάνε ανανέωση για να φορτωθεί η τελευταία έκδοση.</p><button onclick="location.reload()" class="primary-btn">Ανανέωση</button></div></main>';
+      }
+    }, 2500);
+  </script>
+  <script type="module" src="./assets/app-v102.js"></script>
 </body>
 </html>
