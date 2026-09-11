@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.2.0 Workspace production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.2.1 Stability production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -166,7 +166,7 @@ const state = {
   settingsOpen: false, installOpen: false, projectHubOpen: false, homeMenuOpen: false, adjustKey: 'brightness',
   projectMenuId: null, renameProjectId: null, confirmDialog: null, mediaImportContext: null,
   preferences: loadPreferences(), audioDrag: null, assetDrag:null,
-  sheetSnap:'half', timelineScrollLeft:0, sheetScrollTop:0,
+  sheetSnap:'half', timelineScrollLeft:0, sheetScrollTop:0, suppressTimelineClickUntil:0,
   fluentCatalog:loadFluentCatalogCache(), fluentLoading:false, fluentError:'', fluentQuery:'', fluentStyle:'color', fluentVisible:60
 }
 state.pxPerSec=Number(state.preferences.timelineScale)||48
@@ -1281,7 +1281,7 @@ function renderEditor() {
     </header>
 
     <main class="editor-workspace">
-      <aside class="asset-browser desktop-editor-only"><div class="panel-top"><span class="eyebrow">STUDIO</span><strong>${desktopToolTitle()}</strong></div>${desktopSidebar()}</aside>
+      <aside class="asset-browser desktop-editor-only"><div class="panel-top"><span class="eyebrow">STUDIO</span><strong>${desktopToolTitle()}</strong></div><div class="desktop-sidebar-shell">${desktopSidebar()}</div></aside>
 
       <section class="editor-center">
         <div class="viewer-shell">
@@ -1296,7 +1296,7 @@ function renderEditor() {
         </section>
       </section>
 
-      <aside class="inspector-panel desktop-editor-only"><div class="panel-top"><span class="eyebrow">INSPECTOR</span><strong>${state.selected?.type==='clip'?tr('selectedClip'):state.selected?.type==='overlay'?'Overlay':state.selected?.type==='element'?(state.language==='el'?'Στοιχείο':'Element'):state.selected?.type==='audio'?tr('audio'):state.selected?.type==='text'?tr('text'):tr('canvas')}</strong></div>${desktopInspector()}</aside>
+      <aside class="inspector-panel desktop-editor-only"><div class="panel-top"><span class="eyebrow">INSPECTOR</span><strong>${state.selected?.type==='clip'?tr('selectedClip'):state.selected?.type==='overlay'?'Overlay':state.selected?.type==='element'?(state.language==='el'?'Στοιχείο':'Element'):state.selected?.type==='audio'?tr('audio'):state.selected?.type==='text'?tr('text'):tr('canvas')}</strong></div><div class="desktop-inspector-scroll">${desktopInspector()}</div></aside>
     </main>
 
     <footer class="mobile-tool-dock mobile-editor-only"><div class="tool-scroller">${toolButton('media','media',tr('media'))}${toolButton('edit','edit',tr('quickEdit'))}${toolButton('text','text',tr('text'))}${toolButton('elements','effects',state.language==='el'?'Στοιχεία':'Elements')}${toolButton('audio','audio',tr('audio'))}${toolButton('effects','effects',tr('effects'))}${toolButton('adjust','adjust',tr('adjust'))}${toolButton('transitions','transition',tr('transitions'))}${toolButton('canvas','canvas',tr('canvas'))}</div></footer>
@@ -1307,7 +1307,7 @@ function renderEditor() {
   </div><div class="toast-stack" id="toasts"></div>`
   requestAnimationFrame(()=>{
     fitPreviewFrame();updatePlaybackUi();bindTimelineInteractions();bindPreviewInteractions();bindBottomSheetGesture()
-    const sc=$('#timeline-scroll');if(sc){sc.scrollLeft=state.timelineScrollLeft||0;sc.addEventListener('scroll',()=>{state.timelineScrollLeft=sc.scrollLeft},{passive:true})}
+    const sc=$('#timeline-scroll');if(sc){const restore=()=>{const max=Math.max(0,sc.scrollWidth-sc.clientWidth);sc.scrollTop=0;sc.scrollLeft=clamp(state.timelineScrollLeft||0,0,max)};restore();requestAnimationFrame(restore);sc.addEventListener('scroll',()=>{state.timelineScrollLeft=sc.scrollLeft},{passive:true})}
     const sh=$('.sheet-content');if(sh){sh.scrollTop=state.sheetScrollTop||0;sh.addEventListener('scroll',()=>{state.sheetScrollTop=sh.scrollTop},{passive:true})}
     if(state.tool==='elements'||state.sheet==='elements')ensureFluentCatalog()
   })
@@ -1386,6 +1386,18 @@ function rangeField(key,value,min,max,step,show,scope){return `<label class="fie
 function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="canvas-ratio-grid">${[['16:9','Landscape'],['9:16','Vertical'],['1:1','Square'],['4:5','Portrait']].map(([r,label])=>`<button class="canvas-ratio-card ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}"><span class="ratio-shape ratio-${r.replace(':','-')}"></span><strong>${r}</strong><small>${label}</small></button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
 
 function snapTime(value){if(!state.preferences.snap)return Math.max(0,value);const step=.25;return Math.max(0,Math.round(value/step)*step)}
+function commitTimelineDragNoRender(item,newStart,el){
+  const scroll=$('#timeline-scroll')
+  if(scroll)state.timelineScrollLeft=scroll.scrollLeft
+  item.timelineStart=snapTime(newStart)
+  if(el)el.style.left=`${item.timelineStart*state.pxPerSec}px`
+  state.project.updatedAt=Date.now()
+  state.suppressTimelineClickUntil=performance.now()+420
+  queueSave()
+  drawPreview()
+  updatePlaybackUi()
+}
+
 function bindTimelineInteractions(){
   const scroll=$('#timeline-scroll'),ruler=$('[data-timeline-ruler]');if(!scroll)return
   if(ruler)ruler.addEventListener('pointerdown',e=>{const rect=ruler.getBoundingClientRect();seekTo(clamp((e.clientX-rect.left)/state.pxPerSec,0,projectDuration()))})
@@ -1418,10 +1430,7 @@ function bindTimelineInteractions(){
         el.classList.remove('dragging')
         if(moved){
           pushHistory()
-          clip.timelineStart=snapTime(original+(lastX-startX)/state.pxPerSec)
-          state.project.updatedAt=Date.now()
-          queueSave()
-          renderEditor()
+          commitTimelineDragNoRender(clip,original+(lastX-startX)/state.pxPerSec,el)
           syncAudioTracks(true)
         }
       }
@@ -1438,7 +1447,7 @@ function bindTimelineInteractions(){
       e.preventDefault();e.stopPropagation();const startX=e.clientX,original=item.timelineStart||0;let moved=false,lastX=startX
       el.setPointerCapture?.(e.pointerId);el.classList.add('dragging')
       const move=ev=>{if(ev.pointerId!==e.pointerId)return;ev.preventDefault();lastX=ev.clientX;if(Math.abs(lastX-startX)>2)moved=true;const next=Math.max(0,original+(lastX-startX)/state.pxPerSec);el.style.left=`${next*state.pxPerSec}px`}
-      const finish=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);el.classList.remove('dragging');if(moved){pushHistory();item.timelineStart=snapTime(original+(lastX-startX)/state.pxPerSec);state.project.updatedAt=Date.now();queueSave();renderEditor()}}
+      const finish=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);el.classList.remove('dragging');if(moved){pushHistory();commitTimelineDragNoRender(item,original+(lastX-startX)/state.pxPerSec,el)}}
       window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',finish,{passive:false});window.addEventListener('pointercancel',finish,{passive:false})
     },{passive:false})
   })
@@ -1450,7 +1459,7 @@ function bindTimelineInteractions(){
       e.preventDefault();e.stopPropagation();const startX=e.clientX,original=clip.timelineStart||0;let moved=false,lastX=startX,lastY=e.clientY
       el.setPointerCapture?.(e.pointerId);el.classList.add('dragging')
       const move=ev=>{if(ev.pointerId!==e.pointerId)return;ev.preventDefault();lastX=ev.clientX;lastY=ev.clientY;if(Math.abs(lastX-startX)>2)moved=true;const next=Math.max(0,original+(lastX-startX)/state.pxPerSec);el.style.left=`${next*state.pxPerSec}px`;const r=scroll.getBoundingClientRect(),edge=42;if(lastX<r.left+edge)scroll.scrollLeft=Math.max(0,scroll.scrollLeft-8);else if(lastX>r.right-edge)scroll.scrollLeft+=8;$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));document.elementFromPoint(lastX,lastY)?.closest('.overlay-row')?.classList.add('drop-target')}
-      const finish=ev=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);el.classList.remove('dragging');$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));if(moved){const target=document.elementFromPoint(lastX,lastY)?.closest('.overlay-row');pushHistory();clip.timelineStart=snapTime(original+(lastX-startX)/state.pxPerSec);if(target)clip.lane=+target.dataset.lane||clip.lane;state.project.updatedAt=Date.now();queueSave();renderEditor()}}
+      const finish=ev=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);el.classList.remove('dragging');$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));if(moved){const target=document.elementFromPoint(lastX,lastY)?.closest('.overlay-row');pushHistory();const nextLane=target?(+target.dataset.lane||clip.lane):clip.lane;clip.lane=nextLane;commitTimelineDragNoRender(clip,original+(lastX-startX)/state.pxPerSec,el);if(target){target.querySelector('.timeline-overlay-row')?.appendChild(el);const small=el.querySelector('small');if(small)small.textContent=`V${nextLane} · ${fmtTime(overlayDuration(clip))}`}}}
       window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',finish,{passive:false});window.addEventListener('pointercancel',finish,{passive:false})
     },{passive:false})
   })
@@ -1462,7 +1471,7 @@ function bindTimelineInteractions(){
     const sx=e.clientX,sy=e.clientY;let active=false,last={x:sx,y:sy},ghost=null
     const clean=()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);ghost?.remove();$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'))}
     const move=ev=>{if(ev.pointerId!==e.pointerId)return;last={x:ev.clientX,y:ev.clientY};if(!active&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>10){active=true;ghost=document.createElement('div');ghost.className='asset-drag-ghost video';ghost.innerHTML=`${svgIcon('video',17)}<span>${escapeHtml(getAsset(clip.assetId)?.name||'Video')}</span>`;document.body.append(ghost)}if(!active)return;ev.preventDefault();ghost.style.transform=`translate3d(${ev.clientX+10}px,${ev.clientY-24}px,0)`;$$('.overlay-row.drop-target').forEach(x=>x.classList.remove('drop-target'));document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.overlay-row')?.classList.add('drop-target')}
-    const up=ev=>{if(active){ev.preventDefault();const target=document.elementFromPoint(last.x,last.y)?.closest('.overlay-row');if(target){const lane=+target.dataset.lane||2,track=target.querySelector('.timeline-overlay-row'),rect=track?.getBoundingClientRect(),at=rect?snapTime(Math.max(0,(last.x-rect.left)/state.pxPerSec)):state.currentTime;mutate(p=>{const idx=p.clips.findIndex(c=>c.id===clip.id);if(idx>=0)p.clips.splice(idx,1);const converted={...clip,id:uid(),timelineStart:at,lane,fit:'contain',scale:Math.min(.55,clip.scale||.38),volume:0,transition:'none'};p.overlays.push(converted);state.selected={type:'overlay',id:converted.id}})}}clean()}
+    const up=ev=>{if(active){ev.preventDefault();const target=document.elementFromPoint(last.x,last.y)?.closest('.overlay-row');if(target){state.timelineScrollLeft=scroll.scrollLeft;const lane=+target.dataset.lane||2,track=target.querySelector('.timeline-overlay-row'),rect=track?.getBoundingClientRect(),at=rect?snapTime(Math.max(0,(last.x-rect.left)/state.pxPerSec)):state.currentTime;state.suppressTimelineClickUntil=performance.now()+420;mutate(p=>{const idx=p.clips.findIndex(c=>c.id===clip.id);if(idx>=0)p.clips.splice(idx,1);const converted={...clip,id:uid(),timelineStart:at,lane,fit:'contain',scale:Math.min(.55,clip.scale||.38),volume:0,transition:'none'};p.overlays.push(converted);state.selected={type:'overlay',id:converted.id}})}}clean()}
     window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',up,{passive:false});window.addEventListener('pointercancel',up,{passive:false})
   },{passive:false})})
 
@@ -1651,6 +1660,7 @@ function bindGlobalEvents() {
     if(a==='add-asset')return addAssetToTimeline(el.dataset.id)
     if(a==='add-overlay')return addAssetToOverlay(el.dataset.id,state.currentTime)
     if(a==='add-audio'||a==='set-soundtrack')return addAudioToTimeline(el.dataset.id)
+    if(['select-audio','select-clip','select-overlay','select-element'].includes(a) && performance.now()<(state.suppressTimelineClickUntil||0))return
     if(a==='select-audio')return selectAudio(el.dataset.id)
     if(a==='select-clip')return selectClip(el.dataset.id)
     if(a==='select-overlay')return selectOverlay(el.dataset.id)
@@ -1793,7 +1803,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

@@ -1,11 +1,11 @@
-# Edituno Studio v2.2.0
+# Edituno Studio v2.2.1 Stability
 
-## Workspace and library upgrade
+## Stability fixes
 
-- Draggable bottom sheets with collapsed, half and full snap points on mobile and desktop.
-- Timeline and sheet scroll positions are preserved across rerenders and element edits.
-- Desktop now exposes the same Media, Edit, Text, Elements, Audio, Effects, Adjust, Transitions and Canvas tool set as mobile.
-- Microsoft Fluent Emoji integration provides the complete 1,285 Color SVG and 1,285 3D PNG catalog on demand. The catalog is cached locally and selected assets are stored inside the project.
-- 4K export option added for 16:9, 9:16, 1:1 and 4:5 projects.
-- 4K bitrate increased for local rendering.
-- Official Edituno logo unchanged.
+- Reworked the mobile timeline so it scrolls only horizontally and never bounces vertically.
+- Timeline audio, element and overlay drags now commit in place instead of rebuilding the full editor after every pointer release.
+- Prevented the click generated after a touch drag from reopening a tool sheet and moving the workspace.
+- Preserved the exact horizontal timeline viewport across structural edits and rerenders.
+- Rebuilt desktop side panels as bounded scroll containers so video and audio controls cannot escape their columns.
+- Aligned the JavaScript and CSS mobile breakpoint at 979px to prevent mixed mobile/desktop layouts.
+- Retained draggable sheets, Fluent Emoji, compositing layers and 4K export from v2.2.0.

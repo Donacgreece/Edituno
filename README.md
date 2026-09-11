@@ -1,8 +1,8 @@
-# Edituno Studio v2.2.0
+# Edituno Studio v2.2.1
 
 A mobile-first local video editor PWA with a professional desktop workspace.
 
-## Included in v2.2.0
+## Included in v2.2.1
 
 - Draggable editor sheets with collapsed, half and full snap positions
 - Timeline and panel position preservation during edits and rerenders
