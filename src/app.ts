@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.0.2 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.0.3 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -72,7 +72,7 @@ const STRINGS = {
     align:'Alignment', start:'Start', end:'End', weight:'Weight', loop:'Loop soundtrack', installApp:'Install app', browserLimit:'Your browser may export WebM instead of MP4.',
     unsupported:'This file format is not supported by this browser.', imported:'Media imported', srtImported:'Subtitles imported', deleted:'Deleted',
     timeline:'Timeline', share:'Share', download:'Save file', cancel:'Cancel', back:'Back', project:'Project', local:'Local editor',
-    autoSave:'Autosaved', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.', rename:'Rename', projectOptions:'Project options', renameProject:'Rename project', saveChanges:'Save', confirmDelete:'Delete project', keepProject:'Keep project', deleteProjectBody:'This removes the project and its local media from this device.', clearAllTitle:'Delete all projects?', clearAllBody:'This permanently removes every local Edituno project and its media from this device.', duplicatedProject:'Project duplicated',
+    autoSave:'Autosaved', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.', rename:'Rename', projectOptions:'Project options', renameProject:'Rename project', saveChanges:'Save', confirmDelete:'Delete project', keepProject:'Keep project', deleteProjectBody:'This removes the project and its local media from this device.', clearAllTitle:'Delete all projects?', clearAllBody:'This permanently removes every local Edituno project and its media from this device.', duplicatedProject:'Project duplicated', fitAudio:'Fit to video', movePlayhead:'Move to playhead', alignClip:'Align to clip', dragTimeline:'Drag to timeline', invert:'Invert', spin:'Spin', bounce:'Bounce', swing:'Swing', driftUp:'Drift up', driftDown:'Drift down', slideUp:'Slide up', slideDown:'Slide down', dipBlack:'Dip to black', dipWhite:'Dip to white',
     selectedText:'Selected text', textStyle:'Text style', position:'Position', apply:'Apply', installHint:'Install Edituno',
     desktopMedia:'Project media', inspector:'Properties', adjust:'Adjust', transitions:'Transitions', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide left', slideRight:'Slide right', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Reset', timelineZoom:'Timeline zoom', transitionDuration:'Duration', newBlank:'New blank project', resume:'Resume editing', editLocally:'Edit locally. Export anywhere.', chooseProject:'Choose project', mobileReady:'Ready to edit', noUploadShort:'No upload. No watermark.', blurFill:'Blur fill'
   },
@@ -101,7 +101,7 @@ const STRINGS = {
     unsupported:'Αυτό το format δεν υποστηρίζεται από τον browser.', imported:'Τα media προστέθηκαν', srtImported:'Οι υπότιτλοι προστέθηκαν', deleted:'Διαγράφηκε',
     timeline:'Timeline', share:'Κοινοποίηση', download:'Αποθήκευση αρχείου', cancel:'Ακύρωση', back:'Πίσω', project:'Project', local:'Τοπικός editor',
     autoSave:'Αυτόματη αποθήκευση', add:'Προσθήκη', noAudio:'Κάνε import αρχείο ήχου για μουσική.', noMedia:'Δεν υπάρχουν media ακόμα.', rename:'Μετονομασία', projectOptions:'Επιλογές project', renameProject:'Μετονομασία project', saveChanges:'Αποθήκευση', confirmDelete:'Διαγραφή project', keepProject:'Διατήρηση project', deleteProjectBody:'Το project και τα τοπικά media του θα διαγραφούν από αυτή τη συσκευή.', clearAllTitle:'Διαγραφή όλων των projects;', clearAllBody:'Θα διαγραφούν μόνιμα όλα τα τοπικά projects του Edituno και τα media τους από αυτή τη συσκευή.', duplicatedProject:'Το project αντιγράφηκε',
-    selectedText:'Επιλεγμένο κείμενο', textStyle:'Στυλ κειμένου', position:'Θέση', apply:'Εφαρμογή', installHint:'Εγκατάσταση Edituno',
+    fitAudio:'Προσαρμογή στο video', movePlayhead:'Μεταφορά στο playhead', alignClip:'Στοίχιση με clip', dragTimeline:'Σύρε στο timeline', invert:'Αντιστροφή', spin:'Περιστροφή', bounce:'Αναπήδηση', swing:'Αιώρηση', driftUp:'Κίνηση πάνω', driftDown:'Κίνηση κάτω', slideUp:'Slide πάνω', slideDown:'Slide κάτω', dipBlack:'Βύθιση σε μαύρο', dipWhite:'Βύθιση σε λευκό', selectedText:'Επιλεγμένο κείμενο', textStyle:'Στυλ κειμένου', position:'Θέση', apply:'Εφαρμογή', installHint:'Εγκατάσταση Edituno',
     desktopMedia:'Media project', inspector:'Ιδιότητες', adjust:'Ρυθμίσεις', transitions:'Μεταβάσεις', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide αριστερά', slideRight:'Slide δεξιά', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Επαναφορά', timelineZoom:'Zoom timeline', transitionDuration:'Διάρκεια', newBlank:'Νέο κενό project', resume:'Συνέχεια επεξεργασίας', editLocally:'Επεξεργασία τοπικά. Export παντού.', chooseProject:'Επίλεξε project', mobileReady:'Έτοιμο για επεξεργασία', noUploadShort:'Χωρίς upload. Χωρίς watermark.', blurFill:'Blur fill'
   }
 }
@@ -113,7 +113,7 @@ const state = {
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
   settingsOpen: false, installOpen: false, projectHubOpen: false, homeMenuOpen: false, adjustKey: 'brightness',
   projectMenuId: null, renameProjectId: null, confirmDialog: null, mediaImportContext: null,
-  preferences: loadPreferences(), audioDrag: null
+  preferences: loadPreferences(), audioDrag: null, assetDrag:null
 }
 state.pxPerSec=Number(state.preferences.timelineScale)||48
 const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key
@@ -410,9 +410,9 @@ function fitPreviewFrame() {
 
 function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress=0, globalAlpha=1) {
   ctx.save()
-  const b=clip.brightness ?? 100, exposure=clip.exposure ?? 0, c=clip.contrast ?? 100, s=clip.saturation ?? 100, h=clip.hue ?? 0, blur=clip.blur ?? 0, gray=clip.grayscale ?? 0, sep=clip.sepia ?? 0
+  const b=clip.brightness ?? 100, exposure=clip.exposure ?? 0, c=clip.contrast ?? 100, s=clip.saturation ?? 100, h=clip.hue ?? 0, blur=clip.blur ?? 0, gray=clip.grayscale ?? 0, sep=clip.sepia ?? 0, inv=clip.invert ?? 0
   const exposureBrightness = b * Math.pow(2, exposure / 100)
-  ctx.filter=`brightness(${exposureBrightness}%) contrast(${c}%) saturate(${s}%) hue-rotate(${h}deg) blur(${blur}px) grayscale(${gray}%) sepia(${sep}%)`
+  ctx.filter=`brightness(${exposureBrightness}%) contrast(${c}%) saturate(${s}%) hue-rotate(${h}deg) blur(${blur}px) grayscale(${gray}%) sepia(${sep}%) invert(${inv}%)`
   ctx.globalAlpha=(clip.opacity ?? 1)*globalAlpha
   ctx.translate(width/2,height/2)
   let motionScale=1, motionX=0, motionY=0, motionRot=0
@@ -426,6 +426,11 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
     case 'kenburns': motionScale=1.03 + .14*p; motionX=width*.04*(2*p-1); motionY=height*.018*(1-2*p); break
     case 'pulse': motionScale=1 + .035*Math.sin(p*Math.PI*4); break
     case 'float': motionY=Math.sin(p*Math.PI*2)*height*.018; break
+    case 'driftup': motionY=height*.055*(1-2*p); motionScale=1.04; break
+    case 'driftdown': motionY=-height*.055*(1-2*p); motionScale=1.04; break
+    case 'spin': motionRot=(p-.5)*.16; motionScale=1.035; break
+    case 'bounce': motionY=-Math.abs(Math.sin(p*Math.PI*3))*height*.035; break
+    case 'swing': motionRot=Math.sin(p*Math.PI*4)*.035; break
   }
   ctx.translate(motionX,motionY)
   ctx.rotate(((clip.rotation||0)*Math.PI/180)+motionRot)
@@ -479,7 +484,7 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
 
 function transitionStyle(row,time,w,h) {
   const clip=row.clip, d=Math.min(Number(clip.transitionDuration)||.35,row.duration/2)
-  const none={alpha:1,tx:0,ty:0,scale:1,blur:0,overlay:null,overlayAlpha:0}
+  const none={alpha:1,tx:0,ty:0,scale:1,rotation:0,blur:0,overlay:null,overlayAlpha:0}
   if (!clip.transition || clip.transition==='none' || d<=0) return none
   const local=time-row.start
   const atStart=local<d, atEnd=row.end-time<d
@@ -495,6 +500,11 @@ function transitionStyle(row,time,w,h) {
     case 'slideright': out.tx=(atStart?-1:1)*w*edge; out.alpha=.35+.65*progress; break
     case 'zoom': out.scale=1 + .20*edge; out.alpha=.55+.45*progress; break
     case 'blur': out.blur=10*edge; out.alpha=.72+.28*progress; break
+    case 'slideup': out.ty=(atStart?1:-1)*h*edge; out.alpha=.35+.65*progress; break
+    case 'slidedown': out.ty=(atStart?-1:1)*h*edge; out.alpha=.35+.65*progress; break
+    case 'spin': out.scale=1+.12*edge; out.rotation=(atStart?1:-1)*edge*.16; out.alpha=.5+.5*progress; break
+    case 'dipblack': out.overlay='#000000'; out.overlayAlpha=Math.sin((1-progress)*Math.PI/2); break
+    case 'dipwhite': out.overlay='#ffffff'; out.overlayAlpha=Math.sin((1-progress)*Math.PI/2)*.9; break
   }
   return out
 }
@@ -503,7 +513,7 @@ function drawClipWithTransition(ctx,source,asset,row,time,w,h,progress) {
   const fx=transitionStyle(row,time,w,h)
   ctx.save()
   ctx.translate(fx.tx,fx.ty)
-  ctx.translate(w/2,h/2); ctx.scale(fx.scale,fx.scale); ctx.translate(-w/2,-h/2)
+  ctx.translate(w/2,h/2); ctx.rotate(fx.rotation||0); ctx.scale(fx.scale,fx.scale); ctx.translate(-w/2,-h/2)
   const clip = fx.blur ? {...row.clip, blur:(row.clip.blur||0)+fx.blur} : row.clip
   applyClipDrawing(ctx,source,asset,clip,w,h,progress,fx.alpha)
   ctx.restore()
@@ -663,7 +673,7 @@ function normalizeProject(p) {
   p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.texts ||= p.textOverlays || []; p.audioClips ||= []
   if(p.soundtrack && !p.audioClips.length){const a=p.assets.find(x=>x.id===p.soundtrack.assetId);if(a)p.audioClips.push({id:uid(),assetId:a.id,timelineStart:0,sourceStart:0,sourceEnd:a.duration||30,volume:p.soundtrack.volume??.7,speed:1,fadeIn:0,fadeOut:0,muted:false})}
   p.soundtrack=null
-  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
+  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
   return p
 }
 async function createProject(ratio='16:9') {
@@ -712,14 +722,14 @@ async function buildWaveform(file,points=72) {
   } catch { return null }
 }
 function preferredAudioInsertTime(){
+  // New music should naturally play in parallel with the picture.
+  // If a visual clip is selected align to its start, otherwise start at 00:00.
   const clip=selectedClip()
   if(clip){
     const row=clipTimeline().find(r=>r.clip.id===clip.id)
     if(row)return row.start
   }
-  const visual=visualDuration()
-  if(visual>0 && state.currentTime>.05 && state.currentTime<visual-.05)return snapTime(state.currentTime)
-  return visual>0?0:Math.max(0,state.currentTime||0)
+  return visualDuration()>0 ? 0 : Math.max(0,state.currentTime||0)
 }
 function defaultAudioClip(asset,timelineStart=preferredAudioInsertTime()){
   const start=Math.max(0,timelineStart||0)
@@ -730,6 +740,17 @@ function defaultAudioClip(asset,timelineStart=preferredAudioInsertTime()){
   return {id:uid(),assetId:asset.id,timelineStart:start,sourceStart:0,sourceEnd:Math.max(.1,fitted),volume:.8,speed:1,fadeIn:0,fadeOut:0,muted:false}
 }
 function addAudioToTimeline(id,at){const asset=getAsset(id);if(!asset||asset.type!=='audio')return;const start=at===undefined?preferredAudioInsertTime():Math.max(0,at);mutate(p=>{const c=defaultAudioClip(asset,start);p.audioClips.push(c);state.selected={type:'audio',id:c.id};state.tool='audio';state.sheet=isMobileViewport()?'audio':null});syncAudioTracks(true)}
+
+function openMediaPicker(context='editor'){
+  state.mediaImportContext=context
+  const picker=$('#media-picker')
+  if(!picker)return
+  // Native showPicker keeps the file chooser tied directly to the user's gesture.
+  try {
+    if(typeof picker.showPicker==='function'){ picker.showPicker(); return }
+  } catch {}
+  picker.click()
+}
 
 async function importFiles(files, addVisuals=true) {
   if(!state.project || !files?.length) return
@@ -747,7 +768,7 @@ async function importFiles(files, addVisuals=true) {
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
 }
 function defaultClip(asset) {
-  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
+  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
 }
 function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset)return; if(asset.type==='audio')return addAudioToTimeline(id); mutate(p=>p.clips.push(defaultClip(asset))); }
 function setSoundtrack(id) { addAudioToTimeline(id,0) }
@@ -828,7 +849,15 @@ function applyFilter(name) {
     matte:{brightness:106,exposure:3,contrast:86,saturation:82,temperature:5,vignette:12,grain:9,hue:0,blur:0,grayscale:0,sepia:5},
     sunset:{brightness:104,exposure:2,contrast:108,saturation:126,temperature:28,vignette:18,grain:4,hue:-5,blur:0,grayscale:0,sepia:12},
     ice:{brightness:103,exposure:1,contrast:114,saturation:104,temperature:-32,vignette:15,grain:3,hue:10,blur:0,grayscale:0,sepia:0},
-    noir:{brightness:96,exposure:-2,contrast:140,saturation:0,temperature:0,vignette:42,grain:18,hue:0,blur:0,grayscale:100,sepia:0}
+    noir:{brightness:96,exposure:-2,contrast:140,saturation:0,temperature:0,vignette:42,grain:18,hue:0,blur:0,grayscale:100,sepia:0,invert:0},
+    tealorange:{brightness:102,exposure:1,contrast:120,saturation:122,temperature:10,vignette:18,grain:4,hue:-16,blur:0,grayscale:0,sepia:5,invert:0},
+    bleach:{brightness:110,exposure:4,contrast:134,saturation:62,temperature:0,vignette:8,grain:12,hue:0,blur:0,grayscale:0,sepia:4,invert:0},
+    rose:{brightness:106,exposure:2,contrast:98,saturation:118,temperature:12,vignette:10,grain:3,hue:-12,blur:.2,grayscale:0,sepia:8,invert:0},
+    forest:{brightness:98,exposure:-1,contrast:112,saturation:108,temperature:-3,vignette:18,grain:4,hue:18,blur:0,grayscale:0,sepia:2,invert:0},
+    gold:{brightness:105,exposure:2,contrast:110,saturation:116,temperature:30,vignette:16,grain:8,hue:-4,blur:0,grayscale:0,sepia:16,invert:0},
+    highkey:{brightness:118,exposure:8,contrast:88,saturation:94,temperature:2,vignette:0,grain:0,hue:0,blur:.2,grayscale:0,sepia:0,invert:0},
+    lowkey:{brightness:82,exposure:-8,contrast:136,saturation:92,temperature:-4,vignette:48,grain:10,hue:0,blur:0,grayscale:0,sepia:0,invert:0},
+    cyber:{brightness:102,exposure:1,contrast:132,saturation:170,temperature:-18,vignette:28,grain:7,hue:28,blur:0,grayscale:0,sepia:0,invert:0}
   }
   mutate(p=>Object.assign(p.clips.find(x=>x.id===c.id),presets.original,presets[name]||presets.original,{filterPreset:name}))
 }
@@ -865,7 +894,7 @@ function svgIcon(name,size=20) {
     redo:'<path d="m15 7 5 5-5 5"/><path d="M19 12h-8a6 6 0 0 0-6 6"/>',
     zoomin:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/>',
     zoomout:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6"/>',
-    transition:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
+    transition:'<path d="M7 5l5 7-5 7"/><path d="M17 5l-5 7 5 7"/>',
     language:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
     check:'<path d="m5 12 4 4L19 6"/>',
     timeline:'<path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 4v4M15 10v4M11 16v4"/>',
@@ -1099,7 +1128,7 @@ function renderEditor() {
   requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions(); bindPreviewInteractions() })
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
-function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',16)}</button>`:''}</div>`}
+function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
 function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start||0)*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
 function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.preferences.showWaveforms)return'';let out='';for(let i=0;i<count;i++){const v=peaks.length?peaks[Math.floor(i*peaks.length/count)]:(.28+.6*Math.abs(Math.sin(i*1.73)));out+=`<i style="height:${Math.max(12,Math.round(v*86))}%"></i>`}return out}
 function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
@@ -1109,43 +1138,43 @@ function desktopSidebar(){return `<div class="desktop-tool-tabs"><button class="
 function desktopInspector(){return `${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
 function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
 
-function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}"><div class="media-type">${a.type==='video'?svgIcon('video',18):a.type==='image'?svgIcon('media',18):svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${svgIcon('plus',14)}<span>${tr('add')}</span></button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
+function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type==='video'?svgIcon('video',18):a.type==='image'?svgIcon('media',18):svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${svgIcon('plus',14)}<span>${tr('add')}</span></button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
 function textPanel(showAdd=true){const t=selectedText();return `<div class="panel-grid">${showAdd?`<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>${svgIcon('effects',17)}</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>`:''}${t?`<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight==600?'selected':''}>600</option><option ${t.weight==700?'selected':''}>700</option><option ${t.weight==800?'selected':''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color,'#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background,'#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation==='none'?'selected':''}>${tr('none')}</option><option value="fade" ${t.animation==='fade'?'selected':''}>Fade</option><option value="pop" ${t.animation==='pop'?'selected':''}>Pop</option><option value="slide" ${t.animation==='slide'?'selected':''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x',t.x,0,1,.01,true,'text')}${rangeField('y',t.y,0,1,.01,true,'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>`:''}</div>`}
 function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
 function audioPanel(){
   const audios=state.project.assets.filter(a=>a.type==='audio'), c=selectedAudio()
-  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">${svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c?audioClipPanel():`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`
+  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio" data-drag-asset="${a.id}" data-drag-type="audio"><div class="media-type">${svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c?audioClipPanel():`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`
 }
 function audioClipPanel(){
   const c=selectedAudio(),a=getAsset(c?.assetId);if(!c)return''
-  return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">${svgIcon('audio',18)}</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?svgIcon('mute',16):svgIcon('volume',16)}<span>${c.muted?(state.language==='el'?'Ενεργοποίηση':'Unmute'):(state.language==='el'?'Σίγαση':'Mute')}</span></button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
+  return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">${svgIcon('audio',18)}</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.5" ${c.speed===.5?'selected':''}>0.5×</option><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-quick-grid"><button class="secondary-btn" data-action="audio-fit-video">${svgIcon('expand',15)}<span>${tr('fitAudio')}</span></button><button class="secondary-btn" data-action="audio-to-playhead">${svgIcon('right',15)}<span>${tr('movePlayhead')}</span></button><button class="secondary-btn" data-action="audio-align-clip">${svgIcon('transition',15)}<span>${tr('alignClip')}</span></button></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?svgIcon('mute',16):svgIcon('volume',16)}<span>${c.muted?(state.language==='el'?'Ενεργοποίηση':'Unmute'):(state.language==='el'?'Σίγαση':'Mute')}</span></button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
 }
 
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
 function editPanel(){
   const c=selectedClip(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
-  return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy',19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left',19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right',19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash',19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,4,.05,true,'clip')}${a?.type==='video'?rangeField('volume',c.volume,0,1,.01,true,'clip'):''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
+  return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy',19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left',19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right',19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash',19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,8,.05,true,'clip')}${a?.type==='video'?`${rangeField('volume',c.volume,0,1,.01,true,'clip')}${rangeField('audioFadeIn',c.audioFadeIn||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}${rangeField('audioFadeOut',c.audioFadeOut||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}`:''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
 }
 function effectsPanel(){
   const c=selectedClip(); if(!c)return effectsEmpty()
-  const presets=['original','vivid','warm','cool','cinematic','film','dream','crisp','retro','soft','neon','matte','sunset','ice','noir','mono']
-  return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
+  const presets=['original','vivid','warm','cool','cinematic','film','dream','crisp','retro','soft','neon','matte','sunset','ice','noir','mono','tealorange','bleach','rose','forest','gold','highkey','lowkey','cyber']
+  return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')],['driftup',tr('driftUp')],['driftdown',tr('driftDown')],['spin',tr('spin')],['bounce',tr('bounce')],['swing',tr('swing')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
 }
-function motionGlyph(v){const m={none:'circle',zoom:'zoomin',zoomout:'zoomout',kenburns:'expand',panleft:'left',panright:'right',pulse:'circle',float:'movevertical',shake:'movehorizontal'};return svgIcon(m[v]||'effects',20)}
+function motionGlyph(v){const m={none:'circle',zoom:'zoomin',zoomout:'zoomout',kenburns:'expand',panleft:'left',panright:'right',pulse:'circle',float:'movevertical',shake:'movehorizontal',driftup:'movevertical',driftdown:'movevertical',spin:'rotate',bounce:'movevertical',swing:'rotate'};return svgIcon(m[v]||'effects',20)}
 function adjustPanel(){
   const c=selectedClip(); if(!c)return effectsEmpty()
-  const defs={brightness:[50,150,1],exposure:[-50,50,1],contrast:[50,160,1],saturation:[0,200,1],temperature:[-50,50,1],vignette:[0,100,1],grain:[0,100,1],hue:[-180,180,1],blur:[0,8,.1],grayscale:[0,100,1],sepia:[0,100,1],opacity:[0,1,.01]}
+  const defs={brightness:[50,150,1],exposure:[-50,50,1],contrast:[50,160,1],saturation:[0,200,1],temperature:[-50,50,1],vignette:[0,100,1],grain:[0,100,1],hue:[-180,180,1],blur:[0,8,.1],grayscale:[0,100,1],sepia:[0,100,1],invert:[0,100,1],opacity:[0,1,.01]}
   const key=defs[state.adjustKey]?state.adjustKey:'brightness', [min,max,step]=defs[key], value=c[key]??(key==='opacity'?1:0)
   return `<div class="adjust-mobile"><div class="adjust-grid">${Object.keys(defs).map(k=>`<button class="adjust-tile ${key===k?'active':''}" data-action="adjust-select" data-key="${k}"><span>${adjustGlyph(k)}</span><strong>${tr(k)}</strong><small>${Number(c[k]??0).toFixed(step<1?1:0)}</small></button>`).join('')}</div><div class="adjust-focus"><div class="adjust-focus-head"><strong>${tr(key)}</strong><button data-action="reset-adjustment" data-key="${key}">${tr('reset')}</button></div>${rangeField(key,value,min,max,step,true,'clip')}</div></div>`
 }
-function adjustGlyph(k){const m={brightness:'sun',exposure:'half',contrast:'half',saturation:'droplet',temperature:'thermo',vignette:'circle',grain:'grain',hue:'palette',blur:'droplet',grayscale:'half',sepia:'palette',opacity:'circle'};return svgIcon(m[k]||'adjust',19)}
+function adjustGlyph(k){const m={brightness:'sun',exposure:'half',contrast:'half',saturation:'droplet',temperature:'thermo',vignette:'circle',grain:'grain',hue:'palette',blur:'droplet',grayscale:'half',sepia:'palette',invert:'half',opacity:'circle'};return svgIcon(m[k]||'adjust',19)}
 function transitionPanel(){
   const c=selectedClip(); if(!c)return effectsEmpty()
-  const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')]]
+  const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')],['slideup',tr('slideUp')],['slidedown',tr('slideDown')],['spin',tr('spin')],['dipblack',tr('dipBlack')],['dipwhite',tr('dipWhite')]]
   return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v,l])=>`<button class="transition-card ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b></span><strong>${l}</strong></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration',c.transitionDuration,.1,1.5,.05,true,'clip')}</div></div>`
 }
-function clipPanel(){const c=selectedClip();if(!c)return effectsEmpty();return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}</div>${transitionPanel()}</div>`}
-function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)',neon:'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)',matte:'filter:saturate(.8) contrast(.86) brightness(1.07)',sunset:'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)',ice:'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)',noir:'filter:grayscale(1) contrast(1.45) brightness(.96)'};return f[n]||''}
+function clipPanel(){const c=selectedClip();if(!c)return effectsEmpty();return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}${rangeField('invert',c.invert||0,0,100,1,false,'clip')}</div>${transitionPanel()}</div>`}
+function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)',neon:'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)',matte:'filter:saturate(.8) contrast(.86) brightness(1.07)',sunset:'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)',ice:'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)',noir:'filter:grayscale(1) contrast(1.45) brightness(.96)',tealorange:'filter:saturate(1.22) contrast(1.2) hue-rotate(-16deg)',bleach:'filter:saturate(.62) contrast(1.34) brightness(1.1)',rose:'filter:saturate(1.18) sepia(.12) hue-rotate(-12deg)',forest:'filter:saturate(1.08) hue-rotate(18deg) contrast(1.12)',gold:'filter:sepia(.18) saturate(1.16) brightness(1.05)',highkey:'filter:brightness(1.18) contrast(.88)',lowkey:'filter:brightness(.82) contrast(1.36)',cyber:'filter:saturate(1.7) contrast(1.32) hue-rotate(28deg)'};return f[n]||''}
 function rangeField(key,value,min,max,step,show,scope){return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show?Number(value).toFixed(step<1?2:0):Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`}
 function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9','9:16','1:1','4:5'].map(r=>`<button class="format-btn ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
 
@@ -1153,18 +1182,110 @@ function snapTime(value){if(!state.preferences.snap)return Math.max(0,value);con
 function bindTimelineInteractions(){
   const scroll=$('#timeline-scroll'),ruler=$('[data-timeline-ruler]');if(!scroll)return
   if(ruler)ruler.addEventListener('pointerdown',e=>{const rect=ruler.getBoundingClientRect();seekTo(clamp((e.clientX-rect.left)/state.pxPerSec,0,projectDuration()))})
+
+  // Pointer Events are used for audio movement so the exact same interaction works
+  // with mouse, Apple Pencil and a finger. Vertical page panning never steals A1.
   $$('.timeline-audio').forEach(el=>{
     el.addEventListener('pointerdown',e=>{
-      if(e.button!==undefined&&e.button!==0)return
+      if(e.button!==undefined&&e.pointerType==='mouse'&&e.button!==0)return
       const clip=state.project?.audioClips.find(c=>c.id===el.dataset.id);if(!clip)return
-      const startX=e.clientX,original=clip.timelineStart||0;let moved=false
+      e.preventDefault();e.stopPropagation()
+      const startX=e.clientX,original=clip.timelineStart||0;let moved=false,lastX=startX
       el.setPointerCapture?.(e.pointerId);el.classList.add('dragging')
-      const move=ev=>{const delta=(ev.clientX-startX)/state.pxPerSec;if(Math.abs(ev.clientX-startX)>3)moved=true;const next=Math.max(0,original+delta);el.style.left=`${next*state.pxPerSec}px`}
-      const up=ev=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);el.classList.remove('dragging');if(moved){pushHistory();clip.timelineStart=snapTime(original+(ev.clientX-startX)/state.pxPerSec);state.project.updatedAt=Date.now();queueSave();renderEditor();syncAudioTracks(true)}}
-      el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)
-    })
+      const move=ev=>{
+        if(ev.pointerId!==e.pointerId)return
+        ev.preventDefault()
+        lastX=ev.clientX
+        const delta=(lastX-startX)/state.pxPerSec
+        if(Math.abs(lastX-startX)>2)moved=true
+        const next=Math.max(0,original+delta)
+        el.style.left=`${next*state.pxPerSec}px`
+        const r=scroll.getBoundingClientRect(),edge=42
+        if(lastX<r.left+edge)scroll.scrollLeft=Math.max(0,scroll.scrollLeft-8)
+        else if(lastX>r.right-edge)scroll.scrollLeft+=8
+      }
+      const finish=ev=>{
+        window.removeEventListener('pointermove',move)
+        window.removeEventListener('pointerup',finish)
+        window.removeEventListener('pointercancel',finish)
+        el.classList.remove('dragging')
+        if(moved){
+          pushHistory()
+          clip.timelineStart=snapTime(original+(lastX-startX)/state.pxPerSec)
+          state.project.updatedAt=Date.now()
+          queueSave()
+          renderEditor()
+          syncAudioTracks(true)
+        }
+      }
+      window.addEventListener('pointermove',move,{passive:false})
+      window.addEventListener('pointerup',finish,{passive:false})
+      window.addEventListener('pointercancel',finish,{passive:false})
+    },{passive:false})
   })
+
   $$('.timeline-clip').forEach(el=>{el.draggable=!isMobileViewport();el.addEventListener('dragstart',e=>{e.dataTransfer?.setData('text/edituno-clip',el.dataset.id);el.classList.add('dragging')});el.addEventListener('dragend',()=>el.classList.remove('dragging'));el.addEventListener('dragover',e=>e.preventDefault());el.addEventListener('drop',e=>{e.preventDefault();const source=e.dataTransfer?.getData('text/edituno-clip'),target=el.dataset.id;if(!source||!target||source===target)return;mutate(p=>{const from=p.clips.findIndex(c=>c.id===source),to=p.clips.findIndex(c=>c.id===target);if(from<0||to<0)return;const [clip]=p.clips.splice(from,1);p.clips.splice(to,0,clip);state.selected={type:'clip',id:clip.id}})})})
+
+  bindAssetDragInteractions()
+}
+
+function bindAssetDragInteractions(){
+  $$('.media-row[data-drag-asset]').forEach(row=>{
+    row.addEventListener('pointerdown',e=>{
+      if(e.target.closest('button,input,select,textarea'))return
+      if(e.button!==undefined&&e.pointerType==='mouse'&&e.button!==0)return
+      const id=row.dataset.dragAsset,type=row.dataset.dragType
+      if(!id||!type)return
+      const sx=e.clientX,sy=e.clientY;let active=false,ghost=null,last={x:sx,y:sy}
+      const clear=()=>{
+        window.removeEventListener('pointermove',move)
+        window.removeEventListener('pointerup',up)
+        window.removeEventListener('pointercancel',up)
+        ghost?.remove()
+        document.body.classList.remove('asset-dragging')
+      }
+      const begin=()=>{
+        if(active)return
+        active=true
+        document.body.classList.add('asset-dragging')
+        ghost=document.createElement('div');ghost.className=`asset-drag-ghost ${type}`;ghost.innerHTML=`${svgIcon(type==='audio'?'audio':'media',17)}<span>${escapeHtml(getAsset(id)?.name||type)}</span>`
+        document.body.append(ghost)
+      }
+      const move=ev=>{
+        if(ev.pointerId!==e.pointerId)return
+        const dx=ev.clientX-sx,dy=ev.clientY-sy;last={x:ev.clientX,y:ev.clientY}
+        if(!active&&Math.hypot(dx,dy)>8)begin()
+        if(!active)return
+        ev.preventDefault()
+        ghost.style.transform=`translate3d(${ev.clientX+10}px,${ev.clientY-24}px,0)`
+        $$('.track-row.drop-target').forEach(x=>x.classList.remove('drop-target'))
+        const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(type==='audio'?'.audio-row':'.video-row')
+        target?.classList.add('drop-target')
+      }
+      const up=ev=>{
+        if(active){
+          ev.preventDefault()
+          const target=document.elementFromPoint(last.x,last.y)?.closest(type==='audio'?'.audio-row':'.video-row')
+          $$('.track-row.drop-target').forEach(x=>x.classList.remove('drop-target'))
+          if(target){
+            if(type==='audio'){
+              const track=$('.timeline-audio-row'),rect=track?.getBoundingClientRect()
+              const at=rect?snapTime(Math.max(0,(last.x-rect.left)/state.pxPerSec)):0
+              state.sheet=null
+              addAudioToTimeline(id,at)
+            } else {
+              state.sheet=null
+              addAssetToTimeline(id)
+            }
+          }
+        }
+        clear()
+      }
+      window.addEventListener('pointermove',move,{passive:false})
+      window.addEventListener('pointerup',up,{passive:false})
+      window.addEventListener('pointercancel',up,{passive:false})
+    },{passive:false})
+  })
 }
 
 function renderExportModal() {
@@ -1250,7 +1371,7 @@ function bindGlobalEvents() {
     if(a==='home-menu-toggle'){state.homeMenuOpen=!state.homeMenuOpen;renderHome();return}
     if(a==='home-menu-close'){state.homeMenuOpen=false;renderHome();return}
     if(a==='create'){state.mediaImportContext=null;return createProject(el.dataset.ratio||'16:9')}
-    if(a==='create-import'){state.homeMenuOpen=false;state.mediaImportContext='home';$('#media-picker')?.click();return}
+    if(a==='create-import'){state.homeMenuOpen=false;openMediaPicker('home');return}
     if(a==='open-project'){state.mediaImportContext=null;state.projectHubOpen=false;state.homeMenuOpen=false;state.projectMenuId=null;return openProject(el.dataset.id)}
     if(a==='project-menu'){e.stopPropagation();state.projectMenuId=el.dataset.id;state.renameProjectId=null;renderHome();return}
     if(a==='project-menu-close'){state.projectMenuId=null;renderHome();return}
@@ -1283,7 +1404,7 @@ function bindGlobalEvents() {
     if(a==='back')return goHome()
     if(a==='mobile-hub'){state.projectHubOpen=true;renderEditor();return}
     if(a==='mobile-hub-close'){state.projectHubOpen=false;renderEditor();return}
-    if(a==='pick-media'){state.mediaImportContext='editor';$('#media-picker')?.click();return}
+    if(a==='pick-media'){openMediaPicker('editor');return}
     if(a==='add-asset')return addAssetToTimeline(el.dataset.id)
     if(a==='add-audio'||a==='set-soundtrack')return addAudioToTimeline(el.dataset.id)
     if(a==='select-audio')return selectAudio(el.dataset.id)
@@ -1293,7 +1414,7 @@ function bindGlobalEvents() {
     if(a==='select-transition'){state.selected={type:'clip',id:el.dataset.id};state.tool='transitions';state.sheet='transitions';renderEditor();return}
     if(a==='timeline-zoom'){state.pxPerSec=clamp(state.pxPerSec+(+el.dataset.value)*12,24,120);state.preferences.timelineScale=state.pxPerSec;savePreferences();renderEditor();return}
     if(a==='adjust-select'){state.adjustKey=el.dataset.key;state.tool='adjust';state.sheet='adjust';renderEditor();return}
-    if(a==='reset-adjustment'){const c=selectedClip();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,opacity:1};mutate(p=>p.clips.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0);return}
+    if(a==='reset-adjustment'){const c=selectedClip();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,opacity:1};mutate(p=>p.clips.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0);return}
     if(a==='sheet-close'){state.sheet=null;renderEditor();return}
     if(a==='play-toggle'){state.playing?stopPlayback():startPlayback();return}
     if(a==='jump-start'){seekTo(0);return}
@@ -1309,6 +1430,9 @@ function bindGlobalEvents() {
     if(a==='add-text')return addText(el.dataset.kind)
     if(a==='open-srt'){$('#subtitle-picker')?.click();return}
     if(a==='toggle-loop')return mutate(p=>p.soundtrack.loop=!p.soundtrack.loop)
+        if(a==='audio-fit-video'){const c=selectedAudio(),asset=getAsset(c?.assetId);if(!c||!asset)return;mutate(p=>{const x=p.audioClips.find(y=>y.id===c.id);x.timelineStart=0;x.sourceStart=0;x.sourceEnd=Math.min(asset.duration||x.sourceEnd,Math.max(.05,visualDuration()*(x.speed||1)))});syncAudioTracks(true);return}
+    if(a==='audio-to-playhead'){const c=selectedAudio();if(!c)return;mutate(p=>{p.audioClips.find(y=>y.id===c.id).timelineStart=snapTime(state.currentTime)});syncAudioTracks(true);return}
+    if(a==='audio-align-clip'){const c=selectedAudio(),v=selectedClip()||activeAt(state.currentTime)?.clip;if(!c||!v)return;const row=clipTimeline().find(r=>r.clip.id===v.id);if(!row)return;mutate(p=>{p.audioClips.find(y=>y.id===c.id).timelineStart=row.start});syncAudioTracks(true);return}
     if(a==='audio-toggle-mute'){const c=selectedAudio();if(!c)return;mutate(p=>{const x=p.audioClips.find(y=>y.id===c.id);x.muted=!x.muted});syncAudioTracks(true);return}
     if(a==='remove-soundtrack'){const c=selectedAudio();if(c){deleteSelected();syncAudioTracks(true)}return}
     if(a==='ratio')return mutate(p=>p.ratio=el.dataset.value)
@@ -1411,7 +1535,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.0.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.0.3',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

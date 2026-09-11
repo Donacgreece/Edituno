@@ -1,15 +1,23 @@
-# Edituno Studio v2.0.2
+# Edituno Studio v2.0.3
 
-## iPhone viewport and scrollbar hotfix
+Focused editor-engine and mobile interaction release.
 
-- Locks the mobile application shell to the visual viewport instead of allowing the document to drift after the iOS software keyboard closes.
-- Home content now scrolls inside its own surface while the bottom navigation stays anchored.
-- Editor content stays inside a stable app shell while the tool dock remains anchored to the physical bottom edge.
-- Bottom navigation is temporarily hidden while the software keyboard is open and restored after keyboard dismissal.
-- Adds repeated post-blur viewport normalization to work around stale iOS Safari visualViewport offsets.
-- Preserves internal Home scroll position without allowing window-level scrolling.
-- Adds orientation and pageshow recovery.
-- Adds a thin Edituno-themed scrollbar system for the desktop page, settings, sheets, inspectors, timeline and other scrollable surfaces.
-- Keeps horizontal mobile carousels and the editor tool rail visually clean by hiding their scrollbar chrome.
+## Fixed
+- Editor Import now opens the native picker reliably on iOS, Android and desktop.
+- Empty preview interaction overlay no longer blocks the Import button.
+- Audio imports start in parallel with the visual timeline instead of being appended after it.
+- Audio clips can be dragged horizontally with touch, pen or mouse.
+- Imported media rows can be dragged from the media sheet/library directly onto V1 or A1.
+- Timeline transition control is larger, optically centered and uses a symmetric icon.
+- Canvas format controls have improved spacing, centering and touch targets.
 
-No editing features or the official Edituno logo were changed.
+## Expanded controls
+- More video filter presets.
+- More motion effects.
+- More transitions.
+- Invert adjustment.
+- Video audio fade-in and fade-out.
+- Audio quick actions for Fit to video, Move to playhead and Align to clip.
+- Audio speed now includes 0.5x.
+
+The official Edituno logo remains unchanged.

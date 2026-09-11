@@ -28,6 +28,8 @@ if (!html.includes('const $$ =')) {
 const requiredRuntimeMarkers = [
   'function audioClipPanel()',
   'function bindTimelineInteractions()',
+  'function bindAssetDragInteractions()',
+  'function openMediaPicker(',
   'function scheduleAudioTracks(',
   'data-bind-audio',
   'function settingsModal()',
@@ -68,4 +70,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v2.0.2 -> ${dist}`)
+console.log(`Built Edituno v2.0.3 -> ${dist}`)

@@ -1,4 +1,4 @@
-# Edituno Studio v2.0.2
+# Edituno Studio v2.0.3
 
 A ground-up visual rebuild of Edituno focused on mobile-first usability, professional desktop editing, and local-first privacy.
 
