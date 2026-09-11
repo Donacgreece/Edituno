@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="Edituno" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.webmanifest?v=2.0.0" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.0.0" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.0.0" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.0.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.0.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.0.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.0.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.0.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.0.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.0.1" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.0.1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.0.1" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.0.1" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.0.1" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.0.1" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.0.1" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.0.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.0.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno Studio · Video editor</title>
   <style>
 
@@ -106,14 +106,58 @@ img{display:block;max-width:100%}
 .modal{position:fixed;z-index:91;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 40px);background:#151820;border:1px solid var(--line-strong);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}.modal-head{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:17px;margin:0;font-weight:620}.sheet-close,.icon-btn{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.055);color:#C4C8D0}.modal-body{padding:14px;overflow:auto}.install-card{background:#101218;border:1px solid var(--line);border-radius:13px;padding:14px}.install-card strong{font-size:13px}.install-card p{font-size:11px;color:var(--muted)}
 .toast-stack{position:fixed;right:16px;bottom:16px;z-index:200;display:grid;gap:8px}.toast{background:#1A1E27;border:1px solid var(--line-strong);border-radius:11px;padding:9px 12px;box-shadow:var(--shadow);font-size:11px;color:#E8EAF0}
 
+
+/* project actions and confirmations */
+.app-modal-backdrop{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.62);backdrop-filter:blur(8px);display:grid;place-items:center;padding:18px}
+.project-action-sheet,.rename-dialog,.confirm-dialog{width:min(420px,calc(100vw - 28px));background:#151820;border:1px solid var(--line-strong);border-radius:20px;box-shadow:0 28px 90px rgba(0,0,0,.52);overflow:hidden}
+.action-sheet-grabber{display:none}
+.project-action-head{min-height:70px;padding:12px 12px 12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.project-action-identity{min-width:0;display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center}
+.project-action-identity>span:last-child{min-width:0;display:grid;gap:2px}
+.project-action-identity strong{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-action-identity small{font-size:10px;color:var(--muted)}
+.project-action-thumb{width:40px;height:40px;border-radius:11px;background:#1A2030;color:#8EA5FF;display:grid;place-items:center}
+.project-action-list{padding:7px}
+.project-action-list>button{width:100%;min-height:58px;display:grid;grid-template-columns:38px minmax(0,1fr) 18px;gap:10px;align-items:center;padding:7px 9px;border-radius:12px;background:transparent;color:var(--text);text-align:left}
+.project-action-list>button:hover{background:rgba(255,255,255,.055)}
+.project-action-list>button>span:first-child{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.05);display:grid;place-items:center;color:#B9BFCA}
+.project-action-list>button>span:nth-child(2){min-width:0;display:grid;gap:2px}
+.project-action-list strong{font-size:12px;font-weight:580}
+.project-action-list small{font-size:9px;color:var(--muted)}
+.project-action-list>button.danger{color:#FF828C}
+.project-action-list>button.danger>span:first-child{background:rgba(255,93,105,.09);color:#FF7681}
+.rename-dialog header{height:70px;padding:0 13px 0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.rename-dialog header>div{display:grid;gap:5px}.rename-dialog h2{font-size:17px;line-height:1;margin:0;font-weight:620}
+.rename-dialog-body{padding:16px}.rename-dialog-body label{display:grid;gap:7px;font-size:10px;color:var(--muted)}
+.rename-dialog-body input{height:44px;width:100%;border-radius:11px;border:1px solid var(--line-strong);background:#0D0F14;padding:0 12px;color:var(--text);font-size:13px}
+.rename-dialog footer{padding:12px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--line)}
+.rename-dialog footer button{min-height:40px}
+.confirm-dialog{padding:22px;text-align:center}
+.confirm-icon{width:48px;height:48px;margin:0 auto 14px;border-radius:15px;background:rgba(255,93,105,.1);color:#FF7681;display:grid;place-items:center}
+.confirm-dialog h2{font-size:18px;line-height:1.15;margin:0;font-weight:630}
+.confirm-project-name{display:block;margin-top:8px;font-size:12px;font-weight:600;color:#F0F2F6}
+.confirm-dialog p{max-width:330px;margin:9px auto 18px;font-size:11px;line-height:1.45;color:var(--muted)}
+.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.confirm-actions button{min-height:42px}
+.danger-confirm{border-radius:11px;background:#F05561;color:white;font-size:12px;font-weight:600}
+
 /* mobile */
 .mobile-home-only,.mobile-editor-only{display:none}
 @media(max-width:820px){
-  body{font-size:13px}.desktop-home-only,.desktop-editor-only{display:none!important}.mobile-home-only,.mobile-editor-only{display:flex}
+  body{font-size:13px}
+  body.editor-open{position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}.desktop-home-only,.desktop-editor-only{display:none!important}.mobile-home-only,.mobile-editor-only{display:flex}
   .studio-home.is-mobile{display:block;min-height:100dvh;padding-bottom:94px}.home-surface{min-height:100dvh}.home-topbar{height:64px;padding:calc(env(safe-area-inset-top) + 8px) 16px 8px;box-sizing:content-box;position:sticky}.mobile-brand .logo-img{width:31px;height:31px;border-radius:9px}.mobile-brand .logo-lockup{font-size:15px;gap:8px}.home-main{width:auto;margin:0;padding:24px 16px 24px}.home-intro{display:block}.home-intro-copy .eyebrow{display:none}.home-intro h1{font-size:30px;line-height:1.05;letter-spacing:-.04em;margin:0 0 8px;font-weight:660}.home-intro p{font-size:13px;max-width:320px}.home-primary-actions{grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}.create-main,.import-main{min-height:74px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;padding:11px;border-radius:15px}.create-main>svg,.import-main>svg{display:none}.create-main-icon,.import-main-icon{width:30px;height:30px;border-radius:9px}.create-main strong,.import-main strong{font-size:12px}.create-main small,.import-main small{font-size:9px;line-height:1.2}.resume-strip{margin-top:10px}.resume-strip button{width:100%;min-height:58px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:inherit;display:grid;grid-template-columns:34px 1fr auto 16px;align-items:center;gap:9px;padding:8px 11px;text-align:left}.resume-thumb{width:34px;height:34px;border-radius:10px;background:#1A2131;color:#91A7FF;display:grid;place-items:center}.resume-copy{min-width:0;display:grid;gap:2px}.resume-copy small{font-size:9px;color:var(--muted)}.resume-copy strong{font-size:11px;font-weight:580;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.resume-meta{font-size:9px;color:#777E8A}.create-section,.projects-section{margin-top:30px}.section-heading{margin-bottom:12px;align-items:center}.section-heading h2{font-size:16px}.section-heading>span{font-size:9px}.format-gallery{display:flex;overflow-x:auto;gap:9px;scroll-snap-type:x mandatory;padding-bottom:2px;margin-right:-16px;padding-right:16px;scrollbar-width:none}.format-gallery::-webkit-scrollbar{display:none}.studio-format-card{flex:0 0 124px;padding:10px;border-radius:14px;scroll-snap-align:start}.format-preview{height:76px;border-radius:10px}.format-symbol.phone{width:20px;height:36px}.format-symbol.landscape{width:39px;height:22px}.format-symbol.square{width:29px;height:29px}.format-symbol.portrait{width:24px;height:32px}.format-copy{margin-top:8px}.format-copy strong{font-size:11px}.format-copy small{font-size:9px}.studio-project-grid{grid-template-columns:1fr;gap:7px}.studio-project-card{display:grid;grid-template-columns:1fr auto;border-radius:13px}.project-card-main{display:grid;grid-template-columns:62px 1fr;align-items:center}.project-poster{width:62px;height:50px;border-radius:10px;margin:6px}.project-poster i{width:28px;height:28px;border-radius:8px}.project-poster b{font-size:7px;bottom:4px;right:5px}.project-card-copy{padding:8px 4px 8px 8px}.project-card-copy strong{font-size:11px}.project-card-copy small{font-size:9px}.project-card-more{position:static;align-self:center;margin-right:7px;width:34px;height:34px}.empty-library{min-height:74px}.mobile-dock{position:fixed;z-index:60;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(270px,calc(100vw - 34px));height:58px;border-radius:18px;background:rgba(23,26,34,.88);border:1px solid rgba(255,255,255,.11);box-shadow:0 18px 50px rgba(0,0,0,.42);backdrop-filter:blur(24px);align-items:center;justify-content:space-around;padding:5px 10px}.mobile-dock button{min-width:62px;height:46px;border-radius:13px;background:transparent;color:#7D8490;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:8px}.mobile-dock button.active{color:#F3F5F8}.mobile-dock .dock-create{min-width:50px;width:50px;height:50px;margin-top:-20px;border-radius:16px;background:var(--brand);color:white;box-shadow:0 10px 26px rgba(36,85,245,.35)}.mobile-dock .dock-create span{display:grid}.home-menu-popover{top:auto;right:0;left:0;bottom:0;width:100%;border-radius:22px 22px 0 0;padding:8px 14px max(16px,env(safe-area-inset-bottom));animation:sheetUp .22s var(--ease)}@keyframes sheetUp{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}.home-menu-grabber{display:block;width:34px;height:4px;border-radius:99px;background:#484D58;margin:1px auto 9px}.home-menu-head{padding:5px 2px 11px}.home-menu-language{padding:10px 2px}.home-menu-row{min-height:56px}.settings-panel{left:0;top:auto;bottom:0;transform:none;width:100%;max-height:92dvh;border-radius:22px 22px 0 0;border-left:0;border-right:0;border-bottom:0}.settings-grabber{display:block;width:34px;height:4px;border-radius:99px;background:#474C57;margin:8px auto 0}.settings-header{height:62px}.settings-scroll{padding-bottom:max(16px,env(safe-area-inset-bottom))}.settings-split{grid-template-columns:1fr 1fr}
 
   /* mobile editor */
-  .studio-editor{grid-template-rows:auto minmax(0,1fr) auto;background:#08090D}.editor-topbar{height:auto;min-height:54px;padding:calc(env(safe-area-inset-top) + 6px) 9px 6px;grid-template-columns:42px minmax(0,1fr) auto;box-sizing:content-box}.editor-topbar-left{gap:0}.project-title-shell{width:100%;justify-self:stretch}.project-title{height:36px;text-align:left;padding:0 6px;font-size:12px}.save-chip{display:none}.editor-topbar-right{gap:6px}.export-pill{height:34px;min-height:34px;padding:0 10px;border-radius:10px}.export-pill span{font-size:10px}.editor-workspace{display:block;overflow:hidden;min-height:0}.editor-center{height:100%;display:grid;grid-template-rows:minmax(200px,44dvh) minmax(170px,1fr)}.viewer-shell{grid-template-rows:34px minmax(0,1fr) 42px}.viewer-toolbar{padding:0 9px}.viewer-ratio,.viewer-quality{font-size:8px;padding:3px 6px;border-radius:7px}.viewer-actions{display:none!important}.preview-zone{padding:8px;min-height:0}.preview-frame{max-width:100%;max-height:100%;box-shadow:0 16px 34px rgba(0,0,0,.35)}.preview-interaction-layer.active:after{inset:2px}.transport-bar{grid-template-columns:30px 34px auto minmax(70px,1fr);padding:0 9px;gap:6px}.transport-btn{width:30px;height:30px}.transport-play{width:34px;height:34px}.timecode{font-size:8px}.timeline-shell{grid-template-rows:34px minmax(0,1fr)}.timeline-header{padding:0 8px}.timeline-header strong{font-size:10px}.timeline-actions button{height:26px;min-width:26px}.timeline-canvas{min-height:170px}.track-row{min-height:46px}.timeline-clip-wrap,.timeline-clip,.timeline-audio,.timeline-text{height:34px}.timeline-clip-wrap{margin-top:6px}.timeline-transition{top:6px;width:22px;height:22px}.timeline-audio,.timeline-text{top:6px}.mobile-tool-dock{height:64px;background:#0D0F14;border-top:1px solid var(--line);padding-bottom:max(4px,env(safe-area-inset-bottom));overflow:hidden}.tool-scroller{height:100%;display:flex;align-items:center;gap:2px;overflow-x:auto;padding:4px 8px;scrollbar-width:none}.tool-scroller::-webkit-scrollbar{display:none}.tool-btn{flex:0 0 58px;height:52px;border-radius:12px;background:transparent;color:#777E8A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px}.tool-icon{width:28px;height:24px;display:grid;place-items:center}.tool-btn.active{background:#171B24;color:#F3F5F8}.tool-btn.active .tool-icon{color:#7E99FF}.bottom-sheet{max-height:66dvh}.sheet-content{padding-bottom:max(12px,env(safe-area-inset-bottom))}.filter-grid,.motion-grid,.adjust-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.panel-grid{padding:10px}.panel-section{padding:10px}.mobile-quick-actions{scrollbar-width:none}.sheet-action{min-width:68px}.toast-stack{left:12px;right:12px;bottom:82px}.toast{justify-self:center}
+  .studio-editor{position:fixed;inset:0;width:100%;height:100dvh;grid-template-rows:auto minmax(0,1fr);background:#08090D;overflow:hidden;overscroll-behavior:none}.editor-topbar{height:auto;min-height:54px;padding:calc(env(safe-area-inset-top) + 6px) 9px 6px;grid-template-columns:42px minmax(0,1fr) auto;box-sizing:content-box}.editor-topbar-left{gap:0}.project-title-shell{width:100%;justify-self:stretch}.project-title{height:36px;text-align:left;padding:0 6px;font-size:12px}.save-chip{display:none}.editor-topbar-right{gap:6px}.export-pill{height:34px;min-height:34px;padding:0 10px;border-radius:10px}.export-pill span{font-size:10px}.editor-workspace{display:block;overflow:hidden;min-height:0;height:100%;padding-bottom:calc(64px + env(safe-area-inset-bottom));overscroll-behavior:none}.editor-center{height:100%;min-height:0;display:grid;grid-template-rows:minmax(200px,44dvh) minmax(170px,1fr);overflow:hidden}.viewer-shell{grid-template-rows:34px minmax(0,1fr) 42px}.viewer-toolbar{padding:0 9px}.viewer-ratio,.viewer-quality{font-size:8px;padding:3px 6px;border-radius:7px}.viewer-actions{display:none!important}.preview-zone{padding:8px;min-height:0}.preview-frame{max-width:100%;max-height:100%;box-shadow:0 16px 34px rgba(0,0,0,.35)}.preview-interaction-layer.active:after{inset:2px}.transport-bar{grid-template-columns:30px 34px auto minmax(70px,1fr);padding:0 9px;gap:6px}.transport-btn{width:30px;height:30px}.transport-play{width:34px;height:34px}.timecode{font-size:8px}.timeline-shell{grid-template-rows:34px minmax(0,1fr)}.timeline-header{padding:0 8px}.timeline-header strong{font-size:10px}.timeline-actions button{height:26px;min-width:26px}.timeline-canvas{min-height:170px}.track-row{min-height:46px}.timeline-clip-wrap,.timeline-clip,.timeline-audio,.timeline-text{height:34px}.timeline-clip-wrap{margin-top:6px}.timeline-transition{top:6px;width:22px;height:22px}.timeline-audio,.timeline-text{top:6px}.mobile-tool-dock{position:fixed;z-index:88;left:0;right:0;bottom:0;width:100%;height:calc(64px + env(safe-area-inset-bottom));background:rgba(13,15,20,.96);border-top:1px solid var(--line);padding:4px 0 env(safe-area-inset-bottom);overflow:hidden;overscroll-behavior:none;touch-action:pan-x;transform:translateZ(0);backdrop-filter:blur(22px)}.tool-scroller{width:100%;height:60px;display:flex;align-items:center;gap:2px;overflow-x:auto;overflow-y:hidden;padding:4px 8px;scrollbar-width:none;touch-action:pan-x;overscroll-behavior-x:contain;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}.tool-scroller::-webkit-scrollbar{display:none}.tool-btn{flex:0 0 58px;height:52px;scroll-snap-align:center;border-radius:12px;background:transparent;color:#777E8A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px}.tool-icon{width:28px;height:24px;display:grid;place-items:center}.tool-btn.active{background:#171B24;color:#F3F5F8}.tool-btn.active .tool-icon{color:#7E99FF}.bottom-sheet{max-height:66dvh}.sheet-content{padding-bottom:max(12px,env(safe-area-inset-bottom))}.filter-grid,.motion-grid,.adjust-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.panel-grid{padding:10px}.panel-section{padding:10px}.mobile-quick-actions{scrollbar-width:none}.sheet-action{min-width:68px}.toast-stack{left:12px;right:12px;bottom:82px}.toast{justify-self:center}
+
+  .app-modal-backdrop{place-items:end center;padding:0;touch-action:none}
+  .project-action-sheet{width:100%;border-radius:22px 22px 0 0;border-left:0;border-right:0;border-bottom:0;padding-bottom:max(8px,env(safe-area-inset-bottom));animation:sheetUp .2s var(--ease)}
+  .action-sheet-grabber{display:block;width:34px;height:4px;border-radius:99px;background:#464B56;margin:8px auto 2px}
+  .project-action-head{min-height:64px;padding:8px 12px 10px 16px}
+  .project-action-list{padding:6px 10px 10px}.project-action-list>button{min-height:56px}
+  .rename-dialog{width:100%;border-radius:22px 22px 0 0;border-left:0;border-right:0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom);animation:sheetUp .2s var(--ease)}
+  .confirm-dialog{width:calc(100% - 24px);margin:0 12px max(12px,env(safe-area-inset-bottom));border-radius:20px;padding:20px 18px}
 }
 @media(max-width:360px){.home-main{padding-inline:12px}.home-primary-actions{gap:6px}.create-main,.import-main{padding:9px}.studio-format-card{flex-basis:114px}.editor-topbar{grid-template-columns:40px minmax(0,1fr) auto}.export-pill span{display:none}.export-pill{width:34px;padding:0}.format-grid,.field-grid.two,.settings-split{grid-template-columns:1fr}.filter-grid,.motion-grid,.adjust-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:821px) and (max-width:1180px){.studio-home.is-desktop{grid-template-columns:190px minmax(0,1fr)}.home-main{width:calc(100% - 44px)}.format-gallery,.studio-project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.editor-workspace{grid-template-columns:220px minmax(0,1fr) 250px}}
@@ -167,7 +211,7 @@ img{display:block;max-width:100%}
 
       try {
 // @ts-nocheck
-/* Edituno v2.0.0 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.0.1 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)));
@@ -248,7 +292,7 @@ const STRINGS = {
         align: 'Alignment', start: 'Start', end: 'End', weight: 'Weight', loop: 'Loop soundtrack', installApp: 'Install app', browserLimit: 'Your browser may export WebM instead of MP4.',
         unsupported: 'This file format is not supported by this browser.', imported: 'Media imported', srtImported: 'Subtitles imported', deleted: 'Deleted',
         timeline: 'Timeline', share: 'Share', download: 'Save file', cancel: 'Cancel', back: 'Back', project: 'Project', local: 'Local editor',
-        autoSave: 'Autosaved', add: 'Add', noAudio: 'Import an audio file to use music.', noMedia: 'No imported media yet.',
+        autoSave: 'Autosaved', add: 'Add', noAudio: 'Import an audio file to use music.', noMedia: 'No imported media yet.', rename: 'Rename', projectOptions: 'Project options', renameProject: 'Rename project', saveChanges: 'Save', confirmDelete: 'Delete project', keepProject: 'Keep project', deleteProjectBody: 'This removes the project and its local media from this device.', clearAllTitle: 'Delete all projects?', clearAllBody: 'This permanently removes every local Edituno project and its media from this device.', duplicatedProject: 'Project duplicated',
         selectedText: 'Selected text', textStyle: 'Text style', position: 'Position', apply: 'Apply', installHint: 'Install Edituno',
         desktopMedia: 'Project media', inspector: 'Properties', adjust: 'Adjust', transitions: 'Transitions', projectHub: 'Projects', quickEdit: 'Edit', dissolve: 'Dissolve', slideLeft: 'Slide left', slideRight: 'Slide right', blurTransition: 'Blur', kenBurns: 'Ken Burns', pulse: 'Pulse', float: 'Float', reset: 'Reset', timelineZoom: 'Timeline zoom', transitionDuration: 'Duration', newBlank: 'New blank project', resume: 'Resume editing', editLocally: 'Edit locally. Export anywhere.', chooseProject: 'Choose project', mobileReady: 'Ready to edit', noUploadShort: 'No upload. No watermark.', blurFill: 'Blur fill'
     },
@@ -276,7 +320,7 @@ const STRINGS = {
         align: 'Στοίχιση', start: 'Έναρξη', end: 'Τέλος', weight: 'Πάχος', loop: 'Επανάληψη μουσικής', installApp: 'Εγκατάσταση εφαρμογής', browserLimit: 'Ο browser μπορεί να κάνει export σε WebM αντί MP4.',
         unsupported: 'Αυτό το format δεν υποστηρίζεται από τον browser.', imported: 'Τα media προστέθηκαν', srtImported: 'Οι υπότιτλοι προστέθηκαν', deleted: 'Διαγράφηκε',
         timeline: 'Timeline', share: 'Κοινοποίηση', download: 'Αποθήκευση αρχείου', cancel: 'Ακύρωση', back: 'Πίσω', project: 'Project', local: 'Τοπικός editor',
-        autoSave: 'Αυτόματη αποθήκευση', add: 'Προσθήκη', noAudio: 'Κάνε import αρχείο ήχου για μουσική.', noMedia: 'Δεν υπάρχουν media ακόμα.',
+        autoSave: 'Αυτόματη αποθήκευση', add: 'Προσθήκη', noAudio: 'Κάνε import αρχείο ήχου για μουσική.', noMedia: 'Δεν υπάρχουν media ακόμα.', rename: 'Μετονομασία', projectOptions: 'Επιλογές project', renameProject: 'Μετονομασία project', saveChanges: 'Αποθήκευση', confirmDelete: 'Διαγραφή project', keepProject: 'Διατήρηση project', deleteProjectBody: 'Το project και τα τοπικά media του θα διαγραφούν από αυτή τη συσκευή.', clearAllTitle: 'Διαγραφή όλων των projects;', clearAllBody: 'Θα διαγραφούν μόνιμα όλα τα τοπικά projects του Edituno και τα media τους από αυτή τη συσκευή.', duplicatedProject: 'Το project αντιγράφηκε',
         selectedText: 'Επιλεγμένο κείμενο', textStyle: 'Στυλ κειμένου', position: 'Θέση', apply: 'Εφαρμογή', installHint: 'Εγκατάσταση Edituno',
         desktopMedia: 'Media project', inspector: 'Ιδιότητες', adjust: 'Ρυθμίσεις', transitions: 'Μεταβάσεις', projectHub: 'Projects', quickEdit: 'Edit', dissolve: 'Dissolve', slideLeft: 'Slide αριστερά', slideRight: 'Slide δεξιά', blurTransition: 'Blur', kenBurns: 'Ken Burns', pulse: 'Pulse', float: 'Float', reset: 'Επαναφορά', timelineZoom: 'Zoom timeline', transitionDuration: 'Διάρκεια', newBlank: 'Νέο κενό project', resume: 'Συνέχεια επεξεργασίας', editLocally: 'Επεξεργασία τοπικά. Export παντού.', chooseProject: 'Επίλεξε project', mobileReady: 'Έτοιμο για επεξεργασία', noUploadShort: 'Χωρίς upload. Χωρίς watermark.', blurFill: 'Blur fill'
     }
@@ -287,6 +331,7 @@ const state = {
     selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
     exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
     settingsOpen: false, installOpen: false, projectHubOpen: false, homeMenuOpen: false, adjustKey: 'brightness',
+    projectMenuId: null, renameProjectId: null, confirmDialog: null, mediaImportContext: null,
     preferences: loadPreferences(), audioDrag: null
 };
 state.pxPerSec = Number(state.preferences.timelineScale) || 48;
@@ -389,6 +434,44 @@ async function deleteProjectFull(id) {
         for (const a of p.assets)
             await dbDelete(BLOBS, a.id);
     await dbDelete(PROJECTS, id);
+}
+async function duplicateProjectFull(id) {
+    const original = await getProject(id);
+    if (!original)
+        return null;
+    const now = Date.now();
+    const copy = clone(original);
+    copy.id = uid();
+    copy.name = `${original.name} ${state.language === 'el' ? 'αντίγραφο' : 'copy'}`;
+    copy.createdAt = now;
+    copy.updatedAt = now;
+    const assetMap = new Map();
+    copy.assets = [];
+    for (const asset of original.assets || []) {
+        const newId = uid();
+        assetMap.set(asset.id, newId);
+        const blob = await getBlob(asset.id);
+        if (blob)
+            await putBlob(newId, blob);
+        copy.assets.push({ ...clone(asset), id: newId });
+    }
+    copy.clips = (original.clips || []).map(c => ({ ...clone(c), id: uid(), assetId: assetMap.get(c.assetId) || c.assetId }));
+    copy.audioClips = (original.audioClips || []).map(c => ({ ...clone(c), id: uid(), assetId: assetMap.get(c.assetId) || c.assetId }));
+    copy.texts = (original.texts || []).map(t => ({ ...clone(t), id: uid() }));
+    copy.soundtrack = null;
+    await saveProject(copy);
+    return copy.id;
+}
+async function renameProjectFull(id, name) {
+    const project = await getProject(id);
+    if (!project)
+        return;
+    const clean = String(name || '').trim().slice(0, 80);
+    if (!clean)
+        return;
+    project.name = clean;
+    project.updatedAt = Date.now();
+    await saveProject(project);
 }
 let saveTimer;
 function queueSave() {
@@ -928,7 +1011,7 @@ function normalizeProject(p) {
         Object.assign(c, { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, motion: 'none', transition: 'none', transitionDuration: .35, offsetX: 0, offsetY: 0, flipX: false, flipY: false, audioFadeIn: 0, audioFadeOut: 0 }, c);
     return p;
 }
-async function createProject(ratio = '16:9', importNow = false) {
+async function createProject(ratio = '16:9') {
     stopPlayback();
     state.project = defaultProject(ratio);
     await saveProject(state.project);
@@ -940,8 +1023,6 @@ async function createProject(ratio = '16:9', importNow = false) {
     state.selected = null;
     state.view = 'editor';
     render();
-    if (importNow)
-        $('#media-picker')?.click();
 }
 async function openProject(id) {
     stopPlayback();
@@ -1031,9 +1112,28 @@ async function buildWaveform(file, points = 72) {
         return null;
     }
 }
-function defaultAudioClip(asset, timelineStart = state.currentTime || 0) { return { id: uid(), assetId: asset.id, timelineStart: Math.max(0, timelineStart), sourceStart: 0, sourceEnd: Math.max(.1, asset.duration || 30), volume: .8, speed: 1, fadeIn: 0, fadeOut: 0, muted: false }; }
-function addAudioToTimeline(id, at = state.currentTime || 0) { const asset = getAsset(id); if (!asset || asset.type !== 'audio')
-    return; mutate(p => { const c = defaultAudioClip(asset, at); p.audioClips.push(c); state.selected = { type: 'audio', id: c.id }; state.tool = 'audio'; state.sheet = isMobileViewport() ? 'audio' : null; }); syncAudioTracks(true); }
+function preferredAudioInsertTime() {
+    const clip = selectedClip();
+    if (clip) {
+        const row = clipTimeline().find(r => r.clip.id === clip.id);
+        if (row)
+            return row.start;
+    }
+    const visual = visualDuration();
+    if (visual > 0 && state.currentTime > .05 && state.currentTime < visual - .05)
+        return snapTime(state.currentTime);
+    return visual > 0 ? 0 : Math.max(0, state.currentTime || 0);
+}
+function defaultAudioClip(asset, timelineStart = preferredAudioInsertTime()) {
+    const start = Math.max(0, timelineStart || 0);
+    const full = Math.max(.1, asset.duration || 30);
+    const visual = visualDuration();
+    const remaining = visual > start ? visual - start : 0;
+    const fitted = remaining > 0 ? Math.min(full, remaining) : full;
+    return { id: uid(), assetId: asset.id, timelineStart: start, sourceStart: 0, sourceEnd: Math.max(.1, fitted), volume: .8, speed: 1, fadeIn: 0, fadeOut: 0, muted: false };
+}
+function addAudioToTimeline(id, at) { const asset = getAsset(id); if (!asset || asset.type !== 'audio')
+    return; const start = at === undefined ? preferredAudioInsertTime() : Math.max(0, at); mutate(p => { const c = defaultAudioClip(asset, start); p.audioClips.push(c); state.selected = { type: 'audio', id: c.id }; state.tool = 'audio'; state.sheet = isMobileViewport() ? 'audio' : null; }); syncAudioTracks(true); }
 async function importFiles(files, addVisuals = true) {
     if (!state.project || !files?.length)
         return;
@@ -1050,7 +1150,7 @@ async function importFiles(files, addVisuals = true) {
             if (addVisuals && (asset.type === 'video' || asset.type === 'image'))
                 state.project.clips.push(defaultClip(asset));
             if (asset.type === 'audio' && addVisuals)
-                state.project.audioClips.push(defaultAudioClip(asset, state.currentTime || 0));
+                state.project.audioClips.push(defaultAudioClip(asset, preferredAudioInsertTime()));
         }
         catch {
             toast(tr('unsupported'), 'error');
@@ -1256,6 +1356,7 @@ function homeMenuPopover() {
   </aside>`;
 }
 function renderHome() {
+    document.body.classList.remove('editor-open');
     const app = $('#app'), projects = state.projects || [], last = projects[0], mobile = isMobileViewport(), recent = projects.slice(0, mobile ? 7 : 10), el = state.language === 'el';
     const hello = el ? 'Δημιούργησε χωρίς τριβή.' : 'Create without friction.';
     const sub = el ? 'Video editing σχεδιασμένο πρώτα για κινητό.' : 'Video editing designed mobile first.';
@@ -1315,15 +1416,55 @@ function renderHome() {
         <button data-action="projects-scroll">${svgIcon('projects', 19)}<span>Projects</span></button>
       </nav>
     </div>
-    ${homeMenuPopover()}${state.settingsOpen ? settingsModal() : ''}${state.installOpen ? installModal() : ''}
+    ${homeMenuPopover()}${state.settingsOpen ? settingsModal() : ''}${state.installOpen ? installModal() : ''}${projectActionsModal()}${renameProjectModal()}${confirmationModal()}
   </div><div class="toast-stack" id="toasts"></div>`;
 }
 function studioFormatCard(ratio, title, sub, shape = 'phone') { return `<button type="button" class="studio-format-card" data-action="create" data-ratio="${ratio}"><span class="format-preview"><i class="format-symbol ${shape}"></i><b>${ratio}</b></span><span class="format-copy"><strong>${title}</strong><small>${sub}</small></span></button>`; }
-function studioProjectCard(p) { return `<article class="studio-project-card"><button class="project-card-main" data-action="open-project" data-id="${p.id}"><span class="project-poster"><i>${svgIcon('video', 20)}</i><b>${escapeHtml(p.ratio || '16:9')}</b></span><span class="project-card-copy"><strong>${escapeHtml(p.name)}</strong><small>${new Date(p.updatedAt).toLocaleDateString(state.language === 'el' ? 'el-GR' : 'en-US', { day: '2-digit', month: 'short' })}</small></span></button><button class="project-card-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">${svgIcon('more', 17)}</button></article>`; }
+function studioProjectCard(p) { return `<article class="studio-project-card"><button class="project-card-main" data-action="open-project" data-id="${p.id}"><span class="project-poster"><i>${svgIcon('video', 20)}</i><b>${escapeHtml(p.ratio || '16:9')}</b></span><span class="project-card-copy"><strong>${escapeHtml(p.name)}</strong><small>${new Date(p.updatedAt).toLocaleDateString(state.language === 'el' ? 'el-GR' : 'en-US', { day: '2-digit', month: 'short' })}</small></span></button><button class="project-card-more" data-action="project-menu" data-id="${p.id}" aria-label="${tr('projectOptions')}">${svgIcon('more', 17)}</button></article>`; }
 function mobileFormatCard(ratio, title, sub, shape = 'phone') { return studioFormatCard(ratio, title, sub, shape); }
 function desktopFormatButton(ratio, title, sub, shape = 'phone') { return studioFormatCard(ratio, title, sub, shape); }
 function mobileProjectCard(p) { return studioProjectCard(p); }
 function projectCard(p) { return studioProjectCard(p); }
+function projectActionsModal() {
+    const p = state.projects.find(x => x.id === state.projectMenuId);
+    if (!p)
+        return '';
+    return `<div class="app-modal-backdrop" data-action="project-menu-close"><section class="project-action-sheet" role="dialog" aria-modal="true" aria-label="${tr('projectOptions')}">
+    <div class="action-sheet-grabber"></div>
+    <header class="project-action-head"><div class="project-action-identity"><span class="project-action-thumb">${svgIcon('video', 20)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio || '16:9')}</small></span></div><button class="round-icon" data-action="project-menu-close" aria-label="${tr('close')}">${svgIcon('close', 17)}</button></header>
+    <div class="project-action-list">
+      <button data-action="project-menu-open" data-id="${p.id}"><span>${svgIcon('play', 18)}</span><span><strong>${tr('open')}</strong><small>${state.language === 'el' ? 'Συνέχεια επεξεργασίας' : 'Continue editing'}</small></span>${svgIcon('right', 15)}</button>
+      <button data-action="project-menu-rename" data-id="${p.id}"><span>${svgIcon('edit', 18)}</span><span><strong>${tr('rename')}</strong><small>${state.language === 'el' ? 'Αλλαγή ονόματος project' : 'Change project name'}</small></span>${svgIcon('right', 15)}</button>
+      <button data-action="project-menu-duplicate" data-id="${p.id}"><span>${svgIcon('copy', 18)}</span><span><strong>${tr('duplicate')}</strong><small>${state.language === 'el' ? 'Δημιουργία ανεξάρτητου αντιγράφου' : 'Create an independent copy'}</small></span>${svgIcon('right', 15)}</button>
+      <button class="danger" data-action="project-menu-delete" data-id="${p.id}"><span>${svgIcon('trash', 18)}</span><span><strong>${tr('delete')}</strong><small>${state.language === 'el' ? 'Διαγραφή από αυτή τη συσκευή' : 'Remove from this device'}</small></span>${svgIcon('right', 15)}</button>
+    </div>
+  </section></div>`;
+}
+function renameProjectModal() {
+    const p = state.projects.find(x => x.id === state.renameProjectId);
+    if (!p)
+        return '';
+    return `<div class="app-modal-backdrop" data-action="rename-close"><section class="rename-dialog" role="dialog" aria-modal="true" aria-label="${tr('renameProject')}">
+    <header><div><span class="eyebrow">EDITUNO</span><h2>${tr('renameProject')}</h2></div><button class="round-icon" data-action="rename-close">${svgIcon('close', 17)}</button></header>
+    <div class="rename-dialog-body"><label><span>${tr('projectName')}</span><input id="project-rename-input" maxlength="80" value="${escapeHtml(p.name)}" autocomplete="off"></label></div>
+    <footer><button class="secondary-btn" data-action="rename-close">${tr('cancel')}</button><button class="primary-btn" data-action="rename-save" data-id="${p.id}">${tr('saveChanges')}</button></footer>
+  </section></div>`;
+}
+function confirmationModal() {
+    const c = state.confirmDialog;
+    if (!c)
+        return '';
+    const p = c.type === 'delete-project' ? state.projects.find(x => x.id === c.id) : null;
+    const title = c.type === 'clear-all' ? tr('clearAllTitle') : tr('confirmDelete');
+    const body = c.type === 'clear-all' ? tr('clearAllBody') : tr('deleteProjectBody');
+    return `<div class="app-modal-backdrop confirmation-backdrop" data-action="confirm-cancel"><section class="confirm-dialog" role="alertdialog" aria-modal="true">
+    <div class="confirm-icon">${svgIcon('trash', 20)}</div>
+    <h2>${title}</h2>
+    ${p ? `<strong class="confirm-project-name">${escapeHtml(p.name)}</strong>` : ''}
+    <p>${body}</p>
+    <div class="confirm-actions"><button class="secondary-btn" data-action="confirm-cancel">${c.type === 'delete-project' ? tr('keepProject') : tr('cancel')}</button><button class="danger-confirm" data-action="confirm-accept">${tr('delete')}</button></div>
+  </section></div>`;
+}
 function settingsModal() {
     const p = state.preferences, el = state.language === 'el';
     return `<div class="modal-backdrop settings-backdrop" data-action="settings-close"><section class="settings-panel" role="dialog" aria-modal="true" aria-label="${tr('settings')}">
@@ -1428,7 +1569,7 @@ function renderEditor() {
 
     <div class="sheet-backdrop ${state.sheet ? 'open' : ''}" data-action="sheet-close"></div>
     <section class="bottom-sheet ${state.sheet ? 'open' : ''}" aria-modal="true"><div class="sheet-grabber"></div><header class="sheet-header"><div><span class="eyebrow">EDITUNO</span><strong>${sheetTitle()}</strong></div><button class="round-icon" data-action="sheet-close">${svgIcon('close', 17)}</button></header><div class="sheet-content">${state.sheet ? panelContent(state.sheet) : ''}</div></section>
-    ${state.projectHubOpen ? mobileProjectHubModal() : ''}${state.settingsOpen ? settingsModal() : ''}${state.installOpen ? installModal() : ''}
+    ${state.projectHubOpen ? mobileProjectHubModal() : ''}${state.settingsOpen ? settingsModal() : ''}${state.installOpen ? installModal() : ''}${confirmationModal()}
   </div><div class="toast-stack" id="toasts"></div>`;
     requestAnimationFrame(() => { fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions(); bindPreviewInteractions(); });
 }
@@ -1753,6 +1894,8 @@ function bindGlobalEvents() {
         const a = el.dataset.action;
         if ((a === 'settings-close' || a === 'install-close' || a === 'mobile-hub-close') && e.target !== el && (el.classList.contains('modal-backdrop') || el.classList.contains('project-hub-backdrop')))
             return;
+        if ((a === 'project-menu-close' || a === 'rename-close' || a === 'confirm-cancel') && el.classList.contains('app-modal-backdrop') && e.target !== el)
+            return;
         if (a === 'home-menu-toggle') {
             state.homeMenuOpen = !state.homeMenuOpen;
             renderHome();
@@ -1763,24 +1906,97 @@ function bindGlobalEvents() {
             renderHome();
             return;
         }
-        if (a === 'create')
+        if (a === 'create') {
+            state.mediaImportContext = null;
             return createProject(el.dataset.ratio || '16:9');
+        }
         if (a === 'create-import') {
             state.homeMenuOpen = false;
-            return createProject(isMobileViewport() ? '9:16' : '16:9', true);
+            state.mediaImportContext = 'home';
+            $('#media-picker')?.click();
+            return;
         }
         if (a === 'open-project') {
+            state.mediaImportContext = null;
             state.projectHubOpen = false;
             state.homeMenuOpen = false;
+            state.projectMenuId = null;
             return openProject(el.dataset.id);
         }
-        if (a === 'delete-project') {
+        if (a === 'project-menu') {
             e.stopPropagation();
-            if (confirm(tr('delete') + '?')) {
-                await deleteProjectFull(el.dataset.id);
+            state.projectMenuId = el.dataset.id;
+            state.renameProjectId = null;
+            renderHome();
+            return;
+        }
+        if (a === 'project-menu-close') {
+            state.projectMenuId = null;
+            renderHome();
+            return;
+        }
+        if (a === 'project-menu-open') {
+            const id = el.dataset.id;
+            state.projectMenuId = null;
+            return openProject(id);
+        }
+        if (a === 'project-menu-rename') {
+            state.renameProjectId = el.dataset.id;
+            state.projectMenuId = null;
+            renderHome();
+            requestAnimationFrame(() => $('#project-rename-input')?.focus());
+            return;
+        }
+        if (a === 'project-menu-duplicate') {
+            const id = el.dataset.id;
+            state.projectMenuId = null;
+            await duplicateProjectFull(id);
+            state.projects = await listProjects();
+            renderHome();
+            toast(tr('duplicatedProject'), 'success');
+            return;
+        }
+        if (a === 'project-menu-delete') {
+            state.confirmDialog = { type: 'delete-project', id: el.dataset.id };
+            state.projectMenuId = null;
+            renderHome();
+            return;
+        }
+        if (a === 'rename-close') {
+            state.renameProjectId = null;
+            renderHome();
+            return;
+        }
+        if (a === 'rename-save') {
+            const id = el.dataset.id, name = $('#project-rename-input')?.value;
+            await renameProjectFull(id, name);
+            state.renameProjectId = null;
+            state.projects = await listProjects();
+            renderHome();
+            return;
+        }
+        if (a === 'confirm-cancel') {
+            state.confirmDialog = null;
+            render();
+            return;
+        }
+        if (a === 'confirm-accept') {
+            const c = state.confirmDialog;
+            state.confirmDialog = null;
+            if (c?.type === 'delete-project') {
+                await deleteProjectFull(c.id);
                 state.projects = await listProjects();
                 renderHome();
                 toast(tr('deleted'));
+                return;
+            }
+            if (c?.type === 'clear-all') {
+                for (const p of await listProjects())
+                    await deleteProjectFull(p.id);
+                state.projects = [];
+                state.settingsOpen = false;
+                render();
+                return;
             }
             return;
         }
@@ -1841,13 +2057,8 @@ function bindGlobalEvents() {
             return;
         }
         if (a === 'clear-all') {
-            if (confirm(tr('confirmClear'))) {
-                for (const p of await listProjects())
-                    await deleteProjectFull(p.id);
-                state.projects = [];
-                state.settingsOpen = false;
-                render();
-            }
+            state.confirmDialog = { type: 'clear-all' };
+            render();
             return;
         }
         if (a === 'home-top') {
@@ -1871,6 +2082,7 @@ function bindGlobalEvents() {
             return;
         }
         if (a === 'pick-media') {
+            state.mediaImportContext = 'editor';
             $('#media-picker')?.click();
             return;
         }
@@ -2096,12 +2308,39 @@ function bindGlobalEvents() {
                 setTimeout(() => renderEditor(), 0);
         }
     });
-    $('#media-picker').addEventListener('change', async (e) => { const files = [...e.target.files]; e.target.value = ''; await importFiles(files, true); });
+    $('#media-picker').addEventListener('change', async (e) => {
+        const files = [...e.target.files], context = state.mediaImportContext;
+        e.target.value = '';
+        state.mediaImportContext = null;
+        if (!files.length)
+            return;
+        if (context === 'home' || state.view === 'home') {
+            await createProject(isMobileViewport() ? '9:16' : '16:9');
+            await importFiles(files, true);
+            return;
+        }
+        await importFiles(files, true);
+    });
     $('#subtitle-picker').addEventListener('change', async (e) => { const file = e.target.files?.[0]; e.target.value = ''; if (file)
         await importSrt(file); });
     window.addEventListener('resize', () => state.view === 'editor' && fitPreviewFrame());
     window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); state.installPrompt = e; });
     window.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && document.activeElement?.id === 'project-rename-input') {
+            e.preventDefault();
+            document.querySelector('[data-action="rename-save"]')?.click();
+            return;
+        }
+        if (e.key === 'Escape' && state.renameProjectId) {
+            state.renameProjectId = null;
+            renderHome();
+            return;
+        }
+        if (e.key === 'Escape' && state.projectMenuId) {
+            state.projectMenuId = null;
+            renderHome();
+            return;
+        }
         if (state.view !== 'editor' || ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName))
             return;
         if (e.code === 'Space') {
@@ -2154,7 +2393,7 @@ async function init() {
             await new Promise(resolve => setTimeout(resolve, remaining));
         render();
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=1.6.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=2.0.1', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

@@ -1,22 +1,16 @@
-# Edituno Studio v2.0.0
+# Edituno Studio v2.0.1
 
-This release replaces the previous visual system from scratch while preserving the media engine and official Edituno logo.
+Interaction reliability release.
 
-## Rebuilt
+## Fixed
 
-- New dark Studio design system for mobile and desktop
-- New application-style project Home instead of a marketing landing page
-- New iOS-style action sheet menu on mobile
-- New professional three-pane desktop editing workspace
-- New compact mobile editor layout
-- New transport and timeline chrome
-- Unified Lucide-derived icon grammar
-- New dark native-style splash screens
-- Direct preview drag and two-finger clip scaling
-- Stable bilingual geometry
-
-## Open source
-
-Lucide icon geometry is used under ISC/MIT terms. See THIRD_PARTY_NOTICES.md.
-
-Moveable, WaveSurfer.js, Mediabunny and OpenCut were evaluated for the next engine layer. They are not blindly bundled into this release because launch stability is more important than dependency count. See OPEN_SOURCE_STACK.md.
+- Mobile editor tool dock is pinned to the bottom safe area and scrolls only horizontally.
+- Home Import now opens the system picker during the original user gesture, including iOS Safari/PWA.
+- Imported music is placed under the visual timeline by default instead of being appended after the video.
+- Long music is initially trimmed to the remaining visual duration so a soundtrack does not create an accidental black tail.
+- Project three-dot buttons now open an Edituno action sheet.
+- Project actions include Open, Rename, Duplicate and Delete.
+- Project deletion uses an Edituno confirmation modal, never the browser confirm dialog.
+- Delete-all also uses the Edituno confirmation UI.
+- Project duplication copies local media to independent asset IDs so deleting one project does not break the other.
+- Mobile editor body scrolling is locked while editing, while timeline and tool rows retain their intended horizontal scrolling.

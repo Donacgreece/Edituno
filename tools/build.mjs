@@ -34,7 +34,11 @@ const requiredRuntimeMarkers = [
   'function mobileProjectCard(',
   'studio-home',
   'language-segment',
-  'editor-topbar'
+  'editor-topbar',
+  'function projectActionsModal()',
+  'function confirmationModal()',
+  'function preferredAudioInsertTime()',
+  'mediaImportContext'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -64,4 +68,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v2.0.0 -> ${dist}`)
+console.log(`Built Edituno v2.0.1 -> ${dist}`)

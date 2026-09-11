@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.0.0 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.0.1 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -72,7 +72,7 @@ const STRINGS = {
     align:'Alignment', start:'Start', end:'End', weight:'Weight', loop:'Loop soundtrack', installApp:'Install app', browserLimit:'Your browser may export WebM instead of MP4.',
     unsupported:'This file format is not supported by this browser.', imported:'Media imported', srtImported:'Subtitles imported', deleted:'Deleted',
     timeline:'Timeline', share:'Share', download:'Save file', cancel:'Cancel', back:'Back', project:'Project', local:'Local editor',
-    autoSave:'Autosaved', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.',
+    autoSave:'Autosaved', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.', rename:'Rename', projectOptions:'Project options', renameProject:'Rename project', saveChanges:'Save', confirmDelete:'Delete project', keepProject:'Keep project', deleteProjectBody:'This removes the project and its local media from this device.', clearAllTitle:'Delete all projects?', clearAllBody:'This permanently removes every local Edituno project and its media from this device.', duplicatedProject:'Project duplicated',
     selectedText:'Selected text', textStyle:'Text style', position:'Position', apply:'Apply', installHint:'Install Edituno',
     desktopMedia:'Project media', inspector:'Properties', adjust:'Adjust', transitions:'Transitions', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide left', slideRight:'Slide right', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Reset', timelineZoom:'Timeline zoom', transitionDuration:'Duration', newBlank:'New blank project', resume:'Resume editing', editLocally:'Edit locally. Export anywhere.', chooseProject:'Choose project', mobileReady:'Ready to edit', noUploadShort:'No upload. No watermark.', blurFill:'Blur fill'
   },
@@ -100,7 +100,7 @@ const STRINGS = {
     align:'Στοίχιση', start:'Έναρξη', end:'Τέλος', weight:'Πάχος', loop:'Επανάληψη μουσικής', installApp:'Εγκατάσταση εφαρμογής', browserLimit:'Ο browser μπορεί να κάνει export σε WebM αντί MP4.',
     unsupported:'Αυτό το format δεν υποστηρίζεται από τον browser.', imported:'Τα media προστέθηκαν', srtImported:'Οι υπότιτλοι προστέθηκαν', deleted:'Διαγράφηκε',
     timeline:'Timeline', share:'Κοινοποίηση', download:'Αποθήκευση αρχείου', cancel:'Ακύρωση', back:'Πίσω', project:'Project', local:'Τοπικός editor',
-    autoSave:'Αυτόματη αποθήκευση', add:'Προσθήκη', noAudio:'Κάνε import αρχείο ήχου για μουσική.', noMedia:'Δεν υπάρχουν media ακόμα.',
+    autoSave:'Αυτόματη αποθήκευση', add:'Προσθήκη', noAudio:'Κάνε import αρχείο ήχου για μουσική.', noMedia:'Δεν υπάρχουν media ακόμα.', rename:'Μετονομασία', projectOptions:'Επιλογές project', renameProject:'Μετονομασία project', saveChanges:'Αποθήκευση', confirmDelete:'Διαγραφή project', keepProject:'Διατήρηση project', deleteProjectBody:'Το project και τα τοπικά media του θα διαγραφούν από αυτή τη συσκευή.', clearAllTitle:'Διαγραφή όλων των projects;', clearAllBody:'Θα διαγραφούν μόνιμα όλα τα τοπικά projects του Edituno και τα media τους από αυτή τη συσκευή.', duplicatedProject:'Το project αντιγράφηκε',
     selectedText:'Επιλεγμένο κείμενο', textStyle:'Στυλ κειμένου', position:'Θέση', apply:'Εφαρμογή', installHint:'Εγκατάσταση Edituno',
     desktopMedia:'Media project', inspector:'Ιδιότητες', adjust:'Ρυθμίσεις', transitions:'Μεταβάσεις', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide αριστερά', slideRight:'Slide δεξιά', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Επαναφορά', timelineZoom:'Zoom timeline', transitionDuration:'Διάρκεια', newBlank:'Νέο κενό project', resume:'Συνέχεια επεξεργασίας', editLocally:'Επεξεργασία τοπικά. Export παντού.', chooseProject:'Επίλεξε project', mobileReady:'Έτοιμο για επεξεργασία', noUploadShort:'Χωρίς upload. Χωρίς watermark.', blurFill:'Blur fill'
   }
@@ -112,6 +112,7 @@ const state = {
   selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
   settingsOpen: false, installOpen: false, projectHubOpen: false, homeMenuOpen: false, adjustKey: 'brightness',
+  projectMenuId: null, renameProjectId: null, confirmDialog: null, mediaImportContext: null,
   preferences: loadPreferences(), audioDrag: null
 }
 state.pxPerSec=Number(state.preferences.timelineScale)||48
@@ -180,6 +181,42 @@ async function deleteProjectFull(id) {
   const p = await getProject(id)
   if (p?.assets) for (const a of p.assets) await dbDelete(BLOBS,a.id)
   await dbDelete(PROJECTS,id)
+}
+
+async function duplicateProjectFull(id) {
+  const original = await getProject(id)
+  if (!original) return null
+  const now = Date.now()
+  const copy = clone(original)
+  copy.id = uid()
+  copy.name = `${original.name} ${state.language==='el'?'αντίγραφο':'copy'}`
+  copy.createdAt = now
+  copy.updatedAt = now
+  const assetMap = new Map()
+  copy.assets = []
+  for (const asset of original.assets || []) {
+    const newId = uid()
+    assetMap.set(asset.id, newId)
+    const blob = await getBlob(asset.id)
+    if (blob) await putBlob(newId, blob)
+    copy.assets.push({...clone(asset), id:newId})
+  }
+  copy.clips = (original.clips || []).map(c=>({...clone(c), id:uid(), assetId:assetMap.get(c.assetId)||c.assetId}))
+  copy.audioClips = (original.audioClips || []).map(c=>({...clone(c), id:uid(), assetId:assetMap.get(c.assetId)||c.assetId}))
+  copy.texts = (original.texts || []).map(t=>({...clone(t), id:uid()}))
+  copy.soundtrack = null
+  await saveProject(copy)
+  return copy.id
+}
+
+async function renameProjectFull(id, name) {
+  const project = await getProject(id)
+  if (!project) return
+  const clean = String(name || '').trim().slice(0, 80)
+  if (!clean) return
+  project.name = clean
+  project.updatedAt = Date.now()
+  await saveProject(project)
 }
 
 let saveTimer
@@ -538,8 +575,8 @@ function normalizeProject(p) {
   for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
   return p
 }
-async function createProject(ratio='16:9', importNow=false) {
-  stopPlayback(); state.project=defaultProject(ratio); await saveProject(state.project); state.projects=await listProjects(); state.urls={}; state.history=[]; state.future=[]; state.currentTime=0; state.selected=null; state.view='editor'; render(); if(importNow) $('#media-picker')?.click()
+async function createProject(ratio='16:9') {
+  stopPlayback(); state.project=defaultProject(ratio); await saveProject(state.project); state.projects=await listProjects(); state.urls={}; state.history=[]; state.future=[]; state.currentTime=0; state.selected=null; state.view='editor'; render()
 }
 async function openProject(id) {
   stopPlayback(); revokeUrls(); const p=await getProject(id); if(!p) return
@@ -583,8 +620,25 @@ async function buildWaveform(file,points=72) {
     await ctx.close().catch(()=>{});return peaks
   } catch { return null }
 }
-function defaultAudioClip(asset,timelineStart=state.currentTime||0){return {id:uid(),assetId:asset.id,timelineStart:Math.max(0,timelineStart),sourceStart:0,sourceEnd:Math.max(.1,asset.duration||30),volume:.8,speed:1,fadeIn:0,fadeOut:0,muted:false}}
-function addAudioToTimeline(id,at=state.currentTime||0){const asset=getAsset(id);if(!asset||asset.type!=='audio')return;mutate(p=>{const c=defaultAudioClip(asset,at);p.audioClips.push(c);state.selected={type:'audio',id:c.id};state.tool='audio';state.sheet=isMobileViewport()?'audio':null});syncAudioTracks(true)}
+function preferredAudioInsertTime(){
+  const clip=selectedClip()
+  if(clip){
+    const row=clipTimeline().find(r=>r.clip.id===clip.id)
+    if(row)return row.start
+  }
+  const visual=visualDuration()
+  if(visual>0 && state.currentTime>.05 && state.currentTime<visual-.05)return snapTime(state.currentTime)
+  return visual>0?0:Math.max(0,state.currentTime||0)
+}
+function defaultAudioClip(asset,timelineStart=preferredAudioInsertTime()){
+  const start=Math.max(0,timelineStart||0)
+  const full=Math.max(.1,asset.duration||30)
+  const visual=visualDuration()
+  const remaining=visual>start?visual-start:0
+  const fitted=remaining>0?Math.min(full,remaining):full
+  return {id:uid(),assetId:asset.id,timelineStart:start,sourceStart:0,sourceEnd:Math.max(.1,fitted),volume:.8,speed:1,fadeIn:0,fadeOut:0,muted:false}
+}
+function addAudioToTimeline(id,at){const asset=getAsset(id);if(!asset||asset.type!=='audio')return;const start=at===undefined?preferredAudioInsertTime():Math.max(0,at);mutate(p=>{const c=defaultAudioClip(asset,start);p.audioClips.push(c);state.selected={type:'audio',id:c.id};state.tool='audio';state.sheet=isMobileViewport()?'audio':null});syncAudioTracks(true)}
 
 async function importFiles(files, addVisuals=true) {
   if(!state.project || !files?.length) return
@@ -596,7 +650,7 @@ async function importFiles(files, addVisuals=true) {
       const asset={id,name:file.name,type:meta.type,mimeType:file.type,duration:meta.duration,width:meta.width,height:meta.height,size:file.size,waveform}
       await putBlob(id,file); state.project.assets.push(asset); state.urls[id]=URL.createObjectURL(file); added.push(asset)
       if(addVisuals && (asset.type==='video'||asset.type==='image')) state.project.clips.push(defaultClip(asset))
-      if(asset.type==='audio' && addVisuals) state.project.audioClips.push(defaultAudioClip(asset,state.currentTime||0))
+      if(asset.type==='audio' && addVisuals) state.project.audioClips.push(defaultAudioClip(asset,preferredAudioInsertTime()))
     } catch { toast(tr('unsupported'),'error') }
   }
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
@@ -758,6 +812,7 @@ function homeMenuPopover(){
   </aside>`
 }
 function renderHome() {
+  document.body.classList.remove('editor-open')
   const app=$('#app'), projects=state.projects||[], last=projects[0], mobile=isMobileViewport(), recent=projects.slice(0,mobile?7:10), el=state.language==='el'
   const hello=el?'Δημιούργησε χωρίς τριβή.':'Create without friction.'
   const sub=el?'Video editing σχεδιασμένο πρώτα για κινητό.':'Video editing designed mobile first.'
@@ -817,15 +872,56 @@ function renderHome() {
         <button data-action="projects-scroll">${svgIcon('projects',19)}<span>Projects</span></button>
       </nav>
     </div>
-    ${homeMenuPopover()}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
+    ${homeMenuPopover()}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}${projectActionsModal()}${renameProjectModal()}${confirmationModal()}
   </div><div class="toast-stack" id="toasts"></div>`
 }
 function studioFormatCard(ratio,title,sub,shape='phone'){return `<button type="button" class="studio-format-card" data-action="create" data-ratio="${ratio}"><span class="format-preview"><i class="format-symbol ${shape}"></i><b>${ratio}</b></span><span class="format-copy"><strong>${title}</strong><small>${sub}</small></span></button>`}
-function studioProjectCard(p){return `<article class="studio-project-card"><button class="project-card-main" data-action="open-project" data-id="${p.id}"><span class="project-poster"><i>${svgIcon('video',20)}</i><b>${escapeHtml(p.ratio||'16:9')}</b></span><span class="project-card-copy"><strong>${escapeHtml(p.name)}</strong><small>${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US',{day:'2-digit',month:'short'})}</small></span></button><button class="project-card-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">${svgIcon('more',17)}</button></article>`}
+function studioProjectCard(p){return `<article class="studio-project-card"><button class="project-card-main" data-action="open-project" data-id="${p.id}"><span class="project-poster"><i>${svgIcon('video',20)}</i><b>${escapeHtml(p.ratio||'16:9')}</b></span><span class="project-card-copy"><strong>${escapeHtml(p.name)}</strong><small>${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US',{day:'2-digit',month:'short'})}</small></span></button><button class="project-card-more" data-action="project-menu" data-id="${p.id}" aria-label="${tr('projectOptions')}">${svgIcon('more',17)}</button></article>`}
 function mobileFormatCard(ratio,title,sub,shape='phone'){return studioFormatCard(ratio,title,sub,shape)}
 function desktopFormatButton(ratio,title,sub,shape='phone'){return studioFormatCard(ratio,title,sub,shape)}
 function mobileProjectCard(p){return studioProjectCard(p)}
 function projectCard(p){return studioProjectCard(p)}
+
+function projectActionsModal(){
+  const p=state.projects.find(x=>x.id===state.projectMenuId)
+  if(!p)return''
+  return `<div class="app-modal-backdrop" data-action="project-menu-close"><section class="project-action-sheet" role="dialog" aria-modal="true" aria-label="${tr('projectOptions')}">
+    <div class="action-sheet-grabber"></div>
+    <header class="project-action-head"><div class="project-action-identity"><span class="project-action-thumb">${svgIcon('video',20)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')}</small></span></div><button class="round-icon" data-action="project-menu-close" aria-label="${tr('close')}">${svgIcon('close',17)}</button></header>
+    <div class="project-action-list">
+      <button data-action="project-menu-open" data-id="${p.id}"><span>${svgIcon('play',18)}</span><span><strong>${tr('open')}</strong><small>${state.language==='el'?'Συνέχεια επεξεργασίας':'Continue editing'}</small></span>${svgIcon('right',15)}</button>
+      <button data-action="project-menu-rename" data-id="${p.id}"><span>${svgIcon('edit',18)}</span><span><strong>${tr('rename')}</strong><small>${state.language==='el'?'Αλλαγή ονόματος project':'Change project name'}</small></span>${svgIcon('right',15)}</button>
+      <button data-action="project-menu-duplicate" data-id="${p.id}"><span>${svgIcon('copy',18)}</span><span><strong>${tr('duplicate')}</strong><small>${state.language==='el'?'Δημιουργία ανεξάρτητου αντιγράφου':'Create an independent copy'}</small></span>${svgIcon('right',15)}</button>
+      <button class="danger" data-action="project-menu-delete" data-id="${p.id}"><span>${svgIcon('trash',18)}</span><span><strong>${tr('delete')}</strong><small>${state.language==='el'?'Διαγραφή από αυτή τη συσκευή':'Remove from this device'}</small></span>${svgIcon('right',15)}</button>
+    </div>
+  </section></div>`
+}
+
+function renameProjectModal(){
+  const p=state.projects.find(x=>x.id===state.renameProjectId)
+  if(!p)return''
+  return `<div class="app-modal-backdrop" data-action="rename-close"><section class="rename-dialog" role="dialog" aria-modal="true" aria-label="${tr('renameProject')}">
+    <header><div><span class="eyebrow">EDITUNO</span><h2>${tr('renameProject')}</h2></div><button class="round-icon" data-action="rename-close">${svgIcon('close',17)}</button></header>
+    <div class="rename-dialog-body"><label><span>${tr('projectName')}</span><input id="project-rename-input" maxlength="80" value="${escapeHtml(p.name)}" autocomplete="off"></label></div>
+    <footer><button class="secondary-btn" data-action="rename-close">${tr('cancel')}</button><button class="primary-btn" data-action="rename-save" data-id="${p.id}">${tr('saveChanges')}</button></footer>
+  </section></div>`
+}
+
+function confirmationModal(){
+  const c=state.confirmDialog
+  if(!c)return''
+  const p=c.type==='delete-project'?state.projects.find(x=>x.id===c.id):null
+  const title=c.type==='clear-all'?tr('clearAllTitle'):tr('confirmDelete')
+  const body=c.type==='clear-all'?tr('clearAllBody'):tr('deleteProjectBody')
+  return `<div class="app-modal-backdrop confirmation-backdrop" data-action="confirm-cancel"><section class="confirm-dialog" role="alertdialog" aria-modal="true">
+    <div class="confirm-icon">${svgIcon('trash',20)}</div>
+    <h2>${title}</h2>
+    ${p?`<strong class="confirm-project-name">${escapeHtml(p.name)}</strong>`:''}
+    <p>${body}</p>
+    <div class="confirm-actions"><button class="secondary-btn" data-action="confirm-cancel">${c.type==='delete-project'?tr('keepProject'):tr('cancel')}</button><button class="danger-confirm" data-action="confirm-accept">${tr('delete')}</button></div>
+  </section></div>`
+}
+
 function settingsModal(){
   const p=state.preferences, el=state.language==='el'
   return `<div class="modal-backdrop settings-backdrop" data-action="settings-close"><section class="settings-panel" role="dialog" aria-modal="true" aria-label="${tr('settings')}">
@@ -902,7 +998,7 @@ function renderEditor() {
 
     <div class="sheet-backdrop ${state.sheet?'open':''}" data-action="sheet-close"></div>
     <section class="bottom-sheet ${state.sheet?'open':''}" aria-modal="true"><div class="sheet-grabber"></div><header class="sheet-header"><div><span class="eyebrow">EDITUNO</span><strong>${sheetTitle()}</strong></div><button class="round-icon" data-action="sheet-close">${svgIcon('close',17)}</button></header><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
-    ${state.projectHubOpen?mobileProjectHubModal():''}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
+    ${state.projectHubOpen?mobileProjectHubModal():''}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}${confirmationModal()}
   </div><div class="toast-stack" id="toasts"></div>`
   requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions(); bindPreviewInteractions() })
 }
@@ -1054,12 +1150,28 @@ function bindGlobalEvents() {
   document.addEventListener('click',async e=>{
     const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action
     if((a==='settings-close'||a==='install-close'||a==='mobile-hub-close') && e.target!==el && (el.classList.contains('modal-backdrop')||el.classList.contains('project-hub-backdrop'))) return
+    if((a==='project-menu-close'||a==='rename-close'||a==='confirm-cancel') && el.classList.contains('app-modal-backdrop') && e.target!==el) return
     if(a==='home-menu-toggle'){state.homeMenuOpen=!state.homeMenuOpen;renderHome();return}
     if(a==='home-menu-close'){state.homeMenuOpen=false;renderHome();return}
-    if(a==='create')return createProject(el.dataset.ratio||'16:9')
-    if(a==='create-import'){state.homeMenuOpen=false;return createProject(isMobileViewport()?'9:16':'16:9',true)}
-    if(a==='open-project'){state.projectHubOpen=false;state.homeMenuOpen=false;return openProject(el.dataset.id)}
-    if(a==='delete-project'){e.stopPropagation();if(confirm(tr('delete')+'?')){await deleteProjectFull(el.dataset.id);state.projects=await listProjects();renderHome();toast(tr('deleted'))}return}
+    if(a==='create'){state.mediaImportContext=null;return createProject(el.dataset.ratio||'16:9')}
+    if(a==='create-import'){state.homeMenuOpen=false;state.mediaImportContext='home';$('#media-picker')?.click();return}
+    if(a==='open-project'){state.mediaImportContext=null;state.projectHubOpen=false;state.homeMenuOpen=false;state.projectMenuId=null;return openProject(el.dataset.id)}
+    if(a==='project-menu'){e.stopPropagation();state.projectMenuId=el.dataset.id;state.renameProjectId=null;renderHome();return}
+    if(a==='project-menu-close'){state.projectMenuId=null;renderHome();return}
+    if(a==='project-menu-open'){const id=el.dataset.id;state.projectMenuId=null;return openProject(id)}
+    if(a==='project-menu-rename'){state.renameProjectId=el.dataset.id;state.projectMenuId=null;renderHome();requestAnimationFrame(()=>$('#project-rename-input')?.focus());return}
+    if(a==='project-menu-duplicate'){const id=el.dataset.id;state.projectMenuId=null;await duplicateProjectFull(id);state.projects=await listProjects();renderHome();toast(tr('duplicatedProject'),'success');return}
+    if(a==='project-menu-delete'){state.confirmDialog={type:'delete-project',id:el.dataset.id};state.projectMenuId=null;renderHome();return}
+    if(a==='rename-close'){state.renameProjectId=null;renderHome();return}
+    if(a==='rename-save'){const id=el.dataset.id,name=$('#project-rename-input')?.value;await renameProjectFull(id,name);state.renameProjectId=null;state.projects=await listProjects();renderHome();return}
+    if(a==='confirm-cancel'){state.confirmDialog=null;render();return}
+    if(a==='confirm-accept'){
+      const c=state.confirmDialog
+      state.confirmDialog=null
+      if(c?.type==='delete-project'){await deleteProjectFull(c.id);state.projects=await listProjects();renderHome();toast(tr('deleted'));return}
+      if(c?.type==='clear-all'){for(const p of await listProjects())await deleteProjectFull(p.id);state.projects=[];state.settingsOpen=false;render();return}
+      return
+    }
     if(a==='language'){state.language=state.language==='el'?'en':'el';state.homeMenuOpen=false;render();return}
     if(a==='set-lang'){state.language=el.dataset.value;state.homeMenuOpen=false;render();return}
     if(a==='pref-toggle'){const key=el.dataset.key;state.preferences[key]=!state.preferences[key];if(key==='showWaveforms')renderEditor();savePreferences();render();return}
@@ -1069,13 +1181,13 @@ function bindGlobalEvents() {
     if(a==='install-close'){state.installOpen=false;render();return}
     if(a==='install-confirm'&&state.installPrompt){await state.installPrompt.prompt();await state.installPrompt.userChoice;state.installPrompt=null;state.installOpen=false;render();return}
     if(a==='persist-storage'){const ok=await navigator.storage?.persist?.();toast(ok?'✓ '+tr('persistent'):tr('storage'));return}
-    if(a==='clear-all'){if(confirm(tr('confirmClear'))){for(const p of await listProjects())await deleteProjectFull(p.id);state.projects=[];state.settingsOpen=false;render();}return}
+    if(a==='clear-all'){state.confirmDialog={type:'clear-all'};render();return}
     if(a==='home-top'){window.scrollTo({top:0,behavior:'smooth'});return}
     if(a==='projects-scroll'){$('#projects-section')?.scrollIntoView({behavior:'smooth'});return}
     if(a==='back')return goHome()
     if(a==='mobile-hub'){state.projectHubOpen=true;renderEditor();return}
     if(a==='mobile-hub-close'){state.projectHubOpen=false;renderEditor();return}
-    if(a==='pick-media'){$('#media-picker')?.click();return}
+    if(a==='pick-media'){state.mediaImportContext='editor';$('#media-picker')?.click();return}
     if(a==='add-asset')return addAssetToTimeline(el.dataset.id)
     if(a==='add-audio'||a==='set-soundtrack')return addAudioToTimeline(el.dataset.id)
     if(a==='select-audio')return selectAudio(el.dataset.id)
@@ -1126,12 +1238,29 @@ function bindGlobalEvents() {
     const el=e.target
     if(el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-project]')&&state.view==='editor')setTimeout(()=>renderEditor(),0);if(el.matches('[data-pref]')){savePreferences();if(state.view==='editor')setTimeout(()=>renderEditor(),0)}
   })
-  $('#media-picker').addEventListener('change',async e=>{const files=[...e.target.files];e.target.value='';await importFiles(files,true)})
+  $('#media-picker').addEventListener('change',async e=>{
+    const files=[...e.target.files], context=state.mediaImportContext
+    e.target.value=''; state.mediaImportContext=null
+    if(!files.length)return
+    if(context==='home'||state.view==='home'){
+      await createProject(isMobileViewport()?'9:16':'16:9')
+      await importFiles(files,true)
+      return
+    }
+    await importFiles(files,true)
+  })
   $('#subtitle-picker').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await importSrt(file)})
 
   window.addEventListener('resize',()=>state.view==='editor'&&fitPreviewFrame())
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();state.installPrompt=e})
   window.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&document.activeElement?.id==='project-rename-input'){
+      e.preventDefault()
+      document.querySelector('[data-action="rename-save"]')?.click()
+      return
+    }
+    if(e.key==='Escape'&&state.renameProjectId){state.renameProjectId=null;renderHome();return}
+    if(e.key==='Escape'&&state.projectMenuId){state.projectMenuId=null;renderHome();return}
     if(state.view!=='editor'||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return
     if(e.code==='Space'){e.preventDefault();state.playing?stopPlayback():startPlayback()}
     if(e.key.toLowerCase()==='s')splitAtPlayhead()
@@ -1165,7 +1294,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.6.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.0.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
