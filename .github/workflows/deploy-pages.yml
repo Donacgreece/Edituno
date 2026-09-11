@@ -23,18 +23,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Verify production bundle
         run: |
           test -f dist/index.html
           test -f dist/sw.js
           test -f dist/manifest.webmanifest
+          test -f dist/icons/icon-512.png
           test -f src/app.ts
+          grep -q "maximum-scale=1" dist/index.html
+          grep -q "timeline-audio" dist/index.html
+          grep -q "audioClipPanel" dist/index.html
+          grep -q "scheduleAudioTracks" dist/index.html
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
       - name: Upload production site
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

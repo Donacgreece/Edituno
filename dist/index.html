@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="Edituno" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.webmanifest?v=1.2.0" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=1.2.0" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=1.2.0" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=1.2.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=1.2.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=1.2.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=1.2.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=1.2.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=1.2.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=1.3.0" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=1.3.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=1.3.0" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=1.3.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=1.3.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=1.3.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=1.3.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=1.3.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=1.3.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno · Video editor</title>
   <style>
 :root {
@@ -371,7 +371,7 @@ body { min-height:100dvh; background:#fff; overscroll-behavior-y:none; }
 
 
 /* ==========================================================
-   Edituno Studio v1.2.0: mobile-first production shell
+   Edituno Pro v1.3.0: mobile-first production shell
    ========================================================== */
 html, body { width:100%; max-width:100%; overflow-x:hidden; touch-action:manipulation; }
 body { -webkit-user-select:none; user-select:none; }
@@ -569,6 +569,127 @@ input, textarea { -webkit-user-select:text; user-select:text; }
   .preview-zone { padding:30px 30px 78px; }
 }
 
+/* ==========================================================
+   Edituno v1.3.0 Pro polish layer
+   ========================================================== */
+:root {
+  font-family: "SF Pro Text", "SF Pro Display", "Segoe UI Variable Text", "Segoe UI Variable", "Aptos", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --editor-rail: #f8f9fc;
+  --audio: #8055d9;
+  --audio-soft: #f1ecff;
+}
+body { overflow-y:auto; overscroll-behavior-y:auto; font-weight:400; letter-spacing:-.006em; }
+input, textarea, select, button { font-family:inherit; }
+h1,h2,h3,.brand-word,.logo-lockup,.editor-title { font-family:"SF Pro Display","Segoe UI Variable Display","Aptos Display","Segoe UI",system-ui,sans-serif; }
+.landing-page { min-height:100dvh; height:auto; overflow:visible; }
+.landing-main { overflow:visible; }
+.landing-hero h1 { font-weight:760; letter-spacing:-.055em; text-wrap:balance; }
+.landing-hero p { max-width:720px; }
+.landing-header { position:sticky; top:0; z-index:60; backdrop-filter:blur(18px); background:rgba(255,255,255,.92); }
+.editor-settings-btn { font-size:17px; }
+
+/* Timeline is a true multi-track surface. */
+.timeline-panel { grid-template-rows:38px minmax(0,1fr); }
+.timeline-scroll { overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding:10px 10px 14px; }
+.timeline-canvas { position:relative; min-height:214px; padding-bottom:8px; }
+.timeline-ruler { margin-left:42px; height:20px; }
+.track-row { display:grid; grid-template-columns:36px minmax(0,1fr); gap:6px; align-items:stretch; margin-top:5px; min-height:50px; }
+.track-label { display:grid; place-items:center; border-radius:8px; background:#f1f3f8; color:#80899a; font-size:9px; font-weight:800; user-select:none; }
+.video-row { min-height:68px; }
+.audio-row { min-height:54px; }
+.text-row { min-height:34px; }
+.timeline-track { height:68px; min-width:100%; }
+.timeline-text-row, .timeline-audio-row { position:relative; min-width:100%; height:100%; margin:0; }
+.timeline-audio { position:absolute; top:0; height:50px; border:1px solid #cfc3f5; background:linear-gradient(180deg,#f7f3ff,#efe9ff); border-radius:10px; padding:5px 7px; overflow:hidden; color:#563c91; text-align:left; touch-action:none; cursor:grab; }
+.timeline-audio:active,.timeline-audio.dragging { cursor:grabbing; box-shadow:0 10px 30px rgba(85,55,155,.18); z-index:8; }
+.timeline-audio.selected { border-color:var(--azure); box-shadow:0 0 0 2px rgba(36,85,245,.12); }
+.timeline-audio strong { position:absolute; left:7px; right:44px; bottom:5px; font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.timeline-audio small { position:absolute; right:7px; bottom:5px; font-size:8px; color:#7967a7; }
+.audio-wave { position:absolute; inset:5px 6px 18px; display:flex; gap:2px; align-items:center; opacity:.8; }
+.audio-wave i { width:2px; min-height:2px; max-height:100%; border-radius:999px; background:#8a68db; flex:1 1 2px; }
+.timeline-text { top:2px; height:30px; }
+.timeline-clip.dragging { opacity:.58; }
+.playhead { top:8px; bottom:0; }
+.timeline-empty-add { min-height:64px; }
+
+/* Audio mixer */
+.audio-mixer { background:linear-gradient(180deg,#fff,#fcfaff); }
+.mixer-heading { display:flex; align-items:center; gap:10px; padding-bottom:11px; margin-bottom:10px; border-bottom:1px solid var(--line); }
+.mixer-icon { width:38px; height:38px; border-radius:12px; background:var(--audio-soft); color:var(--audio); display:grid; place-items:center; font-size:18px; }
+.mixer-heading strong,.mixer-heading small { display:block; }
+.mixer-heading strong { font-size:12px; max-width:230px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.mixer-heading small { margin-top:3px; color:var(--muted); font-size:9px; }
+.audio-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.audio-actions .danger-btn { grid-column:1/-1; }
+
+/* Settings */
+.settings-modal .modal-head { align-items:flex-start; }
+.settings-modal .modal-head small { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
+.two-settings { grid-template-columns:1fr 1fr; }
+.settings-modal .panel-section { padding:15px; }
+.settings-modal select { min-height:44px; }
+
+/* Better scrolling and layout on desktop. */
+@media (min-width:1100px) {
+  html,body,#app { height:100%; }
+  body:has(.desktop-editor) { overflow:hidden; }
+  .desktop-editor { height:100dvh; min-height:0; overflow:hidden; }
+  .desktop-editor .editor-body { min-width:0; overflow:hidden; grid-template-rows:minmax(0,1fr) 258px; }
+  .desktop-sidebar,.desktop-inspector { min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding-bottom:42px; }
+  .desktop-sidebar::-webkit-scrollbar,.desktop-inspector::-webkit-scrollbar,.timeline-scroll::-webkit-scrollbar { width:9px; height:9px; }
+  .desktop-sidebar::-webkit-scrollbar-thumb,.desktop-inspector::-webkit-scrollbar-thumb,.timeline-scroll::-webkit-scrollbar-thumb { background:#d8dce7; border-radius:999px; border:2px solid #fff; }
+  .desktop-clip-stack { display:grid; gap:12px; padding-bottom:22px; }
+  .preview-zone { min-width:0; }
+  .timeline-panel { min-width:0; }
+  .timeline-canvas { min-height:214px; }
+  .landing-main { min-height:calc(100dvh - 72px); }
+  .modal-body { scrollbar-gutter:stable; }
+}
+
+/* Mobile editor behaves like an app, not a squeezed desktop page. */
+@media (max-width:1099px) {
+  body:has(.mobile-editor) { overflow:hidden; overscroll-behavior:none; }
+  .editor-page.mobile-editor { height:100dvh; min-height:100dvh; }
+  .mobile-editor .editor-body { grid-template-rows:minmax(175px,1fr) 46px minmax(164px,34vh); min-height:0; }
+  .mobile-editor .timeline-panel { min-height:164px; }
+  .mobile-editor .timeline-canvas { min-height:202px; }
+  .editor-tools { display:flex; grid-template-columns:none; overflow-x:auto; scrollbar-width:none; gap:3px; padding:6px 8px; scroll-snap-type:x proximity; }
+  .editor-tools::-webkit-scrollbar { display:none; }
+  .tool-btn { flex:0 0 70px; min-width:70px; min-height:56px; scroll-snap-align:center; }
+  .sheet-content { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  .bottom-sheet { max-height:min(76dvh,680px); }
+  .sheet-content { max-height:calc(min(76dvh,680px) - 66px - var(--safe-bottom)); }
+  .preset-carousel { scroll-snap-type:x mandatory; }
+  .preset-card { scroll-snap-align:start; }
+  .timeline-scroll { -webkit-overflow-scrolling:touch; }
+  .editor-header-actions { min-width:max-content; }
+  .editor-settings-btn { display:grid; }
+}
+
+@media (max-width:430px) {
+  .editor-header { grid-template-columns:40px minmax(0,1fr) auto; }
+  .editor-header .icon-btn { width:38px; height:38px; }
+  .editor-header .primary-btn { padding:0 10px; }
+  .editor-settings-btn { display:none !important; }
+  .editor-title { font-size:13px; }
+  .mobile-editor .editor-body { grid-template-rows:minmax(160px,1fr) 44px minmax(158px,34vh); }
+  .track-row { grid-template-columns:30px minmax(0,1fr); gap:4px; }
+  .timeline-ruler { margin-left:36px; }
+  .playhead { margin-left:-6px; }
+  .timeline-toolbar-left strong { font-size:10px; }
+  .timecode { min-width:66px; font-size:9px; }
+  .audio-actions { grid-template-columns:1fr; }
+  .audio-actions .danger-btn { grid-column:auto; }
+}
+
+@media (max-width:340px) {
+  .tool-btn { flex-basis:64px; min-width:64px; }
+  .editor-header .export-btn span { display:none; }
+  .editor-header .export-btn { width:40px; padding:0; }
+  .timeline-toolbar { padding:0 6px; }
+  .timeline-toolbar button { min-width:29px; }
+}
+
   </style>
 </head>
 <body>
@@ -617,7 +738,7 @@ input, textarea { -webkit-user-select:text; user-select:text; }
 
       try {
 // @ts-nocheck
-/* Edituno v1.2.0 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.3.0 Pro production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)));
@@ -653,6 +774,26 @@ function safeSetLanguage(value) {
     }
     catch { }
 }
+function loadPreferences() {
+    const defaults = { snap: true, defaultQuality: 1080, defaultFps: 30, previewQuality: 'balanced', timelineScale: 48, showWaveforms: true };
+    try {
+        return { ...defaults, ...JSON.parse(localStorage.getItem('edituno-preferences') || '{}') };
+    }
+    catch {
+        return defaults;
+    }
+}
+function savePreferences() {
+    try {
+        localStorage.setItem('edituno-preferences', JSON.stringify(state.preferences));
+    }
+    catch { }
+}
+function preferenceLabel(key) {
+    const el = state.language === 'el';
+    const labels = { snap: el ? 'Μαγνήτιση στο timeline' : 'Timeline snapping', showWaveforms: el ? 'Waveforms ήχου' : 'Audio waveforms', previewQuality: el ? 'Ποιότητα preview' : 'Preview quality', defaultQuality: el ? 'Προεπιλεγμένη εξαγωγή' : 'Default export', defaultFps: el ? 'Προεπιλεγμένα FPS' : 'Default FPS', timelineScale: el ? 'Μέγεθος timeline' : 'Timeline scale' };
+    return labels[key] || key;
+}
 const STRINGS = {
     en: {
         create: 'Create project', import: 'Import media', recent: 'Recent projects', noProjects: 'No projects yet',
@@ -660,7 +801,7 @@ const STRINGS = {
         free: 'Free. No watermark. No account.', newProject: 'New project', templates: 'Start with a format', projects: 'Projects', settings: 'Settings',
         private: 'Local by default', privateSub: 'Your media stays on this device.', offline: 'Works offline', offlineSub: 'Install once and keep editing.', noAccount: 'No account', noAccountSub: 'Open Edituno and start.',
         open: 'Open', delete: 'Delete', edit: 'Edit', export: 'Export', media: 'Media', text: 'Text', audio: 'Audio', effects: 'Effects', canvas: 'Canvas',
-        addMedia: 'Add media', addTimeline: 'Add', soundtrack: 'Soundtrack', useSoundtrack: 'Use', remove: 'Remove', captions: 'Captions', importSrt: 'Import SRT',
+        addMedia: 'Add media', addTimeline: 'Add', soundtrack: 'Soundtrack', useSoundtrack: 'Use', remove: 'Remove', captions: 'Captions', importSrt: 'Import SRT', fadeIn: 'Fade in', fadeOut: 'Fade out',
         addTitle: 'Add title', addCaption: 'Add caption', addSticker: 'Add sticker', selectedClip: 'Selected clip', clip: 'Clip', trim: 'Trim', transform: 'Transform',
         speed: 'Speed', volume: 'Volume', opacity: 'Opacity', scale: 'Scale', rotation: 'Rotation', fit: 'Fit', cover: 'Cover', contain: 'Contain', mirror: 'Mirror',
         split: 'Split', duplicate: 'Duplicate', moveLeft: 'Left', moveRight: 'Right', brightness: 'Brightness', contrast: 'Contrast', saturation: 'Saturation', exposure: 'Exposure', temperature: 'Temperature', vignette: 'Vignette', grain: 'Film grain',
@@ -688,7 +829,7 @@ const STRINGS = {
         free: 'Δωρεάν. Χωρίς watermark. Χωρίς λογαριασμό.', newProject: 'Νέο project', templates: 'Ξεκίνα με format', projects: 'Projects', settings: 'Ρυθμίσεις',
         private: 'Τοπικά από προεπιλογή', privateSub: 'Τα αρχεία μένουν στη συσκευή σου.', offline: 'Λειτουργεί offline', offlineSub: 'Εγκατέστησέ το μία φορά και συνέχισε.', noAccount: 'Χωρίς λογαριασμό', noAccountSub: 'Άνοιξε το Edituno και ξεκίνα.',
         open: 'Άνοιγμα', delete: 'Διαγραφή', edit: 'Επεξεργασία', export: 'Export', media: 'Media', text: 'Κείμενο', audio: 'Ήχος', effects: 'Εφέ', canvas: 'Καμβάς',
-        addMedia: 'Προσθήκη media', addTimeline: 'Προσθήκη', soundtrack: 'Μουσική', useSoundtrack: 'Χρήση', remove: 'Αφαίρεση', captions: 'Υπότιτλοι', importSrt: 'Εισαγωγή SRT',
+        addMedia: 'Προσθήκη media', addTimeline: 'Προσθήκη', soundtrack: 'Μουσική', useSoundtrack: 'Χρήση', remove: 'Αφαίρεση', captions: 'Υπότιτλοι', importSrt: 'Εισαγωγή SRT', fadeIn: 'Fade in', fadeOut: 'Fade out',
         addTitle: 'Προσθήκη τίτλου', addCaption: 'Προσθήκη caption', addSticker: 'Προσθήκη sticker', selectedClip: 'Επιλεγμένο clip', clip: 'Clip', trim: 'Trim', transform: 'Μετασχηματισμός',
         speed: 'Ταχύτητα', volume: 'Ένταση', opacity: 'Διαφάνεια', scale: 'Μέγεθος', rotation: 'Περιστροφή', fit: 'Προσαρμογή', cover: 'Γέμισμα', contain: 'Ολόκληρο', mirror: 'Καθρέφτης',
         split: 'Κόψιμο', duplicate: 'Αντιγραφή', moveLeft: 'Αριστερά', moveRight: 'Δεξιά', brightness: 'Φωτεινότητα', contrast: 'Αντίθεση', saturation: 'Κορεσμός', exposure: 'Έκθεση', temperature: 'Θερμοκρασία', vignette: 'Vignette', grain: 'Film grain',
@@ -716,8 +857,10 @@ const state = {
     view: 'home', projects: [], project: null, urls: {}, currentTime: 0, playing: false,
     selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
     exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
-    settingsOpen: false, installOpen: false, projectHubOpen: false, adjustKey: 'brightness'
+    settingsOpen: false, installOpen: false, projectHubOpen: false, adjustKey: 'brightness',
+    preferences: loadPreferences(), audioDrag: null
 };
+state.pxPerSec = Number(state.preferences.timelineScale) || 48;
 const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key;
 function isMobileViewport() {
     return window.matchMedia('(max-width: 979px)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -841,12 +984,20 @@ const previewAudio = document.createElement('audio');
 previewAudio.preload = 'auto';
 previewAudio.style.display = 'none';
 document.body.append(previewAudio);
+const audioPreviewNodes = new Map();
 const imageCache = new Map();
 let rafId = 0;
 let playStartPerf = 0;
 let playStartTime = 0;
-function projectDuration(project = state.project) {
+function visualDuration(project = state.project) {
     return (project?.clips || []).reduce((sum, c) => sum + clipDuration(c), 0);
+}
+function audioClipDuration(c) { return Math.max(.05, (c.sourceEnd - c.sourceStart) / Math.max(.05, c.speed || 1)); }
+function projectDuration(project = state.project) {
+    const visual = visualDuration(project);
+    const audio = Math.max(0, ...(project?.audioClips || []).map(c => (c.timelineStart || 0) + audioClipDuration(c)));
+    const text = Math.max(0, ...(project?.texts || []).map(t => t.end || 0));
+    return Math.max(visual, audio, text);
 }
 function clipDuration(c) { return Math.max(.05, (c.end - c.start) / Math.max(.05, c.speed || 1)); }
 function clipTimeline(project = state.project) {
@@ -868,13 +1019,15 @@ function ratioValue(ratio) {
     return ({ '16:9': 16 / 9, '9:16': 9 / 16, '1:1': 1, '4:5': 4 / 5 })[ratio] || 16 / 9;
 }
 function previewDimensions(ratio) {
+    const q = state.preferences?.previewQuality || 'balanced';
+    const base = q === 'performance' ? 360 : q === 'quality' ? 720 : 540;
     if (ratio === '9:16')
-        return [540, 960];
+        return [base, Math.round(base * 16 / 9)];
     if (ratio === '1:1')
-        return [800, 800];
+        return [base, base];
     if (ratio === '4:5')
-        return [720, 900];
-    return [960, 540];
+        return [base, Math.round(base * 5 / 4)];
+    return [Math.round(base * 16 / 9), base];
 }
 function exportDimensions(ratio, quality) {
     const q = Number(quality);
@@ -1175,32 +1328,65 @@ function ensurePreviewVideo(row, asset, url) {
     if (state.playing && previewVideo.paused && previewVideo.readyState >= 2)
         previewVideo.play().catch(() => { });
 }
-function syncSoundtrack() {
-    const st = state.project?.soundtrack;
-    if (!st) {
-        previewAudio.pause();
-        previewAudio.removeAttribute('src');
-        return;
-    }
-    const url = state.urls[st.assetId];
-    if (!url)
-        return;
-    if (previewAudio.src !== url) {
-        previewAudio.src = url;
-        previewAudio.load();
-    }
-    previewAudio.volume = clamp(st.volume ?? .7, 0, 1);
-    previewAudio.loop = Boolean(st.loop);
-    if (previewAudio.readyState >= 1 && Number.isFinite(previewAudio.duration)) {
-        const target = st.loop && previewAudio.duration ? state.currentTime % previewAudio.duration : Math.min(state.currentTime, previewAudio.duration - .05);
-        if (Math.abs(previewAudio.currentTime - target) > .35)
-            previewAudio.currentTime = Math.max(0, target);
-    }
-    if (state.playing)
-        previewAudio.play().catch(() => { });
-    else
-        previewAudio.pause();
+function audioFadeGain(clip, localTime) {
+    const dur = audioClipDuration(clip), fadeIn = Math.min(clip.fadeIn || 0, dur / 2), fadeOut = Math.min(clip.fadeOut || 0, dur / 2);
+    let gain = 1;
+    if (fadeIn > 0 && localTime < fadeIn)
+        gain = Math.min(gain, localTime / fadeIn);
+    if (fadeOut > 0 && localTime > dur - fadeOut)
+        gain = Math.min(gain, (dur - localTime) / fadeOut);
+    return clamp(gain, 0, 1);
 }
+function audioElementForClip(clip) {
+    let el = audioPreviewNodes.get(clip.id);
+    if (!el) {
+        el = document.createElement('audio');
+        el.preload = 'auto';
+        el.playsInline = true;
+        el.style.display = 'none';
+        document.body.append(el);
+        audioPreviewNodes.set(clip.id, el);
+    }
+    return el;
+}
+function syncAudioTracks(force = false) {
+    const clips = state.project?.audioClips || [], alive = new Set(clips.map(c => c.id));
+    for (const [id, el] of audioPreviewNodes) {
+        if (!alive.has(id)) {
+            el.pause();
+            el.remove();
+            audioPreviewNodes.delete(id);
+        }
+    }
+    for (const clip of clips) {
+        const asset = getAsset(clip.assetId), url = state.urls[clip.assetId];
+        if (!asset || !url)
+            continue;
+        const dur = audioClipDuration(clip), local = state.currentTime - (clip.timelineStart || 0), active = local >= 0 && local <= dur;
+        const el = audioElementForClip(clip);
+        if (el.src !== url) {
+            el.src = url;
+            el.load();
+            force = true;
+        }
+        el.playbackRate = clamp(clip.speed || 1, .5, 2);
+        el.volume = clip.muted ? 0 : clamp((clip.volume ?? .8) * audioFadeGain(clip, Math.max(0, local)), 0, 1);
+        if (active) {
+            const target = (clip.sourceStart || 0) + local * (clip.speed || 1);
+            if (el.readyState >= 1 && (force || Math.abs((el.currentTime || 0) - target) > .28))
+                el.currentTime = clamp(target, clip.sourceStart || 0, Math.max(clip.sourceStart || 0, (clip.sourceEnd || asset.duration) - .02));
+            if (state.playing && el.paused)
+                el.play().catch(() => { });
+            if (!state.playing && !el.paused)
+                el.pause();
+        }
+        else if (!el.paused)
+            el.pause();
+    }
+}
+function stopAudioTracks() { for (const el of audioPreviewNodes.values())
+    el.pause(); }
+function syncSoundtrack() { syncAudioTracks(true); }
 function updatePlaybackUi() {
     const dur = projectDuration(), seek = $('#seekbar'), time = $('#timecode'), play = $('[data-action="play-toggle"]'), head = $('.playhead');
     if (seek) {
@@ -1214,7 +1400,7 @@ function updatePlaybackUi() {
         play.setAttribute('aria-label', state.playing ? tr('pause') : tr('play'));
     }
     if (head)
-        head.style.left = `${Math.max(0, state.currentTime * state.pxPerSec) + 10}px`;
+        head.style.left = `${Math.max(0, state.currentTime * state.pxPerSec) + 42}px`;
 }
 function playbackLoop(now) {
     if (!state.playing)
@@ -1222,11 +1408,15 @@ function playbackLoop(now) {
     const dur = projectDuration();
     state.currentTime = Math.min(dur, playStartTime + (now - playStartPerf) / 1000);
     const row = activeAt(state.currentTime);
-    if (!row || state.currentTime >= dur) {
+    if (state.currentTime >= dur) {
         stopPlayback(true);
         return;
     }
-    ensureActiveMediaForPlayback(row);
+    if (row)
+        ensureActiveMediaForPlayback(row);
+    else
+        previewVideo.pause();
+    syncAudioTracks(false);
     drawPreview();
     updatePlaybackUi();
     rafId = requestAnimationFrame(playbackLoop);
@@ -1250,7 +1440,7 @@ function startPlayback() {
     state.playing = true;
     playStartPerf = performance.now();
     playStartTime = state.currentTime;
-    syncSoundtrack();
+    syncAudioTracks(true);
     const row = activeAt(state.currentTime);
     if (row)
         ensureActiveMediaForPlayback(row);
@@ -1263,6 +1453,7 @@ function stopPlayback(atEnd = false) {
     cancelAnimationFrame(rafId);
     previewVideo.pause();
     previewAudio.pause();
+    stopAudioTracks();
     if (atEnd)
         state.currentTime = projectDuration();
     updatePlaybackUi();
@@ -1277,20 +1468,26 @@ function seekTo(value) {
     const row = activeAt(state.currentTime);
     if (row)
         ensureActiveMediaForPlayback(row);
-    syncSoundtrack();
+    syncAudioTracks(true);
     updatePlaybackUi();
     drawPreview();
 }
 function defaultProject(ratio = '16:9') {
     const now = Date.now();
-    return { id: uid(), name: state.language === 'el' ? 'Νέο project' : 'Untitled project', createdAt: now, updatedAt: now, ratio, background: '#0b0d12', assets: [], clips: [], texts: [], soundtrack: null };
+    return { id: uid(), name: state.language === 'el' ? 'Νέο project' : 'Untitled project', createdAt: now, updatedAt: now, ratio, background: '#0b0d12', assets: [], clips: [], audioClips: [], texts: [], soundtrack: null };
 }
 function normalizeProject(p) {
     p.background || (p.background = '#0b0d12');
     p.assets || (p.assets = []);
     p.clips || (p.clips = []);
     p.texts || (p.texts = p.textOverlays || []);
-    p.soundtrack || (p.soundtrack = null);
+    p.audioClips || (p.audioClips = []);
+    if (p.soundtrack && !p.audioClips.length) {
+        const a = p.assets.find(x => x.id === p.soundtrack.assetId);
+        if (a)
+            p.audioClips.push({ id: uid(), assetId: a.id, timelineStart: 0, sourceStart: 0, sourceEnd: a.duration || 30, volume: p.soundtrack.volume ?? .7, speed: 1, fadeIn: 0, fadeOut: 0, muted: false });
+    }
+    p.soundtrack = null;
     for (const c of p.clips)
         Object.assign(c, { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, motion: 'none', transition: 'none', transitionDuration: .35, offsetX: 0, offsetY: 0, flipX: false, flipY: false, audioFadeIn: 0, audioFadeOut: 0 }, c);
     return p;
@@ -1379,6 +1576,28 @@ async function mediaMetadata(file) {
         URL.revokeObjectURL(url);
     }
 }
+async function buildWaveform(file, points = 72) {
+    if (!file.type.startsWith('audio/'))
+        return null;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)(), buffer = await ctx.decodeAudioData(await file.arrayBuffer()), data = buffer.getChannelData(0), step = Math.max(1, Math.floor(data.length / points)), peaks = [];
+        for (let i = 0; i < points; i++) {
+            let max = 0;
+            const start = i * step, end = Math.min(data.length, start + step);
+            for (let j = start; j < end; j++)
+                max = Math.max(max, Math.abs(data[j]));
+            peaks.push(Math.round(max * 1000) / 1000);
+        }
+        await ctx.close().catch(() => { });
+        return peaks;
+    }
+    catch {
+        return null;
+    }
+}
+function defaultAudioClip(asset, timelineStart = state.currentTime || 0) { return { id: uid(), assetId: asset.id, timelineStart: Math.max(0, timelineStart), sourceStart: 0, sourceEnd: Math.max(.1, asset.duration || 30), volume: .8, speed: 1, fadeIn: 0, fadeOut: 0, muted: false }; }
+function addAudioToTimeline(id, at = state.currentTime || 0) { const asset = getAsset(id); if (!asset || asset.type !== 'audio')
+    return; mutate(p => { const c = defaultAudioClip(asset, at); p.audioClips.push(c); state.selected = { type: 'audio', id: c.id }; state.tool = 'audio'; state.sheet = isMobileViewport() ? 'audio' : null; }); syncAudioTracks(true); }
 async function importFiles(files, addVisuals = true) {
     if (!state.project || !files?.length)
         return;
@@ -1386,15 +1605,16 @@ async function importFiles(files, addVisuals = true) {
     for (const file of files) {
         try {
             const meta = await mediaMetadata(file), id = uid();
-            const asset = { id, name: file.name, type: meta.type, mimeType: file.type, duration: meta.duration, width: meta.width, height: meta.height, size: file.size };
+            const waveform = meta.type === 'audio' ? await buildWaveform(file) : null;
+            const asset = { id, name: file.name, type: meta.type, mimeType: file.type, duration: meta.duration, width: meta.width, height: meta.height, size: file.size, waveform };
             await putBlob(id, file);
             state.project.assets.push(asset);
             state.urls[id] = URL.createObjectURL(file);
             added.push(asset);
             if (addVisuals && (asset.type === 'video' || asset.type === 'image'))
                 state.project.clips.push(defaultClip(asset));
-            if (asset.type === 'audio' && !state.project.soundtrack)
-                state.project.soundtrack = { assetId: id, volume: .7, loop: true };
+            if (asset.type === 'audio' && addVisuals)
+                state.project.audioClips.push(defaultAudioClip(asset, state.currentTime || 0));
         }
         catch {
             toast(tr('unsupported'), 'error');
@@ -1409,15 +1629,27 @@ async function importFiles(files, addVisuals = true) {
 function defaultClip(asset) {
     return { id: uid(), assetId: asset.id, start: 0, end: asset.type === 'image' ? Math.max(1, asset.duration || 4) : Math.max(.1, asset.duration || 4), speed: 1, volume: 1, scale: 1, rotation: 0, opacity: 1, fit: 'cover', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, motion: 'none', transition: 'none', transitionDuration: .35, audioFadeIn: 0, audioFadeOut: 0 };
 }
-function addAssetToTimeline(id) { const asset = getAsset(id); if (!asset || asset.type === 'audio')
-    return; mutate(p => p.clips.push(defaultClip(asset))); }
-function setSoundtrack(id) { const asset = getAsset(id); if (!asset || asset.type !== 'audio')
-    return; mutate(p => p.soundtrack = { assetId: id, volume: .7, loop: true }); syncSoundtrack(); }
+function addAssetToTimeline(id) { const asset = getAsset(id); if (!asset)
+    return; if (asset.type === 'audio')
+    return addAudioToTimeline(id); mutate(p => p.clips.push(defaultClip(asset))); }
+function setSoundtrack(id) { addAudioToTimeline(id, 0); }
 function selectedClip() { return state.selected?.type === 'clip' ? state.project?.clips.find(c => c.id === state.selected.id) : null; }
 function selectedText() { return state.selected?.type === 'text' ? state.project?.texts.find(t => t.id === state.selected.id) : null; }
+function selectedAudio() { return state.selected?.type === 'audio' ? state.project?.audioClips.find(c => c.id === state.selected.id) : null; }
 function selectClip(id) { state.selected = { type: 'clip', id }; state.tool = 'edit'; state.sheet = isMobileViewport() ? 'edit' : null; renderEditor(); }
 function selectText(id) { state.selected = { type: 'text', id }; state.tool = 'text'; state.sheet = isMobileViewport() ? 'text' : null; renderEditor(); }
+function selectAudio(id) { state.selected = { type: 'audio', id }; state.tool = 'audio'; state.sheet = isMobileViewport() ? 'audio' : null; renderEditor(); }
 function splitAtPlayhead() {
+    const audio = selectedAudio();
+    if (audio) {
+        const startT = audio.timelineStart || 0, endT = startT + audioClipDuration(audio);
+        if (state.currentTime <= startT + .05 || state.currentTime >= endT - .05)
+            return;
+        const splitSource = (audio.sourceStart || 0) + (state.currentTime - startT) * (audio.speed || 1);
+        mutate(p => { const idx = p.audioClips.findIndex(c => c.id === audio.id), a = { ...audio, id: uid(), sourceEnd: splitSource }, b = { ...audio, id: uid(), sourceStart: splitSource, timelineStart: state.currentTime }; p.audioClips.splice(idx, 1, a, b); state.selected = { type: 'audio', id: b.id }; });
+        syncAudioTracks(true);
+        return;
+    }
     const row = activeAt(state.currentTime);
     if (!row)
         return;
@@ -1430,19 +1662,36 @@ function splitAtPlayhead() {
         state.selected = { type: 'clip', id: b.id };
     });
 }
-function duplicateSelected() { const clip = selectedClip(); if (!clip)
-    return; mutate(p => { const idx = p.clips.findIndex(c => c.id === clip.id); const c = { ...clone(clip), id: uid() }; p.clips.splice(idx + 1, 0, c); state.selected = { type: 'clip', id: c.id }; }); }
+function duplicateSelected() {
+    const clip = selectedClip();
+    if (clip)
+        return mutate(p => { const idx = p.clips.findIndex(c => c.id === clip.id); const c = { ...clone(clip), id: uid() }; p.clips.splice(idx + 1, 0, c); state.selected = { type: 'clip', id: c.id }; });
+    const audio = selectedAudio();
+    if (audio)
+        return mutate(p => { const c = { ...clone(audio), id: uid(), timelineStart: (audio.timelineStart || 0) + .25 }; p.audioClips.push(c); state.selected = { type: 'audio', id: c.id }; });
+}
 function deleteSelected() {
     if (state.selected?.type === 'clip')
         mutate(p => { p.clips = p.clips.filter(c => c.id !== state.selected.id); state.selected = null; });
     else if (state.selected?.type === 'text')
         mutate(p => { p.texts = p.texts.filter(t => t.id !== state.selected.id); state.selected = null; });
+    else if (state.selected?.type === 'audio') {
+        const id = state.selected.id;
+        mutate(p => { p.audioClips = p.audioClips.filter(c => c.id !== id); state.selected = null; });
+        const el = audioPreviewNodes.get(id);
+        if (el) {
+            el.pause();
+            el.remove();
+            audioPreviewNodes.delete(id);
+        }
+    }
 }
-function moveSelected(delta) { const clip = selectedClip(); if (!clip)
-    return; mutate(p => { const i = p.clips.findIndex(c => c.id === clip.id), j = clamp(i + delta, 0, p.clips.length - 1); if (i !== j) {
-    const [x] = p.clips.splice(i, 1);
-    p.clips.splice(j, 0, x);
-} }); }
+function moveSelected(delta) { const clip = selectedClip(); if (clip)
+    return mutate(p => { const i = p.clips.findIndex(c => c.id === clip.id), j = clamp(i + delta, 0, p.clips.length - 1); if (i !== j) {
+        const [x] = p.clips.splice(i, 1);
+        p.clips.splice(j, 0, x);
+    } }); const audio = selectedAudio(); if (audio)
+    return mutate(p => { const x = p.audioClips.find(c => c.id === audio.id); x.timelineStart = Math.max(0, (x.timelineStart || 0) + delta * (state.preferences.snap ? .25 : .1)); }); }
 function addText(kind = 'title') {
     if (!state.project)
         return;
@@ -1530,7 +1779,7 @@ function renderHome() {
     const app = $('#app'), projects = state.projects;
     app.innerHTML = `<div class="landing-page">
     <header class="landing-header">
-      <div class="landing-header-inner">${renderLogo()}<div class="landing-actions"><button class="lang-pill" data-action="language">${state.language === 'el' ? 'EN' : 'ΕΛ'}</button><button class="text-btn" data-action="install">${tr('install')}</button><button class="primary-btn compact" data-action="create" data-ratio="16:9">${tr('open')} Edituno</button></div></div>
+      <div class="landing-header-inner">${renderLogo()}<div class="landing-actions"><button class="lang-pill" data-action="language">${state.language === 'el' ? 'EN' : 'ΕΛ'}</button><button class="text-btn" data-action="settings">⚙ ${tr('settings')}</button><button class="text-btn" data-action="install">${tr('install')}</button><button class="primary-btn compact" data-action="create" data-ratio="16:9">${tr('open')} Edituno</button></div></div>
     </header>
     <main class="landing-main">
       <section class="landing-hero">
@@ -1555,8 +1804,12 @@ function templateCard(ratio, title, sub, cls) { return `<button class="template-
 function trustCard(icon, title, sub) { return `<div class="trust-card"><div class="trust-icon">${icon}</div><div><strong>${title}</strong><span>${sub}</span></div></div>`; }
 function projectCard(p) { return `<article class="project-card" data-action="open-project" data-id="${p.id}"><div class="project-thumb">▶</div><div class="project-copy"><strong>${escapeHtml(p.name)}</strong><span>${new Date(p.updatedAt).toLocaleDateString(state.language === 'el' ? 'el-GR' : 'en-US')} · ${escapeHtml(p.ratio || '16:9')}</span></div><button class="project-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">⋯</button></article>`; }
 function settingsModal() {
-    return `<div class="modal-backdrop" data-action="settings-close"><section class="modal" onclick="event.stopPropagation()"><div class="modal-head"><h2>${tr('settings')}</h2><button class="sheet-close" data-action="settings-close">×</button></div><div class="modal-body"><div class="panel-grid">
-  <div class="panel-section"><h3>${tr('language')}</h3><div class="format-grid"><button class="format-btn ${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el">Ελληνικά</button><button class="format-btn ${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en">English</button></div></div>
+    const p = state.preferences;
+    return `<div class="modal-backdrop" data-action="settings-close"><section class="modal settings-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><h2>${tr('settings')}</h2><small>${state.language === 'el' ? 'Ρύθμισε τον editor στη ροή σου' : 'Tune the editor to your workflow'}</small></div><button class="sheet-close" data-action="settings-close">×</button></div><div class="modal-body"><div class="panel-grid">
+  <div class="panel-section"><h3>${tr('language')}</h3><div class="format-grid two-settings"><button class="format-btn ${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el">Ελληνικά</button><button class="format-btn ${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en">English</button></div></div>
+  <div class="panel-section"><h3>${state.language === 'el' ? 'Timeline' : 'Timeline'}</h3><div class="switch-row"><span>${preferenceLabel('snap')}</span><button class="switch ${p.snap ? 'on' : ''}" data-action="pref-toggle" data-key="snap"></button></div><div class="switch-row"><span>${preferenceLabel('showWaveforms')}</span><button class="switch ${p.showWaveforms ? 'on' : ''}" data-action="pref-toggle" data-key="showWaveforms"></button></div><label class="field"><span>${preferenceLabel('timelineScale')}</span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale || 48}"></label></div>
+  <div class="panel-section"><h3>${state.language === 'el' ? 'Απόδοση' : 'Performance'}</h3><label class="field"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality === 'performance' ? 'selected' : ''}>Performance</option><option value="balanced" ${p.previewQuality === 'balanced' ? 'selected' : ''}>Balanced</option><option value="quality" ${p.previewQuality === 'quality' ? 'selected' : ''}>Quality</option></select></label></div>
+  <div class="panel-section"><h3>${tr('export')}</h3><div class="field-grid two"><label class="field"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality === 720 ? 'selected' : ''}>720p</option><option value="1080" ${+p.defaultQuality === 1080 ? 'selected' : ''}>1080p</option></select></label><label class="field"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps === 24 ? 'selected' : ''}>24</option><option value="30" ${+p.defaultFps === 30 ? 'selected' : ''}>30</option><option value="60" ${+p.defaultFps === 60 ? 'selected' : ''}>60</option></select></label></div></div>
   <div class="install-card"><strong>${tr('installHint')}</strong><p>${tr('chromeInstall')}</p><button class="primary-btn full" data-action="install">${tr('installApp')}</button></div>
   <div class="panel-section"><h3>${tr('storage')}</h3><p class="helper">${tr('persistent')}</p><button class="secondary-btn" data-action="persist-storage">${tr('requestStorage')}</button></div>
   <div class="panel-section"><button class="danger-btn" data-action="clear-all">${tr('clearAll')}</button></div>
@@ -1577,7 +1830,7 @@ function renderEditor() {
       <button class="icon-btn" data-action="${mobile ? 'mobile-hub' : 'back'}" aria-label="${mobile ? tr('projectHub') : tr('back')}">${svgIcon(mobile ? 'projects' : 'back', 20)}</button>
       <div class="editor-title-wrap"><input class="editor-title" id="project-name" aria-label="${tr('projectName')}" value="${escapeHtml(p.name)}" /></div>
       <span class="editor-save-state" id="save-state">${tr('save')}</span>
-      <div class="editor-header-actions"><button class="primary-btn export-btn" data-action="export">${svgIcon('export', 16)}<span>${tr('export')}</span></button></div>
+      <div class="editor-header-actions"><button class="icon-btn editor-settings-btn" data-action="settings" aria-label="${tr('settings')}">⚙</button><button class="primary-btn export-btn" data-action="export">${svgIcon('export', 16)}<span>${tr('export')}</span></button></div>
     </header>
 
     <main class="editor-body">
@@ -1588,7 +1841,7 @@ function renderEditor() {
       <div class="transport"><button class="icon-btn transport-home" data-action="jump-start" aria-label="Start">↤</button><button class="play-btn" data-action="play-toggle" aria-label="${tr('play')}">${svgIcon('play', 19)}</button><input id="seekbar" class="seekbar" type="range" min="0" max="${dur || 1}" step="0.01" value="${state.currentTime}" /><span class="timecode" id="timecode">${fmtTime(state.currentTime)} / ${fmtTime(dur)}</span></div>
       <section class="timeline-panel">
         <div class="timeline-toolbar"><div class="timeline-toolbar-left"><strong>${tr('timeline')}</strong></div><div class="timeline-toolbar-right"><button data-action="timeline-zoom" data-value="-1" title="${tr('timelineZoom')}">${svgIcon('zoomout', 15)}</button><button data-action="timeline-zoom" data-value="1" title="${tr('timelineZoom')}">${svgIcon('zoomin', 15)}</button><button data-action="undo" title="${tr('undo')}">${svgIcon('undo', 15)}</button><button data-action="redo" title="${tr('redo')}">${svgIcon('redo', 15)}</button><button data-action="split" title="${tr('split')}">${svgIcon('split', 15)}</button></div></div>
-        <div class="timeline-scroll" id="timeline-scroll"><div style="width:${totalWidth}px;position:relative;min-height:126px"><div class="timeline-ruler">${timelineRuler(dur, totalWidth)}</div><div class="timeline-track">${rows.length ? rows.map((r, i) => timelineClip(r, i)).join('') : `<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus', 18)} ${tr('addMedia')}</button>`}</div><div class="timeline-text-row">${(p.texts || []).map(timelineText).join('')}</div><div class="playhead" style="left:${10 + state.currentTime * state.pxPerSec}px"></div></div></div>
+        <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur, totalWidth)}</div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length ? rows.map((r, i) => timelineClip(r, i)).join('') : `<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus', 18)} ${tr('addMedia')}</button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips || []).map(timelineAudio).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts || []).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42 + state.currentTime * state.pxPerSec}px"></div></div></div>
       </section>
       <aside class="desktop-inspector">${desktopInspector()}</aside>
     </main>
@@ -1600,13 +1853,19 @@ function renderEditor() {
     <section class="bottom-sheet ${state.sheet ? 'open' : ''}" aria-modal="true"><div class="sheet-handle"></div><div class="sheet-head"><strong>${sheetTitle()}</strong><button class="sheet-close" data-action="sheet-close">${svgIcon('close', 18)}</button></div><div class="sheet-content">${state.sheet ? panelContent(state.sheet) : ''}</div></section>
     ${state.projectHubOpen ? mobileProjectHubModal() : ''}${state.settingsOpen ? settingsModal() : ''}${state.installOpen ? installModal() : ''}
   </div><div class="toast-stack" id="toasts"></div>`;
-    requestAnimationFrame(() => { fitPreviewFrame(); updatePlaybackUi(); });
+    requestAnimationFrame(() => { fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions(); });
 }
 function timelineRuler(dur, width) { if (!dur)
     return ''; const every = dur > 180 ? 30 : dur > 60 ? 10 : dur > 20 ? 5 : 2; let out = ''; for (let t = 0; t <= dur + .001; t += every)
-    out += `<span style="left:${10 + t * state.pxPerSec}px">${fmtTime(t).slice(0, 5)}</span>`; return out; }
+    out += `<span style="left:${t * state.pxPerSec}px">${fmtTime(t).slice(0, 5)}</span>`; return out; }
 function timelineClip(row, index) { const a = getAsset(row.clip.assetId), w = Math.max(68, row.duration * state.pxPerSec); const transition = row.clip.transition && row.clip.transition !== 'none'; return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type === 'image' ? 'image' : ''} ${state.selected?.type === 'clip' && state.selected.id === row.clip.id ? 'selected' : ''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name || 'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index < state.project.clips.length - 1 ? `<button class="timeline-transition ${transition ? 'active' : ''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">◇</button>` : ''}</div>`; }
-function timelineText(t) { const w = Math.max(54, (t.end - t.start) * state.pxPerSec); return `<button class="timeline-text ${state.selected?.type === 'text' && state.selected.id === t.id ? 'selected' : ''}" data-action="select-text" data-id="${t.id}" style="left:${10 + t.start * state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`; }
+function timelineText(t) { const w = Math.max(54, (t.end - t.start) * state.pxPerSec); return `<button class="timeline-text ${state.selected?.type === 'text' && state.selected.id === t.id ? 'selected' : ''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start || 0) * state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`; }
+function waveformBars(asset, count = 36) { const peaks = asset?.waveform || []; if (!state.preferences.showWaveforms)
+    return ''; let out = ''; for (let i = 0; i < count; i++) {
+    const v = peaks.length ? peaks[Math.floor(i * peaks.length / count)] : (.28 + .6 * Math.abs(Math.sin(i * 1.73)));
+    out += `<i style="height:${Math.max(12, Math.round(v * 86))}%"></i>`;
+} return out; }
+function timelineAudio(c) { const a = getAsset(c.assetId), w = Math.max(72, audioClipDuration(c) * state.pxPerSec), left = (c.timelineStart || 0) * state.pxPerSec; return `<button class="timeline-audio ${state.selected?.type === 'audio' && state.selected.id === c.id ? 'selected' : ''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name || 'Audio')}</strong><small>${Math.round((c.volume ?? .8) * 100)}%</small></button>`; }
 function toolButton(tool, iconName, label) { return `<button class="tool-btn ${state.tool === tool ? 'active' : ''}" data-action="tool" data-tool="${tool}"><span class="tool-icon">${svgIcon(iconName, 21)}</span><span>${label}</span></button>`; }
 function sheetTitle() { if (state.sheet === 'edit')
     return tr('quickEdit'); if (state.sheet === 'effects')
@@ -1615,7 +1874,7 @@ function sheetTitle() { if (state.sheet === 'edit')
     return tr('transitions'); if (state.sheet === 'text' && selectedText())
     return tr('selectedText'); return tr(state.sheet || 'project'); }
 function desktopSidebar() { return `<h3 class="desktop-panel-title">${tr('desktopMedia')}</h3><div class="desktop-tool-tabs"><button class="active" data-action="pick-media">＋ ${tr('media')}</button><button data-action="add-text" data-kind="title">T ${tr('text')}</button><button data-action="open-srt">CC</button></div>${mediaPanel()}`; }
-function desktopInspector() { return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type === 'clip' ? clipPanel() : state.selected?.type === 'text' ? textPanel() : canvasPanel()}`; }
+function desktopInspector() { return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type === 'clip' ? clipPanel() : state.selected?.type === 'text' ? textPanel() : state.selected?.type === 'audio' ? audioClipPanel() : canvasPanel()}`; }
 function panelContent(tool) { if (tool === 'media')
     return mediaPanel(); if (tool === 'edit')
     return editPanel(); if (tool === 'text')
@@ -1625,10 +1884,19 @@ function panelContent(tool) { if (tool === 'media')
     return adjustPanel(); if (tool === 'transitions')
     return transitionPanel(); if (tool === 'canvas')
     return canvasPanel(); return ''; }
-function mediaPanel() { const list = state.project.assets || []; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length ? `<div class="media-list">${list.map(a => `<div class="media-row ${a.type}"><div class="media-type">${a.type === 'video' ? '▶' : a.type === 'image' ? '▧' : '♫'}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration ? fmtTime(a.duration) : ''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type === 'audio' ? 'set-soundtrack' : 'add-asset'}" data-id="${a.id}">${tr(a.type === 'audio' ? 'useSoundtrack' : 'add')}</button></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`; }
+function mediaPanel() { const list = state.project.assets || []; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length ? `<div class="media-list">${list.map(a => `<div class="media-row ${a.type}"><div class="media-type">${a.type === 'video' ? '▶' : a.type === 'image' ? '▧' : '♫'}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration ? fmtTime(a.duration) : ''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type === 'audio' ? 'add-audio' : 'add-asset'}" data-id="${a.id}">${tr('add')}</button></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`; }
 function textPanel(showAdd = true) { const t = selectedText(); return `<div class="panel-grid">${showAdd ? `<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>✨</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>` : ''}${t ? `<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight == 600 ? 'selected' : ''}>600</option><option ${t.weight == 700 ? 'selected' : ''}>700</option><option ${t.weight == 800 ? 'selected' : ''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color, '#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background, '#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation === 'none' ? 'selected' : ''}>${tr('none')}</option><option value="fade" ${t.animation === 'fade' ? 'selected' : ''}>Fade</option><option value="pop" ${t.animation === 'pop' ? 'selected' : ''}>Pop</option><option value="slide" ${t.animation === 'slide' ? 'selected' : ''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x', t.x, 0, 1, .01, true, 'text')}${rangeField('y', t.y, 0, 1, .01, true, 'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>` : ''}</div>`; }
 function safeColor(v, fallback) { return /^#[0-9a-f]{6}$/i.test(v || '') ? v : fallback; }
-function audioPanel() { const audios = state.project.assets.filter(a => a.type === 'audio'), st = state.project.soundtrack; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length ? `<div class="media-list">${audios.map(a => `<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)}</span></div><button class="media-action" data-action="set-soundtrack" data-id="${a.id}">${st?.assetId === a.id ? '✓' : tr('useSoundtrack')}</button></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${st ? `<div class="panel-section"><h3>${tr('soundtrack')}</h3>${rangeField('soundtrack.volume', st.volume, 0, 1, .01, true, 'project')}<div class="switch-row"><span>${tr('loop')}</span><button class="switch ${st.loop ? 'on' : ''}" data-action="toggle-loop"></button></div><button class="danger-btn" data-action="remove-soundtrack">${tr('remove')}</button></div>` : ''}</div>`; }
+function audioPanel() {
+    const audios = state.project.assets.filter(a => a.type === 'audio'), c = selectedAudio();
+    return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length ? `<div class="media-list">${audios.map(a => `<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c ? audioClipPanel() : `<div class="panel-section soft"><h3>${state.language === 'el' ? 'Πολυκάναλος ήχος' : 'Multitrack audio'}</h3><p class="helper">${state.language === 'el' ? 'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.' : 'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`;
+}
+function audioClipPanel() {
+    const c = selectedAudio(), a = getAsset(c?.assetId);
+    if (!c)
+        return '';
+    return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">♫</span><div><strong>${escapeHtml(a?.name || 'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume', c.volume, 0, 1, .01, true, 'audio')}${rangeField('fadeIn', c.fadeIn, 0, Math.min(5, audioClipDuration(c) / 2), .05, true, 'audio')}${rangeField('fadeOut', c.fadeOut, 0, Math.min(5, audioClipDuration(c) / 2), .05, true, 'audio')}<div class="field-grid two"><label class="field"><span>${state.language === 'el' ? 'Θέση' : 'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart || 0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.75" ${c.speed === .75 ? 'selected' : ''}>0.75×</option><option value="1" ${c.speed === 1 ? 'selected' : ''}>1×</option><option value="1.25" ${c.speed === 1.25 ? 'selected' : ''}>1.25×</option><option value="1.5" ${c.speed === 1.5 ? 'selected' : ''}>1.5×</option><option value="2" ${c.speed === 2 ? 'selected' : ''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0, (a?.duration || c.sourceEnd) - .05)}" step="0.05" value="${(c.sourceStart || 0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart || 0) + .05}" max="${a?.duration || c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted ? '🔇 ' + (state.language === 'el' ? 'Ενεργοποίηση' : 'Unmute') : '🔊 ' + (state.language === 'el' ? 'Σίγαση' : 'Mute')}</button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`;
+}
 function effectsEmpty() { return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language === 'el' ? 'Επίλεξε clip από το timeline.' : 'Select a clip on the timeline.'}</span></div>`; }
 function editPanel() {
     const c = selectedClip(), a = getAsset(c?.assetId);
@@ -1665,13 +1933,51 @@ function clipPanel() { const c = selectedClip(); if (!c)
 function filterPreviewStyle(n) { const f = { original: '', vivid: 'filter:saturate(1.4) contrast(1.1)', warm: 'filter:sepia(.25) saturate(1.2)', cool: 'filter:hue-rotate(18deg)', mono: 'filter:grayscale(1) contrast(1.15)', film: 'filter:sepia(.3) saturate(.8) contrast(1.1)', dream: 'filter:brightness(1.15) saturate(1.05);opacity:.82', crisp: 'filter:contrast(1.3) saturate(1.12)', cinematic: 'filter:contrast(1.2) saturate(.9) sepia(.08)', retro: 'filter:sepia(.3) saturate(.85) contrast(.95)', soft: 'filter:brightness(1.1) contrast(.9)', neon: 'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)', matte: 'filter:saturate(.8) contrast(.86) brightness(1.07)', sunset: 'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)', ice: 'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)', noir: 'filter:grayscale(1) contrast(1.45) brightness(.96)' }; return f[n] || ''; }
 function rangeField(key, value, min, max, step, show, scope) { return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show ? Number(value).toFixed(step < 1 ? 2 : 0) : Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`; }
 function canvasPanel() { const p = state.project; return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9', '9:16', '1:1', '4:5'].map(r => `<button class="format-btn ${p.ratio === r ? 'active' : ''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background, '#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`; }
+function snapTime(value) { if (!state.preferences.snap)
+    return Math.max(0, value); const step = .25; return Math.max(0, Math.round(value / step) * step); }
+function bindTimelineInteractions() {
+    const scroll = $('#timeline-scroll'), ruler = $('[data-timeline-ruler]');
+    if (!scroll)
+        return;
+    if (ruler)
+        ruler.addEventListener('pointerdown', e => { const rect = ruler.getBoundingClientRect(); seekTo(clamp((e.clientX - rect.left) / state.pxPerSec, 0, projectDuration())); });
+    $$('.timeline-audio').forEach(el => {
+        el.addEventListener('pointerdown', e => {
+            if (e.button !== undefined && e.button !== 0)
+                return;
+            const clip = state.project?.audioClips.find(c => c.id === el.dataset.id);
+            if (!clip)
+                return;
+            const startX = e.clientX, original = clip.timelineStart || 0;
+            let moved = false;
+            el.setPointerCapture?.(e.pointerId);
+            el.classList.add('dragging');
+            const move = ev => { const delta = (ev.clientX - startX) / state.pxPerSec; if (Math.abs(ev.clientX - startX) > 3)
+                moved = true; const next = Math.max(0, original + delta); el.style.left = `${next * state.pxPerSec}px`; };
+            const up = ev => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); el.classList.remove('dragging'); if (moved) {
+                pushHistory();
+                clip.timelineStart = snapTime(original + (ev.clientX - startX) / state.pxPerSec);
+                state.project.updatedAt = Date.now();
+                queueSave();
+                renderEditor();
+                syncAudioTracks(true);
+            } };
+            el.addEventListener('pointermove', move);
+            el.addEventListener('pointerup', up);
+            el.addEventListener('pointercancel', up);
+        });
+    });
+    $$('.timeline-clip').forEach(el => { el.draggable = !isMobileViewport(); el.addEventListener('dragstart', e => { e.dataTransfer?.setData('text/edituno-clip', el.dataset.id); el.classList.add('dragging'); }); el.addEventListener('dragend', () => el.classList.remove('dragging')); el.addEventListener('dragover', e => e.preventDefault()); el.addEventListener('drop', e => { e.preventDefault(); const source = e.dataTransfer?.getData('text/edituno-clip'), target = el.dataset.id; if (!source || !target || source === target)
+        return; mutate(p => { const from = p.clips.findIndex(c => c.id === source), to = p.clips.findIndex(c => c.id === target); if (from < 0 || to < 0)
+        return; const [clip] = p.clips.splice(from, 1); p.clips.splice(to, 0, clip); state.selected = { type: 'clip', id: clip.id }; }); }); });
+}
 function renderExportModal() {
     const old = $('.modal-backdrop.export-modal');
     if (old)
         old.remove();
     const el = document.createElement('div');
     el.className = 'modal-backdrop export-modal';
-    el.innerHTML = `<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720">720p</option><option value="1080" selected>1080p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option>24</option><option selected>30</option><option>60</option></select></label></div><p class="helper">${tr('browserLimit')}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;
+    el.innerHTML = `<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality === 720 ? 'selected' : ''}>720p</option><option value="1080" ${+state.preferences.defaultQuality === 1080 ? 'selected' : ''}>1080p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps === 24 ? 'selected' : ''}>24</option><option ${+state.preferences.defaultFps === 30 ? 'selected' : ''}>30</option><option ${+state.preferences.defaultFps === 60 ? 'selected' : ''}>60</option></select></label></div><p class="helper">${tr('browserLimit')}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;
     document.body.append(el);
 }
 function render() { document.documentElement.lang = state.language; safeSetLanguage(state.language); state.view === 'editor' ? renderEditor() : renderHome(); }
@@ -1688,6 +1994,39 @@ function toast(message, type = '') {
     el.textContent = message;
     root.append(el);
     setTimeout(() => el.remove(), 2600);
+}
+async function decodeAudioAsset(assetId, audioContext) { const url = state.urls[assetId]; if (!url)
+    return null; try {
+    return await audioContext.decodeAudioData(await (await fetch(url)).arrayBuffer());
+}
+catch {
+    return null;
+} }
+async function scheduleAudioTracks(project, audioContext, dest) {
+    const decoded = [];
+    for (const clip of project.audioClips || []) {
+        const buffer = await decodeAudioAsset(clip.assetId, audioContext);
+        if (buffer)
+            decoded.push({ clip, buffer });
+    }
+    const zero = audioContext.currentTime + .04;
+    const nodes = [];
+    for (const { clip, buffer } of decoded) {
+        const source = audioContext.createBufferSource(), gain = audioContext.createGain(), duration = audioClipDuration(clip), start = zero + (clip.timelineStart || 0), vol = clip.muted ? 0 : clamp(clip.volume ?? .8, 0, 1), fadeIn = Math.min(clip.fadeIn || 0, duration / 2), fadeOut = Math.min(clip.fadeOut || 0, duration / 2);
+        source.buffer = buffer;
+        source.playbackRate.value = clamp(clip.speed || 1, .5, 2);
+        source.connect(gain).connect(dest);
+        gain.gain.setValueAtTime(fadeIn > 0 ? 0 : vol, start);
+        if (fadeIn > 0)
+            gain.gain.linearRampToValueAtTime(vol, start + fadeIn);
+        if (fadeOut > 0) {
+            gain.gain.setValueAtTime(vol, start + duration - fadeOut);
+            gain.gain.linearRampToValueAtTime(0, start + duration);
+        }
+        source.start(start, clip.sourceStart || 0, Math.max(.05, (clip.sourceEnd || buffer.duration) - (clip.sourceStart || 0)));
+        nodes.push(source);
+    }
+    return nodes;
 }
 async function exportProjectLocal(quality, fps, onProgress, signal) {
     const project = state.project;
@@ -1708,21 +2047,9 @@ async function exportProjectLocal(quality, fps, onProgress, signal) {
     const chunks = [];
     recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
     const done = new Promise((resolve, reject) => { recorder.onerror = () => reject(new Error('record')); recorder.onstop = () => resolve(new Blob(chunks, { type: mime })); });
-    let soundtrack = null, soundtrackSource = null;
-    if (project.soundtrack) {
-        const url = state.urls[project.soundtrack.assetId];
-        if (url) {
-            soundtrack = new Audio(url);
-            soundtrack.loop = project.soundtrack.loop;
-            soundtrack.volume = project.soundtrack.volume;
-            soundtrackSource = audioContext.createMediaElementSource(soundtrack);
-            soundtrackSource.connect(dest);
-        }
-    }
     await audioContext.resume();
+    const audioNodes = await scheduleAudioTracks(project, audioContext, dest);
     recorder.start(500);
-    if (soundtrack)
-        await soundtrack.play().catch(() => { });
     let global = 0, total = projectDuration(project);
     try {
         for (const clip of project.clips) {
@@ -1741,8 +2068,15 @@ async function exportProjectLocal(quality, fps, onProgress, signal) {
                 v.currentTime = Math.min(clip.start, Math.max(0, (v.duration || asset.duration) - .03));
                 await waitSeek(v);
                 v.playbackRate = clamp(clip.speed, .25, 4);
-                const src = audioContext.createMediaElementSource(v), gain = audioContext.createGain();
-                gain.gain.value = clamp(clip.volume, 0, 1);
+                const src = audioContext.createMediaElementSource(v), gain = audioContext.createGain(), now = audioContext.currentTime, clipVol = clamp(clip.volume, 0, 1), fi = Math.min(clip.audioFadeIn || 0, dur / 2), fo = Math.min(clip.audioFadeOut || 0, dur / 2);
+                gain.gain.setValueAtTime(fi ? 0 : clipVol, now);
+                if (fi)
+                    gain.gain.linearRampToValueAtTime(clipVol, now + fi);
+                if (fo) {
+                    gain.gain.setValueAtTime(clipVol, now + dur - fo);
+                    gain.gain.linearRampToValueAtTime(0, now + dur);
+                }
+                ;
                 src.connect(gain).connect(dest);
                 await v.play();
                 await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; drawClipWithTransition(ctx, v, asset, row, global + elapsed, w, h, elapsed / dur); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
@@ -1756,9 +2090,18 @@ async function exportProjectLocal(quality, fps, onProgress, signal) {
             }
             global += dur;
         }
+        if (global < total) {
+            const rest = total - global;
+            await renderSegment(rest, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
+        }
     }
     finally {
-        soundtrack?.pause();
+        for (const n of audioNodes || [])
+            try {
+                n.stop();
+            }
+            catch { }
+        ;
         if (recorder.state !== 'inactive')
             recorder.stop();
         await audioContext.close().catch(() => { });
@@ -1861,6 +2204,15 @@ function bindGlobalEvents() {
             render();
             return;
         }
+        if (a === 'pref-toggle') {
+            const key = el.dataset.key;
+            state.preferences[key] = !state.preferences[key];
+            if (key === 'showWaveforms')
+                renderEditor();
+            savePreferences();
+            render();
+            return;
+        }
         if (a === 'settings') {
             state.settingsOpen = true;
             render();
@@ -1930,8 +2282,10 @@ function bindGlobalEvents() {
         }
         if (a === 'add-asset')
             return addAssetToTimeline(el.dataset.id);
-        if (a === 'set-soundtrack')
-            return setSoundtrack(el.dataset.id);
+        if (a === 'add-audio' || a === 'set-soundtrack')
+            return addAudioToTimeline(el.dataset.id);
+        if (a === 'select-audio')
+            return selectAudio(el.dataset.id);
         if (a === 'select-clip')
             return selectClip(el.dataset.id);
         if (a === 'select-text')
@@ -1951,6 +2305,8 @@ function bindGlobalEvents() {
         }
         if (a === 'timeline-zoom') {
             state.pxPerSec = clamp(state.pxPerSec + (+el.dataset.value) * 12, 24, 120);
+            state.preferences.timelineScale = state.pxPerSec;
+            savePreferences();
             renderEditor();
             return;
         }
@@ -2018,9 +2374,20 @@ function bindGlobalEvents() {
         }
         if (a === 'toggle-loop')
             return mutate(p => p.soundtrack.loop = !p.soundtrack.loop);
+        if (a === 'audio-toggle-mute') {
+            const c = selectedAudio();
+            if (!c)
+                return;
+            mutate(p => { const x = p.audioClips.find(y => y.id === c.id); x.muted = !x.muted; });
+            syncAudioTracks(true);
+            return;
+        }
         if (a === 'remove-soundtrack') {
-            mutate(p => p.soundtrack = null);
-            syncSoundtrack();
+            const c = selectedAudio();
+            if (c) {
+                deleteSelected();
+                syncAudioTracks(true);
+            }
             return;
         }
         if (a === 'ratio')
@@ -2052,7 +2419,20 @@ function bindGlobalEvents() {
             queueSave();
             return;
         }
-        const clipKey = el.dataset.bindClip, textKey = el.dataset.bindText, projectKey = el.dataset.bindProject;
+        const clipKey = el.dataset.bindClip, textKey = el.dataset.bindText, audioKey = el.dataset.bindAudio, projectKey = el.dataset.bindProject, prefKey = el.dataset.pref;
+        if (prefKey) {
+            let val = (el.type === 'range' || el.type === 'number' || el.tagName === 'SELECT' && /^\d/.test(el.value)) ? +el.value : el.value;
+            state.preferences[prefKey] = val;
+            if (prefKey === 'timelineScale')
+                state.pxPerSec = +val;
+            savePreferences();
+            if (state.view === 'editor') {
+                fitPreviewFrame();
+                if (prefKey === 'timelineScale' || prefKey === 'showWaveforms')
+                    renderEditor();
+            }
+            return;
+        }
         if (clipKey) {
             const c = selectedClip();
             if (!c)
@@ -2087,6 +2467,24 @@ function bindGlobalEvents() {
             updateRangeLabel(el);
             return;
         }
+        if (audioKey) {
+            const c = selectedAudio();
+            if (!c)
+                return;
+            let val = (el.type === 'range' || el.type === 'number' || el.tagName === 'SELECT') ? +el.value : el.value;
+            const obj = state.project.audioClips.find(x => x.id === c.id);
+            obj[audioKey] = val;
+            if (audioKey === 'sourceStart')
+                obj.sourceStart = Math.max(0, Math.min(obj.sourceStart, obj.sourceEnd - .05));
+            if (audioKey === 'sourceEnd')
+                obj.sourceEnd = Math.max(obj.sourceStart + .05, obj.sourceEnd);
+            if (audioKey === 'timelineStart')
+                obj.timelineStart = snapTime(obj.timelineStart);
+            queueSave();
+            syncAudioTracks(true);
+            updateRangeLabel(el);
+            return;
+        }
         if (projectKey && state.project) {
             state.project[projectKey] = el.value;
             queueSave();
@@ -2096,8 +2494,13 @@ function bindGlobalEvents() {
     });
     document.addEventListener('change', e => {
         const el = e.target;
-        if (el.matches('[data-bind-clip],[data-bind-text],[data-bind-project]') && state.view === 'editor')
+        if (el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-project]') && state.view === 'editor')
             setTimeout(() => renderEditor(), 0);
+        if (el.matches('[data-pref]')) {
+            savePreferences();
+            if (state.view === 'editor')
+                setTimeout(() => renderEditor(), 0);
+        }
     });
     $('#media-picker').addEventListener('change', async (e) => { const files = [...e.target.files]; e.target.value = ''; await importFiles(files, true); });
     $('#subtitle-picker').addEventListener('change', async (e) => { const file = e.target.files?.[0]; e.target.value = ''; if (file)
@@ -2177,7 +2580,7 @@ async function init() {
             await new Promise(resolve => setTimeout(resolve, remaining));
         render();
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=1.2.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=1.3.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

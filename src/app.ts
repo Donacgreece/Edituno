@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v1.2.0 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v1.3.0 Pro production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -33,6 +33,20 @@ function safeSetLanguage(value) {
   try { localStorage.setItem('edituno-language', value) } catch {}
 }
 
+
+function loadPreferences() {
+  const defaults={snap:true,defaultQuality:1080,defaultFps:30,previewQuality:'balanced',timelineScale:48,showWaveforms:true}
+  try { return {...defaults,...JSON.parse(localStorage.getItem('edituno-preferences')||'{}')} } catch { return defaults }
+}
+function savePreferences() {
+  try { localStorage.setItem('edituno-preferences',JSON.stringify(state.preferences)) } catch {}
+}
+function preferenceLabel(key) {
+  const el=state.language==='el'
+  const labels={snap:el?'Μαγνήτιση στο timeline':'Timeline snapping',showWaveforms:el?'Waveforms ήχου':'Audio waveforms',previewQuality:el?'Ποιότητα preview':'Preview quality',defaultQuality:el?'Προεπιλεγμένη εξαγωγή':'Default export',defaultFps:el?'Προεπιλεγμένα FPS':'Default FPS',timelineScale:el?'Μέγεθος timeline':'Timeline scale'}
+  return labels[key]||key
+}
+
 const STRINGS = {
   en: {
     create:'Create project', import:'Import media', recent:'Recent projects', noProjects:'No projects yet',
@@ -40,7 +54,7 @@ const STRINGS = {
     free:'Free. No watermark. No account.', newProject:'New project', templates:'Start with a format', projects:'Projects', settings:'Settings',
     private:'Local by default', privateSub:'Your media stays on this device.', offline:'Works offline', offlineSub:'Install once and keep editing.', noAccount:'No account', noAccountSub:'Open Edituno and start.',
     open:'Open', delete:'Delete', edit:'Edit', export:'Export', media:'Media', text:'Text', audio:'Audio', effects:'Effects', canvas:'Canvas',
-    addMedia:'Add media', addTimeline:'Add', soundtrack:'Soundtrack', useSoundtrack:'Use', remove:'Remove', captions:'Captions', importSrt:'Import SRT',
+    addMedia:'Add media', addTimeline:'Add', soundtrack:'Soundtrack', useSoundtrack:'Use', remove:'Remove', captions:'Captions', importSrt:'Import SRT', fadeIn:'Fade in', fadeOut:'Fade out',
     addTitle:'Add title', addCaption:'Add caption', addSticker:'Add sticker', selectedClip:'Selected clip', clip:'Clip', trim:'Trim', transform:'Transform',
     speed:'Speed', volume:'Volume', opacity:'Opacity', scale:'Scale', rotation:'Rotation', fit:'Fit', cover:'Cover', contain:'Contain', mirror:'Mirror',
     split:'Split', duplicate:'Duplicate', moveLeft:'Left', moveRight:'Right', brightness:'Brightness', contrast:'Contrast', saturation:'Saturation', exposure:'Exposure', temperature:'Temperature', vignette:'Vignette', grain:'Film grain',
@@ -68,7 +82,7 @@ const STRINGS = {
     free:'Δωρεάν. Χωρίς watermark. Χωρίς λογαριασμό.', newProject:'Νέο project', templates:'Ξεκίνα με format', projects:'Projects', settings:'Ρυθμίσεις',
     private:'Τοπικά από προεπιλογή', privateSub:'Τα αρχεία μένουν στη συσκευή σου.', offline:'Λειτουργεί offline', offlineSub:'Εγκατέστησέ το μία φορά και συνέχισε.', noAccount:'Χωρίς λογαριασμό', noAccountSub:'Άνοιξε το Edituno και ξεκίνα.',
     open:'Άνοιγμα', delete:'Διαγραφή', edit:'Επεξεργασία', export:'Export', media:'Media', text:'Κείμενο', audio:'Ήχος', effects:'Εφέ', canvas:'Καμβάς',
-    addMedia:'Προσθήκη media', addTimeline:'Προσθήκη', soundtrack:'Μουσική', useSoundtrack:'Χρήση', remove:'Αφαίρεση', captions:'Υπότιτλοι', importSrt:'Εισαγωγή SRT',
+    addMedia:'Προσθήκη media', addTimeline:'Προσθήκη', soundtrack:'Μουσική', useSoundtrack:'Χρήση', remove:'Αφαίρεση', captions:'Υπότιτλοι', importSrt:'Εισαγωγή SRT', fadeIn:'Fade in', fadeOut:'Fade out',
     addTitle:'Προσθήκη τίτλου', addCaption:'Προσθήκη caption', addSticker:'Προσθήκη sticker', selectedClip:'Επιλεγμένο clip', clip:'Clip', trim:'Trim', transform:'Μετασχηματισμός',
     speed:'Ταχύτητα', volume:'Ένταση', opacity:'Διαφάνεια', scale:'Μέγεθος', rotation:'Περιστροφή', fit:'Προσαρμογή', cover:'Γέμισμα', contain:'Ολόκληρο', mirror:'Καθρέφτης',
     split:'Κόψιμο', duplicate:'Αντιγραφή', moveLeft:'Αριστερά', moveRight:'Δεξιά', brightness:'Φωτεινότητα', contrast:'Αντίθεση', saturation:'Κορεσμός', exposure:'Έκθεση', temperature:'Θερμοκρασία', vignette:'Vignette', grain:'Film grain',
@@ -97,8 +111,10 @@ const state = {
   view: 'home', projects: [], project: null, urls: {}, currentTime: 0, playing: false,
   selected: null, tool: 'media', sheet: null, history: [], future: [], installPrompt: null,
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
-  settingsOpen: false, installOpen: false, projectHubOpen: false, adjustKey: 'brightness'
+  settingsOpen: false, installOpen: false, projectHubOpen: false, adjustKey: 'brightness',
+  preferences: loadPreferences(), audioDrag: null
 }
+state.pxPerSec=Number(state.preferences.timelineScale)||48
 const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key
 
 function isMobileViewport() {
@@ -187,13 +203,21 @@ const previewAudio = document.createElement('audio')
 previewAudio.preload = 'auto'
 previewAudio.style.display = 'none'
 document.body.append(previewAudio)
+const audioPreviewNodes = new Map()
 const imageCache = new Map()
 let rafId = 0
 let playStartPerf = 0
 let playStartTime = 0
 
-function projectDuration(project = state.project) {
+function visualDuration(project = state.project) {
   return (project?.clips || []).reduce((sum,c)=>sum + clipDuration(c),0)
+}
+function audioClipDuration(c) { return Math.max(.05,(c.sourceEnd-c.sourceStart)/Math.max(.05,c.speed||1)) }
+function projectDuration(project = state.project) {
+  const visual=visualDuration(project)
+  const audio=Math.max(0,...(project?.audioClips||[]).map(c=>(c.timelineStart||0)+audioClipDuration(c)))
+  const text=Math.max(0,...(project?.texts||[]).map(t=>t.end||0))
+  return Math.max(visual,audio,text)
 }
 function clipDuration(c) { return Math.max(.05, (c.end-c.start) / Math.max(.05,c.speed || 1)) }
 function clipTimeline(project = state.project) {
@@ -213,10 +237,12 @@ function ratioValue(ratio) {
   return ({'16:9':16/9,'9:16':9/16,'1:1':1,'4:5':4/5})[ratio] || 16/9
 }
 function previewDimensions(ratio) {
-  if (ratio==='9:16') return [540,960]
-  if (ratio==='1:1') return [800,800]
-  if (ratio==='4:5') return [720,900]
-  return [960,540]
+  const q=state.preferences?.previewQuality||'balanced'
+  const base=q==='performance'?360:q==='quality'?720:540
+  if (ratio==='9:16') return [base,Math.round(base*16/9)]
+  if (ratio==='1:1') return [base,base]
+  if (ratio==='4:5') return [base,Math.round(base*5/4)]
+  return [Math.round(base*16/9),base]
 }
 function exportDimensions(ratio, quality) {
   const q=Number(quality)
@@ -417,33 +443,54 @@ function ensurePreviewVideo(row,asset,url) {
   if (state.playing && previewVideo.paused && previewVideo.readyState>=2) previewVideo.play().catch(()=>{})
 }
 
-function syncSoundtrack() {
-  const st=state.project?.soundtrack
-  if (!st) { previewAudio.pause(); previewAudio.removeAttribute('src'); return }
-  const url=state.urls[st.assetId]; if (!url) return
-  if (previewAudio.src!==url) { previewAudio.src=url; previewAudio.load() }
-  previewAudio.volume=clamp(st.volume??.7,0,1); previewAudio.loop=Boolean(st.loop)
-  if (previewAudio.readyState>=1 && Number.isFinite(previewAudio.duration)) {
-    const target=st.loop && previewAudio.duration ? state.currentTime%previewAudio.duration : Math.min(state.currentTime,previewAudio.duration-.05)
-    if (Math.abs(previewAudio.currentTime-target)>.35) previewAudio.currentTime=Math.max(0,target)
-  }
-  if (state.playing) previewAudio.play().catch(()=>{}); else previewAudio.pause()
+function audioFadeGain(clip,localTime) {
+  const dur=audioClipDuration(clip), fadeIn=Math.min(clip.fadeIn||0,dur/2), fadeOut=Math.min(clip.fadeOut||0,dur/2)
+  let gain=1
+  if(fadeIn>0 && localTime<fadeIn) gain=Math.min(gain,localTime/fadeIn)
+  if(fadeOut>0 && localTime>dur-fadeOut) gain=Math.min(gain,(dur-localTime)/fadeOut)
+  return clamp(gain,0,1)
 }
+function audioElementForClip(clip) {
+  let el=audioPreviewNodes.get(clip.id)
+  if(!el){el=document.createElement('audio');el.preload='auto';el.playsInline=true;el.style.display='none';document.body.append(el);audioPreviewNodes.set(clip.id,el)}
+  return el
+}
+function syncAudioTracks(force=false) {
+  const clips=state.project?.audioClips||[], alive=new Set(clips.map(c=>c.id))
+  for(const [id,el] of audioPreviewNodes){if(!alive.has(id)){el.pause();el.remove();audioPreviewNodes.delete(id)}}
+  for(const clip of clips){
+    const asset=getAsset(clip.assetId),url=state.urls[clip.assetId];if(!asset||!url)continue
+    const dur=audioClipDuration(clip), local=state.currentTime-(clip.timelineStart||0), active=local>=0&&local<=dur
+    const el=audioElementForClip(clip)
+    if(el.src!==url){el.src=url;el.load();force=true}
+    el.playbackRate=clamp(clip.speed||1,.5,2)
+    el.volume=clip.muted?0:clamp((clip.volume??.8)*audioFadeGain(clip,Math.max(0,local)),0,1)
+    if(active){
+      const target=(clip.sourceStart||0)+local*(clip.speed||1)
+      if(el.readyState>=1 && (force||Math.abs((el.currentTime||0)-target)>.28)) el.currentTime=clamp(target,clip.sourceStart||0,Math.max(clip.sourceStart||0,(clip.sourceEnd||asset.duration)-.02))
+      if(state.playing && el.paused)el.play().catch(()=>{})
+      if(!state.playing&&!el.paused)el.pause()
+    } else if(!el.paused) el.pause()
+  }
+}
+function stopAudioTracks(){for(const el of audioPreviewNodes.values())el.pause()}
+function syncSoundtrack(){ syncAudioTracks(true) }
 
 function updatePlaybackUi() {
   const dur=projectDuration(), seek=$('#seekbar'), time=$('#timecode'), play=$('[data-action="play-toggle"]'), head=$('.playhead')
   if (seek) { seek.max=dur||1; seek.value=state.currentTime }
   if (time) time.textContent=`${fmtTime(state.currentTime)} / ${fmtTime(dur)}`
   if (play) { play.textContent=state.playing?'❚❚':'▶'; play.setAttribute('aria-label',state.playing?tr('pause'):tr('play')) }
-  if (head) head.style.left=`${Math.max(0,state.currentTime*state.pxPerSec)+10}px`
+  if (head) head.style.left=`${Math.max(0,state.currentTime*state.pxPerSec)+42}px`
 }
 function playbackLoop(now) {
   if (!state.playing) return
   const dur=projectDuration()
   state.currentTime=Math.min(dur,playStartTime+(now-playStartPerf)/1000)
   const row=activeAt(state.currentTime)
-  if (!row || state.currentTime>=dur) { stopPlayback(true); return }
-  ensureActiveMediaForPlayback(row)
+  if (state.currentTime>=dur) { stopPlayback(true); return }
+  if(row) ensureActiveMediaForPlayback(row); else previewVideo.pause()
+  syncAudioTracks(false)
   drawPreview(); updatePlaybackUi()
   rafId=requestAnimationFrame(playbackLoop)
 }
@@ -459,25 +506,27 @@ function startPlayback() {
   if (!state.project || !projectDuration()) return
   if (state.currentTime>=projectDuration()-.03) state.currentTime=0
   state.playing=true; playStartPerf=performance.now(); playStartTime=state.currentTime
-  syncSoundtrack(); const row=activeAt(state.currentTime); if(row) ensureActiveMediaForPlayback(row)
+  syncAudioTracks(true); const row=activeAt(state.currentTime); if(row) ensureActiveMediaForPlayback(row)
   updatePlaybackUi(); cancelAnimationFrame(rafId); rafId=requestAnimationFrame(playbackLoop)
 }
 function stopPlayback(atEnd=false) {
-  state.playing=false; cancelAnimationFrame(rafId); previewVideo.pause(); previewAudio.pause()
+  state.playing=false; cancelAnimationFrame(rafId); previewVideo.pause(); previewAudio.pause(); stopAudioTracks()
   if (atEnd) state.currentTime=projectDuration()
   updatePlaybackUi(); drawPreview()
 }
 function seekTo(value) {
   state.currentTime=clamp(value,0,projectDuration()); if(state.playing){playStartTime=state.currentTime;playStartPerf=performance.now()}
-  const row=activeAt(state.currentTime); if(row) ensureActiveMediaForPlayback(row); syncSoundtrack(); updatePlaybackUi(); drawPreview()
+  const row=activeAt(state.currentTime); if(row) ensureActiveMediaForPlayback(row); syncAudioTracks(true); updatePlaybackUi(); drawPreview()
 }
 
 function defaultProject(ratio='16:9') {
   const now=Date.now()
-  return { id:uid(), name:state.language==='el'?'Νέο project':'Untitled project', createdAt:now, updatedAt:now, ratio, background:'#0b0d12', assets:[], clips:[], texts:[], soundtrack:null }
+  return { id:uid(), name:state.language==='el'?'Νέο project':'Untitled project', createdAt:now, updatedAt:now, ratio, background:'#0b0d12', assets:[], clips:[], audioClips:[], texts:[], soundtrack:null }
 }
 function normalizeProject(p) {
-  p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.texts ||= p.textOverlays || []; p.soundtrack ||= null
+  p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.texts ||= p.textOverlays || []; p.audioClips ||= []
+  if(p.soundtrack && !p.audioClips.length){const a=p.assets.find(x=>x.id===p.soundtrack.assetId);if(a)p.audioClips.push({id:uid(),assetId:a.id,timelineStart:0,sourceStart:0,sourceEnd:a.duration||30,volume:p.soundtrack.volume??.7,speed:1,fadeIn:0,fadeOut:0,muted:false})}
+  p.soundtrack=null
   for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
   return p
 }
@@ -518,16 +567,28 @@ async function mediaMetadata(file) {
     return {type,duration:Number.isFinite(media.duration)?media.duration:0,width:type==='video'?media.videoWidth:undefined,height:type==='video'?media.videoHeight:undefined}
   } finally { URL.revokeObjectURL(url) }
 }
+async function buildWaveform(file,points=72) {
+  if(!file.type.startsWith('audio/'))return null
+  try {
+    const ctx=new (window.AudioContext||window.webkitAudioContext)(), buffer=await ctx.decodeAudioData(await file.arrayBuffer()), data=buffer.getChannelData(0), step=Math.max(1,Math.floor(data.length/points)), peaks=[]
+    for(let i=0;i<points;i++){let max=0;const start=i*step,end=Math.min(data.length,start+step);for(let j=start;j<end;j++)max=Math.max(max,Math.abs(data[j]));peaks.push(Math.round(max*1000)/1000)}
+    await ctx.close().catch(()=>{});return peaks
+  } catch { return null }
+}
+function defaultAudioClip(asset,timelineStart=state.currentTime||0){return {id:uid(),assetId:asset.id,timelineStart:Math.max(0,timelineStart),sourceStart:0,sourceEnd:Math.max(.1,asset.duration||30),volume:.8,speed:1,fadeIn:0,fadeOut:0,muted:false}}
+function addAudioToTimeline(id,at=state.currentTime||0){const asset=getAsset(id);if(!asset||asset.type!=='audio')return;mutate(p=>{const c=defaultAudioClip(asset,at);p.audioClips.push(c);state.selected={type:'audio',id:c.id};state.tool='audio';state.sheet=isMobileViewport()?'audio':null});syncAudioTracks(true)}
+
 async function importFiles(files, addVisuals=true) {
   if(!state.project || !files?.length) return
   const added=[]
   for(const file of files) {
     try {
       const meta=await mediaMetadata(file), id=uid()
-      const asset={id,name:file.name,type:meta.type,mimeType:file.type,duration:meta.duration,width:meta.width,height:meta.height,size:file.size}
+      const waveform=meta.type==='audio'?await buildWaveform(file):null
+      const asset={id,name:file.name,type:meta.type,mimeType:file.type,duration:meta.duration,width:meta.width,height:meta.height,size:file.size,waveform}
       await putBlob(id,file); state.project.assets.push(asset); state.urls[id]=URL.createObjectURL(file); added.push(asset)
       if(addVisuals && (asset.type==='video'||asset.type==='image')) state.project.clips.push(defaultClip(asset))
-      if(asset.type==='audio' && !state.project.soundtrack) state.project.soundtrack={assetId:id,volume:.7,loop:true}
+      if(asset.type==='audio' && addVisuals) state.project.audioClips.push(defaultAudioClip(asset,state.currentTime||0))
     } catch { toast(tr('unsupported'),'error') }
   }
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
@@ -535,15 +596,24 @@ async function importFiles(files, addVisuals=true) {
 function defaultClip(asset) {
   return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
 }
-function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset||asset.type==='audio')return; mutate(p=>p.clips.push(defaultClip(asset))); }
-function setSoundtrack(id) { const asset=getAsset(id); if(!asset||asset.type!=='audio')return; mutate(p=>p.soundtrack={assetId:id,volume:.7,loop:true}); syncSoundtrack() }
+function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset)return; if(asset.type==='audio')return addAudioToTimeline(id); mutate(p=>p.clips.push(defaultClip(asset))); }
+function setSoundtrack(id) { addAudioToTimeline(id,0) }
 
 function selectedClip() { return state.selected?.type==='clip' ? state.project?.clips.find(c=>c.id===state.selected.id) : null }
 function selectedText() { return state.selected?.type==='text' ? state.project?.texts.find(t=>t.id===state.selected.id) : null }
+function selectedAudio() { return state.selected?.type==='audio' ? state.project?.audioClips.find(c=>c.id===state.selected.id) : null }
 function selectClip(id) { state.selected={type:'clip',id}; state.tool='edit'; state.sheet=isMobileViewport()?'edit':null; renderEditor() }
 function selectText(id) { state.selected={type:'text',id}; state.tool='text'; state.sheet=isMobileViewport()?'text':null; renderEditor() }
+function selectAudio(id) { state.selected={type:'audio',id}; state.tool='audio'; state.sheet=isMobileViewport()?'audio':null; renderEditor() }
 
 function splitAtPlayhead() {
+  const audio=selectedAudio()
+  if(audio){
+    const startT=audio.timelineStart||0,endT=startT+audioClipDuration(audio)
+    if(state.currentTime<=startT+.05||state.currentTime>=endT-.05)return
+    const splitSource=(audio.sourceStart||0)+(state.currentTime-startT)*(audio.speed||1)
+    mutate(p=>{const idx=p.audioClips.findIndex(c=>c.id===audio.id),a={...audio,id:uid(),sourceEnd:splitSource},b={...audio,id:uid(),sourceStart:splitSource,timelineStart:state.currentTime};p.audioClips.splice(idx,1,a,b);state.selected={type:'audio',id:b.id}});syncAudioTracks(true);return
+  }
   const row=activeAt(state.currentTime); if(!row) return
   const clip=row.clip, source=sourceTime(row,state.currentTime)
   if(source<=clip.start+.08 || source>=clip.end-.08) return
@@ -552,12 +622,17 @@ function splitAtPlayhead() {
     p.clips.splice(idx,1,a,b); state.selected={type:'clip',id:b.id}
   })
 }
-function duplicateSelected() { const clip=selectedClip(); if(!clip)return; mutate(p=>{const idx=p.clips.findIndex(c=>c.id===clip.id); const c={...clone(clip),id:uid()};p.clips.splice(idx+1,0,c);state.selected={type:'clip',id:c.id}}) }
+
+function duplicateSelected() {
+  const clip=selectedClip(); if(clip)return mutate(p=>{const idx=p.clips.findIndex(c=>c.id===clip.id); const c={...clone(clip),id:uid()};p.clips.splice(idx+1,0,c);state.selected={type:'clip',id:c.id}})
+  const audio=selectedAudio(); if(audio)return mutate(p=>{const c={...clone(audio),id:uid(),timelineStart:(audio.timelineStart||0)+.25};p.audioClips.push(c);state.selected={type:'audio',id:c.id}})
+}
 function deleteSelected() {
   if(state.selected?.type==='clip') mutate(p=>{p.clips=p.clips.filter(c=>c.id!==state.selected.id);state.selected=null})
   else if(state.selected?.type==='text') mutate(p=>{p.texts=p.texts.filter(t=>t.id!==state.selected.id);state.selected=null})
+  else if(state.selected?.type==='audio') { const id=state.selected.id; mutate(p=>{p.audioClips=p.audioClips.filter(c=>c.id!==id);state.selected=null});const el=audioPreviewNodes.get(id);if(el){el.pause();el.remove();audioPreviewNodes.delete(id)} }
 }
-function moveSelected(delta) { const clip=selectedClip(); if(!clip)return; mutate(p=>{const i=p.clips.findIndex(c=>c.id===clip.id),j=clamp(i+delta,0,p.clips.length-1);if(i!==j){const [x]=p.clips.splice(i,1);p.clips.splice(j,0,x)}}) }
+function moveSelected(delta) { const clip=selectedClip(); if(clip)return mutate(p=>{const i=p.clips.findIndex(c=>c.id===clip.id),j=clamp(i+delta,0,p.clips.length-1);if(i!==j){const [x]=p.clips.splice(i,1);p.clips.splice(j,0,x)}});const audio=selectedAudio();if(audio)return mutate(p=>{const x=p.audioClips.find(c=>c.id===audio.id);x.timelineStart=Math.max(0,(x.timelineStart||0)+delta*(state.preferences.snap?.25:.1))}) }
 
 function addText(kind='title') {
   if(!state.project) return
@@ -635,7 +710,7 @@ function renderHome() {
   const app=$('#app'), projects=state.projects
   app.innerHTML=`<div class="landing-page">
     <header class="landing-header">
-      <div class="landing-header-inner">${renderLogo()}<div class="landing-actions"><button class="lang-pill" data-action="language">${state.language==='el'?'EN':'ΕΛ'}</button><button class="text-btn" data-action="install">${tr('install')}</button><button class="primary-btn compact" data-action="create" data-ratio="16:9">${tr('open')} Edituno</button></div></div>
+      <div class="landing-header-inner">${renderLogo()}<div class="landing-actions"><button class="lang-pill" data-action="language">${state.language==='el'?'EN':'ΕΛ'}</button><button class="text-btn" data-action="settings">⚙ ${tr('settings')}</button><button class="text-btn" data-action="install">${tr('install')}</button><button class="primary-btn compact" data-action="create" data-ratio="16:9">${tr('open')} Edituno</button></div></div>
     </header>
     <main class="landing-main">
       <section class="landing-hero">
@@ -660,12 +735,16 @@ function templateCard(ratio,title,sub,cls){return `<button class="template-card"
 function trustCard(icon,title,sub){return `<div class="trust-card"><div class="trust-icon">${icon}</div><div><strong>${title}</strong><span>${sub}</span></div></div>`}
 function projectCard(p){return `<article class="project-card" data-action="open-project" data-id="${p.id}"><div class="project-thumb">▶</div><div class="project-copy"><strong>${escapeHtml(p.name)}</strong><span>${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')} · ${escapeHtml(p.ratio||'16:9')}</span></div><button class="project-more" data-action="delete-project" data-id="${p.id}" aria-label="${tr('delete')}">⋯</button></article>`}
 
-function settingsModal(){return `<div class="modal-backdrop" data-action="settings-close"><section class="modal" onclick="event.stopPropagation()"><div class="modal-head"><h2>${tr('settings')}</h2><button class="sheet-close" data-action="settings-close">×</button></div><div class="modal-body"><div class="panel-grid">
-  <div class="panel-section"><h3>${tr('language')}</h3><div class="format-grid"><button class="format-btn ${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">Ελληνικά</button><button class="format-btn ${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">English</button></div></div>
+function settingsModal(){const p=state.preferences;return `<div class="modal-backdrop" data-action="settings-close"><section class="modal settings-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><h2>${tr('settings')}</h2><small>${state.language==='el'?'Ρύθμισε τον editor στη ροή σου':'Tune the editor to your workflow'}</small></div><button class="sheet-close" data-action="settings-close">×</button></div><div class="modal-body"><div class="panel-grid">
+  <div class="panel-section"><h3>${tr('language')}</h3><div class="format-grid two-settings"><button class="format-btn ${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">Ελληνικά</button><button class="format-btn ${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">English</button></div></div>
+  <div class="panel-section"><h3>${state.language==='el'?'Timeline':'Timeline'}</h3><div class="switch-row"><span>${preferenceLabel('snap')}</span><button class="switch ${p.snap?'on':''}" data-action="pref-toggle" data-key="snap"></button></div><div class="switch-row"><span>${preferenceLabel('showWaveforms')}</span><button class="switch ${p.showWaveforms?'on':''}" data-action="pref-toggle" data-key="showWaveforms"></button></div><label class="field"><span>${preferenceLabel('timelineScale')}</span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></div>
+  <div class="panel-section"><h3>${state.language==='el'?'Απόδοση':'Performance'}</h3><label class="field"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></div>
+  <div class="panel-section"><h3>${tr('export')}</h3><div class="field-grid two"><label class="field"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="field"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24</option><option value="30" ${+p.defaultFps===30?'selected':''}>30</option><option value="60" ${+p.defaultFps===60?'selected':''}>60</option></select></label></div></div>
   <div class="install-card"><strong>${tr('installHint')}</strong><p>${tr('chromeInstall')}</p><button class="primary-btn full" data-action="install">${tr('installApp')}</button></div>
   <div class="panel-section"><h3>${tr('storage')}</h3><p class="helper">${tr('persistent')}</p><button class="secondary-btn" data-action="persist-storage">${tr('requestStorage')}</button></div>
   <div class="panel-section"><button class="danger-btn" data-action="clear-all">${tr('clearAll')}</button></div>
 </div></div></section></div>`}
+
 function installModal(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);return `<div class="modal-backdrop" data-action="install-close"><section class="modal" onclick="event.stopPropagation()"><div class="modal-head"><h2>${tr('installTitle')}</h2><button class="sheet-close" data-action="install-close">×</button></div><div class="modal-body"><div class="install-card"><strong>Edituno</strong><p>${ios?tr('iosInstall'):tr('chromeInstall')}</p>${!ios&&state.installPrompt?`<button class="primary-btn full" data-action="install-confirm">${tr('installApp')}</button>`:''}</div></div></section></div>`}
 
 function mobileProjectHubModal(){
@@ -682,7 +761,7 @@ function renderEditor() {
       <button class="icon-btn" data-action="${mobile?'mobile-hub':'back'}" aria-label="${mobile?tr('projectHub'):tr('back')}">${svgIcon(mobile?'projects':'back',20)}</button>
       <div class="editor-title-wrap"><input class="editor-title" id="project-name" aria-label="${tr('projectName')}" value="${escapeHtml(p.name)}" /></div>
       <span class="editor-save-state" id="save-state">${tr('save')}</span>
-      <div class="editor-header-actions"><button class="primary-btn export-btn" data-action="export">${svgIcon('export',16)}<span>${tr('export')}</span></button></div>
+      <div class="editor-header-actions"><button class="icon-btn editor-settings-btn" data-action="settings" aria-label="${tr('settings')}">⚙</button><button class="primary-btn export-btn" data-action="export">${svgIcon('export',16)}<span>${tr('export')}</span></button></div>
     </header>
 
     <main class="editor-body">
@@ -693,7 +772,7 @@ function renderEditor() {
       <div class="transport"><button class="icon-btn transport-home" data-action="jump-start" aria-label="Start">↤</button><button class="play-btn" data-action="play-toggle" aria-label="${tr('play')}">${svgIcon('play',19)}</button><input id="seekbar" class="seekbar" type="range" min="0" max="${dur||1}" step="0.01" value="${state.currentTime}" /><span class="timecode" id="timecode">${fmtTime(state.currentTime)} / ${fmtTime(dur)}</span></div>
       <section class="timeline-panel">
         <div class="timeline-toolbar"><div class="timeline-toolbar-left"><strong>${tr('timeline')}</strong></div><div class="timeline-toolbar-right"><button data-action="timeline-zoom" data-value="-1" title="${tr('timelineZoom')}">${svgIcon('zoomout',15)}</button><button data-action="timeline-zoom" data-value="1" title="${tr('timelineZoom')}">${svgIcon('zoomin',15)}</button><button data-action="undo" title="${tr('undo')}">${svgIcon('undo',15)}</button><button data-action="redo" title="${tr('redo')}">${svgIcon('redo',15)}</button><button data-action="split" title="${tr('split')}">${svgIcon('split',15)}</button></div></div>
-        <div class="timeline-scroll" id="timeline-scroll"><div style="width:${totalWidth}px;position:relative;min-height:126px"><div class="timeline-ruler">${timelineRuler(dur,totalWidth)}</div><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',18)} ${tr('addMedia')}</button>`}</div><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div><div class="playhead" style="left:${10+state.currentTime*state.pxPerSec}px"></div></div></div>
+        <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur,totalWidth)}</div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',18)} ${tr('addMedia')}</button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips||[]).map(timelineAudio).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42+state.currentTime*state.pxPerSec}px"></div></div></div>
       </section>
       <aside class="desktop-inspector">${desktopInspector()}</aside>
     </main>
@@ -705,21 +784,31 @@ function renderEditor() {
     <section class="bottom-sheet ${state.sheet?'open':''}" aria-modal="true"><div class="sheet-handle"></div><div class="sheet-head"><strong>${sheetTitle()}</strong><button class="sheet-close" data-action="sheet-close">${svgIcon('close',18)}</button></div><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
     ${state.projectHubOpen?mobileProjectHubModal():''}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}
   </div><div class="toast-stack" id="toasts"></div>`
-  requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi() })
+  requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions() })
 }
-function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${10+t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
+function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
 function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">◇</button>`:''}</div>`}
-function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${10+t.start*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
+function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start||0)*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
+function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.preferences.showWaveforms)return'';let out='';for(let i=0;i<count;i++){const v=peaks.length?peaks[Math.floor(i*peaks.length/count)]:(.28+.6*Math.abs(Math.sin(i*1.73)));out+=`<i style="height:${Math.max(12,Math.round(v*86))}%"></i>`}return out}
+function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
 function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}"><span class="tool-icon">${svgIcon(iconName,21)}</span><span>${label}</span></button>`}
 function sheetTitle(){if(state.sheet==='edit')return tr('quickEdit');if(state.sheet==='effects')return tr('effects');if(state.sheet==='adjust')return tr('adjust');if(state.sheet==='transitions')return tr('transitions');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
 function desktopSidebar(){return `<h3 class="desktop-panel-title">${tr('desktopMedia')}</h3><div class="desktop-tool-tabs"><button class="active" data-action="pick-media">＋ ${tr('media')}</button><button data-action="add-text" data-kind="title">T ${tr('text')}</button><button data-action="open-srt">CC</button></div>${mediaPanel()}`}
-function desktopInspector(){return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():canvasPanel()}`}
+function desktopInspector(){return `<h3 class="desktop-panel-title">${tr('inspector')}</h3>${state.selected?.type==='clip'?clipPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
 function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
 
-function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}"><div class="media-type">${a.type==='video'?'▶':a.type==='image'?'▧':'♫'}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type==='audio'?'set-soundtrack':'add-asset'}" data-id="${a.id}">${tr(a.type==='audio'?'useSoundtrack':'add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
+function mediaPanel(){const list=state.project.assets||[];return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length?`<div class="media-list">${list.map(a=>`<div class="media-row ${a.type}"><div class="media-type">${a.type==='video'?'▶':a.type==='image'?'▧':'♫'}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration?fmtTime(a.duration):''} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="${a.type==='audio'?'add-audio':'add-asset'}" data-id="${a.id}">${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`}
 function textPanel(showAdd=true){const t=selectedText();return `<div class="panel-grid">${showAdd?`<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>✨</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>`:''}${t?`<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight==600?'selected':''}>600</option><option ${t.weight==700?'selected':''}>700</option><option ${t.weight==800?'selected':''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color,'#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background,'#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation==='none'?'selected':''}>${tr('none')}</option><option value="fade" ${t.animation==='fade'?'selected':''}>Fade</option><option value="pop" ${t.animation==='pop'?'selected':''}>Pop</option><option value="slide" ${t.animation==='slide'?'selected':''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x',t.x,0,1,.01,true,'text')}${rangeField('y',t.y,0,1,.01,true,'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>`:''}</div>`}
 function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
-function audioPanel(){const audios=state.project.assets.filter(a=>a.type==='audio'), st=state.project.soundtrack;return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)}</span></div><button class="media-action" data-action="set-soundtrack" data-id="${a.id}">${st?.assetId===a.id?'✓':tr('useSoundtrack')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${st?`<div class="panel-section"><h3>${tr('soundtrack')}</h3>${rangeField('soundtrack.volume',st.volume,0,1,.01,true,'project')}<div class="switch-row"><span>${tr('loop')}</span><button class="switch ${st.loop?'on':''}" data-action="toggle-loop"></button></div><button class="danger-btn" data-action="remove-soundtrack">${tr('remove')}</button></div>`:''}</div>`}
+function audioPanel(){
+  const audios=state.project.assets.filter(a=>a.type==='audio'), c=selectedAudio()
+  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio"><div class="media-type">♫</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c?audioClipPanel():`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`
+}
+function audioClipPanel(){
+  const c=selectedAudio(),a=getAsset(c?.assetId);if(!c)return''
+  return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">♫</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?'🔇 '+(state.language==='el'?'Ενεργοποίηση':'Unmute'):'🔊 '+(state.language==='el'?'Σίγαση':'Mute')}</button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
+}
+
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
 function editPanel(){
   const c=selectedClip(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
@@ -748,9 +837,27 @@ function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) 
 function rangeField(key,value,min,max,step,show,scope){return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show?Number(value).toFixed(step<1?2:0):Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`}
 function canvasPanel(){const p=state.project;return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="format-grid">${['16:9','9:16','1:1','4:5'].map(r=>`<button class="format-btn ${p.ratio===r?'active':''}" data-action="ratio" data-value="${r}">${r}</button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background,'#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`}
 
+function snapTime(value){if(!state.preferences.snap)return Math.max(0,value);const step=.25;return Math.max(0,Math.round(value/step)*step)}
+function bindTimelineInteractions(){
+  const scroll=$('#timeline-scroll'),ruler=$('[data-timeline-ruler]');if(!scroll)return
+  if(ruler)ruler.addEventListener('pointerdown',e=>{const rect=ruler.getBoundingClientRect();seekTo(clamp((e.clientX-rect.left)/state.pxPerSec,0,projectDuration()))})
+  $$('.timeline-audio').forEach(el=>{
+    el.addEventListener('pointerdown',e=>{
+      if(e.button!==undefined&&e.button!==0)return
+      const clip=state.project?.audioClips.find(c=>c.id===el.dataset.id);if(!clip)return
+      const startX=e.clientX,original=clip.timelineStart||0;let moved=false
+      el.setPointerCapture?.(e.pointerId);el.classList.add('dragging')
+      const move=ev=>{const delta=(ev.clientX-startX)/state.pxPerSec;if(Math.abs(ev.clientX-startX)>3)moved=true;const next=Math.max(0,original+delta);el.style.left=`${next*state.pxPerSec}px`}
+      const up=ev=>{el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);el.classList.remove('dragging');if(moved){pushHistory();clip.timelineStart=snapTime(original+(ev.clientX-startX)/state.pxPerSec);state.project.updatedAt=Date.now();queueSave();renderEditor();syncAudioTracks(true)}}
+      el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)
+    })
+  })
+  $$('.timeline-clip').forEach(el=>{el.draggable=!isMobileViewport();el.addEventListener('dragstart',e=>{e.dataTransfer?.setData('text/edituno-clip',el.dataset.id);el.classList.add('dragging')});el.addEventListener('dragend',()=>el.classList.remove('dragging'));el.addEventListener('dragover',e=>e.preventDefault());el.addEventListener('drop',e=>{e.preventDefault();const source=e.dataTransfer?.getData('text/edituno-clip'),target=el.dataset.id;if(!source||!target||source===target)return;mutate(p=>{const from=p.clips.findIndex(c=>c.id===source),to=p.clips.findIndex(c=>c.id===target);if(from<0||to<0)return;const [clip]=p.clips.splice(from,1);p.clips.splice(to,0,clip);state.selected={type:'clip',id:clip.id}})})})
+}
+
 function renderExportModal() {
   const old=$('.modal-backdrop.export-modal'); if(old)old.remove()
-  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720">720p</option><option value="1080" selected>1080p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option>24</option><option selected>30</option><option>60</option></select></label></div><p class="helper">${tr('browserLimit')}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
+  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${tr('browserLimit')}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
 }
 
 function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); state.view==='editor'?renderEditor():renderHome() }
@@ -758,6 +865,21 @@ function render() { document.documentElement.lang=state.language; safeSetLanguag
 function toast(message,type='') {
   let root=$('#toasts'); if(!root){root=document.createElement('div');root.id='toasts';root.className='toast-stack';document.body.append(root)}
   const el=document.createElement('div');el.className=`toast ${type}`;el.textContent=message;root.append(el);setTimeout(()=>el.remove(),2600)
+}
+
+async function decodeAudioAsset(assetId,audioContext){const url=state.urls[assetId];if(!url)return null;try{return await audioContext.decodeAudioData(await (await fetch(url)).arrayBuffer())}catch{return null}}
+async function scheduleAudioTracks(project,audioContext,dest){
+  const decoded=[]
+  for(const clip of project.audioClips||[]){const buffer=await decodeAudioAsset(clip.assetId,audioContext);if(buffer)decoded.push({clip,buffer})}
+  const zero=audioContext.currentTime+.04
+  const nodes=[]
+  for(const {clip,buffer} of decoded){
+    const source=audioContext.createBufferSource(),gain=audioContext.createGain(),duration=audioClipDuration(clip),start=zero+(clip.timelineStart||0),vol=clip.muted?0:clamp(clip.volume??.8,0,1),fadeIn=Math.min(clip.fadeIn||0,duration/2),fadeOut=Math.min(clip.fadeOut||0,duration/2)
+    source.buffer=buffer;source.playbackRate.value=clamp(clip.speed||1,.5,2);source.connect(gain).connect(dest)
+    gain.gain.setValueAtTime(fadeIn>0?0:vol,start);if(fadeIn>0)gain.gain.linearRampToValueAtTime(vol,start+fadeIn);if(fadeOut>0){gain.gain.setValueAtTime(vol,start+duration-fadeOut);gain.gain.linearRampToValueAtTime(0,start+duration)}
+    source.start(start,clip.sourceStart||0,Math.max(.05,(clip.sourceEnd||buffer.duration)-(clip.sourceStart||0)));nodes.push(source)
+  }
+  return nodes
 }
 
 async function exportProjectLocal(quality,fps,onProgress,signal) {
@@ -769,22 +891,21 @@ async function exportProjectLocal(quality,fps,onProgress,signal) {
   const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:quality===1080?10_000_000:5_500_000,audioBitsPerSecond:192_000})
   const chunks=[];recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data)
   const done=new Promise((resolve,reject)=>{recorder.onerror=()=>reject(new Error('record'));recorder.onstop=()=>resolve(new Blob(chunks,{type:mime}))})
-  let soundtrack=null, soundtrackSource=null
-  if(project.soundtrack){const url=state.urls[project.soundtrack.assetId];if(url){soundtrack=new Audio(url);soundtrack.loop=project.soundtrack.loop;soundtrack.volume=project.soundtrack.volume; soundtrackSource=audioContext.createMediaElementSource(soundtrack);soundtrackSource.connect(dest)}}
-  await audioContext.resume();recorder.start(500);if(soundtrack)await soundtrack.play().catch(()=>{})
+  await audioContext.resume();const audioNodes=await scheduleAudioTracks(project,audioContext,dest);recorder.start(500)
   let global=0,total=projectDuration(project)
   try {
     for(const clip of project.clips){if(signal?.aborted)throw new DOMException('Aborted','AbortError');const asset=getAsset(clip.assetId,project),url=state.urls[clip.assetId];if(!asset||!url)continue;const dur=clipDuration(clip)
       if(asset.type==='video'){
         const v=document.createElement('video');v.src=url;v.playsInline=true;v.preload='auto';await waitLoaded(v);v.currentTime=Math.min(clip.start,Math.max(0,(v.duration||asset.duration)-.03));await waitSeek(v);v.playbackRate=clamp(clip.speed,.25,4)
-        const src=audioContext.createMediaElementSource(v),gain=audioContext.createGain();gain.gain.value=clamp(clip.volume,0,1);src.connect(gain).connect(dest);await v.play()
+        const src=audioContext.createMediaElementSource(v),gain=audioContext.createGain(),now=audioContext.currentTime,clipVol=clamp(clip.volume,0,1),fi=Math.min(clip.audioFadeIn||0,dur/2),fo=Math.min(clip.audioFadeOut||0,dur/2);gain.gain.setValueAtTime(fi?0:clipVol,now);if(fi)gain.gain.linearRampToValueAtTime(clipVol,now+fi);if(fo){gain.gain.setValueAtTime(clipVol,now+dur-fo);gain.gain.linearRampToValueAtTime(0,now+dur)};src.connect(gain).connect(dest);await v.play()
         await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/dur);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
       } else if(asset.type==='image'){
         const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,img,asset,row,global+elapsed,w,h,elapsed/dur);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
       }
       global+=dur
     }
-  } finally { soundtrack?.pause(); if(recorder.state!=='inactive')recorder.stop(); await audioContext.close().catch(()=>{}) }
+    if(global<total){const rest=total-global;await renderSegment(rest,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)}
+  } finally { for(const n of audioNodes||[])try{n.stop()}catch{}; if(recorder.state!=='inactive')recorder.stop(); await audioContext.close().catch(()=>{}) }
   const blob=await done;onProgress(1);return {blob,extension:mime.includes('mp4')?'mp4':'webm',mime}
 }
 function pickMime(){const list=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];return list.find(x=>MediaRecorder.isTypeSupported(x))||''}
@@ -818,6 +939,7 @@ function bindGlobalEvents() {
     if(a==='delete-project'){e.stopPropagation();if(confirm(tr('delete')+'?')){await deleteProjectFull(el.dataset.id);state.projects=await listProjects();renderHome();toast(tr('deleted'))}return}
     if(a==='language'){state.language=state.language==='el'?'en':'el';render();return}
     if(a==='set-lang'){state.language=el.dataset.value;render();return}
+    if(a==='pref-toggle'){const key=el.dataset.key;state.preferences[key]=!state.preferences[key];if(key==='showWaveforms')renderEditor();savePreferences();render();return}
     if(a==='settings'){state.settingsOpen=true;render();return}
     if(a==='settings-close'){state.settingsOpen=false;render();return}
     if(a==='install'){state.installOpen=true;render();return}
@@ -832,12 +954,13 @@ function bindGlobalEvents() {
     if(a==='mobile-hub-close'){state.projectHubOpen=false;renderEditor();return}
     if(a==='pick-media'){$('#media-picker')?.click();return}
     if(a==='add-asset')return addAssetToTimeline(el.dataset.id)
-    if(a==='set-soundtrack')return setSoundtrack(el.dataset.id)
+    if(a==='add-audio'||a==='set-soundtrack')return addAudioToTimeline(el.dataset.id)
+    if(a==='select-audio')return selectAudio(el.dataset.id)
     if(a==='select-clip')return selectClip(el.dataset.id)
     if(a==='select-text')return selectText(el.dataset.id)
     if(a==='tool'){state.tool=el.dataset.tool;state.sheet=el.dataset.tool;renderEditor();return}
     if(a==='select-transition'){state.selected={type:'clip',id:el.dataset.id};state.tool='transitions';state.sheet='transitions';renderEditor();return}
-    if(a==='timeline-zoom'){state.pxPerSec=clamp(state.pxPerSec+(+el.dataset.value)*12,24,120);renderEditor();return}
+    if(a==='timeline-zoom'){state.pxPerSec=clamp(state.pxPerSec+(+el.dataset.value)*12,24,120);state.preferences.timelineScale=state.pxPerSec;savePreferences();renderEditor();return}
     if(a==='adjust-select'){state.adjustKey=el.dataset.key;state.tool='adjust';state.sheet='adjust';renderEditor();return}
     if(a==='reset-adjustment'){const c=selectedClip();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,opacity:1};mutate(p=>p.clips.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0);return}
     if(a==='sheet-close'){state.sheet=null;renderEditor();return}
@@ -855,7 +978,8 @@ function bindGlobalEvents() {
     if(a==='add-text')return addText(el.dataset.kind)
     if(a==='open-srt'){$('#subtitle-picker')?.click();return}
     if(a==='toggle-loop')return mutate(p=>p.soundtrack.loop=!p.soundtrack.loop)
-    if(a==='remove-soundtrack'){mutate(p=>p.soundtrack=null);syncSoundtrack();return}
+    if(a==='audio-toggle-mute'){const c=selectedAudio();if(!c)return;mutate(p=>{const x=p.audioClips.find(y=>y.id===c.id);x.muted=!x.muted});syncAudioTracks(true);return}
+    if(a==='remove-soundtrack'){const c=selectedAudio();if(c){deleteSelected();syncAudioTracks(true)}return}
     if(a==='ratio')return mutate(p=>p.ratio=el.dataset.value)
     if(a==='export'){renderExportModal();return}
     if(a==='export-close'){state.exportController?.abort();$('.export-modal')?.remove();return}
@@ -868,14 +992,16 @@ function bindGlobalEvents() {
     const el=e.target
     if(el.id==='seekbar'){seekTo(+el.value);return}
     if(el.id==='project-name'&&state.project){state.project.name=el.value;queueSave();return}
-    const clipKey=el.dataset.bindClip,textKey=el.dataset.bindText,projectKey=el.dataset.bindProject
+    const clipKey=el.dataset.bindClip,textKey=el.dataset.bindText,audioKey=el.dataset.bindAudio,projectKey=el.dataset.bindProject,prefKey=el.dataset.pref
+    if(prefKey){let val=(el.type==='range'||el.type==='number'||el.tagName==='SELECT'&&/^\d/.test(el.value))?+el.value:el.value;state.preferences[prefKey]=val;if(prefKey==='timelineScale')state.pxPerSec=+val;savePreferences();if(state.view==='editor'){fitPreviewFrame();if(prefKey==='timelineScale'||prefKey==='showWaveforms')renderEditor()}return}
     if(clipKey){const c=selectedClip();if(!c)return;const val=el.type==='range'||el.type==='number'?+el.value:el.value;const obj=state.project.clips.find(x=>x.id===c.id);obj[clipKey]=val;if(clipKey==='start')obj.start=Math.min(obj.start,obj.end-.05);if(clipKey==='end')obj.end=Math.max(obj.end,obj.start+.05);queueSave();drawPreview();updateRangeLabel(el);return}
     if(textKey){const t=selectedText();if(!t)return;let val=(el.type==='range'||el.type==='number')?+el.value:el.value;if(textKey==='weight')val=+val;const obj=state.project.texts.find(x=>x.id===t.id);obj[textKey]=val;if(textKey==='start')obj.start=Math.max(0,Math.min(obj.start,obj.end-.05));if(textKey==='end')obj.end=Math.max(obj.end,obj.start+.05);queueSave();drawPreview();updateRangeLabel(el);return}
+    if(audioKey){const c=selectedAudio();if(!c)return;let val=(el.type==='range'||el.type==='number'||el.tagName==='SELECT')?+el.value:el.value;const obj=state.project.audioClips.find(x=>x.id===c.id);obj[audioKey]=val;if(audioKey==='sourceStart')obj.sourceStart=Math.max(0,Math.min(obj.sourceStart,obj.sourceEnd-.05));if(audioKey==='sourceEnd')obj.sourceEnd=Math.max(obj.sourceStart+.05,obj.sourceEnd);if(audioKey==='timelineStart')obj.timelineStart=snapTime(obj.timelineStart);queueSave();syncAudioTracks(true);updateRangeLabel(el);return}
     if(projectKey&&state.project){state.project[projectKey]=el.value;queueSave();drawPreview();return}
   })
   document.addEventListener('change',e=>{
     const el=e.target
-    if(el.matches('[data-bind-clip],[data-bind-text],[data-bind-project]')&&state.view==='editor')setTimeout(()=>renderEditor(),0)
+    if(el.matches('[data-bind-clip],[data-bind-text],[data-bind-audio],[data-bind-project]')&&state.view==='editor')setTimeout(()=>renderEditor(),0);if(el.matches('[data-pref]')){savePreferences();if(state.view==='editor')setTimeout(()=>renderEditor(),0)}
   })
   $('#media-picker').addEventListener('change',async e=>{const files=[...e.target.files];e.target.value='';await importFiles(files,true)})
   $('#subtitle-picker').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await importSrt(file)})
@@ -920,7 +1046,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.2.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=1.3.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

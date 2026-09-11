@@ -347,7 +347,7 @@ body { min-height:100dvh; background:#fff; overscroll-behavior-y:none; }
 
 
 /* ==========================================================
-   Edituno Studio v1.2.0: mobile-first production shell
+   Edituno Pro v1.3.0: mobile-first production shell
    ========================================================== */
 html, body { width:100%; max-width:100%; overflow-x:hidden; touch-action:manipulation; }
 body { -webkit-user-select:none; user-select:none; }
@@ -543,4 +543,125 @@ input, textarea { -webkit-user-select:text; user-select:text; }
 @media (min-width:1900px) {
   .editor-body { grid-template-columns:320px minmax(820px,1fr) 360px; grid-template-rows:minmax(0,1fr) 260px; }
   .preview-zone { padding:30px 30px 78px; }
+}
+
+/* ==========================================================
+   Edituno v1.3.0 Pro polish layer
+   ========================================================== */
+:root {
+  font-family: "SF Pro Text", "SF Pro Display", "Segoe UI Variable Text", "Segoe UI Variable", "Aptos", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --editor-rail: #f8f9fc;
+  --audio: #8055d9;
+  --audio-soft: #f1ecff;
+}
+body { overflow-y:auto; overscroll-behavior-y:auto; font-weight:400; letter-spacing:-.006em; }
+input, textarea, select, button { font-family:inherit; }
+h1,h2,h3,.brand-word,.logo-lockup,.editor-title { font-family:"SF Pro Display","Segoe UI Variable Display","Aptos Display","Segoe UI",system-ui,sans-serif; }
+.landing-page { min-height:100dvh; height:auto; overflow:visible; }
+.landing-main { overflow:visible; }
+.landing-hero h1 { font-weight:760; letter-spacing:-.055em; text-wrap:balance; }
+.landing-hero p { max-width:720px; }
+.landing-header { position:sticky; top:0; z-index:60; backdrop-filter:blur(18px); background:rgba(255,255,255,.92); }
+.editor-settings-btn { font-size:17px; }
+
+/* Timeline is a true multi-track surface. */
+.timeline-panel { grid-template-rows:38px minmax(0,1fr); }
+.timeline-scroll { overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding:10px 10px 14px; }
+.timeline-canvas { position:relative; min-height:214px; padding-bottom:8px; }
+.timeline-ruler { margin-left:42px; height:20px; }
+.track-row { display:grid; grid-template-columns:36px minmax(0,1fr); gap:6px; align-items:stretch; margin-top:5px; min-height:50px; }
+.track-label { display:grid; place-items:center; border-radius:8px; background:#f1f3f8; color:#80899a; font-size:9px; font-weight:800; user-select:none; }
+.video-row { min-height:68px; }
+.audio-row { min-height:54px; }
+.text-row { min-height:34px; }
+.timeline-track { height:68px; min-width:100%; }
+.timeline-text-row, .timeline-audio-row { position:relative; min-width:100%; height:100%; margin:0; }
+.timeline-audio { position:absolute; top:0; height:50px; border:1px solid #cfc3f5; background:linear-gradient(180deg,#f7f3ff,#efe9ff); border-radius:10px; padding:5px 7px; overflow:hidden; color:#563c91; text-align:left; touch-action:none; cursor:grab; }
+.timeline-audio:active,.timeline-audio.dragging { cursor:grabbing; box-shadow:0 10px 30px rgba(85,55,155,.18); z-index:8; }
+.timeline-audio.selected { border-color:var(--azure); box-shadow:0 0 0 2px rgba(36,85,245,.12); }
+.timeline-audio strong { position:absolute; left:7px; right:44px; bottom:5px; font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.timeline-audio small { position:absolute; right:7px; bottom:5px; font-size:8px; color:#7967a7; }
+.audio-wave { position:absolute; inset:5px 6px 18px; display:flex; gap:2px; align-items:center; opacity:.8; }
+.audio-wave i { width:2px; min-height:2px; max-height:100%; border-radius:999px; background:#8a68db; flex:1 1 2px; }
+.timeline-text { top:2px; height:30px; }
+.timeline-clip.dragging { opacity:.58; }
+.playhead { top:8px; bottom:0; }
+.timeline-empty-add { min-height:64px; }
+
+/* Audio mixer */
+.audio-mixer { background:linear-gradient(180deg,#fff,#fcfaff); }
+.mixer-heading { display:flex; align-items:center; gap:10px; padding-bottom:11px; margin-bottom:10px; border-bottom:1px solid var(--line); }
+.mixer-icon { width:38px; height:38px; border-radius:12px; background:var(--audio-soft); color:var(--audio); display:grid; place-items:center; font-size:18px; }
+.mixer-heading strong,.mixer-heading small { display:block; }
+.mixer-heading strong { font-size:12px; max-width:230px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.mixer-heading small { margin-top:3px; color:var(--muted); font-size:9px; }
+.audio-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.audio-actions .danger-btn { grid-column:1/-1; }
+
+/* Settings */
+.settings-modal .modal-head { align-items:flex-start; }
+.settings-modal .modal-head small { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
+.two-settings { grid-template-columns:1fr 1fr; }
+.settings-modal .panel-section { padding:15px; }
+.settings-modal select { min-height:44px; }
+
+/* Better scrolling and layout on desktop. */
+@media (min-width:1100px) {
+  html,body,#app { height:100%; }
+  body:has(.desktop-editor) { overflow:hidden; }
+  .desktop-editor { height:100dvh; min-height:0; overflow:hidden; }
+  .desktop-editor .editor-body { min-width:0; overflow:hidden; grid-template-rows:minmax(0,1fr) 258px; }
+  .desktop-sidebar,.desktop-inspector { min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding-bottom:42px; }
+  .desktop-sidebar::-webkit-scrollbar,.desktop-inspector::-webkit-scrollbar,.timeline-scroll::-webkit-scrollbar { width:9px; height:9px; }
+  .desktop-sidebar::-webkit-scrollbar-thumb,.desktop-inspector::-webkit-scrollbar-thumb,.timeline-scroll::-webkit-scrollbar-thumb { background:#d8dce7; border-radius:999px; border:2px solid #fff; }
+  .desktop-clip-stack { display:grid; gap:12px; padding-bottom:22px; }
+  .preview-zone { min-width:0; }
+  .timeline-panel { min-width:0; }
+  .timeline-canvas { min-height:214px; }
+  .landing-main { min-height:calc(100dvh - 72px); }
+  .modal-body { scrollbar-gutter:stable; }
+}
+
+/* Mobile editor behaves like an app, not a squeezed desktop page. */
+@media (max-width:1099px) {
+  body:has(.mobile-editor) { overflow:hidden; overscroll-behavior:none; }
+  .editor-page.mobile-editor { height:100dvh; min-height:100dvh; }
+  .mobile-editor .editor-body { grid-template-rows:minmax(175px,1fr) 46px minmax(164px,34vh); min-height:0; }
+  .mobile-editor .timeline-panel { min-height:164px; }
+  .mobile-editor .timeline-canvas { min-height:202px; }
+  .editor-tools { display:flex; grid-template-columns:none; overflow-x:auto; scrollbar-width:none; gap:3px; padding:6px 8px; scroll-snap-type:x proximity; }
+  .editor-tools::-webkit-scrollbar { display:none; }
+  .tool-btn { flex:0 0 70px; min-width:70px; min-height:56px; scroll-snap-align:center; }
+  .sheet-content { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  .bottom-sheet { max-height:min(76dvh,680px); }
+  .sheet-content { max-height:calc(min(76dvh,680px) - 66px - var(--safe-bottom)); }
+  .preset-carousel { scroll-snap-type:x mandatory; }
+  .preset-card { scroll-snap-align:start; }
+  .timeline-scroll { -webkit-overflow-scrolling:touch; }
+  .editor-header-actions { min-width:max-content; }
+  .editor-settings-btn { display:grid; }
+}
+
+@media (max-width:430px) {
+  .editor-header { grid-template-columns:40px minmax(0,1fr) auto; }
+  .editor-header .icon-btn { width:38px; height:38px; }
+  .editor-header .primary-btn { padding:0 10px; }
+  .editor-settings-btn { display:none !important; }
+  .editor-title { font-size:13px; }
+  .mobile-editor .editor-body { grid-template-rows:minmax(160px,1fr) 44px minmax(158px,34vh); }
+  .track-row { grid-template-columns:30px minmax(0,1fr); gap:4px; }
+  .timeline-ruler { margin-left:36px; }
+  .playhead { margin-left:-6px; }
+  .timeline-toolbar-left strong { font-size:10px; }
+  .timecode { min-width:66px; font-size:9px; }
+  .audio-actions { grid-template-columns:1fr; }
+  .audio-actions .danger-btn { grid-column:auto; }
+}
+
+@media (max-width:340px) {
+  .tool-btn { flex-basis:64px; min-width:64px; }
+  .editor-header .export-btn span { display:none; }
+  .editor-header .export-btn { width:40px; padding:0; }
+  .timeline-toolbar { padding:0 6px; }
+  .timeline-toolbar button { min-width:29px; }
 }

@@ -24,6 +24,23 @@ if (!js.includes('const $$ =')) {
 if (!html.includes('const $$ =')) {
   throw new Error('Generated bundle validation failed: literal $$ was corrupted during HTML assembly')
 }
+
+const requiredRuntimeMarkers = [
+  'function audioClipPanel()',
+  'function bindTimelineInteractions()',
+  'function scheduleAudioTracks(',
+  'data-bind-audio',
+  'function settingsModal()'
+]
+for (const marker of requiredRuntimeMarkers) {
+  if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
+}
+if (!template.includes('maximum-scale=1') || !template.includes('user-scalable=no')) {
+  throw new Error('Mobile viewport lock is missing')
+}
+if (!css.includes('.timeline-audio') || !css.includes('.desktop-sidebar')) {
+  throw new Error('Responsive multitrack CSS validation failed')
+}
 fs.writeFileSync(path.join(dist, 'index.html'), html)
 
 function copyDir(from, to) {
@@ -37,4 +54,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v1.2.0 -> ${dist}`)
+console.log(`Built Edituno v1.3.0 -> ${dist}`)
