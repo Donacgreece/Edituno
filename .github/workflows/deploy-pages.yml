@@ -54,6 +54,10 @@ jobs:
           grep -Fq "preset-card" dist/index.html
           grep -Fq "element-library" dist/index.html
           grep -Fq "function addAssetToOverlay" dist/index.html
+          grep -Fq "bindBottomSheetGesture" dist/index.html
+          grep -Fq "FLUENT_TREE_API" dist/index.html
+          grep -Fq "desktop-tool-menu" dist/index.html
+          grep -Fq "4K · 2160p" dist/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

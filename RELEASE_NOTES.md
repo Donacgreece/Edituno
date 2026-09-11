@@ -1,10 +1,11 @@
-# Edituno Studio v2.1.0 — Layers
+# Edituno Studio v2.2.0
 
-- Adds V2 and V3 overlay video/image tracks for simultaneous composition.
-- Mobile touch drag can move imported visual assets to V2/V3 and can convert a V1 clip into an overlay track.
-- Overlay clips can be dragged horizontally and between V2/V3 on touch or mouse.
-- Direct preview manipulation now works for primary clips, overlays and built-in elements, including drag, pinch-to-scale and resize handle.
-- Adds an Elements library with creator CTAs, arrows, highlights, lower thirds and labels. PNG/JPG/WebP/GIF files can be imported and added as overlays.
-- Rebuilds filter and transition controls as visual cards instead of text lists.
-- Canvas ratio selector is horizontal, spaced, centered and visually communicates each format.
-- Preserves multitrack audio, effects, transitions, custom scrollbars, iOS keyboard stabilization and local-first storage.
+## Workspace and library upgrade
+
+- Draggable bottom sheets with collapsed, half and full snap points on mobile and desktop.
+- Timeline and sheet scroll positions are preserved across rerenders and element edits.
+- Desktop now exposes the same Media, Edit, Text, Elements, Audio, Effects, Adjust, Transitions and Canvas tool set as mobile.
+- Microsoft Fluent Emoji integration provides the complete 1,285 Color SVG and 1,285 3D PNG catalog on demand. The catalog is cached locally and selected assets are stored inside the project.
+- 4K export option added for 16:9, 9:16, 1:1 and 4:5 projects.
+- 4K bitrate increased for local rendering.
+- Official Edituno logo unchanged.

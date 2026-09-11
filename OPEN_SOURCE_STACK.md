@@ -29,4 +29,9 @@ License: MIT.
 Use: architectural reference for a browser/mobile editor and possible isolated reusable subsystems after code-level review.
 We do not copy its product UI or branding.
 
-- Fluent Emoji (MIT): approved source for a future large built-in sticker/emoji library. Full pack is not bundled in v2.1 to keep the launch PWA small.
+## Used in v2.2.0
+
+### Microsoft Fluent Emoji
+License: MIT.
+Use: on-demand searchable element library. Edituno loads the upstream catalog from the official Microsoft GitHub repository, offers Color SVG and 3D PNG variants, and stores only assets selected by the user inside the local project.
+

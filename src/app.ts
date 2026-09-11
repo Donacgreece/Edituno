@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.1.0 Layers production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.2.0 Workspace production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -53,7 +53,7 @@ const STRINGS = {
     homeLead:'Create. Cut. Share.', homeBody:'A private studio that feels native on every screen. No upload. No watermark.',
     free:'Free. No watermark. No account.', newProject:'New project', templates:'Start with a format', projects:'Projects', settings:'Settings',
     private:'Local by default', privateSub:'Your media stays on this device.', offline:'Works offline', offlineSub:'Install once and keep editing.', noAccount:'No account', noAccountSub:'Open Edituno and start.',
-    open:'Open', delete:'Delete', edit:'Edit', export:'Export', media:'Media', text:'Text', audio:'Audio', effects:'Effects', canvas:'Canvas',
+    open:'Open', delete:'Delete', edit:'Edit', export:'Export', media:'Media', text:'Text', audio:'Audio', effects:'Effects', elements:'Elements', canvas:'Canvas',
     addMedia:'Add media', addTimeline:'Add', soundtrack:'Soundtrack', useSoundtrack:'Use', remove:'Remove', captions:'Captions', importSrt:'Import SRT', fadeIn:'Fade in', fadeOut:'Fade out',
     addTitle:'Add title', addCaption:'Add caption', addSticker:'Add sticker', selectedClip:'Selected clip', clip:'Clip', trim:'Trim', transform:'Transform',
     speed:'Speed', volume:'Volume', opacity:'Opacity', scale:'Scale', rotation:'Rotation', fit:'Fit', cover:'Cover', contain:'Contain', mirror:'Mirror',
@@ -81,7 +81,7 @@ const STRINGS = {
     homeLead:'Δημιούργησε. Κόψε. Μοιράσου.', homeBody:'Ένα ιδιωτικό studio που νιώθει φυσικό σε κάθε οθόνη. Χωρίς upload. Χωρίς watermark.',
     free:'Δωρεάν. Χωρίς watermark. Χωρίς λογαριασμό.', newProject:'Νέο project', templates:'Ξεκίνα με format', projects:'Projects', settings:'Ρυθμίσεις',
     private:'Τοπικά από προεπιλογή', privateSub:'Τα αρχεία μένουν στη συσκευή σου.', offline:'Λειτουργεί offline', offlineSub:'Εγκατέστησέ το μία φορά και συνέχισε.', noAccount:'Χωρίς λογαριασμό', noAccountSub:'Άνοιξε το Edituno και ξεκίνα.',
-    open:'Άνοιγμα', delete:'Διαγραφή', edit:'Επεξεργασία', export:'Export', media:'Media', text:'Κείμενο', audio:'Ήχος', effects:'Εφέ', canvas:'Καμβάς',
+    open:'Άνοιγμα', delete:'Διαγραφή', edit:'Επεξεργασία', export:'Export', media:'Media', text:'Κείμενο', audio:'Ήχος', effects:'Εφέ', elements:'Στοιχεία', canvas:'Καμβάς',
     addMedia:'Προσθήκη media', addTimeline:'Προσθήκη', soundtrack:'Μουσική', useSoundtrack:'Χρήση', remove:'Αφαίρεση', captions:'Υπότιτλοι', importSrt:'Εισαγωγή SRT', fadeIn:'Fade in', fadeOut:'Fade out',
     addTitle:'Προσθήκη τίτλου', addCaption:'Προσθήκη caption', addSticker:'Προσθήκη sticker', selectedClip:'Επιλεγμένο clip', clip:'Clip', trim:'Trim', transform:'Μετασχηματισμός',
     speed:'Ταχύτητα', volume:'Ένταση', opacity:'Διαφάνεια', scale:'Μέγεθος', rotation:'Περιστροφή', fit:'Προσαρμογή', cover:'Γέμισμα', contain:'Ολόκληρο', mirror:'Καθρέφτης',
@@ -106,6 +106,58 @@ const STRINGS = {
   }
 }
 
+
+const FLUENT_TREE_API='https://api.github.com/repos/microsoft/fluentui-emoji/git/trees/main?recursive=1'
+const FLUENT_RAW_ROOT='https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/'
+const FLUENT_CACHE_KEY='edituno-fluent-emoji-catalog-v1'
+function loadFluentCatalogCache(){
+  try { const saved=JSON.parse(localStorage.getItem(FLUENT_CACHE_KEY)||'[]'); return Array.isArray(saved)?saved:[] } catch { return [] }
+}
+function fluentRawUrl(path){return FLUENT_RAW_ROOT+String(path||'').split('/').map(encodeURIComponent).join('/')}
+function fluentStylePath(entry,style='color'){
+  if(style==='3d')return entry.d3
+  return entry.color
+}
+async function ensureFluentCatalog(){
+  if(state.fluentCatalog?.length||state.fluentLoading)return
+  state.fluentLoading=true;state.fluentError=''
+  try{
+    const response=await fetch(FLUENT_TREE_API,{headers:{Accept:'application/vnd.github+json'}})
+    if(!response.ok)throw new Error(`GitHub ${response.status}`)
+    const json=await response.json()
+    const entries=(json.tree||[]).filter(x=>x.type==='blob'&&/\/Color\/.*_color\.svg$/i.test(x.path)).map(x=>{
+      const parts=x.path.split('/'),name=parts[1]||'Emoji',color=x.path
+      const file=parts.at(-1)||''
+      const d3=color.replace('/Color/','/3D/').replace(/_color\.svg$/i,'_3d.png')
+      return {name,color,d3}
+    }).sort((a,b)=>a.name.localeCompare(b.name))
+    state.fluentCatalog=entries
+    try{localStorage.setItem(FLUENT_CACHE_KEY,JSON.stringify(entries))}catch{}
+  }catch(error){state.fluentError=String(error?.message||error)}
+  finally{state.fluentLoading=false;if(state.view==='editor')renderEditor()}
+}
+function fluentMatches(){
+  const q=String(state.fluentQuery||'').trim().toLowerCase()
+  const list=q?state.fluentCatalog.filter(x=>x.name.toLowerCase().includes(q)):state.fluentCatalog
+  return list.slice(0,Math.max(30,state.fluentVisible||60))
+}
+async function addFluentElement(name,path){
+  if(!state.project||!path)return
+  try{
+    toast(state.language==='el'?'Λήψη στοιχείου…':'Downloading element…')
+    const response=await fetch(fluentRawUrl(path))
+    if(!response.ok)throw new Error(`HTTP ${response.status}`)
+    const blob=await response.blob(), ext=path.toLowerCase().endsWith('.png')?'png':'svg'
+    const file=new File([blob],`${String(name||'fluent').replace(/[^a-z0-9_-]+/gi,'_')}.${ext}`,{type:blob.type||(ext==='png'?'image/png':'image/svg+xml')})
+    const meta=await mediaMetadata(file),id=uid(),asset={id,name:`Fluent · ${name}`,type:'image',mimeType:file.type,duration:Math.max(3,visualDuration()?Math.min(6,visualDuration()):4),width:meta.width,height:meta.height,size:file.size,waveform:null,source:'microsoft-fluent-emoji'}
+    await putBlob(id,file);state.project.assets.push(asset);state.urls[id]=URL.createObjectURL(file)
+    pushHistory()
+    const clip=defaultOverlayClip(asset,state.currentTime,3);clip.scale=.28;clip.fit='contain';clip.volume=0
+    state.project.overlays.push(clip);state.project.updatedAt=Date.now();state.selected={type:'overlay',id:clip.id};state.tool='elements';state.sheet=isMobileViewport()?'elements':null
+    queueSave();renderEditor();toast(state.language==='el'?'Το στοιχείο προστέθηκε':'Element added','success')
+  }catch(error){console.error(error);toast(state.language==='el'?'Δεν ήταν δυνατή η λήψη του στοιχείου':'Could not download element','error')}
+}
+
 const state = {
   language: safeLanguage(),
   view: 'home', projects: [], project: null, urls: {}, currentTime: 0, playing: false,
@@ -113,7 +165,9 @@ const state = {
   exportController: null, exportResult: null, exportUrl: null, pxPerSec: 48, currentPreviewAsset: null,
   settingsOpen: false, installOpen: false, projectHubOpen: false, homeMenuOpen: false, adjustKey: 'brightness',
   projectMenuId: null, renameProjectId: null, confirmDialog: null, mediaImportContext: null,
-  preferences: loadPreferences(), audioDrag: null, assetDrag:null
+  preferences: loadPreferences(), audioDrag: null, assetDrag:null,
+  sheetSnap:'half', timelineScrollLeft:0, sheetScrollTop:0,
+  fluentCatalog:loadFluentCatalogCache(), fluentLoading:false, fluentError:'', fluentQuery:'', fluentStyle:'color', fluentVisible:60
 }
 state.pxPerSec=Number(state.preferences.timelineScale)||48
 const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key
@@ -386,10 +440,11 @@ function previewDimensions(ratio) {
 }
 function exportDimensions(ratio, quality) {
   const q=Number(quality)
-  if (ratio==='9:16') return q===1080?[1080,1920]:[720,1280]
-  if (ratio==='1:1') return q===1080?[1080,1080]:[720,720]
-  if (ratio==='4:5') return q===1080?[1080,1350]:[720,900]
-  return q===1080?[1920,1080]:[1280,720]
+  const hi=q>=2160
+  if (ratio==='9:16') return hi?[2160,3840]:q===1080?[1080,1920]:[720,1280]
+  if (ratio==='1:1') return hi?[2160,2160]:q===1080?[1080,1080]:[720,720]
+  if (ratio==='4:5') return hi?[2160,2700]:q===1080?[1080,1350]:[720,900]
+  return hi?[3840,2160]:q===1080?[1920,1080]:[1280,720]
 }
 
 async function loadImage(url) {
@@ -1142,7 +1197,7 @@ function settingsModal(){
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('language',18)}</span><div><strong>${tr('language')}</strong><small>${el?'Interface':'Interface'}</small></div></div><div class="language-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span><i>${state.language==='el'?svgIcon('check',14):''}</i></button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en"><span>English</span><i>${state.language==='en'?svgIcon('check',14):''}</i></button></div></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('timeline',18)}</span><div><strong>Timeline</strong><small>${el?'Editing behavior':'Editing behavior'}</small></div></div><button class="setting-row" data-action="pref-toggle" data-key="snap"><span><strong>${preferenceLabel('snap')}</strong><small>${el?'Αυτόματη ευθυγράμμιση clips':'Snap clips to edit points'}</small></span><i class="switch ${p.snap?'on':''}"><b></b></i></button><button class="setting-row" data-action="pref-toggle" data-key="showWaveforms"><span><strong>${preferenceLabel('showWaveforms')}</strong><small>${el?'Waveforms στο audio track':'Show waveforms in audio track'}</small></span><i class="switch ${p.showWaveforms?'on':''}"><b></b></i></button><label class="setting-slider"><span><strong>${preferenceLabel('timelineScale')}</strong><b>${p.timelineScale||48}</b></span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('effects',18)}</span><div><strong>${el?'Playback':'Playback'}</strong><small>${el?'Preview performance':'Preview performance'}</small></div></div><label class="setting-select"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></section>
-      <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('export',18)}</span><div><strong>${tr('export')}</strong><small>${el?'Defaults':'Defaults'}</small></div></div><div class="settings-split"><label class="setting-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="setting-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24 fps</option><option value="30" ${+p.defaultFps===30?'selected':''}>30 fps</option><option value="60" ${+p.defaultFps===60?'selected':''}>60 fps</option></select></label></div></section>
+      <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('export',18)}</span><div><strong>${tr('export')}</strong><small>${el?'Defaults':'Defaults'}</small></div></div><div class="settings-split"><label class="setting-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+p.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="setting-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24 fps</option><option value="30" ${+p.defaultFps===30?'selected':''}>30 fps</option><option value="60" ${+p.defaultFps===60?'selected':''}>60 fps</option></select></label></div></section>
       <section class="settings-card"><button class="settings-link" data-action="install"><span>${svgIcon('install',18)}</span><span><strong>${tr('installApp')}</strong><small>PWA · Offline</small></span>${svgIcon('right',16)}</button><button class="settings-link" data-action="persist-storage"><span>${svgIcon('folder',18)}</span><span><strong>${tr('requestStorage')}</strong><small>${el?'Κράτησε τα projects διαθέσιμα':'Keep projects available'}</small></span>${svgIcon('right',16)}</button></section>
       <button class="settings-danger" data-action="clear-all">${svgIcon('trash',16)}<span>${tr('clearAll')}</span></button>
     </div>
@@ -1191,8 +1246,29 @@ function bindPreviewInteractions(){
 }
 
 
+
+function applySheetSnap(sheet,snap){
+  if(!sheet)return
+  state.sheetSnap=snap
+  sheet.classList.remove('snap-collapsed','snap-half','snap-full','dragging')
+  sheet.classList.add(`snap-${snap}`);sheet.style.height=''
+  const backdrop=$('.sheet-backdrop');backdrop?.classList.toggle('collapsed',snap==='collapsed')
+}
+function bindBottomSheetGesture(){
+  const sheet=$('.bottom-sheet.open'),grabber=sheet?.querySelector('.sheet-grabber');if(!sheet||!grabber)return
+  applySheetSnap(sheet,state.sheetSnap||'half')
+  let startY=0,startH=0,moved=false,pointerId=null
+  const heights=()=>({collapsed:42,half:Math.min(window.innerHeight*.54,560),full:Math.min(window.innerHeight*.86,820)})
+  const move=e=>{if(e.pointerId!==pointerId)return;e.preventDefault();moved=true;const h=heights(),next=clamp(startH+(startY-e.clientY),h.collapsed,h.full);sheet.classList.add('dragging');sheet.style.height=`${next}px`;const backdrop=$('.sheet-backdrop');if(backdrop)backdrop.classList.remove('collapsed')}
+  const finish=e=>{if(pointerId===null||e.pointerId!==pointerId)return;window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',finish);window.removeEventListener('pointercancel',finish);const h=heights(),current=sheet.getBoundingClientRect().height;let snap='half';if(current<(h.collapsed+h.half)/2)snap='collapsed';else if(current>(h.half+h.full)/2)snap='full';applySheetSnap(sheet,snap);pointerId=null;if(!moved&&snap==='collapsed')applySheetSnap(sheet,'half')}
+  grabber.addEventListener('pointerdown',e=>{e.preventDefault();pointerId=e.pointerId;startY=e.clientY;startH=sheet.getBoundingClientRect().height;moved=false;grabber.setPointerCapture?.(e.pointerId);window.addEventListener('pointermove',move,{passive:false});window.addEventListener('pointerup',finish,{passive:false});window.addEventListener('pointercancel',finish,{passive:false})},{passive:false})
+  grabber.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();applySheetSnap(sheet,state.sheetSnap==='collapsed'?'half':'collapsed')}})
+}
+
 function renderEditor() {
   if(!state.project) return
+  const previousTimeline=$('#timeline-scroll'); if(previousTimeline)state.timelineScrollLeft=previousTimeline.scrollLeft
+  const previousSheet=$('.sheet-content'); if(previousSheet)state.sheetScrollTop=previousSheet.scrollTop
   document.body.classList.toggle('editor-open', isMobileViewport())
   document.body.classList.toggle('mobile-app-shell', isMobileViewport())
   scheduleMobileViewportSync()
@@ -1205,7 +1281,7 @@ function renderEditor() {
     </header>
 
     <main class="editor-workspace">
-      <aside class="asset-browser desktop-editor-only"><div class="panel-top"><span class="eyebrow">LIBRARY</span><strong>${tr('media')}</strong></div>${desktopSidebar()}</aside>
+      <aside class="asset-browser desktop-editor-only"><div class="panel-top"><span class="eyebrow">STUDIO</span><strong>${desktopToolTitle()}</strong></div>${desktopSidebar()}</aside>
 
       <section class="editor-center">
         <div class="viewer-shell">
@@ -1225,11 +1301,16 @@ function renderEditor() {
 
     <footer class="mobile-tool-dock mobile-editor-only"><div class="tool-scroller">${toolButton('media','media',tr('media'))}${toolButton('edit','edit',tr('quickEdit'))}${toolButton('text','text',tr('text'))}${toolButton('elements','effects',state.language==='el'?'Στοιχεία':'Elements')}${toolButton('audio','audio',tr('audio'))}${toolButton('effects','effects',tr('effects'))}${toolButton('adjust','adjust',tr('adjust'))}${toolButton('transitions','transition',tr('transitions'))}${toolButton('canvas','canvas',tr('canvas'))}</div></footer>
 
-    <div class="sheet-backdrop ${state.sheet?'open':''}" data-action="sheet-close"></div>
-    <section class="bottom-sheet ${state.sheet?'open':''}" aria-modal="true"><div class="sheet-grabber"></div><header class="sheet-header"><div><span class="eyebrow">EDITUNO</span><strong>${sheetTitle()}</strong></div><button class="round-icon" data-action="sheet-close">${svgIcon('close',17)}</button></header><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
+    <div class="sheet-backdrop ${state.sheet?'open':''} ${state.sheetSnap==='collapsed'?'collapsed':''}" data-action="sheet-close"></div>
+    <section class="bottom-sheet ${state.sheet?'open':''} snap-${state.sheetSnap||'half'}" aria-modal="true"><div class="sheet-grabber" role="button" tabindex="0" aria-label="${state.language==='el'?'Σύρε για αλλαγή ύψους':'Drag to resize panel'}"></div><header class="sheet-header"><div><span class="eyebrow">EDITUNO</span><strong>${sheetTitle()}</strong></div><button class="round-icon" data-action="sheet-close">${svgIcon('close',17)}</button></header><div class="sheet-content">${state.sheet?panelContent(state.sheet):''}</div></section>
     ${state.projectHubOpen?mobileProjectHubModal():''}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}${confirmationModal()}
   </div><div class="toast-stack" id="toasts"></div>`
-  requestAnimationFrame(()=>{ fitPreviewFrame(); updatePlaybackUi(); bindTimelineInteractions(); bindPreviewInteractions() })
+  requestAnimationFrame(()=>{
+    fitPreviewFrame();updatePlaybackUi();bindTimelineInteractions();bindPreviewInteractions();bindBottomSheetGesture()
+    const sc=$('#timeline-scroll');if(sc){sc.scrollLeft=state.timelineScrollLeft||0;sc.addEventListener('scroll',()=>{state.timelineScrollLeft=sc.scrollLeft},{passive:true})}
+    const sh=$('.sheet-content');if(sh){sh.scrollTop=state.sheetScrollTop||0;sh.addEventListener('scroll',()=>{state.sheetScrollTop=sh.scrollTop},{passive:true})}
+    if(state.tool==='elements'||state.sheet==='elements')ensureFluentCatalog()
+  })
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
 function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
@@ -1240,7 +1321,10 @@ function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.
 function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
 function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}" aria-pressed="${state.tool===tool?'true':'false'}"><span class="tool-icon">${svgIcon(iconName,20)}</span><span>${label}</span></button>`}
 function sheetTitle(){if(state.sheet==='edit')return tr('quickEdit');if(state.sheet==='effects')return tr('effects');if(state.sheet==='adjust')return tr('adjust');if(state.sheet==='transitions')return tr('transitions');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
-function desktopSidebar(){return `<div class="desktop-tool-tabs"><button class="active" data-action="pick-media">${svgIcon('plus',14)}<span>${tr('media')}</span></button><button data-action="add-text" data-kind="title">${svgIcon('text',14)}<span>${tr('text')}</span></button><button data-action="open-srt">${svgIcon('captions',14)}<span>SRT</span></button></div>${mediaPanel()}`}
+const EDITOR_TOOL_DEFS=[['media','media'],['edit','edit'],['text','text'],['elements','effects'],['audio','audio'],['effects','effects'],['adjust','adjust'],['transitions','transition'],['canvas','canvas']]
+function desktopToolTitle(){const key=state.tool||'media';if(key==='edit')return tr('quickEdit');if(key==='adjust')return tr('adjust');if(key==='transitions')return tr('transitions');return tr(key)}
+function desktopSidebar(){return `<nav class="desktop-tool-menu" aria-label="Editor tools">${EDITOR_TOOL_DEFS.map(([tool,icon])=>`<button class="${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}" title="${desktopToolTitleFor(tool)}"><span>${svgIcon(icon,17)}</span><small>${desktopToolTitleFor(tool)}</small></button>`).join('')}</nav><div class="desktop-tool-content">${panelContent(state.tool||'media')}</div>`}
+function desktopToolTitleFor(tool){if(tool==='edit')return tr('quickEdit');if(tool==='adjust')return tr('adjust');if(tool==='transitions')return tr('transitions');return tr(tool)}
 function desktopInspector(){return `${state.selected?.type==='clip'||state.selected?.type==='overlay'?clipPanel():state.selected?.type==='element'?elementPanel():state.selected?.type==='text'?textPanel():state.selected?.type==='audio'?audioClipPanel():canvasPanel()}`}
 function panelContent(tool){if(tool==='media')return mediaPanel();if(tool==='edit')return editPanel();if(tool==='text')return textPanel(true);if(tool==='elements')return elementPanel();if(tool==='audio')return audioPanel();if(tool==='effects')return effectsPanel();if(tool==='adjust')return adjustPanel();if(tool==='transitions')return transitionPanel();if(tool==='canvas')return canvasPanel();return''}
 
@@ -1290,7 +1374,11 @@ const ELEMENT_PRESETS=[
 ]
 const EMOJI_PRESETS=['🔥','✨','❤️','🚀','⭐','👀','💯','🎉','👍','👏','😍','😎','😂','🤯','✅','❌','⚡','💡','🎮','🎬','🎵','📌','👉','⬇️']
 function addElement(kind){const isEmoji=String(kind).startsWith('emoji:');const preset=isEmoji?{kind:'emoji',name:String(kind).slice(6)||'✨',color:'#ffffff'}:(ELEMENT_PRESETS.find(x=>x.kind===kind)||ELEMENT_PRESETS[0]);const dur=Math.max(3,Math.min(6,visualDuration()||3)),item={id:uid(),kind:preset.kind,label:isEmoji?preset.name:(preset.name==='Subscribe'?'SUBSCRIBE':preset.name),timelineStart:Math.max(0,state.currentTime||0),duration:Math.min(dur,Math.max(1,(visualDuration()||dur)-(state.currentTime||0))||dur),x:.5,y:preset.kind==='lowerthird'?.8:.5,scale:isEmoji?.9:1,rotation:0,opacity:1,color:preset.color,z:20};mutate(p=>{p.elements.push(item);state.selected={type:'element',id:item.id};state.tool='elements';state.sheet=isMobileViewport()?'elements':null})}
-function elementPanel(){const selected=selectedElement();return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language==='el'?'Creator στοιχεία':'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e=>`<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon,20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>Stickers</h3><div class="emoji-library">${EMOJI_PRESETS.map(e=>`<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div><p class="helper">${state.language==='el'?'Μπορείς επίσης να κάνεις import PNG, JPG, WebP ή GIF και να το προσθέσεις ως overlay.':'You can also import PNG, JPG, WebP or GIF and add it as an overlay.'}</p></div>${selected?`<div class="panel-section"><h3>${state.language==='el'?'Επιλεγμένο στοιχείο':'Selected element'}</h3>${rangeField('scale',selected.scale,.2,3,.01,true,'element')}${rangeField('rotation',selected.rotation,-180,180,1,true,'element')}${rangeField('opacity',selected.opacity,0,1,.01,true,'element')}${selected.kind!=='emoji'?`<label class="field"><span>${state.language==='el'?'Χρώμα':'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color,'#2455F5')}"></label>`:''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>`:''}</div>`}
+function elementPanel(){
+  const selected=selectedElement(),fluent=fluentMatches(),q=escapeHtml(state.fluentQuery||''),style=state.fluentStyle||'color'
+  const fluentSection=`<div class="panel-section borderless-mobile fluent-section"><div class="panel-heading-row"><div><h3>Microsoft Fluent Emoji</h3><small>${state.fluentCatalog.length?`${state.fluentCatalog.length.toLocaleString()} assets · MIT`:'MIT · 1,285 Color + 1,285 3D assets'}</small></div><div class="fluent-style-toggle"><button class="${style==='color'?'active':''}" data-action="fluent-style" data-value="color">Color</button><button class="${style==='3d'?'active':''}" data-action="fluent-style" data-value="3d">3D</button></div></div><label class="fluent-search">${svgIcon('search',15)}<input data-fluent-search type="search" value="${q}" placeholder="${state.language==='el'?'Αναζήτηση 1.285 στοιχείων':'Search 1,285 elements'}"></label>${state.fluentLoading?`<div class="fluent-loading">${state.language==='el'?'Φόρτωση πλήρους βιβλιοθήκης…':'Loading full library…'}</div>`:state.fluentError?`<div class="fluent-error"><span>${state.language==='el'?'Δεν φορτώθηκε η βιβλιοθήκη.':'Library could not load.'}</span><button data-action="fluent-retry">Retry</button></div>`:state.fluentCatalog.length?`<div class="fluent-grid">${fluent.map(entry=>{const path=fluentStylePath(entry,style);return `<button class="fluent-card" data-action="add-fluent" data-name="${escapeHtml(entry.name)}" data-path="${escapeHtml(path)}" title="${escapeHtml(entry.name)}"><span><img loading="lazy" decoding="async" src="${escapeHtml(fluentRawUrl(path))}" alt=""></span><small>${escapeHtml(entry.name)}</small></button>`}).join('')}</div>${fluent.length<state.fluentCatalog.filter(x=>!state.fluentQuery||x.name.toLowerCase().includes(String(state.fluentQuery).toLowerCase())).length?`<button class="secondary-btn full" data-action="fluent-more">${state.language==='el'?'Περισσότερα':'Load more'}</button>`:''}`:`<button class="secondary-btn full" data-action="fluent-retry">${state.language==='el'?'Φόρτωση Fluent library':'Load Fluent library'}</button>`}<p class="helper">${state.language==='el'?'Τα Fluent Emoji φορτώνονται κατά απαίτηση από το επίσημο Microsoft repository. Μόλις τα προσθέσεις σε project αποθηκεύονται τοπικά στη συσκευή.':'Fluent Emoji are loaded on demand from the official Microsoft repository. Once added to a project they are stored locally on your device.'}</p></div>`
+  return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language==='el'?'Creator στοιχεία':'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e=>`<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon,20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${state.language==='el'?'Γρήγορα stickers':'Quick stickers'}</h3><div class="emoji-library">${EMOJI_PRESETS.map(e=>`<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div></div>${fluentSection}${selected?`<div class="panel-section"><h3>${state.language==='el'?'Επιλεγμένο στοιχείο':'Selected element'}</h3>${rangeField('scale',selected.scale,.2,3,.01,true,'element')}${rangeField('rotation',selected.rotation,-180,180,1,true,'element')}${rangeField('opacity',selected.opacity,0,1,.01,true,'element')}${selected.kind!=='emoji'?`<label class="field"><span>${state.language==='el'?'Χρώμα':'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color,'#2455F5')}"></label>`:''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>`:''}</div>`
+}
 
 function clipPanel(){const c=selectedVisual();if(!c)return effectsEmpty();return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness',c.brightness,50,150,1,false,'clip')}${rangeField('exposure',c.exposure,-50,50,1,false,'clip')}${rangeField('contrast',c.contrast,50,160,1,false,'clip')}${rangeField('saturation',c.saturation,0,200,1,false,'clip')}${rangeField('temperature',c.temperature,-50,50,1,false,'clip')}${rangeField('vignette',c.vignette,0,100,1,false,'clip')}${rangeField('grain',c.grain,0,100,1,false,'clip')}${rangeField('hue',c.hue,-180,180,1,false,'clip')}${rangeField('blur',c.blur,0,8,.1,false,'clip')}${rangeField('grayscale',c.grayscale,0,100,1,false,'clip')}${rangeField('sepia',c.sepia,0,100,1,false,'clip')}${rangeField('invert',c.invert||0,0,100,1,false,'clip')}</div>${transitionPanel()}</div>`}
 function filterPreviewStyle(n){const f={original:'',vivid:'filter:saturate(1.4) contrast(1.1)',warm:'filter:sepia(.25) saturate(1.2)',cool:'filter:hue-rotate(18deg)',mono:'filter:grayscale(1) contrast(1.15)',film:'filter:sepia(.3) saturate(.8) contrast(1.1)',dream:'filter:brightness(1.15) saturate(1.05);opacity:.82',crisp:'filter:contrast(1.3) saturate(1.12)',cinematic:'filter:contrast(1.2) saturate(.9) sepia(.08)',retro:'filter:sepia(.3) saturate(.85) contrast(.95)',soft:'filter:brightness(1.1) contrast(.9)',neon:'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)',matte:'filter:saturate(.8) contrast(.86) brightness(1.07)',sunset:'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)',ice:'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)',noir:'filter:grayscale(1) contrast(1.45) brightness(.96)',tealorange:'filter:saturate(1.22) contrast(1.2) hue-rotate(-16deg)',bleach:'filter:saturate(.62) contrast(1.34) brightness(1.1)',rose:'filter:saturate(1.18) sepia(.12) hue-rotate(-12deg)',forest:'filter:saturate(1.08) hue-rotate(18deg) contrast(1.12)',gold:'filter:sepia(.18) saturate(1.16) brightness(1.05)',highkey:'filter:brightness(1.18) contrast(.88)',lowkey:'filter:brightness(.82) contrast(1.36)',cyber:'filter:saturate(1.7) contrast(1.32) hue-rotate(28deg)'};return f[n]||''}
@@ -1445,7 +1533,7 @@ function bindAssetDragInteractions(){
 
 function renderExportModal() {
   const old=$('.modal-backdrop.export-modal'); if(old)old.remove()
-  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${tr('browserLimit')}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
+  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+state.preferences.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${tr('browserLimit')} ${state.language==='el'?'Το 4K απαιτεί αρκετή μνήμη και η διαθεσιμότητα εξαρτάται από browser και συσκευή.':'4K needs substantial memory and availability depends on the browser and device.'}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
 }
 
 function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); state.view==='editor'?renderEditor():renderHome() }
@@ -1476,7 +1564,7 @@ async function exportProjectLocal(quality,fps,onProgress,signal) {
   const ctx=canvas.getContext('2d',{alpha:false}), stream=canvas.captureStream(fps)
   const audioContext=new AudioContext(), dest=audioContext.createMediaStreamDestination(); const atrack=dest.stream.getAudioTracks()[0]; if(atrack)stream.addTrack(atrack)
   const mime=pickMime(); if(!mime)throw new Error('mediarecorder')
-  const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:quality===1080?10_000_000:5_500_000,audioBitsPerSecond:192_000})
+  const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:quality>=2160?35_000_000:quality===1080?10_000_000:5_500_000,audioBitsPerSecond:192_000})
   const chunks=[];recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data)
   const done=new Promise((resolve,reject)=>{recorder.onerror=()=>reject(new Error('record'));recorder.onstop=()=>resolve(new Blob(chunks,{type:mime}))})
   await audioContext.resume();const audioNodes=await scheduleAudioTracks(project,audioContext,dest);recorder.start(500)
@@ -1503,7 +1591,7 @@ function renderSegment(duration,fps,draw,signal){return new Promise((resolve,rej
 function getAsset(id,project=state.project){return project?.assets?.find(a=>a.id===id)}
 
 async function beginExport() {
-  if(!state.project?.clips.length){toast(tr('emptyTimeline'),'error');return}
+  if(!state.project||((state.project.clips?.length||0)+(state.project.overlays?.length||0)+(state.project.elements?.length||0)===0)){toast(tr('emptyTimeline'),'error');return}
   const q=+$('#export-quality').value,fps=+$('#export-fps').value,wrap=$('#export-progress-wrap'),bar=$('#export-progress'),status=$('#export-status'),btn=$('[data-action="export-start"]')
   wrap.classList.remove('hidden');btn.disabled=true;btn.textContent=tr('exporting');state.exportController=new AbortController()
   try{
@@ -1569,12 +1657,12 @@ function bindGlobalEvents() {
     if(a==='select-element')return selectElement(el.dataset.id)
     if(a==='add-element')return addElement(el.dataset.value)
     if(a==='select-text')return selectText(el.dataset.id)
-    if(a==='tool'){state.tool=el.dataset.tool;state.sheet=el.dataset.tool;renderEditor();return}
+    if(a==='tool'){state.tool=el.dataset.tool;state.sheet=isMobileViewport()?el.dataset.tool:null;if(state.tool==='elements')state.sheetSnap='half';renderEditor();if(state.tool==='elements')ensureFluentCatalog();return}
     if(a==='select-transition'){state.selected={type:'clip',id:el.dataset.id};state.tool='transitions';state.sheet='transitions';renderEditor();return}
     if(a==='timeline-zoom'){state.pxPerSec=clamp(state.pxPerSec+(+el.dataset.value)*12,24,120);state.preferences.timelineScale=state.pxPerSec;savePreferences();renderEditor();return}
     if(a==='adjust-select'){state.adjustKey=el.dataset.key;state.tool='adjust';state.sheet='adjust';renderEditor();return}
     if(a==='reset-adjustment'){const c=selectedVisual();if(!c)return;const defaults={brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,opacity:1};mutate(p=>{const list=state.selected?.type==='overlay'?p.overlays:p.clips;list.find(x=>x.id===c.id)[el.dataset.key]=defaults[el.dataset.key]??0});return}
-    if(a==='sheet-close'){state.sheet=null;renderEditor();return}
+    if(a==='sheet-close'){state.sheet=null;state.sheetSnap='half';renderEditor();return}
     if(a==='play-toggle'){state.playing?stopPlayback():startPlayback();return}
     if(a==='jump-start'){seekTo(0);return}
     if(a==='undo')return undo()
@@ -1594,6 +1682,10 @@ function bindGlobalEvents() {
     if(a==='audio-align-clip'){const c=selectedAudio(),v=selectedClip()||activeAt(state.currentTime)?.clip;if(!c||!v)return;const row=clipTimeline().find(r=>r.clip.id===v.id);if(!row)return;mutate(p=>{p.audioClips.find(y=>y.id===c.id).timelineStart=row.start});syncAudioTracks(true);return}
     if(a==='audio-toggle-mute'){const c=selectedAudio();if(!c)return;mutate(p=>{const x=p.audioClips.find(y=>y.id===c.id);x.muted=!x.muted});syncAudioTracks(true);return}
     if(a==='remove-soundtrack'){const c=selectedAudio();if(c){deleteSelected();syncAudioTracks(true)}return}
+    if(a==='fluent-style'){state.fluentStyle=el.dataset.value==='3d'?'3d':'color';state.fluentVisible=60;renderEditor();return}
+    if(a==='fluent-more'){state.fluentVisible=(state.fluentVisible||60)+60;renderEditor();return}
+    if(a==='fluent-retry'){state.fluentCatalog=[];state.fluentError='';ensureFluentCatalog();return}
+    if(a==='add-fluent'){return addFluentElement(el.dataset.name,el.dataset.path)}
     if(a==='ratio')return mutate(p=>p.ratio=el.dataset.value)
     if(a==='export'){renderExportModal();return}
     if(a==='export-close'){state.exportController?.abort();$('.export-modal')?.remove();return}
@@ -1604,6 +1696,7 @@ function bindGlobalEvents() {
 
   document.addEventListener('input',e=>{
     const el=e.target
+    if(el.matches?.('[data-fluent-search]')){state.fluentQuery=el.value;state.fluentVisible=60;const grid=el.closest('.fluent-section')?.querySelector('.fluent-grid');if(grid){const style=state.fluentStyle||'color';grid.innerHTML=fluentMatches().map(entry=>{const path=fluentStylePath(entry,style);return `<button class="fluent-card" data-action="add-fluent" data-name="${escapeHtml(entry.name)}" data-path="${escapeHtml(path)}" title="${escapeHtml(entry.name)}"><span><img loading="lazy" decoding="async" src="${escapeHtml(fluentRawUrl(path))}" alt=""></span><small>${escapeHtml(entry.name)}</small></button>`}).join('')}return}
     if(el.id==='seekbar'){seekTo(+el.value);return}
     if(el.id==='project-name'&&state.project){state.project.name=el.value;queueSave();return}
     const clipKey=el.dataset.bindClip,textKey=el.dataset.bindText,audioKey=el.dataset.bindAudio,elementKey=el.dataset.bindElement,projectKey=el.dataset.bindProject,prefKey=el.dataset.pref
@@ -1694,8 +1787,13 @@ async function init() {
     if(remaining) await new Promise(resolve=>setTimeout(resolve,remaining))
     render()
 
+    // Prime the complete Microsoft Fluent Emoji catalog in the background so
+    // Elements feels instant the first time it is opened. One catalog request
+    // is cached locally; artwork itself stays lazy-loaded to keep the PWA small.
+    if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
+
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.1.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
