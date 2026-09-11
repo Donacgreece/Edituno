@@ -1,16 +1,15 @@
-# Edituno Studio v2.0.1
+# Edituno Studio v2.0.2
 
-Interaction reliability release.
+## iPhone viewport and scrollbar hotfix
 
-## Fixed
+- Locks the mobile application shell to the visual viewport instead of allowing the document to drift after the iOS software keyboard closes.
+- Home content now scrolls inside its own surface while the bottom navigation stays anchored.
+- Editor content stays inside a stable app shell while the tool dock remains anchored to the physical bottom edge.
+- Bottom navigation is temporarily hidden while the software keyboard is open and restored after keyboard dismissal.
+- Adds repeated post-blur viewport normalization to work around stale iOS Safari visualViewport offsets.
+- Preserves internal Home scroll position without allowing window-level scrolling.
+- Adds orientation and pageshow recovery.
+- Adds a thin Edituno-themed scrollbar system for the desktop page, settings, sheets, inspectors, timeline and other scrollable surfaces.
+- Keeps horizontal mobile carousels and the editor tool rail visually clean by hiding their scrollbar chrome.
 
-- Mobile editor tool dock is pinned to the bottom safe area and scrolls only horizontally.
-- Home Import now opens the system picker during the original user gesture, including iOS Safari/PWA.
-- Imported music is placed under the visual timeline by default instead of being appended after the video.
-- Long music is initially trimmed to the remaining visual duration so a soundtrack does not create an accidental black tail.
-- Project three-dot buttons now open an Edituno action sheet.
-- Project actions include Open, Rename, Duplicate and Delete.
-- Project deletion uses an Edituno confirmation modal, never the browser confirm dialog.
-- Delete-all also uses the Edituno confirmation UI.
-- Project duplication copies local media to independent asset IDs so deleting one project does not break the other.
-- Mobile editor body scrolling is locked while editing, while timeline and tool rows retain their intended horizontal scrolling.
+No editing features or the official Edituno logo were changed.

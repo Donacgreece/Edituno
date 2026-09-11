@@ -44,6 +44,10 @@ jobs:
           grep -Fq "confirm-dialog" dist/index.html
           grep -Fq "preferredAudioInsertTime" dist/index.html
           grep -Fq "mediaImportContext" dist/index.html
+          grep -Fq "mobile-app-shell" dist/index.html
+          grep -Fq "normalizeViewportAfterKeyboard" dist/index.html
+          grep -Fq "lastStableHeight" dist/index.html
+          grep -Fq "scrollbar-thumb" dist/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

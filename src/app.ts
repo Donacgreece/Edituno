@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.0.1 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.0.2 Studio production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -120,6 +120,97 @@ const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key
 
 function isMobileViewport() {
   return window.matchMedia('(max-width: 979px)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+}
+
+
+// iOS Safari/PWA keyboard handling.
+// The browser can leave the layout viewport scrolled after the software keyboard closes,
+// which makes bottom navigation appear detached from the physical bottom edge.
+// Edituno keeps the document itself locked and scrolls only its internal surfaces.
+const mobileViewport = {
+  raf: 0,
+  lastStableHeight: 0,
+  lastStableWidth: 0,
+  keyboardOpen: false,
+  settling: false
+}
+
+function isEditableElement(el) {
+  if (!el || !(el instanceof Element)) return false
+  return el.matches('input, textarea, select, [contenteditable="true"]')
+}
+
+function syncMobileViewport(forceStable = false) {
+  if (!isMobileViewport()) {
+    document.body.classList.remove('mobile-app-shell', 'keyboard-open', 'keyboard-transition')
+    document.documentElement.style.removeProperty('--app-vh')
+    document.documentElement.style.removeProperty('--app-vtop')
+    mobileViewport.lastStableHeight = 0
+    mobileViewport.lastStableWidth = 0
+    mobileViewport.keyboardOpen = false
+    return
+  }
+
+  const vv = window.visualViewport
+  const layoutWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1)
+  const layoutHeight = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1)
+  const visualHeight = Math.max(1, vv?.height || layoutHeight)
+  const visualTop = Math.max(0, vv?.offsetTop || 0)
+  const keyboardGap = Math.max(0, layoutHeight - visualHeight - visualTop)
+  const editable = isEditableElement(document.activeElement)
+  const keyboardOpen = editable && keyboardGap > 90
+
+  // Keep the largest known closed-keyboard height for the current orientation.
+  // iOS often reports a stale, shorter innerHeight for a few frames after blur.
+  // Never overwrite the good height with that transient value.
+  const orientationChanged = mobileViewport.lastStableWidth > 0 && Math.abs(layoutWidth - mobileViewport.lastStableWidth) > 70
+  if (orientationChanged && !editable) {
+    mobileViewport.lastStableHeight = Math.max(layoutHeight, visualHeight)
+    mobileViewport.lastStableWidth = layoutWidth
+  } else if (!keyboardOpen && !editable) {
+    mobileViewport.lastStableHeight = Math.max(mobileViewport.lastStableHeight || 0, layoutHeight, visualHeight)
+    mobileViewport.lastStableWidth = layoutWidth
+  } else if (!mobileViewport.lastStableHeight) {
+    mobileViewport.lastStableHeight = Math.max(layoutHeight, visualHeight)
+    mobileViewport.lastStableWidth = layoutWidth
+  }
+
+  mobileViewport.keyboardOpen = keyboardOpen && !forceStable
+
+  const stableHeight = mobileViewport.lastStableHeight || Math.max(layoutHeight, visualHeight)
+  const height = mobileViewport.keyboardOpen ? visualHeight : stableHeight
+  const top = mobileViewport.keyboardOpen ? visualTop : 0
+
+  document.documentElement.style.setProperty('--app-vh', `${Math.round(height)}px`)
+  document.documentElement.style.setProperty('--app-vtop', `${Math.round(top)}px`)
+  document.body.classList.add('mobile-app-shell')
+  document.body.classList.toggle('keyboard-open', mobileViewport.keyboardOpen)
+}
+
+function scheduleMobileViewportSync(forceStable = false) {
+  cancelAnimationFrame(mobileViewport.raf)
+  mobileViewport.raf = requestAnimationFrame(() => syncMobileViewport(forceStable))
+}
+
+function resetWindowScrollPosition() {
+  try { window.scrollTo(0, 0) } catch {}
+  try { document.documentElement.scrollTop = 0 } catch {}
+  try { document.body.scrollTop = 0 } catch {}
+}
+
+function normalizeViewportAfterKeyboard() {
+  // iOS Safari/PWA can keep the page panned after the keyboard animation ends.
+  // The stable-height cache prevents a transient short innerHeight from becoming
+  // the new app height, while these delayed passes follow the native animation.
+  mobileViewport.settling = true
+  const settle = () => {
+    if (isEditableElement(document.activeElement)) return
+    resetWindowScrollPosition()
+    scheduleMobileViewportSync(true)
+  }
+  requestAnimationFrame(settle)
+  ;[60, 160, 320, 520, 800].forEach(delay => setTimeout(settle, delay))
+  setTimeout(() => { mobileViewport.settling = false }, 900)
 }
 
 
@@ -813,6 +904,8 @@ function homeMenuPopover(){
 }
 function renderHome() {
   document.body.classList.remove('editor-open')
+  document.body.classList.toggle('mobile-app-shell', isMobileViewport())
+  scheduleMobileViewportSync()
   const app=$('#app'), projects=state.projects||[], last=projects[0], mobile=isMobileViewport(), recent=projects.slice(0,mobile?7:10), el=state.language==='el'
   const hello=el?'Δημιούργησε χωρίς τριβή.':'Create without friction.'
   const sub=el?'Video editing σχεδιασμένο πρώτα για κινητό.':'Video editing designed mobile first.'
@@ -967,6 +1060,9 @@ function bindPreviewInteractions(){
 
 function renderEditor() {
   if(!state.project) return
+  document.body.classList.toggle('editor-open', isMobileViewport())
+  document.body.classList.toggle('mobile-app-shell', isMobileViewport())
+  scheduleMobileViewportSync()
   const app=$('#app'), p=state.project, dur=projectDuration(), rows=clipTimeline(), mobile=isMobileViewport(), totalWidth=Math.max(360,Math.ceil(dur*state.pxPerSec)+72)
   app.innerHTML=`<div class="studio-editor ${mobile?'editor-mobile':'editor-desktop'}">
     <header class="editor-topbar">
@@ -1251,7 +1347,27 @@ function bindGlobalEvents() {
   })
   $('#subtitle-picker').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await importSrt(file)})
 
-  window.addEventListener('resize',()=>state.view==='editor'&&fitPreviewFrame())
+  window.addEventListener('resize',()=>{ scheduleMobileViewportSync(); if(state.view==='editor')requestAnimationFrame(fitPreviewFrame) })
+  window.visualViewport?.addEventListener('resize',()=>{ scheduleMobileViewportSync(); if(state.view==='editor')requestAnimationFrame(fitPreviewFrame) })
+  window.visualViewport?.addEventListener('scroll',()=>{ if(mobileViewport.keyboardOpen||mobileViewport.settling) scheduleMobileViewportSync() })
+  window.addEventListener('orientationchange',()=>{
+    mobileViewport.lastStableHeight=0; mobileViewport.lastStableWidth=0
+    setTimeout(()=>{ resetWindowScrollPosition(); scheduleMobileViewportSync(true) },180)
+    setTimeout(()=>{ resetWindowScrollPosition(); scheduleMobileViewportSync(true); if(state.view==='editor')fitPreviewFrame() },420)
+  })
+  document.addEventListener('focusin',e=>{
+    if(isEditableElement(e.target)) {
+      document.body.classList.add('keyboard-transition')
+      setTimeout(()=>scheduleMobileViewportSync(),20)
+    }
+  },true)
+  document.addEventListener('focusout',e=>{
+    if(isEditableElement(e.target)) {
+      document.body.classList.remove('keyboard-transition')
+      normalizeViewportAfterKeyboard()
+    }
+  },true)
+  window.addEventListener('pageshow',()=>normalizeViewportAfterKeyboard())
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();state.installPrompt=e})
   window.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&document.activeElement?.id==='project-rename-input'){
@@ -1273,6 +1389,7 @@ function updateRangeLabel(el){const b=el.closest('.field')?.querySelector('b');i
 
 async function init() {
   const bootStarted=performance.now()
+  syncMobileViewport(true)
   try {
     bindGlobalEvents()
     const launch=new URLSearchParams(location.search)
@@ -1294,7 +1411,7 @@ async function init() {
     render()
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.0.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.0.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
