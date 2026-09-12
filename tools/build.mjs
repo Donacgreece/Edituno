@@ -146,6 +146,12 @@ if (!js.includes('function prewarmExportAudioContext()') || !js.includes('functi
 if (!js.includes('function decodeMp4AudioWithWebCodecs(') || !js.includes('function normalizedAacEncoderMetadata(') || !js.includes('vendor/mp4box.all.mjs')) {
   throw new Error('Safari MP4 audio decode and AAC metadata repair layer is missing')
 }
+if (!js.includes('function prepareSourceAacPassthrough(') || !js.includes('function muxSourceAacPassthrough(') || !js.includes('addAudioChunkRaw')) {
+  throw new Error('iPhone source AAC passthrough export path is missing')
+}
+if (!js.includes('function validateExportAudioEnergy(') || !js.includes("throw new Error('export-silent-audio')")) {
+  throw new Error('Audible export validation is missing')
+}
 if (!js.includes("throw new Error('offline-audio-decode')") || !js.includes("validateExportBlob(blob, projectExpectsAudio(project))")) {
   throw new Error('Silent-audio export prevention is missing')
 }
@@ -256,4 +262,4 @@ if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4-MUXER-MIT.txt'))) throw new Error('mp4-muxer MIT license copy missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## MP4Box.js')) throw new Error('MP4Box.js third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.txt'))) throw new Error('MP4Box.js BSD-3-Clause license copy missing')
-console.log(`Built Edituno v2.6.2 -> ${dist}`)
+console.log(`Built Edituno v2.6.3 -> ${dist}`)

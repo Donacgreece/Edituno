@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "private": true,
   "description": "Free local video editor PWA with direct device install, optional PayPal support and mobile-first About experience",
   "scripts": {

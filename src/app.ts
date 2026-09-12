@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.6.2 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.6.3 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1554,7 +1554,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.6.2</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.6.3</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1562,7 +1562,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.6.2</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.6.3</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1599,7 +1599,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.6.2</div>
+      <div class="home-rail-version">v2.6.3</div>
     </aside>
 
     <div class="home-surface">
@@ -2655,7 +2655,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.6.2'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.6.3'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -2687,6 +2687,103 @@ async function extractMp4AudioSamples(blob){
     }catch(error){finishError(error)}
   })
 }
+
+function audioBufferRms(buffer){
+  if(!buffer?.length||!buffer.numberOfChannels)return 0
+  const step=Math.max(1,Math.floor(buffer.length/240000)),channels=Math.min(2,buffer.numberOfChannels)
+  let sum=0,count=0
+  for(let c=0;c<channels;c++){
+    const data=buffer.getChannelData(c)
+    for(let i=0;i<data.length;i+=step){const v=data[i]||0;sum+=v*v;count++}
+  }
+  return count?Math.sqrt(sum/count):0
+}
+function clipAllowsSourceAudioPassthrough(clip){
+  return Math.abs((clip.speed??1)-1)<.0001&&Math.abs((clip.volume??1)-1)<.0001&&(clip.audioFadeIn||0)<=.0001&&(clip.audioFadeOut||0)<=.0001
+}
+function projectAllowsSourceAudioPassthrough(project){
+  if(!project||!projectExpectsAudio(project))return false
+  if((project.audioClips||[]).some(c=>!c.muted&&(c.volume??.8)>0))return false
+  if((project.overlays||[]).some(c=>{
+    const asset=getAsset(c.assetId,project)
+    return asset?.type==='video'&&(c.volume??0)>0
+  }))return false
+  let audiblePrimary=0
+  for(const row of clipTimeline(project)){
+    const clip=row.clip,asset=getAsset(clip.assetId,project)
+    if(asset?.type!=='video'||asset.hasAudio===false||(clip.volume??1)<=0)continue
+    audiblePrimary++
+    if(!clipAllowsSourceAudioPassthrough(clip))return false
+  }
+  return audiblePrimary>0
+}
+async function prepareSourceAacPassthrough(project){
+  if(!projectAllowsSourceAudioPassthrough(project))return null
+  const cache=new Map(),segments=[]
+  let sampleRate=null,numberOfChannels=null,codec=null,totalSamples=0
+  for(const row of clipTimeline(project)){
+    const clip=row.clip,asset=getAsset(clip.assetId,project)
+    if(asset?.type!=='video'||asset.hasAudio===false||(clip.volume??1)<=0)continue
+    let parsed=cache.get(asset.id)
+    if(!parsed){
+      const blob=await getBlob(asset.id);if(!blob)return null
+      try{parsed=await extractMp4AudioSamples(blob)}catch(error){console.warn('AAC passthrough parse failed.',error);return null}
+      cache.set(asset.id,parsed)
+    }
+    const track=parsed?.track,samples=parsed?.samples||[]
+    if(!track||!samples.length||!String(track.codec||'').startsWith('mp4a.'))return null
+    const sr=track.audio?.sample_rate||track.timescale||48000,ch=Math.max(1,Math.min(2,track.audio?.channel_count||2))
+    if(sampleRate===null){sampleRate=sr;numberOfChannels=ch;codec=track.codec}
+    if(sr!==sampleRate||ch!==numberOfChannels||track.codec!==codec)return null
+    const scale=track.timescale||sr,sourceStart=clip.start||0,sourceEnd=clip.end||asset.duration||0
+    const selected=samples.filter(sample=>{
+      const pts=(sample.cts??sample.dts??0)/scale,dur=(sample.duration||1024)/scale
+      return pts<sourceEnd-.00001&&pts+dur>sourceStart+.00001
+    })
+    if(!selected.length)return null
+    totalSamples+=selected.length
+    segments.push({row,clip,asset,track,samples:selected,scale,sourceStart,sourceEnd})
+  }
+  if(!segments.length||!sampleRate||!numberOfChannels||!totalSamples)return null
+  return {sampleRate,numberOfChannels,codec,segments,totalSamples}
+}
+function muxSourceAacPassthrough(muxer,plan){
+  if(!plan?.segments?.length)return 0
+  const description=aacAudioSpecificConfig(plan.sampleRate,plan.numberOfChannels,plan.codec)
+  if(!description)return 0
+  const meta={decoderConfig:{codec:plan.codec,sampleRate:plan.sampleRate,numberOfChannels:plan.numberOfChannels,description}}
+  let count=0,lastTimestamp=-1
+  for(const segment of plan.segments){
+    const {row,samples,scale,sourceStart,sourceEnd}=segment
+    for(const sample of samples){
+      const pts=(sample.cts??sample.dts??0)/scale,durationSec=(sample.duration||1024)/scale
+      let timestampSec=row.start+(pts-sourceStart)
+      if(timestampSec<row.start)timestampSec=row.start
+      if(timestampSec>=row.end+.03)continue
+      let timestamp=Math.max(0,Math.round(timestampSec*1e6))
+      if(timestamp<=lastTimestamp)timestamp=lastTimestamp+1
+      let duration=Math.max(1,Math.round(Math.min(durationSec,Math.max(.000001,sourceEnd-Math.max(sourceStart,pts)))*1e6))
+      const bytes=sample.data instanceof Uint8Array?sample.data:new Uint8Array(sample.data)
+      muxer.addAudioChunkRaw(bytes,'key',timestamp,duration,count===0?meta:undefined)
+      lastTimestamp=timestamp;count++
+    }
+  }
+  return count
+}
+async function validateExportAudioEnergy(blob,expectedAudio){
+  if(!expectedAudio)return true
+  const Ctx=window.OfflineAudioContext
+  if(!Ctx||!window.AudioDecoder||!window.EncodedAudioChunk)return null
+  try{
+    const ctx=new Ctx(2,1,48000),decoded=await decodeMp4AudioWithWebCodecs(blob,ctx)
+    if(!decoded)return false
+    return audioBufferRms(decoded)>0.000015
+  }catch(error){
+    console.warn('Export audio energy validation unavailable.',error)
+    return null
+  }
+}
+
 async function decodeMp4AudioWithWebCodecs(blob,ctx){
   const AudioDecoderCtor=window.AudioDecoder,ChunkCtor=window.EncodedAudioChunk
   if(!AudioDecoderCtor||!ChunkCtor||typeof AudioDecoderCtor.isConfigSupported!=='function')return null
@@ -2794,7 +2891,9 @@ async function renderOfflineProjectAudio(project,sampleRate=48000){
     const buffer=await decodeOfflineAudio(clip.assetId,ctx,cache);if(!buffer){decodeFailures++;continue}
     hasAudio=connectOfflineSource(ctx,master,buffer,clip.timelineStart||0,clip.sourceStart||0,clip.sourceEnd||buffer.duration,clip.speed||1,clip.volume??.8,clip.fadeIn||0,clip.fadeOut||0)||hasAudio
   }
-  return {buffer:hasAudio?await ctx.startRendering():null,hasAudio,expectedAudio,decodeFailures}
+  const buffer=hasAudio?await ctx.startRendering():null
+  const rms=buffer?audioBufferRms(buffer):0
+  return {buffer,hasAudio:hasAudio&&rms>0.000015,expectedAudio,decodeFailures,rms}
 }
 async function encodeOfflineAudio(buffer,encoder,onProgress,signal){
   if(!buffer)return 0
@@ -2817,18 +2916,20 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
   if(!project)throw new Error('empty')
   const [w,h]=exportDimensions(project.ratio,quality),duration=Math.max(.05,projectDuration(project)),MuxerLib=(window).Mp4Muxer
   const videoConfig=await chooseAvcEncoderConfig(w,h,fps,quality);if(!videoConfig)throw new Error('webcodecs-video')
-  const audioMix=await renderOfflineProjectAudio(project,48000)
+  const sourceAacPlan=isAppleMobileRuntime()?await prepareSourceAacPassthrough(project):null
+  const audioMix=sourceAacPlan?{buffer:null,hasAudio:true,expectedAudio:true,decodeFailures:0,rms:1}:await renderOfflineProjectAudio(project,48000)
   if(audioMix.expectedAudio&&!audioMix.hasAudio)throw new Error('offline-audio-decode')
-  const audioConfig=audioMix.hasAudio?await chooseAacEncoderConfig(48000,2):null
-  if(audioMix.hasAudio&&!audioConfig)throw new Error('webcodecs-audio')
+  const audioConfig=!sourceAacPlan&&audioMix.hasAudio?await chooseAacEncoderConfig(48000,2):null
+  if(!sourceAacPlan&&audioMix.hasAudio&&!audioConfig)throw new Error('webcodecs-audio')
+  const muxAudio=sourceAacPlan?{codec:'aac',numberOfChannels:sourceAacPlan.numberOfChannels,sampleRate:sourceAacPlan.sampleRate}:audioConfig?{codec:'aac',numberOfChannels:2,sampleRate:48000}:undefined
   const target=new MuxerLib.ArrayBufferTarget()
-  const muxer=new MuxerLib.Muxer({target,video:{codec:'avc',width:w,height:h,frameRate:fps},audio:audioConfig?{codec:'aac',numberOfChannels:2,sampleRate:48000}:undefined,fastStart:'in-memory',firstTimestampBehavior:'strict'})
+  const muxer=new MuxerLib.Muxer({target,video:{codec:'avc',width:w,height:h,frameRate:fps},audio:muxAudio,fastStart:'in-memory',firstTimestampBehavior:'strict'})
   let videoError=null,audioError=null,videoChunks=0,audioChunks=0
   const VideoEncoderCtor=(window).VideoEncoder,AudioEncoderCtor=(window).AudioEncoder,VideoFrameCtor=(window).VideoFrame
   const videoEncoder=new VideoEncoderCtor({output:(chunk,meta)=>{videoChunks++;muxer.addVideoChunk(chunk,meta)},error:error=>{videoError=error}})
   videoEncoder.configure(videoConfig)
   let audioEncoder=null,audioMetadataSent=false
-  if(audioConfig){
+  if(audioConfig&&!sourceAacPlan){
     audioEncoder=new AudioEncoderCtor({
       output:(chunk,meta)=>{
         audioChunks++
@@ -2857,11 +2958,23 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
       onProgress(Math.min(.78,(index+1)/frameCount*.78))
     }
     await videoEncoder.flush();if(videoError)throw videoError
-    if(audioEncoder&&audioMix.buffer){await encodeOfflineAudio(audioMix.buffer,audioEncoder,p=>onProgress(.78+p*.18),signal);if(audioError)throw audioError}
+    if(sourceAacPlan){
+      audioChunks=muxSourceAacPassthrough(muxer,sourceAacPlan)
+      if(audioChunks<1)throw new Error('aac-passthrough-empty')
+      onProgress(.96)
+    }else if(audioEncoder&&audioMix.buffer){
+      await encodeOfflineAudio(audioMix.buffer,audioEncoder,p=>onProgress(.78+p*.18),signal)
+      if(audioError)throw audioError
+    }
     muxer.finalize();onProgress(.98)
     if(!target.buffer||target.buffer.byteLength<4096||videoChunks<1)throw new Error('webcodecs-empty')
     if(audioMix.hasAudio&&audioChunks<1)throw new Error('webcodecs-no-audio')
-    const blob=new Blob([target.buffer],{type:'video/mp4'});await validateExportBlob(blob,audioMix.expectedAudio);onProgress(1)
+    const blob=new Blob([target.buffer],{type:'video/mp4'});await validateExportBlob(blob,audioMix.expectedAudio)
+    if(audioMix.expectedAudio&&isAppleMobileRuntime()){
+      const audible=await validateExportAudioEnergy(blob,true)
+      if(audible===false)throw new Error('export-silent-audio')
+    }
+    onProgress(1)
     return {blob,extension:'mp4',mime:'video/mp4'}
   }finally{
     destroyDeterministicSources(sources)
@@ -3058,7 +3171,7 @@ async function beginExport() {
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){
-    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'
     status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
     toast(missingAudio?(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.'):tr('exportFailed'),'error')
     console.error(e)
@@ -3275,7 +3388,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.6.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.6.3',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

@@ -1,5 +1,17 @@
 # Release Notes
 
+## v2.6.3
+
+iPhone original-audio passthrough export.
+
+- Stops re-encoding AAC on Apple mobile when the project audio is unchanged and can safely use the source track.
+- For normal talking-head/video clips with original volume, speed 1.0 and no audio fades, Edituno now demuxes the original AAC packets and muxes those exact packets into the rendered MP4 with timeline-adjusted timestamps.
+- This bypasses Safari's AAC AudioEncoder entirely for the most common mobile editing workflow, eliminating the silent-AAC encoder failure path while preserving the original source audio quality.
+- Supports trims and multiple primary video clips as long as their AAC format is compatible.
+- Adds PCM RMS validation before audio re-encoding so a zero-energy offline mix is never treated as valid audio.
+- Adds a post-export audible-energy probe on Apple mobile. A file that contains an audio track but decodes to silence is rejected instead of being offered as a successful export.
+- Projects that change audio speed, volume, fades, overlay audio or add A1 tracks still use the mixed-audio path and compatibility fallback.
+
 ## v2.6.2
 
 Safari/iPhone audio export repair.
