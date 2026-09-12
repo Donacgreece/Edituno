@@ -125,6 +125,15 @@ if (!css.includes('.theme-option-label') || !css.includes('.theme-option-check')
 if (!js.includes("data-key=\"autoSave\"") || !js.includes('autoSave: true')) {
   throw new Error('Autosave preference setting is missing')
 }
+if (!js.includes('function autoReframeSelected()') || !js.includes('smartcrop-2.0.5') || !js.includes('data-action="smart-reframe"')) {
+  throw new Error('Phase 2 Auto Reframe implementation is missing')
+}
+if (!js.includes('function analyzeSelectedAudio()') || !js.includes('meyda-5.6.3') || !js.includes('data-action="smart-cut-beats"')) {
+  throw new Error('Phase 2 Smart Audio implementation is missing')
+}
+if (!template.includes('vendor/smartcrop.js') || !template.includes('vendor/meyda.min.js')) {
+  throw new Error('Phase 2 smart vendor scripts are missing from the document')
+}
 if (js.includes("isMobileViewport() && launch.get('home')!=='1'")) {
   throw new Error('Mobile must not auto-enter the editor')
 }
@@ -164,6 +173,16 @@ function copyVendor(candidates,target,label,minBytes) {
 }
 copyVendor(pixiCandidates,path.join(vendorDir,'pixi.min.js'),'PixiJS 8.20.1',500000)
 copyVendor(filtersCandidates,path.join(vendorDir,'pixi-filters.min.js'),'pixi-filters 6.1.5',100000)
+const smartcropCandidates = [
+  path.join(root,'node_modules','smartcrop','smartcrop.js'),
+  path.join(root,'public','vendor','smartcrop.js')
+]
+const meydaCandidates = [
+  path.join(root,'node_modules','meyda','dist','web','meyda.min.js'),
+  path.join(root,'public','vendor','meyda.min.js')
+]
+copyVendor(smartcropCandidates,path.join(vendorDir,'smartcrop.js'),'Smartcrop.js 2.0.5',15000)
+copyVendor(meydaCandidates,path.join(vendorDir,'meyda.min.js'),'Meyda 5.6.3',50000)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -183,4 +202,4 @@ if (!fs.readFileSync(path.join(dist, 'LICENSE.md'), 'utf8').includes('PolyForm-N
 if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('Third-party material')) throw new Error('Production license scope missing')
 if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notice:')) throw new Error('Production required notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
-console.log(`Built Edituno v2.3.1 -> ${dist}`)
+console.log(`Built Edituno v2.4.0 -> ${dist}`)

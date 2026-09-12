@@ -65,3 +65,24 @@ Edituno bundles only transition shader files whose upstream file headers explici
 - `Dreamy.glsl`, Author: mikolalysenko
 
 Those shader files retain their upstream MIT notices and are not relicensed under PolyForm.
+
+
+## Smartcrop.js
+
+- Component: `smartcrop` 2.0.5
+- Upstream: https://github.com/jwagner/smartcrop.js
+- License: MIT
+- Copyright: 2016 Jonas Wagner
+- License copy: `THIRD_PARTY_LICENSES/SMARTCROP-MIT.txt`
+
+Edituno uses Smartcrop.js as the content-aware framing engine behind Auto Reframe. Edituno's UI, multi-frame sampling, transform mapping and project workflow are first-party code. Smartcrop.js remains MIT-licensed.
+
+## Meyda
+
+- Component: `meyda` 5.6.3
+- Upstream: https://github.com/meyda/meyda
+- License: MIT
+- Copyright: 2014 Hugh A. Rawlinson, Nevo Segal, Jakub Fiala
+- License copy: `THIRD_PARTY_LICENSES/MEYDA-MIT.txt`
+
+Edituno uses Meyda for local audio feature extraction used by Smart Audio analysis. Edituno's silence segmentation, beat peak selection, timeline guides and beat-driven cut orchestration are first-party code. Meyda remains MIT-licensed.

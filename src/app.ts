@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.3.1 GPU effects and shader transitions release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.4.0 Smart Tools release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -237,7 +237,8 @@ const state = {
   projectMenuId: null, renameProjectId: null, confirmDialog: null, mediaImportContext: null,
   preferences: loadPreferences(), audioDrag: null, assetDrag:null,
   sheetSnap:'half', timelineScrollLeft:0, sheetScrollTop:0, suppressTimelineClickUntil:0,
-  fluentCatalog:loadFluentCatalogCache(), fluentLoading:false, fluentError:'', fluentQuery:'', fluentStyle:'color', fluentVisible:60
+  fluentCatalog:loadFluentCatalogCache(), fluentLoading:false, fluentError:'', fluentQuery:'', fluentStyle:'color', fluentVisible:60,
+  smartBusy:null, smartProgress:0
 }
 state.pxPerSec=Number(state.preferences.timelineScale)||48
 const tr = key => STRINGS[state.language][key] ?? STRINGS.en[key] ?? key
@@ -1028,13 +1029,16 @@ function seekTo(value) {
 
 function defaultProject(ratio='16:9') {
   const now=Date.now()
-  return { id:uid(), name:state.language==='el'?'Νέο project':'Untitled project', createdAt:now, updatedAt:now, ratio, background:'#0b0d12', assets:[], clips:[], overlays:[], elements:[], audioClips:[], texts:[], soundtrack:null }
+  return { id:uid(), name:state.language==='el'?'Νέο project':'Untitled project', createdAt:now, updatedAt:now, ratio, background:'#0b0d12', assets:[], clips:[], overlays:[], elements:[], audioClips:[], texts:[], soundtrack:null, smartAudioGuideId:null }
 }
 function normalizeProject(p) {
   p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.overlays ||= []; p.elements ||= []; p.texts ||= p.textOverlays || []; p.audioClips ||= []
   if(p.soundtrack && !p.audioClips.length){const a=p.assets.find(x=>x.id===p.soundtrack.assetId);if(a)p.audioClips.push({id:uid(),assetId:a.id,timelineStart:0,sourceStart:0,sourceEnd:a.duration||30,volume:p.soundtrack.volume??.7,speed:1,fadeIn:0,fadeOut:0,muted:false})}
   p.soundtrack=null
-  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
+  p.smartAudioGuideId ||= null
+  for (const c of p.audioClips) Object.assign(c,{beatCutEvery:2,smartSilence:false},c)
+  if(p.smartAudioGuideId && !p.audioClips.some(c=>c.id===p.smartAudioGuideId))p.smartAudioGuideId=null
+  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0,smartReframe:null},c)
   for (const c of p.overlays) Object.assign(c,{timelineStart:0,lane:2,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',offsetX:0,offsetY:0,scale:.36,fit:'contain',opacity:1,flipX:false,flipY:false,volume:0},c)
   return p
 }
@@ -1083,6 +1087,232 @@ async function buildWaveform(file,points=72) {
     await ctx.close().catch(()=>{});return peaks
   } catch { return null }
 }
+
+function smartcropEngine(){return window.smartcrop||window.SmartCrop||null}
+function meydaEngine(){return window.Meyda||null}
+function median(values){const v=values.filter(Number.isFinite).slice().sort((a,b)=>a-b);if(!v.length)return 0;const m=Math.floor(v.length/2);return v.length%2?v[m]:(v[m-1]+v[m])/2}
+function percentile(values,q){const v=values.filter(Number.isFinite).slice().sort((a,b)=>a-b);if(!v.length)return 0;const i=clamp(q,0,1)*(v.length-1),lo=Math.floor(i),hi=Math.ceil(i),f=i-lo;return v[lo]*(1-f)+v[hi]*f}
+function ratioPair(ratio){return ({'16:9':[16,9],'9:16':[9,16],'1:1':[1,1],'4:5':[4,5]})[ratio]||[16,9]}
+function smartFrameCanvas(source,maxSide=640){
+  const sw=source.videoWidth||source.naturalWidth||source.width||640,sh=source.videoHeight||source.naturalHeight||source.height||360
+  const scale=Math.min(1,maxSide/Math.max(sw,sh)),w=Math.max(2,Math.round(sw*scale)),h=Math.max(2,Math.round(sh*scale))
+  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(source,0,0,w,h)
+  return canvas
+}
+async function videoAnalysisFrame(url,sourceTime){
+  const video=document.createElement('video');video.preload='auto';video.muted=true;video.playsInline=true;video.crossOrigin='anonymous';video.src=url
+  try{
+    await waitLoaded(video)
+    const maxTime=Math.max(0,(Number.isFinite(video.duration)?video.duration:sourceTime)-.04)
+    video.currentTime=clamp(sourceTime,0,maxTime)
+    await waitSeek(video)
+    return smartFrameCanvas(video)
+  }finally{
+    try{video.pause()}catch{}
+    video.removeAttribute('src');video.load()
+  }
+}
+async function smartCropSample(clip,asset,ratio,position=.5){
+  const engine=smartcropEngine();if(!engine?.crop)throw new Error('Smartcrop.js runtime unavailable')
+  const url=state.urls[asset.id];if(!url)throw new Error('Media source unavailable')
+  let frame
+  if(asset.type==='image')frame=smartFrameCanvas(await loadImage(url))
+  else{
+    const sourceTime=clip.start+(clip.end-clip.start)*clamp(position,0,1)
+    frame=await videoAnalysisFrame(url,sourceTime)
+  }
+  const [rw,rh]=ratioPair(ratio)
+  const result=await engine.crop(frame,{width:rw,height:rh,minScale:.7,maxScale:1,ruleOfThirds:true})
+  const crop=result?.topCrop
+  if(!crop)throw new Error('Smartcrop returned no crop')
+  return {
+    cx:(crop.x+crop.width/2)/frame.width,
+    cy:(crop.y+crop.height/2)/frame.height,
+    width:crop.width/frame.width,
+    height:crop.height/frame.height,
+    score:Number(crop.score?.total)||0
+  }
+}
+function smartReframeTransform(asset,ratio,samples){
+  const cx=median(samples.map(x=>x.cx)),cy=median(samples.map(x=>x.cy)),cw=median(samples.map(x=>x.width)),ch=median(samples.map(x=>x.height))
+  const sw=Math.max(1,asset.width||1920),sh=Math.max(1,asset.height||1080),tr=ratioValue(ratio)
+  const targetH=1000,targetW=targetH*tr
+  const cropW=Math.max(1,cw*sw),cropH=Math.max(1,ch*sh)
+  const desiredK=Math.max(targetW/cropW,targetH/cropH),baseK=Math.max(targetW/sw,targetH/sh)
+  const scale=clamp(desiredK/baseK,1,3),dw=sw*baseK*scale,dh=sh*baseK*scale
+  const offsetX=clamp((dw*(.5-cx))/targetW,-.7,.7),offsetY=clamp((dh*(.5-cy))/targetH,-.7,.7)
+  return {scale,offsetX,offsetY,fit:'cover'}
+}
+async function autoReframeSelected(){
+  const selected=selectedClip(),clipId=selected?.id,asset=getAsset(selected?.assetId)
+  if(!selected||!asset||!['image','video'].includes(asset.type)){toast(state.language==='el'?'Επίλεξε ένα κύριο clip στη V1.':'Select a primary V1 clip.','error');return}
+  if(state.smartBusy)return
+  if(!smartcropEngine()?.crop){toast(state.language==='el'?'Το Smartcrop δεν φορτώθηκε. Κάνε ανανέωση της εφαρμογής.':'Smartcrop did not load. Refresh the app.','error');return}
+  state.smartBusy='reframe';state.smartProgress=0;renderEditor()
+  try{
+    const positions=asset.type==='video'?[.2,.5,.8]:[.5],samples=[]
+    for(let i=0;i<positions.length;i++){
+      samples.push(await smartCropSample(selected,asset,state.project.ratio,positions[i]))
+      state.smartProgress=(i+1)/positions.length
+    }
+    const target=state.project?.clips.find(c=>c.id===clipId);if(!target)return
+    const transform=smartReframeTransform(asset,state.project.ratio,samples)
+    pushHistory()
+    Object.assign(target,transform,{smartReframe:{engine:'smartcrop-2.0.5',ratio:state.project.ratio,samples:samples.length,analyzedAt:Date.now()}})
+    state.project.updatedAt=Date.now();queueSave();drawPreview()
+    toast(state.language==='el'?'Το Auto Reframe εφαρμόστηκε.':'Auto Reframe applied.','success')
+  }catch(error){
+    console.error('Auto Reframe failed:',error)
+    toast(state.language==='el'?'Το Auto Reframe δεν ολοκληρώθηκε.':'Auto Reframe could not finish.','error')
+  }finally{state.smartBusy=null;state.smartProgress=0;renderEditor()}
+}
+function resetSmartReframe(){
+  const c=selectedClip();if(!c)return
+  mutate(p=>{const x=p.clips.find(v=>v.id===c.id);Object.assign(x,{fit:'cover',scale:1,offsetX:0,offsetY:0});delete x.smartReframe})
+}
+function audioAnalysisForClip(c){return c?getAsset(c.assetId)?.audioAnalysis:null}
+function analysisBeatTimes(c,analysis=audioAnalysisForClip(c)){
+  if(!c||!analysis?.beats)return[]
+  const speed=Math.max(.05,c.speed||1),start=c.sourceStart||0,end=c.sourceEnd||0,timeline=c.timelineStart||0
+  return analysis.beats.filter(b=>b.time>=start&&b.time<=end).map(b=>({time:timeline+(b.time-start)/speed,strength:b.strength??1,sourceTime:b.time}))
+}
+function analysisSilenceRanges(c,analysis=audioAnalysisForClip(c)){
+  if(!c||!analysis?.silences)return[]
+  const speed=Math.max(.05,c.speed||1),start=c.sourceStart||0,end=c.sourceEnd||0,timeline=c.timelineStart||0
+  return analysis.silences.map(s=>({start:Math.max(s.start,start),end:Math.min(s.end,end)})).filter(s=>s.end-s.start>.05).map(s=>({start:timeline+(s.start-start)/speed,end:timeline+(s.end-start)/speed}))
+}
+function estimateBpm(beats){
+  const intervals=[]
+  for(let i=1;i<beats.length;i++){const d=beats[i].time-beats[i-1].time;if(d>=.25&&d<=1.6)intervals.push(d)}
+  if(!intervals.length)return 0
+  let bpm=60/median(intervals)
+  while(bpm<70)bpm*=2
+  while(bpm>180)bpm/=2
+  return Math.round(bpm)
+}
+function detectSilenceRegions(times,dbValues,thresholdDb,minDuration=.35){
+  const out=[];let start=null,last=null
+  for(let i=0;i<times.length;i++){
+    const silent=dbValues[i]<=thresholdDb
+    if(silent&&start===null)start=times[i]
+    if(silent)last=times[i]
+    if(!silent&&start!==null){const end=last??times[i];if(end-start>=minDuration)out.push({start,end});start=null;last=null}
+  }
+  if(start!==null){const end=last??start;if(end-start>=minDuration)out.push({start,end})}
+  const merged=[]
+  for(const r of out){const prev=merged[merged.length-1];if(prev&&r.start-prev.end<.14)prev.end=r.end;else merged.push({...r})}
+  return merged.map(r=>({start:Math.round(r.start*1000)/1000,end:Math.round(r.end*1000)/1000}))
+}
+function detectBeatPeaks(times,rmsValues,fluxValues,dbValues,silenceThreshold){
+  const novelty=fluxValues.map((v,i)=>Number.isFinite(v)&&v>0?v:Math.max(0,(rmsValues[i]||0)-(rmsValues[i-1]||0))*40)
+  const beats=[];let last=-10
+  for(let i=6;i<novelty.length-2;i++){
+    const from=Math.max(0,i-10),window=novelty.slice(from,i),mean=window.reduce((a,b)=>a+b,0)/Math.max(1,window.length)
+    const variance=window.reduce((a,b)=>a+(b-mean)*(b-mean),0)/Math.max(1,window.length),std=Math.sqrt(variance)
+    const threshold=mean+Math.max(std*1.25,mean*.22)
+    const localPeak=novelty[i]>=novelty[i-1]&&novelty[i]>novelty[i+1]
+    if(localPeak&&novelty[i]>threshold&&dbValues[i]>silenceThreshold+4&&times[i]-last>.22){
+      const strength=clamp((novelty[i]-threshold)/(Math.abs(threshold)+std+.000001),.15,3)
+      beats.push({time:Math.round(times[i]*1000)/1000,strength:Math.round(strength*100)/100})
+      last=times[i]
+    }
+  }
+  return beats
+}
+async function analyzeSelectedAudio(){
+  const selected=selectedAudio(),clipId=selected?.id,asset=getAsset(selected?.assetId)
+  if(!selected||!asset||asset.type!=='audio'){toast(state.language==='el'?'Επίλεξε audio clip στο A1.':'Select an audio clip on A1.','error');return}
+  if(state.smartBusy)return
+  const Meyda=meydaEngine()
+  if(!Meyda?.extract){toast(state.language==='el'?'Το Meyda δεν φορτώθηκε. Κάνε ανανέωση της εφαρμογής.':'Meyda did not load. Refresh the app.','error');return}
+  state.smartBusy='audio';state.smartProgress=0;renderEditor()
+  let audioContext
+  try{
+    const blob=await getBlob(asset.id);if(!blob)throw new Error('Audio blob missing')
+    audioContext=new (window.AudioContext||window.webkitAudioContext)()
+    const buffer=await audioContext.decodeAudioData(await blob.arrayBuffer())
+    const frameSize=2048,maxFrames=12000,rawHop=Math.max(1024,Math.ceil(Math.max(1,buffer.length-frameSize)/maxFrames))
+    const hop=Math.max(1024,Math.ceil(rawHop/1024)*1024),channels=Array.from({length:buffer.numberOfChannels},(_,i)=>buffer.getChannelData(i))
+    Meyda.bufferSize=frameSize;Meyda.sampleRate=buffer.sampleRate;Meyda.windowingFunction='hanning'
+    const times=[],rmsValues=[],fluxValues=[],centroids=[];let previous=null,frameCount=0
+    const estimatedFrames=Math.max(1,Math.ceil(Math.max(1,buffer.length-frameSize)/hop))
+    for(let start=0;start+frameSize<=buffer.length;start+=hop){
+      const frame=new Float32Array(frameSize)
+      for(let i=0;i<frameSize;i++){let sum=0;for(const ch of channels)sum+=ch[start+i]||0;frame[i]=sum/Math.max(1,channels.length)}
+      let features
+      try{features=Meyda.extract(previous?['rms','spectralCentroid','spectralFlux']:['rms','spectralCentroid'],frame,previous)||{}}catch{features=Meyda.extract(['rms','spectralCentroid'],frame)||{}}
+      times.push(start/buffer.sampleRate);rmsValues.push(Number(features.rms)||0);fluxValues.push(Number(features.spectralFlux));centroids.push(Number(features.spectralCentroid)||0)
+      previous=frame;frameCount++
+      if(frameCount%180===0){state.smartProgress=Math.min(.98,frameCount/estimatedFrames);await new Promise(resolve=>setTimeout(resolve,0))}
+    }
+    const dbValues=rmsValues.map(v=>20*Math.log10(Math.max(v,1e-8))),floor=percentile(dbValues,.12),med=percentile(dbValues,.5)
+    const silenceThreshold=clamp(Math.min(floor+8,med-9),-55,-28)
+    const silences=detectSilenceRegions(times,dbValues,silenceThreshold,.35)
+    const beats=detectBeatPeaks(times,rmsValues,fluxValues,dbValues,silenceThreshold)
+    const profilePoints=160,profile=[]
+    for(let i=0;i<profilePoints;i++){const a=Math.floor(i*rmsValues.length/profilePoints),b=Math.max(a+1,Math.floor((i+1)*rmsValues.length/profilePoints));profile.push(Math.round(Math.max(0,...rmsValues.slice(a,b))*1000)/1000)}
+    const analysis={engine:'meyda-5.6.3',version:1,analyzedAt:Date.now(),duration:buffer.duration,sampleRate:buffer.sampleRate,hopSeconds:hop/buffer.sampleRate,silenceThresholdDb:Math.round(silenceThreshold*10)/10,silences,beats,bpm:estimateBpm(beats),profile}
+    const targetAsset=state.project?.assets.find(a=>a.id===asset.id);if(!targetAsset)return
+    pushHistory();targetAsset.audioAnalysis=analysis;state.project.updatedAt=Date.now();queueSave()
+    const targetClip=state.project.audioClips.find(c=>c.id===clipId);if(targetClip&&!targetClip.beatCutEvery)targetClip.beatCutEvery=2
+    toast(state.language==='el'?`Ανάλυση έτοιμη · ${beats.length} beats · ${silences.length} σιωπές`:`Analysis ready · ${beats.length} beats · ${silences.length} silences`,'success')
+  }catch(error){
+    console.error('Smart audio analysis failed:',error)
+    toast(state.language==='el'?'Η ανάλυση ήχου δεν ολοκληρώθηκε.':'Audio analysis could not finish.','error')
+  }finally{
+    if(audioContext)await audioContext.close().catch(()=>{})
+    state.smartBusy=null;state.smartProgress=0;renderEditor()
+  }
+}
+function toggleSmartAudioGuides(){
+  const c=selectedAudio();if(!c||!audioAnalysisForClip(c))return
+  mutate(p=>{p.smartAudioGuideId=p.smartAudioGuideId===c.id?null:c.id})
+}
+function smartGuideLayer(){
+  const id=state.project?.smartAudioGuideId,c=state.project?.audioClips.find(x=>x.id===id),analysis=audioAnalysisForClip(c)
+  if(!c||!analysis)return''
+  const step=Math.max(1,Number(c.beatCutEvery)||2),allBeats=analysisBeatTimes(c,analysis).filter((_,i)=>i%step===0)
+  const stride=Math.max(1,Math.ceil(allBeats.length/400)),beats=allBeats.filter((_,i)=>i%stride===0)
+  const silences=analysisSilenceRanges(c,analysis).slice(0,140),maxTime=projectDuration()
+  return `<div class="smart-guide-layer" aria-hidden="true">${silences.map(s=>`<i class="smart-silence-guide" style="left:${42+clamp(s.start,0,maxTime)*state.pxPerSec}px;width:${Math.max(2,(clamp(s.end,0,maxTime)-clamp(s.start,0,maxTime))*state.pxPerSec)}px"></i>`).join('')}${beats.map(b=>`<b class="smart-beat-guide" style="left:${42+clamp(b.time,0,maxTime)*state.pxPerSec}px;opacity:${(.34+Math.min(.5,(b.strength||1)*.18)).toFixed(2)}"></b>`).join('')}</div>`
+}
+function splitPrimaryClipsAtTimes(times){
+  const project=state.project;if(!project?.clips?.length)return 0
+  const rows=clipTimeline(project),clean=times.filter(Number.isFinite).sort((a,b)=>a-b),next=[],minGap=.28;let cuts=0
+  for(const row of rows){
+    const clip=row.clip,speed=Math.max(.05,clip.speed||1),inside=[];let last=row.start
+    for(const t of clean){if(t<=row.start+minGap||t>=row.end-minGap||t-last<minGap)continue;inside.push(t);last=t}
+    if(!inside.length){next.push(clip);continue}
+    let sourceCursor=clip.start,first=true
+    for(const t of inside){
+      const sourceCut=clip.start+(t-row.start)*speed
+      if(sourceCut-sourceCursor<.05)continue
+      const seg={...clone(clip),id:first?clip.id:uid(),start:sourceCursor,end:sourceCut}
+      if(!first)seg.transition='none'
+      next.push(seg);sourceCursor=sourceCut;first=false;cuts++
+    }
+    const tail={...clone(clip),id:first?clip.id:uid(),start:sourceCursor,end:clip.end}
+    if(!first)tail.transition='none'
+    next.push(tail)
+  }
+  project.clips=next
+  return cuts
+}
+function cutVideoToSelectedAudioBeats(){
+  const c=selectedAudio(),analysis=audioAnalysisForClip(c);if(!c||!analysis){toast(state.language==='el'?'Ανάλυσε πρώτα το audio.':'Analyze the audio first.','error');return}
+  const step=Math.max(1,Number(c.beatCutEvery)||2),beats=analysisBeatTimes(c,analysis).filter((_,i)=>i%step===0).map(b=>b.time).filter(t=>t>0&&t<visualDuration())
+  if(!beats.length){toast(state.language==='el'?'Δεν βρέθηκαν beats μέσα στο video.':'No beats were found inside the video.','error');return}
+  pushHistory();const cuts=splitPrimaryClipsAtTimes(beats)
+  if(!cuts){state.history.pop();toast(state.language==='el'?'Δεν υπήρχαν ασφαλή σημεία για cut.':'No safe cut points were available.','error');return}
+  state.project.updatedAt=Date.now();queueSave();renderEditor()
+  toast(state.language==='el'?`${cuts} cuts εφαρμόστηκαν στα beats.`:`${cuts} beat cuts applied.`,'success')
+}
+function clearSmartAudioAnalysis(){
+  const c=selectedAudio(),asset=getAsset(c?.assetId);if(!c||!asset?.audioAnalysis)return
+  pushHistory();delete asset.audioAnalysis;if(state.project.smartAudioGuideId===c.id)state.project.smartAudioGuideId=null;state.project.updatedAt=Date.now();queueSave();renderEditor()
+}
+
 function preferredAudioInsertTime(){
   // New music should naturally play in parallel with the picture.
   // If a visual clip is selected align to its start, otherwise start at 00:00.
@@ -1099,7 +1329,7 @@ function defaultAudioClip(asset,timelineStart=preferredAudioInsertTime()){
   const visual=visualDuration()
   const remaining=visual>start?visual-start:0
   const fitted=remaining>0?Math.min(full,remaining):full
-  return {id:uid(),assetId:asset.id,timelineStart:start,sourceStart:0,sourceEnd:Math.max(.1,fitted),volume:.8,speed:1,fadeIn:0,fadeOut:0,muted:false}
+  return {id:uid(),assetId:asset.id,timelineStart:start,sourceStart:0,sourceEnd:Math.max(.1,fitted),volume:.8,speed:1,fadeIn:0,fadeOut:0,muted:false,beatCutEvery:2,smartSilence:false}
 }
 function addAudioToTimeline(id,at){const asset=getAsset(id);if(!asset||asset.type!=='audio')return;const start=at===undefined?preferredAudioInsertTime():Math.max(0,at);mutate(p=>{const c=defaultAudioClip(asset,start);p.audioClips.push(c);state.selected={type:'audio',id:c.id};state.tool='audio';state.sheet=isMobileViewport()?'audio':null});syncAudioTracks(true)}
 
@@ -1130,7 +1360,7 @@ async function importFiles(files, addVisuals=true) {
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
 }
 function defaultClip(asset) {
-  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
+  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0,smartReframe:null }
 }
 function nextOverlayLane(at=state.currentTime){
   const occupied=lane=>(state.project?.overlays||[]).some(c=>(c.lane||2)===lane&&at<(c.timelineStart||0)+overlayDuration(c)&&at+0.05>=(c.timelineStart||0))
@@ -1319,7 +1549,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.3.1</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.4.0</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1327,7 +1557,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.3.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.4.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1364,7 +1594,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.3.1</div>
+      <div class="home-rail-version">v2.4.0</div>
     </aside>
 
     <div class="home-surface">
@@ -1595,7 +1825,7 @@ function renderEditor() {
 
         <section class="timeline-shell">
           <header class="timeline-header"><div><strong>Timeline</strong><span>${dur?fmtTime(dur):'00:00.0'}</span></div><div class="timeline-actions"><button data-action="timeline-zoom" data-value="-1">${svgIcon('zoomout',15)}</button><button data-action="timeline-zoom" data-value="1">${svgIcon('zoomin',15)}</button><button data-action="split">${svgIcon('split',15)}<span class="desktop-editor-only">${tr('split')}</span></button></div></header>
-          <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur,totalWidth)}</div><div class="track-row overlay-row" data-lane="3"><span class="track-label">V3</span><div class="timeline-overlay-row">${(p.overlays||[]).filter(c=>(c.lane||2)===3).map(timelineOverlay).join('')}</div></div><div class="track-row overlay-row" data-lane="2"><span class="track-label">V2</span><div class="timeline-overlay-row">${(p.overlays||[]).filter(c=>(c.lane||2)===2).map(timelineOverlay).join('')}</div></div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',17)}<span>${tr('addMedia')}</span></button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips||[]).map(timelineAudio).join('')}</div></div><div class="track-row element-row"><span class="track-label">E1</span><div class="timeline-element-row">${(p.elements||[]).map(timelineElement).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42+state.currentTime*state.pxPerSec}px"><i></i></div></div></div>
+          <div class="timeline-scroll" id="timeline-scroll"><div class="timeline-canvas" style="width:${totalWidth}px"><div class="timeline-ruler" data-timeline-ruler>${timelineRuler(dur,totalWidth)}</div>${smartGuideLayer()}<div class="track-row overlay-row" data-lane="3"><span class="track-label">V3</span><div class="timeline-overlay-row">${(p.overlays||[]).filter(c=>(c.lane||2)===3).map(timelineOverlay).join('')}</div></div><div class="track-row overlay-row" data-lane="2"><span class="track-label">V2</span><div class="timeline-overlay-row">${(p.overlays||[]).filter(c=>(c.lane||2)===2).map(timelineOverlay).join('')}</div></div><div class="track-row video-row"><span class="track-label">V1</span><div class="timeline-track">${rows.length?rows.map((r,i)=>timelineClip(r,i)).join(''):`<button class="timeline-empty-add" data-action="pick-media">${svgIcon('plus',17)}<span>${tr('addMedia')}</span></button>`}</div></div><div class="track-row audio-row"><span class="track-label">A1</span><div class="timeline-audio-row">${(p.audioClips||[]).map(timelineAudio).join('')}</div></div><div class="track-row element-row"><span class="track-label">E1</span><div class="timeline-element-row">${(p.elements||[]).map(timelineElement).join('')}</div></div><div class="track-row text-row"><span class="track-label">T1</span><div class="timeline-text-row">${(p.texts||[]).map(timelineText).join('')}</div></div><div class="playhead" style="left:${42+state.currentTime*state.pxPerSec}px"><i></i></div></div></div>
         </section>
       </section>
 
@@ -1653,17 +1883,33 @@ function textPanel(showAdd=true){const t=selectedText();return `<div class="pane
 function safeColor(v,fallback){return /^#[0-9a-f]{6}$/i.test(v||'')?v:fallback}
 function audioPanel(){
   const audios=state.project.assets.filter(a=>a.type==='audio'), c=selectedAudio()
-  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio" data-drag-asset="${a.id}" data-drag-type="audio"><div class="media-type">${svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${c?audioClipPanel():`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`}</div>`
+  const selectedUi=c?(isMobileViewport()?audioClipPanel():`<div class="panel-section soft desktop-audio-inspector-note"><div class="panel-heading-row"><div><h3>${state.language==='el'?'Επιλεγμένο audio':'Selected audio'}</h3><small>${state.language==='el'?'Mixer και Smart Audio στο Inspector':'Mixer and Smart Audio are in the Inspector'}</small></div><span>${svgIcon('right',16)}</span></div></div>`):`<div class="panel-section soft"><h3>${state.language==='el'?'Πολυκάναλος ήχος':'Multitrack audio'}</h3><p class="helper">${state.language==='el'?'Πρόσθεσε μουσική στο A1 και μετακίνησέ την ελεύθερα πάνω στο timeline.':'Add music to A1 and position it freely on the timeline.'}</p></div>`
+  return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${audios.length?`<div class="media-list">${audios.map(a=>`<div class="media-row audio" data-drag-asset="${a.id}" data-drag-type="audio"><div class="media-type">${svgIcon('audio',18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${fmtTime(a.duration)} · ${fmtBytes(a.size)}</span></div><button class="media-action" data-action="add-audio" data-id="${a.id}">＋ ${tr('add')}</button></div>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noAudio')}</b></div>`}${selectedUi}</div>`
 }
+
+function smartAudioPanel(){
+  const c=selectedAudio(),a=getAsset(c?.assetId);if(!c||!a)return''
+  const analysis=a.audioAnalysis,busy=state.smartBusy==='audio',guides=state.project.smartAudioGuideId===c.id
+  const silenceSeconds=analysis?.silences?.reduce((sum,s)=>sum+Math.max(0,s.end-s.start),0)||0
+  return `<div class="panel-section smart-tool-card smart-audio-card"><div class="smart-tool-head"><span class="smart-tool-icon">${svgIcon('audio',18)}</span><div><strong>${state.language==='el'?'Smart Audio':'Smart Audio'}</strong><small>Meyda 5.6.3 · MIT · local analysis</small></div><span class="smart-badge">SMART</span></div>${analysis?`<div class="smart-metrics"><div><strong>${analysis.bpm||'--'}</strong><small>BPM</small></div><div><strong>${analysis.beats?.length||0}</strong><small>Beats</small></div><div><strong>${analysis.silences?.length||0}</strong><small>${state.language==='el'?'Σιωπές':'Silences'}</small></div><div><strong>${silenceSeconds.toFixed(1)}s</strong><small>${state.language==='el'?'Σιωπηλός χρόνος':'Silent time'}</small></div></div><div class="smart-analysis-note"><span>${svgIcon('check',14)}</span><span>${state.language==='el'?`Όριο σιωπής ${analysis.silenceThresholdDb} dB · ανάλυση στη συσκευή`:`Silence threshold ${analysis.silenceThresholdDb} dB · on-device analysis`}</span></div><label class="field smart-density"><span>${state.language==='el'?'Πυκνότητα beat cuts':'Beat cut density'}</span><select data-bind-audio="beatCutEvery"><option value="1" ${Number(c.beatCutEvery||2)===1?'selected':''}>${state.language==='el'?'Κάθε beat':'Every beat'}</option><option value="2" ${Number(c.beatCutEvery||2)===2?'selected':''}>${state.language==='el'?'Κάθε 2 beats':'Every 2 beats'}</option><option value="4" ${Number(c.beatCutEvery||2)===4?'selected':''}>${state.language==='el'?'Κάθε 4 beats':'Every 4 beats'}</option></select></label><div class="smart-audio-actions"><button class="secondary-btn ${guides?'smart-active':''}" data-action="smart-audio-guides">${svgIcon('timeline',15)}<span>${guides?(state.language==='el'?'Απόκρυψη guides':'Hide guides'):(state.language==='el'?'Beat + silence guides':'Beat + silence guides')}</span></button><button class="primary-btn" data-action="smart-cut-beats">${svgIcon('split',15)}<span>${state.language==='el'?'Cut V1 στα beats':'Cut V1 to beats'}</span></button></div><div class="smart-action-row"><button class="secondary-btn" data-action="smart-audio-analyze">${svgIcon('audio',15)}<span>${state.language==='el'?'Νέα ανάλυση':'Re-analyze'}</span></button><button class="secondary-btn subtle-danger" data-action="smart-audio-clear">${svgIcon('trash',15)}<span>${state.language==='el'?'Καθαρισμός':'Clear'}</span></button></div>`:`<p class="helper">${state.language==='el'?'Ανίχνευση σιωπής, beat detection και αυτόματα cuts στη V1. Η ανάλυση γίνεται τοπικά χωρίς upload.':'Silence detection, beat detection and automatic V1 cuts. Analysis runs locally with no upload.'}</p><button class="primary-btn full smart-analyze-btn" data-action="smart-audio-analyze" ${busy?'disabled':''}>${busy?`<span class="smart-spinner"></span>${state.language==='el'?'Ανάλυση ήχου…':'Analyzing audio…'}`:`${svgIcon('effects',16)}<span>${state.language==='el'?'Ανάλυση με Meyda':'Analyze with Meyda'}</span>`}</button>`}</div>`
+}
+
 function audioClipPanel(){
   const c=selectedAudio(),a=getAsset(c?.assetId);if(!c)return''
-  return `<div class="panel-grid"><div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">${svgIcon('audio',18)}</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.5" ${c.speed===.5?'selected':''}>0.5×</option><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-quick-grid"><button class="secondary-btn" data-action="audio-fit-video">${svgIcon('expand',15)}<span>${tr('fitAudio')}</span></button><button class="secondary-btn" data-action="audio-to-playhead">${svgIcon('right',15)}<span>${tr('movePlayhead')}</span></button><button class="secondary-btn" data-action="audio-align-clip">${svgIcon('transition',15)}<span>${tr('alignClip')}</span></button></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?svgIcon('mute',16):svgIcon('volume',16)}<span>${c.muted?(state.language==='el'?'Ενεργοποίηση':'Unmute'):(state.language==='el'?'Σίγαση':'Mute')}</span></button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
+  return `<div class="panel-grid">${smartAudioPanel()}<div class="panel-section audio-mixer"><div class="mixer-heading"><span class="mixer-icon">${svgIcon('audio',18)}</span><div><strong>${escapeHtml(a?.name||'Audio')}</strong><small>A1 · ${fmtTime(audioClipDuration(c))}</small></div></div>${rangeField('volume',c.volume,0,1,.01,true,'audio')}${rangeField('fadeIn',c.fadeIn,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}${rangeField('fadeOut',c.fadeOut,0,Math.min(5,audioClipDuration(c)/2),.05,true,'audio')}<div class="field-grid two"><label class="field"><span>${state.language==='el'?'Θέση':'Position'}</span><input data-bind-audio="timelineStart" type="number" min="0" step="0.05" value="${(c.timelineStart||0).toFixed(2)}"></label><label class="field"><span>${tr('speed')}</span><select data-bind-audio="speed"><option value="0.5" ${c.speed===.5?'selected':''}>0.5×</option><option value="0.75" ${c.speed===.75?'selected':''}>0.75×</option><option value="1" ${c.speed===1?'selected':''}>1×</option><option value="1.25" ${c.speed===1.25?'selected':''}>1.25×</option><option value="1.5" ${c.speed===1.5?'selected':''}>1.5×</option><option value="2" ${c.speed===2?'selected':''}>2×</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-audio="sourceStart" type="number" min="0" max="${Math.max(0,(a?.duration||c.sourceEnd)-.05)}" step="0.05" value="${(c.sourceStart||0).toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-audio="sourceEnd" type="number" min="${(c.sourceStart||0)+.05}" max="${a?.duration||c.sourceEnd}" step="0.05" value="${c.sourceEnd.toFixed(2)}"></label></div><div class="audio-quick-grid"><button class="secondary-btn" data-action="audio-fit-video">${svgIcon('expand',15)}<span>${tr('fitAudio')}</span></button><button class="secondary-btn" data-action="audio-to-playhead">${svgIcon('right',15)}<span>${tr('movePlayhead')}</span></button><button class="secondary-btn" data-action="audio-align-clip">${svgIcon('transition',15)}<span>${tr('alignClip')}</span></button></div><div class="audio-actions"><button class="secondary-btn" data-action="audio-toggle-mute">${c.muted?svgIcon('mute',16):svgIcon('volume',16)}<span>${c.muted?(state.language==='el'?'Ενεργοποίηση':'Unmute'):(state.language==='el'?'Σίγαση':'Mute')}</span></button><button class="secondary-btn" data-action="duplicate">${tr('duplicate')}</button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div></div></div>`
 }
 
 function effectsEmpty(){return `<div class="empty-state"><b>${tr('effects')}</b><span>${state.language==='el'?'Επίλεξε clip από το timeline.':'Select a clip on the timeline.'}</span></div>`}
+
+function smartReframePanel(){
+  const c=selectedClip(),a=getAsset(c?.assetId);if(!c||!a||!['image','video'].includes(a.type))return''
+  const applied=c.smartReframe,valid=applied?.ratio===state.project.ratio,busy=state.smartBusy==='reframe'
+  return `<div class="panel-section smart-tool-card smart-reframe-card"><div class="smart-tool-head"><span class="smart-tool-icon">${svgIcon('effects',18)}</span><div><strong>${state.language==='el'?'Auto Reframe':'Auto Reframe'}</strong><small>Smartcrop.js 2.0.5 · MIT</small></div><span class="smart-badge">SMART</span></div><p class="helper">${a.type==='video'?(state.language==='el'?'Αναλύει τρία σημεία του clip και κρατά σταθερό το σημαντικό περιεχόμενο μέσα στο τρέχον κάδρο.':'Analyzes three points in the clip and keeps important content framed consistently for the current canvas.'):(state.language==='el'?'Εντοπίζει το σημαντικό περιεχόμενο και προσαρμόζει το κάδρο στο τρέχον aspect ratio.':'Finds the important content and reframes it for the current canvas aspect ratio.')}</p><div class="smart-reframe-status"><span>${svgIcon(valid?'check':'canvas',15)}</span><span><strong>${valid?(state.language==='el'?'Εφαρμοσμένο':'Applied'):(applied?(state.language==='el'?'Χρειάζεται νέα ανάλυση':'Needs refresh'):(state.language==='el'?'Τρέχον κάδρο':'Current canvas'))}</strong><small>${escapeHtml(state.project.ratio)} · ${a.type==='video'?'3-frame':'1-frame'} analysis</small></span></div><div class="smart-action-row"><button class="primary-btn smart-primary" data-action="smart-reframe" ${busy?'disabled':''}>${busy?`<span class="smart-spinner"></span>${state.language==='el'?'Ανάλυση…':'Analyzing…'}`:`${svgIcon('effects',16)}<span>${state.language==='el'?'Auto Reframe':'Auto Reframe'}</span>`}</button><button class="secondary-btn" data-action="smart-reframe-reset">${svgIcon('undo',15)}<span>${state.language==='el'?'Reset κάδρου':'Reset frame'}</span></button></div></div>`
+}
+
 function editPanel(){
   const c=selectedVisual(),a=getAsset(c?.assetId); if(!c)return effectsEmpty()
-  return `<div class="panel-grid compact-panels"><div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy',19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left',19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right',19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash',19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,8,.05,true,'clip')}${a?.type==='video'?`${rangeField('volume',c.volume,0,1,.01,true,'clip')}${rangeField('audioFadeIn',c.audioFadeIn||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}${rangeField('audioFadeOut',c.audioFadeOut||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}`:''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
+  return `<div class="panel-grid compact-panels">${smartReframePanel()}<div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split',19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy',19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left',19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right',19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash',19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0,(a?.duration||c.end)-.05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start+.05}" max="${a?.duration||c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed',c.speed,.25,8,.05,true,'clip')}${a?.type==='video'?`${rangeField('volume',c.volume,0,1,.01,true,'clip')}${rangeField('audioFadeIn',c.audioFadeIn||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}${rangeField('audioFadeOut',c.audioFadeOut||0,0,Math.min(5,clipDuration(c)/2),.05,true,'clip')}`:''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale',c.scale,.2,3,.01,true,'clip')}${rangeField('rotation',c.rotation,-180,180,1,true,'clip')}<div class="field-grid two">${rangeField('offsetX',c.offsetX,-.7,.7,.01,true,'clip')}${rangeField('offsetY',c.offsetY,-.7,.7,.01,true,'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit==='cover'?'active':''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit==='contain'?'active':''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX?'active':''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY?'active':''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`
 }
 function effectsPanel(){
   const c=selectedVisual(); if(!c)return effectsEmpty()
@@ -2104,6 +2350,12 @@ function bindGlobalEvents() {
     if(a==='audio-to-playhead'){const c=selectedAudio();if(!c)return;mutate(p=>{p.audioClips.find(y=>y.id===c.id).timelineStart=snapTime(state.currentTime)});syncAudioTracks(true);return}
     if(a==='audio-align-clip'){const c=selectedAudio(),v=selectedClip()||activeAt(state.currentTime)?.clip;if(!c||!v)return;const row=clipTimeline().find(r=>r.clip.id===v.id);if(!row)return;mutate(p=>{p.audioClips.find(y=>y.id===c.id).timelineStart=row.start});syncAudioTracks(true);return}
     if(a==='audio-toggle-mute'){const c=selectedAudio();if(!c)return;mutate(p=>{const x=p.audioClips.find(y=>y.id===c.id);x.muted=!x.muted});syncAudioTracks(true);return}
+    if(a==='smart-reframe')return autoReframeSelected()
+    if(a==='smart-reframe-reset')return resetSmartReframe()
+    if(a==='smart-audio-analyze')return analyzeSelectedAudio()
+    if(a==='smart-audio-guides')return toggleSmartAudioGuides()
+    if(a==='smart-cut-beats')return cutVideoToSelectedAudioBeats()
+    if(a==='smart-audio-clear')return clearSmartAudioAnalysis()
     if(a==='remove-soundtrack'){const c=selectedAudio();if(c){deleteSelected();syncAudioTracks(true)}return}
     if(a==='fluent-style'){state.fluentStyle=el.dataset.value==='3d'?'3d':'color';state.fluentVisible=60;renderEditor();return}
     if(a==='fluent-more'){state.fluentVisible=(state.fluentVisible||60)+60;renderEditor();return}
@@ -2220,7 +2472,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.3.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.4.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

@@ -32,3 +32,8 @@ The generated `dist/` bundle contains Edituno first-party code together with any
 ## Phase 1 editing engines
 
 PixiJS 8.20.1, PixiJS Filters 6.1.5 and the explicitly MIT-licensed gl-transitions shader files included by Edituno are third-party material. They remain governed by their upstream MIT licenses. The Edituno PolyForm Noncommercial license applies only to Edituno first-party code, UI, documentation and other original material, and does not replace or narrow the MIT rights granted by those upstream projects.
+
+
+## Phase 2 smart editing engines
+
+Smartcrop.js 2.0.5 and Meyda 5.6.3 are third-party MIT-licensed components. They are not relicensed under PolyForm. Edituno's Auto Reframe sampling/orchestration, audio analysis heuristics, timeline guide rendering and beat-driven editing workflow are first-party Edituno material under `PolyForm-Noncommercial-1.0.0`, while the upstream Smartcrop.js and Meyda code retain their MIT rights and notices.

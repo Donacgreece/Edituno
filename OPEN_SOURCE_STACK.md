@@ -47,3 +47,11 @@ Use: on-demand searchable element library. Edituno loads the upstream catalog fr
 - gl-transitions, MIT collection with per-file licensing: Edituno bundles only six shaders whose upstream headers explicitly state MIT.
 
 The libraries are implementation engines. Edituno's interface, presets, project model, fallbacks, rendering orchestration and export integration are first-party Edituno code.
+
+
+## Phase 2 smart editing engine (v2.4.0)
+
+- Smartcrop.js 2.0.5, MIT: content-aware framing engine for Auto Reframe.
+- Meyda 5.6.3, MIT: local audio feature extraction for silence and beat analysis.
+
+Edituno adds its own multi-frame video sampling, stable crop transform mapping, silence-region detection, beat peak selection, BPM estimation, timeline guides and beat-driven V1 cutting workflow around those engines.

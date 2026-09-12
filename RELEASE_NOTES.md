@@ -1,5 +1,20 @@
 # Release Notes
 
+## v2.4.0
+
+Smart editing Phase 2.
+
+- Added Auto Reframe with Smartcrop.js 2.0.5.
+- Video Auto Reframe samples three positions in the selected V1 clip and applies a stable content-aware crop to the current project aspect ratio.
+- Added Smart Audio with Meyda 5.6.3 for local audio feature extraction.
+- Added silence-region detection with an automatically derived threshold.
+- Added beat peak detection and BPM estimation.
+- Added beat and silence guides directly on the timeline.
+- Added configurable beat density and one-click V1 cuts driven by detected audio beats.
+- Added safe reset, clear-analysis and re-analysis flows.
+- Added MIT license copies and third-party notices for Smartcrop.js and Meyda.
+- Preserved the v2.3.1 pinned GPU vendor pipeline, GPU effects, shader transitions, light mode, autosave and existing editor layout.
+
 ## v2.3.1
 
 GPU vendor pipeline hotfix.

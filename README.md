@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.3.1**
+Current packaged release: **v2.4.0**
 
 ## License
 
@@ -143,3 +143,12 @@ v2.2.10 restores the `selectedTransformTarget()` helper used by the preview inte
 Edituno v2.3.0 adds a real GPU Effects layer powered by MIT-licensed PixiJS 8.20.1 and PixiJS Filters 6.1.5. Bloom, Glitch, CRT, Old Film, RGB Split, Pixelate, Bulge and Dream Blur are applied to both preview and export, with a Canvas fallback for environments where GPU rendering is unavailable.
 
 The Transitions panel also includes six explicitly MIT-licensed shaders from gl-transitions: Cross Zoom, Swirl, Mosaic, Circle Crop, Directional and Dreamy. These run as true two-frame WebGL transitions and gracefully fall back to a dissolve if WebGL is unavailable. See `THIRD_PARTY_NOTICES.md` and `THIRD_PARTY_LICENSES/`.
+
+
+### Smart editing tools in v2.4.0
+
+Phase 2 adds local, non-cloud smart editing:
+
+- Auto Reframe powered by Smartcrop.js 2.0.5. Image clips use content-aware framing and video clips use a three-frame stability pass before Edituno maps the result to its own scale and offset model.
+- Smart Audio powered by Meyda 5.6.3. Edituno extracts local audio features, detects silence regions and beat peaks, estimates BPM, renders timeline guides and can split V1 clips to the detected rhythm.
+- All analysis happens on the user's device. Media is not uploaded for these features.
