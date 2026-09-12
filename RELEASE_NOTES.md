@@ -1,5 +1,18 @@
 # Release Notes
 
+## v2.6.1
+
+Mobile audio export reliability hotfix.
+
+- Prevents deterministic WebCodecs export from silently producing video-only MP4 when Safari cannot decode the embedded audio track through `decodeAudioData`.
+- Prewarms and unlocks the export AudioContext directly from the user's Export tap before asynchronous export preparation can lose iOS user activation.
+- Routes all realtime fallback audio through one persistent master Web Audio bus connected to both the recorder stream and an inaudible keep-alive monitor.
+- Uses the source video's own media clock to drive fallback video-frame rendering, improving lip sync because picture and embedded audio share the same playback clock.
+- Uses the same high bitrate policy as the deterministic exporter for fallback 720p/1080p/4K recording.
+- Validates that MP4 output contains an audio track whenever the project is expected to contain audible media. Silent video-only output is rejected instead of being presented as a successful export.
+- Stores video audio-track presence on new imports when the browser exposes that metadata.
+- Phase 1 GPU effects, Phase 2 Smart Tools, Phase 3 Konva and the deterministic WebCodecs export path remain intact.
+
 ## v2.6.0
 
 Production Export Engine.

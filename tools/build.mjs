@@ -140,6 +140,12 @@ if (!js.includes('function bindKonvaCanvasEditor()') || !js.includes('new Konva.
 if (!js.includes('function exportProjectWebCodecs(') || !js.includes('function renderOfflineProjectAudio(') || !js.includes('new VideoFrameCtor(')) {
   throw new Error('Deterministic WebCodecs export engine is missing')
 }
+if (!js.includes('function prewarmExportAudioContext()') || !js.includes('function projectExpectsAudio(') || !js.includes('function renderMediaClockSegment(')) {
+  throw new Error('Mobile audio export reliability layer is missing')
+}
+if (!js.includes("throw new Error('offline-audio-decode')") || !js.includes("validateExportBlob(blob, projectExpectsAudio(project))")) {
+  throw new Error('Silent-audio export prevention is missing')
+}
 if (!js.includes("codec: 'mp4a.40.2'") || !js.includes("codec: 'avc'")) {
   throw new Error('Deterministic AVC/AAC export codec configuration is missing')
 }
@@ -240,4 +246,4 @@ if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'KONVA-MIT.txt'))) throw new Error('Konva MIT license copy missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## mp4-muxer')) throw new Error('mp4-muxer third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4-MUXER-MIT.txt'))) throw new Error('mp4-muxer MIT license copy missing')
-console.log(`Built Edituno v2.6.0 -> ${dist}`)
+console.log(`Built Edituno v2.6.1 -> ${dist}`)

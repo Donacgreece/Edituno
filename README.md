@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.6.0**
+**Current release: v2.6.1**
 
 </div>
 
@@ -544,3 +544,7 @@ https://edituno.com/
 **Edituno**
 
 </div>
+
+### Mobile audio export reliability
+
+On Apple mobile browsers, Edituno now unlocks the export audio graph directly from the user's Export action, prevents video-only MP4 files when a project is expected to contain audio, and uses the source media clock for the realtime compatibility path so embedded speech stays tied to the corresponding video frames.

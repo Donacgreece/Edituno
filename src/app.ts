@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.6.0 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.6.1 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1079,7 +1079,8 @@ async function mediaMetadata(file) {
     }
     const media=document.createElement(type==='video'?'video':'audio'); media.preload='metadata'; media.src=url
     await new Promise((resolve,reject)=>{ media.onloadedmetadata=resolve; media.onerror=reject })
-    return {type,duration:Number.isFinite(media.duration)?media.duration:0,width:type==='video'?media.videoWidth:undefined,height:type==='video'?media.videoHeight:undefined}
+    const audioTracks=type==='video'&&media.audioTracks&&typeof media.audioTracks.length==='number'?media.audioTracks.length:undefined
+    return {type,duration:Number.isFinite(media.duration)?media.duration:0,width:type==='video'?media.videoWidth:undefined,height:type==='video'?media.videoHeight:undefined,hasAudio:type==='audio'?true:(audioTracks===undefined?undefined:audioTracks>0)}
   } finally { URL.revokeObjectURL(url) }
 }
 async function buildWaveform(file,points=72) {
@@ -1354,7 +1355,7 @@ async function importFiles(files, addVisuals=true) {
     try {
       const meta=await mediaMetadata(file), id=uid()
       const waveform=meta.type==='audio'?await buildWaveform(file):null
-      const asset={id,name:file.name,type:meta.type,mimeType:file.type,duration:meta.duration,width:meta.width,height:meta.height,size:file.size,waveform}
+      const asset={id,name:file.name,type:meta.type,mimeType:file.type,duration:meta.duration,width:meta.width,height:meta.height,size:file.size,waveform,hasAudio:meta.hasAudio}
       await putBlob(id,file); state.project.assets.push(asset); state.urls[id]=URL.createObjectURL(file); added.push(asset)
       if(addVisuals && (asset.type==='video'||asset.type==='image')) state.project.clips.push(defaultClip(asset))
       if(asset.type==='audio' && addVisuals) state.project.audioClips.push(defaultAudioClip(asset,preferredAudioInsertTime()))
@@ -1553,7 +1554,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.6.0</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.6.1</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1561,7 +1562,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.6.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.6.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1598,7 +1599,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.6.0</div>
+      <div class="home-rail-version">v2.6.1</div>
     </aside>
 
     <div class="home-surface">
@@ -2437,7 +2438,7 @@ function exportCanvasStream(canvas,fps){
   if(!stream)stream=canvas.captureStream(fps)
   return {stream,commit}
 }
-async function validateExportBlob(blob){
+async function validateExportBlob(blob,expectedAudio=false){
   if(!blob||blob.size<2048)throw new Error('empty-export')
   const url=URL.createObjectURL(blob),probe=document.createElement('video');probe.preload='metadata';probe.muted=true;probe.playsInline=true;probe.src=url
   try{
@@ -2447,9 +2448,69 @@ async function validateExportBlob(blob){
       probe.onerror=()=>{clearTimeout(timer);reject(new Error('export-probe-failed'))}
     })
     if(!probe.videoWidth||!probe.videoHeight)throw new Error('export-no-video-track')
+    if(expectedAudio){
+      const hasAudio=await exportedBlobHasAudioTrack(blob,probe)
+      if(hasAudio===false)throw new Error('export-no-audio-track')
+    }
   }finally{
     probe.removeAttribute('src');probe.load();URL.revokeObjectURL(url)
   }
+}
+
+
+function projectExpectsAudio(project=state.project){
+  if(!project)return false
+  for(const row of clipTimeline(project)){
+    const clip=row.clip,asset=getAsset(clip.assetId,project)
+    if(asset?.type==='video'&&asset.hasAudio!==false&&(clip.volume??1)>0)return true
+  }
+  for(const clip of project.overlays||[]){
+    const asset=getAsset(clip.assetId,project)
+    if(asset?.type==='video'&&asset.hasAudio!==false&&(clip.volume??0)>0)return true
+  }
+  for(const clip of project.audioClips||[]){
+    if(!clip.muted&&(clip.volume??.8)>0)return true
+  }
+  return false
+}
+function isAppleMobileRuntime(){
+  const ua=navigator.userAgent||''
+  return /iPad|iPhone|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)
+}
+async function prewarmExportAudioContext(){
+  const Ctx=window.AudioContext||window.webkitAudioContext
+  if(!Ctx)return null
+  const ctx=new Ctx()
+  try{
+    if(ctx.state==='suspended')await ctx.resume()
+    const source=ctx.createBufferSource(),buffer=ctx.createBuffer(1,1,ctx.sampleRate)
+    source.buffer=buffer;source.connect(ctx.destination);source.start(0)
+    return ctx
+  }catch(error){
+    try{await ctx.close()}catch{}
+    console.warn('Export audio prewarm failed.',error)
+    return null
+  }
+}
+async function blobChunkContainsAscii(blob,text){
+  const bytes=new TextEncoder().encode(text),windowSize=Math.min(blob.size,2*1024*1024)
+  const ranges=[[0,windowSize]]
+  if(blob.size>windowSize)ranges.push([Math.max(0,blob.size-windowSize),blob.size])
+  for(const [start,end] of ranges){
+    const data=new Uint8Array(await blob.slice(start,end).arrayBuffer())
+    outer:for(let i=0;i<=data.length-bytes.length;i++){
+      for(let j=0;j<bytes.length;j++)if(data[i+j]!==bytes[j])continue outer
+      return true
+    }
+  }
+  return false
+}
+async function exportedBlobHasAudioTrack(blob,probe){
+  try{
+    if(probe?.audioTracks&&typeof probe.audioTracks.length==='number')return probe.audioTracks.length>0
+  }catch{}
+  if((blob.type||'').includes('mp4'))return await blobChunkContainsAscii(blob,'soun')
+  return null
 }
 
 function webCodecsExportAvailable(){
@@ -2594,27 +2655,27 @@ function connectOfflineSource(ctx,master,buffer,when,sourceStart,sourceEnd,speed
   return true
 }
 async function renderOfflineProjectAudio(project,sampleRate=48000){
-  const duration=Math.max(.05,projectDuration(project)),frames=Math.max(1,Math.ceil(duration*sampleRate)),Ctx=(window).OfflineAudioContext
-  if(!Ctx)return {buffer:null,hasAudio:false}
+  const duration=Math.max(.05,projectDuration(project)),frames=Math.max(1,Math.ceil(duration*sampleRate)),Ctx=(window).OfflineAudioContext,expectedAudio=projectExpectsAudio(project)
+  if(!Ctx)return {buffer:null,hasAudio:false,expectedAudio,decodeFailures:expectedAudio?1:0}
   const ctx=new Ctx(2,frames,sampleRate),master=ctx.createDynamicsCompressor(),cache=new Map();master.connect(ctx.destination)
   master.threshold.value=-2;master.knee.value=8;master.ratio.value=4;master.attack.value=.003;master.release.value=.15
-  let hasAudio=false
+  let hasAudio=false,decodeFailures=0
   for(const row of clipTimeline(project)){
     const clip=row.clip,asset=getAsset(clip.assetId,project);if(!asset||asset.type!=='video'||(clip.volume??1)<=0)continue
-    const buffer=await decodeOfflineAudio(asset.id,ctx,cache);if(!buffer)continue
+    const buffer=await decodeOfflineAudio(asset.id,ctx,cache);if(!buffer){if(asset.hasAudio!==false)decodeFailures++;continue}
     hasAudio=connectOfflineSource(ctx,master,buffer,row.start,clip.start||0,clip.end||buffer.duration,clip.speed||1,clip.volume??1,clip.audioFadeIn||0,clip.audioFadeOut||0)||hasAudio
   }
   for(const clip of project.overlays||[]){
     const asset=getAsset(clip.assetId,project);if(!asset||asset.type!=='video'||(clip.volume??0)<=0)continue
-    const buffer=await decodeOfflineAudio(asset.id,ctx,cache);if(!buffer)continue
+    const buffer=await decodeOfflineAudio(asset.id,ctx,cache);if(!buffer){if(asset.hasAudio!==false)decodeFailures++;continue}
     hasAudio=connectOfflineSource(ctx,master,buffer,clip.timelineStart||0,clip.start||0,clip.end||buffer.duration,clip.speed||1,clip.volume??0,0,0)||hasAudio
   }
   for(const clip of project.audioClips||[]){
     if(clip.muted||(clip.volume??.8)<=0)continue
-    const buffer=await decodeOfflineAudio(clip.assetId,ctx,cache);if(!buffer)continue
+    const buffer=await decodeOfflineAudio(clip.assetId,ctx,cache);if(!buffer){decodeFailures++;continue}
     hasAudio=connectOfflineSource(ctx,master,buffer,clip.timelineStart||0,clip.sourceStart||0,clip.sourceEnd||buffer.duration,clip.speed||1,clip.volume??.8,clip.fadeIn||0,clip.fadeOut||0)||hasAudio
   }
-  return {buffer:hasAudio?await ctx.startRendering():null,hasAudio}
+  return {buffer:hasAudio?await ctx.startRendering():null,hasAudio,expectedAudio,decodeFailures}
 }
 async function encodeOfflineAudio(buffer,encoder,onProgress,signal){
   if(!buffer)return 0
@@ -2638,6 +2699,7 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
   const [w,h]=exportDimensions(project.ratio,quality),duration=Math.max(.05,projectDuration(project)),MuxerLib=(window).Mp4Muxer
   const videoConfig=await chooseAvcEncoderConfig(w,h,fps,quality);if(!videoConfig)throw new Error('webcodecs-video')
   const audioMix=await renderOfflineProjectAudio(project,48000)
+  if(audioMix.expectedAudio&&!audioMix.hasAudio)throw new Error('offline-audio-decode')
   const audioConfig=audioMix.hasAudio?await chooseAacEncoderConfig(48000,2):null
   if(audioMix.hasAudio&&!audioConfig)throw new Error('webcodecs-audio')
   const target=new MuxerLib.ArrayBufferTarget()
@@ -2669,7 +2731,7 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
     muxer.finalize();onProgress(.98)
     if(!target.buffer||target.buffer.byteLength<4096||videoChunks<1)throw new Error('webcodecs-empty')
     if(audioMix.hasAudio&&audioChunks<1)throw new Error('webcodecs-no-audio')
-    const blob=new Blob([target.buffer],{type:'video/mp4'});await validateExportBlob(blob);onProgress(1)
+    const blob=new Blob([target.buffer],{type:'video/mp4'});await validateExportBlob(blob,audioMix.expectedAudio);onProgress(1)
     return {blob,extension:'mp4',mime:'video/mp4'}
   }finally{
     destroyDeterministicSources(sources)
@@ -2677,7 +2739,7 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
     try{audioEncoder?.close()}catch{}
   }
 }
-async function exportProjectLocal(quality,fps,onProgress,signal){
+async function exportProjectLocal(quality,fps,onProgress,signal,prewarmedAudioContext=null){
   if(webCodecsExportAvailable()){
     try{return await exportProjectWebCodecs(quality,fps,onProgress,signal)}
     catch(error){
@@ -2686,9 +2748,34 @@ async function exportProjectLocal(quality,fps,onProgress,signal){
       onProgress(0)
     }
   }
-  return exportProjectRealtimeFallback(quality,fps,onProgress,signal)
+  return exportProjectRealtimeFallback(quality,fps,onProgress,signal,prewarmedAudioContext)
 }
-async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
+
+async function renderMediaClockSegment(video,clip,duration,fps,draw,signal){
+  const sourceStart=clip.start||0,speed=Math.max(.05,clip.speed||1),interval=1000/Math.max(1,fps),started=performance.now()
+  let nextFrameAt=started,lastMedia=video.currentTime||sourceStart,lastAdvance=started
+  while(true){
+    if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+    const now=performance.now(),current=video.currentTime||sourceStart
+    if(Math.abs(current-lastMedia)>.0015){lastMedia=current;lastAdvance=now}
+    const elapsed=clamp((current-sourceStart)/speed,0,duration)
+    await draw(elapsed)
+    if(elapsed>=duration-.002)return
+    const wallElapsed=(now-started)/1000
+    if(now-lastAdvance>450){
+      const recoveryTarget=sourceStart+Math.min(duration,wallElapsed)*speed
+      await syncExportVideoFrame(video,recoveryTarget,signal,true)
+      lastMedia=video.currentTime||recoveryTarget;lastAdvance=performance.now()
+      if(video.paused)await video.play()
+    }
+    nextFrameAt+=interval
+    const wait=nextFrameAt-performance.now()
+    if(wait>1)await exportSleep(wait,signal)
+    else await new Promise(resolve=>requestAnimationFrame(()=>resolve()))
+  }
+}
+
+async function exportProjectRealtimeFallback(quality,fps,onProgress,signal,prewarmedAudioContext=null) {
   const project=state.project
   if(!project||(project.clips?.length||0)+(project.overlays?.length||0)+(project.elements?.length||0)===0)throw new Error('empty')
   if(typeof HTMLCanvasElement.prototype.captureStream!=='function'||typeof MediaRecorder==='undefined')throw new Error('mediarecorder')
@@ -2700,20 +2787,21 @@ async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
 
   const AudioCtx=window.AudioContext||window.webkitAudioContext
   if(!AudioCtx)throw new Error('audio-context')
-  const audioContext=new AudioCtx(),dest=audioContext.createMediaStreamDestination()
+  const audioContext=prewarmedAudioContext&&prewarmedAudioContext.state!=='closed'?prewarmedAudioContext:new AudioCtx(),dest=audioContext.createMediaStreamDestination(),master=audioContext.createGain(),monitor=audioContext.createGain()
+  master.gain.value=1;monitor.gain.value=.000001;master.connect(dest);master.connect(monitor);monitor.connect(audioContext.destination)
   const audioTrack=dest.stream.getAudioTracks()[0]
   if(audioTrack)stream.addTrack(audioTrack)
 
   const mime=pickMime()
   if(!mime)throw new Error('mediarecorder')
-  const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:quality>=2160?35_000_000:quality===1080?10_000_000:5_500_000,audioBitsPerSecond:192_000})
+  const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:exportBitrate(quality,fps),audioBitsPerSecond:192_000})
   const chunks=[]
   recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data)
   const done=new Promise((resolve,reject)=>{recorder.onerror=()=>reject(new Error('record'));recorder.onstop=()=>resolve(new Blob(chunks,{type:mime}))})
 
   await audioContext.resume()
   const exportZero=audioContext.currentTime+.16
-  const audioNodes=await scheduleAudioTracks(project,audioContext,dest,exportZero)
+  const audioNodes=await scheduleAudioTracks(project,audioContext,master,exportZero)
   let exportError=null,blob=null,global=0,total=projectDuration(project)
 
   recorder.start(250)
@@ -2730,16 +2818,15 @@ async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
 
       if(asset.type==='video'){
         const v=attachExportMedia(document.createElement('video'))
-        let src=null,gain=null,keepAlive=null
+        let src=null,gain=null
         try{
-          v.src=url;v.load();await waitLoaded(v)
+          v.src=url;v.muted=false;v.volume=1;v.load();await waitLoaded(v)
           v.playbackRate=clamp(clip.speed||1,.25,4)
           await syncExportVideoFrame(v,clip.start||0,signal,true)
 
           src=audioContext.createMediaElementSource(v)
           gain=audioContext.createGain()
-          keepAlive=audioContext.createGain();keepAlive.gain.value=0
-          src.connect(gain);gain.connect(dest);gain.connect(keepAlive);keepAlive.connect(audioContext.destination)
+          src.connect(gain);gain.connect(master)
 
           const now=audioContext.currentTime,clipVol=clamp(clip.volume??1,0,1),fi=Math.min(clip.audioFadeIn||0,dur/2),fo=Math.min(clip.audioFadeOut||0,dur/2)
           gain.gain.cancelScheduledValues(now);gain.gain.setValueAtTime(fi?0:clipVol,now)
@@ -2747,19 +2834,8 @@ async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
           if(fo){gain.gain.setValueAtTime(clipVol,now+dur-fo);gain.gain.linearRampToValueAtTime(0,now+dur)}
 
           await v.play()
-          let lastMediaTime=v.currentTime,lastAdvance=performance.now()
 
-          await renderSegment(dur,fps,async elapsed=>{
-            const expected=(clip.start||0)+elapsed*(clip.speed||1)
-            const current=v.currentTime||0
-            if(Math.abs(current-lastMediaTime)>.002){lastMediaTime=current;lastAdvance=performance.now()}
-            const stalled=performance.now()-lastAdvance>280
-            if(stalled||Math.abs(current-expected)>.20){
-              await syncExportVideoFrame(v,expected,signal,true)
-              lastMediaTime=v.currentTime;lastAdvance=performance.now()
-              if(v.paused)await v.play()
-            }
-
+          await renderMediaClockSegment(v,clip,dur,fps,async elapsed=>{
             ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h)
             const row={clip,start:global,end:global+dur,duration:dur}
             await drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/Math.max(.001,dur))
@@ -2773,7 +2849,6 @@ async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
           try{v.pause()}catch{}
           try{src?.disconnect()}catch{}
           try{gain?.disconnect()}catch{}
-          try{keepAlive?.disconnect()}catch{}
           cleanupExportMedia(v)
         }
       }else if(asset.type==='image'){
@@ -2813,12 +2888,14 @@ async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
   try{
     blob=await done
   }finally{
+    try{master.disconnect()}catch{}
+    try{monitor.disconnect()}catch{}
     for(const track of stream.getTracks())try{track.stop()}catch{}
     await audioContext.close().catch(()=>{})
   }
 
   if(exportError)throw exportError
-  await validateExportBlob(blob)
+  await validateExportBlob(blob,projectExpectsAudio(project))
   onProgress(1)
   return {blob,extension:mime.includes('mp4')?'mp4':'webm',mime}
 }
@@ -2845,11 +2922,20 @@ async function beginExport() {
   if(!state.project||((state.project.clips?.length||0)+(state.project.overlays?.length||0)+(state.project.elements?.length||0)===0)){toast(tr('emptyTimeline'),'error');return}
   const q=+$('#export-quality').value,fps=+$('#export-fps').value,wrap=$('#export-progress-wrap'),bar=$('#export-progress'),status=$('#export-status'),btn=$('[data-action="export-start"]')
   wrap.classList.remove('hidden');btn.disabled=true;btn.textContent=tr('exporting');state.exportController=new AbortController()
+  const prewarmedAudioContext=projectExpectsAudio(state.project)?await prewarmExportAudioContext():null
   try{
-    const result=await exportProjectLocal(q,fps,p=>{bar.style.width=`${Math.round(p*100)}%`;status.textContent=`${tr('exporting')} ${Math.round(p*100)}%`},state.exportController.signal)
+    const result=await exportProjectLocal(q,fps,p=>{bar.style.width=`${Math.round(p*100)}%`;status.textContent=`${tr('exporting')} ${Math.round(p*100)}%`},state.exportController.signal,prewarmedAudioContext)
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
-  }catch(e){status.textContent=tr('exportFailed');toast(tr('exportFailed'),'error');console.error(e)}finally{btn.disabled=false;btn.textContent=tr('startExport')}
+  }catch(e){
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'
+    status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
+    toast(missingAudio?(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.'):tr('exportFailed'),'error')
+    console.error(e)
+  }finally{
+    if(prewarmedAudioContext&&prewarmedAudioContext.state!=='closed')await prewarmedAudioContext.close().catch(()=>{})
+    btn.disabled=false;btn.textContent=tr('startExport')
+  }
 }
 function exportFilename(){const name=(state.project?.name||'Edituno').replace(/[^a-z0-9\-_ ]/gi,'').trim().replace(/\s+/g,'-')||'Edituno';return `${name}.${state.exportResult?.extension||'webm'}`}
 function downloadExport(){if(!state.exportUrl)return;const a=document.createElement('a');a.href=state.exportUrl;a.download=exportFilename();document.body.append(a);a.click();a.remove()}
@@ -3059,7 +3145,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.6.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.6.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
