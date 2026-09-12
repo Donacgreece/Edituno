@@ -108,3 +108,14 @@ Edituno uses Konva as the interaction engine for direct on-canvas selection, dra
 - License copy: `THIRD_PARTY_LICENSES/MP4-MUXER-MIT.txt`
 
 Edituno uses the pinned mp4-muxer package only to multiplex timestamped WebCodecs AVC video and AAC audio into an MP4 container. Edituno's frame rendering, timeline timing, audio mixing, effects and synchronization logic remain first-party Edituno code. mp4-muxer remains MIT-licensed.
+
+
+## MP4Box.js
+
+- Component: `mp4box` 2.4.1
+- Upstream: https://github.com/gpac/mp4box.js
+- License: BSD-3-Clause
+- Copyright: 2012 Telecom ParisTech/TSI/MM/GPAC Cyril Concolato
+- License copy: `THIRD_PARTY_LICENSES/MP4BOX-BSD-3-CLAUSE.txt`
+
+Edituno uses MP4Box.js only as a local ISO-BMFF/QuickTime demuxer fallback so Safari can expose AAC access units to WebCodecs when Web Audio's `decodeAudioData()` cannot decode the embedded audio track. Edituno's timeline audio mix, synchronization, AAC metadata repair and export orchestration remain first-party Edituno code. MP4Box.js remains under its BSD-3-Clause license.

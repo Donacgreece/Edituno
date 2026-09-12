@@ -1,5 +1,16 @@
 # Release Notes
 
+## v2.6.2
+
+Safari/iPhone audio export repair.
+
+- Added an MP4/QuickTime AAC demux fallback with MP4Box.js 2.4.1 for cases where Safari/WebKit cannot decode the embedded audio stream through `decodeAudioData()`.
+- Extracted AAC access units are decoded through WebCodecs `AudioDecoder` and rebuilt as PCM before Edituno performs its deterministic timeline audio mix.
+- Added explicit AAC `AudioSpecificConfig` generation for common AAC-LC tracks.
+- Repairs Safari/WebKit AAC `AudioEncoder` metadata before mp4-muxer receives it, avoiding the known WebKit behavior where the encoder can expose an `esds`-style description instead of the required AudioSpecificConfig and create silent MP4 audio tracks.
+- Retains the iOS audio-context unlock, realtime compatibility path and audio-track validation from v2.6.1.
+- Does not change the editor interface, GPU effects, Smart Tools or Konva editing.
+
 ## v2.6.1
 
 Mobile audio export reliability hotfix.

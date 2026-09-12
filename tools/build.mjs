@@ -143,6 +143,9 @@ if (!js.includes('function exportProjectWebCodecs(') || !js.includes('function r
 if (!js.includes('function prewarmExportAudioContext()') || !js.includes('function projectExpectsAudio(') || !js.includes('function renderMediaClockSegment(')) {
   throw new Error('Mobile audio export reliability layer is missing')
 }
+if (!js.includes('function decodeMp4AudioWithWebCodecs(') || !js.includes('function normalizedAacEncoderMetadata(') || !js.includes('vendor/mp4box.all.mjs')) {
+  throw new Error('Safari MP4 audio decode and AAC metadata repair layer is missing')
+}
 if (!js.includes("throw new Error('offline-audio-decode')") || !js.includes("validateExportBlob(blob, projectExpectsAudio(project))")) {
   throw new Error('Silent-audio export prevention is missing')
 }
@@ -223,6 +226,11 @@ const mp4MuxerCandidates = [
   path.join(root,'public','vendor','mp4-muxer.js')
 ]
 copyVendor(mp4MuxerCandidates,path.join(vendorDir,'mp4-muxer.js'),'mp4-muxer 5.2.2',1)
+const mp4boxCandidates = [
+  path.join(root,'node_modules','mp4box','dist','mp4box.all.mjs'),
+  path.join(root,'public','vendor','mp4box.all.mjs')
+]
+copyVendor(mp4boxCandidates,path.join(vendorDir,'mp4box.all.mjs'),'mp4box 2.4.1',1)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -246,4 +254,6 @@ if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'KONVA-MIT.txt'))) throw new Error('Konva MIT license copy missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## mp4-muxer')) throw new Error('mp4-muxer third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4-MUXER-MIT.txt'))) throw new Error('mp4-muxer MIT license copy missing')
-console.log(`Built Edituno v2.6.1 -> ${dist}`)
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## MP4Box.js')) throw new Error('MP4Box.js third-party notice missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.txt'))) throw new Error('MP4Box.js BSD-3-Clause license copy missing')
+console.log(`Built Edituno v2.6.2 -> ${dist}`)

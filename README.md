@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.6.1**
+**Current release: v2.6.2**
 
 </div>
 
@@ -548,3 +548,7 @@ https://edituno.com/
 ### Mobile audio export reliability
 
 On Apple mobile browsers, Edituno now unlocks the export audio graph directly from the user's Export action, prevents video-only MP4 files when a project is expected to contain audio, and uses the source media clock for the realtime compatibility path so embedded speech stays tied to the corresponding video frames.
+
+### Safari audio export compatibility
+
+Edituno includes a dedicated Safari/iPhone audio compatibility path. If native Web Audio cannot decode an embedded AAC track from an MP4 or QuickTime source, Edituno can demux the local media container with MP4Box.js, decode AAC through WebCodecs, rebuild the PCM timeline mix and normalize AAC encoder metadata before the final MP4 mux. This is designed to prevent successful-looking but silent mobile exports.

@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "private": true,
   "description": "Free local video editor PWA with direct device install, optional PayPal support and mobile-first About experience",
   "scripts": {
@@ -24,6 +24,7 @@
     "smartcrop": "2.0.5",
     "meyda": "5.6.3",
     "konva": "10.5.0",
-    "mp4-muxer": "5.2.2"
+    "mp4-muxer": "5.2.2",
+    "mp4box": "2.4.1"
   }
 }

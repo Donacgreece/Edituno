@@ -46,3 +46,8 @@ Konva 10.5.0 is a third-party MIT-licensed component and is not relicensed under
 ## Deterministic MP4 export container
 
 `mp4-muxer` 5.2.2 is a third-party MIT-licensed component used as the MP4 container multiplexer for Edituno's WebCodecs export engine. It is not relicensed under PolyForm. Edituno's deterministic frame rendering, OfflineAudioContext mix, timeline synchronization and export orchestration remain first-party material under `PolyForm-Noncommercial-1.0.0`.
+
+
+## Safari MP4 audio demux fallback
+
+`mp4box` 2.4.1 is a third-party BSD-3-Clause component used only to parse ISO-BMFF/QuickTime containers and expose embedded AAC packets when native Web Audio decoding is unavailable or fails. MP4Box.js is not relicensed under PolyForm. Edituno's audio timeline model, PCM assembly, WebCodecs decoding, AAC metadata normalization, synchronization and export workflow remain first-party material under `PolyForm-Noncommercial-1.0.0`.
