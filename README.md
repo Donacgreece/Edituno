@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.16**
+Current packaged release: **v2.3.0**
 
 ## License
 
@@ -136,3 +136,10 @@ The in-app About page explains the local-first model and includes optional proje
 ## Editor startup stability
 
 v2.2.10 restores the `selectedTransformTarget()` helper used by the preview interaction layer. This fixes the runtime crash that could replace the editor with the startup error screen on desktop and mobile. The production build now explicitly validates that this helper is present before deployment.
+
+
+## GPU Effects and Shader Transitions
+
+Edituno v2.3.0 adds a real GPU Effects layer powered by MIT-licensed PixiJS 8.20.1 and PixiJS Filters 6.1.5. Bloom, Glitch, CRT, Old Film, RGB Split, Pixelate, Bulge and Dream Blur are applied to both preview and export, with a Canvas fallback for environments where GPU rendering is unavailable.
+
+The Transitions panel also includes six explicitly MIT-licensed shaders from gl-transitions: Cross Zoom, Swirl, Mosaic, Circle Crop, Directional and Dreamy. These run as true two-frame WebGL transitions and gracefully fall back to a dissolve if WebGL is unavailable. See `THIRD_PARTY_NOTICES.md` and `THIRD_PARTY_LICENSES/`.

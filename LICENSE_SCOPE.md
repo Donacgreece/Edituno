@@ -27,3 +27,8 @@ See `THIRD_PARTY_NOTICES.md` for current notices and upstream license links.
 ## Generated production bundle
 
 The generated `dist/` bundle contains Edituno first-party code together with any identified third-party material. The presence of PolyForm metadata in the bundle applies only to Edituno-owned material. Third-party material continues under its original license.
+
+
+## Phase 1 editing engines
+
+PixiJS 8.20.1, PixiJS Filters 6.1.5 and the explicitly MIT-licensed gl-transitions shader files included by Edituno are third-party material. They remain governed by their upstream MIT licenses. The Edituno PolyForm Noncommercial license applies only to Edituno first-party code, UI, documentation and other original material, and does not replace or narrow the MIT rights granted by those upstream projects.

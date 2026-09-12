@@ -1,7 +1,15 @@
-const CACHE = 'edituno-studio-v2.2.16'
+const CACHE = 'edituno-studio-v2.3.0'
 const CORE = [
   './',
   './manifest.webmanifest',
+  './vendor/pixi.min.js',
+  './vendor/pixi-filters.min.js',
+  './vendor/gl-transitions/CrossZoom.glsl',
+  './vendor/gl-transitions/AdvancedMosaic.glsl',
+  './vendor/gl-transitions/CircleCrop.glsl',
+  './vendor/gl-transitions/Directional.glsl',
+  './vendor/gl-transitions/Dreamy.glsl',
+  './vendor/gl-transitions/Swirl.glsl',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
@@ -48,7 +56,7 @@ self.addEventListener('fetch', event => {
     return
   }
 
-  if (url.pathname.includes('/icons/') || url.pathname.includes('/splash/') || url.pathname.endsWith('.webmanifest')) {
+  if (url.pathname.includes('/icons/') || url.pathname.includes('/splash/') || url.pathname.endsWith('.webmanifest') || url.pathname.includes('/vendor/') || url.pathname.endsWith('.glsl')) {
     event.respondWith(
       caches.match(event.request)
         .then(hit => hit || fetch(event.request).then(response => {

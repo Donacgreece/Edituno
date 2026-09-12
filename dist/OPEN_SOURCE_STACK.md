@@ -38,3 +38,12 @@ We do not copy its product UI or branding.
 License: MIT.
 Use: on-demand searchable element library. Edituno loads the upstream catalog from the official Microsoft GitHub repository, offers Color SVG and 3D PNG variants, and stores only assets selected by the user inside the local project.
 
+
+
+## Phase 1 GPU editing engine (v2.3.0)
+
+- PixiJS 8.20.1, MIT: GPU rendering layer used for live and export effects.
+- PixiJS Filters 6.1.5, MIT: selected real-time filters exposed through Edituno's own Effects interface.
+- gl-transitions, MIT collection with per-file licensing: Edituno bundles only six shaders whose upstream headers explicitly state MIT.
+
+The libraries are implementation engines. Edituno's interface, presets, project model, fallbacks, rendering orchestration and export integration are first-party Edituno code.

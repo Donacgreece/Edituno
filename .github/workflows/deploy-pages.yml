@@ -74,6 +74,19 @@ jobs:
           test -f dist/LICENSE_SCOPE.md
           test -f dist/NOTICE
           test -f dist/THIRD_PARTY_NOTICES.md
+          test -f dist/vendor/pixi.min.js
+          test -f dist/vendor/pixi-filters.min.js
+          test -f dist/vendor/gl-transitions/CrossZoom.glsl
+          test -f dist/vendor/gl-transitions/Swirl.glsl
+          test -f dist/vendor/gl-transitions/AdvancedMosaic.glsl
+          test -f dist/vendor/gl-transitions/CircleCrop.glsl
+          test -f dist/vendor/gl-transitions/Directional.glsl
+          test -f dist/vendor/gl-transitions/Dreamy.glsl
+          test -f dist/THIRD_PARTY_LICENSES/PIXIJS-MIT.txt
+          test -f dist/THIRD_PARTY_LICENSES/PIXI-FILTERS-MIT.txt
+          test -f dist/THIRD_PARTY_LICENSES/GL-TRANSITIONS-MIT.txt
+          test $(wc -c < dist/vendor/pixi.min.js) -gt 500000
+          test $(wc -c < dist/vendor/pixi-filters.min.js) -gt 100000
           grep -Fq "$EDITUNO_SITE_URL" dist/index.html
           grep -Fq "$SHARE_URL" dist/index.html
           grep -Fq "$SITEMAP_URL" dist/robots.txt
@@ -92,7 +105,7 @@ jobs:
           grep -Fq 'PolyForm-Noncommercial-1.0.0' dist/LICENSE.md
           grep -Fq 'Required Notice:' dist/NOTICE
           grep -Fq 'third-party' dist/LICENSE_SCOPE.md
-          grep -Fq 'edituno-studio-v2.2.16' dist/sw.js
+          grep -Fq 'edituno-studio-v2.3.0' dist/sw.js
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 

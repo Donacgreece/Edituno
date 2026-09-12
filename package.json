@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.2.16",
+  "version": "2.3.0",
   "private": true,
   "description": "Free local video editor PWA with direct device install, optional PayPal support and mobile-first About experience",
   "scripts": {
@@ -17,5 +17,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Donacgreece/Edituno.git"
+  },
+  "dependencies": {
+    "pixi.js": "8.20.1",
+    "pixi-filters": "6.1.5"
   }
 }

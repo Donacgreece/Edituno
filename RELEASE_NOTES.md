@@ -1,5 +1,16 @@
 # Release Notes
 
+## v2.3.0
+
+GPU Effects and Shader Transitions release.
+
+- Added a new 3 x 3 GPU Effects section with real PixiJS/PixiJS Filters processing.
+- Added Bloom, Glitch, CRT, Old Film, RGB Split, Pixelate, Bulge and Dream Blur with an intensity control.
+- Effects are integrated into preview and export, with safe Canvas fallbacks.
+- Added six real WebGL two-frame transitions from explicitly MIT-licensed gl-transitions shaders.
+- Added offline caching for GPU vendor bundles and transition shaders.
+- Expanded third-party notices and preserved PolyForm scope separation.
+
 ## v2.2.16
 
 Licensing and third-party scope release.

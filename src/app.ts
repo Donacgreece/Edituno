@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.2.16 licensing release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.3.0 GPU effects and shader transitions release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -644,6 +644,146 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
   }
 }
 
+
+const gpuFxRuntime={app:null,sourceCanvas:null,sourceCtx:null,texture:null,sprite:null,filters:new Map(),width:0,height:0,failed:false}
+const gpuFxScratch=document.createElement('canvas')
+const gpuFxFallback=document.createElement('canvas')
+const glTransitionRuntime={canvas:document.createElement('canvas'),gl:null,programs:new Map(),sources:new Map(),failed:false}
+const transitionSourceNodes=new Map()
+const GL_TRANSITIONS={
+  'gl-crosszoom':{file:'CrossZoom.glsl',uniforms:{strength:.4}},
+  'gl-swirl':{file:'Swirl.glsl',uniforms:{}},
+  'gl-mosaic':{file:'AdvancedMosaic.glsl',uniforms:{pixelSize:50}},
+  'gl-circlecrop':{file:'CircleCrop.glsl',uniforms:{bgcolor:[0,0,0,1]}},
+  'gl-directional':{file:'Directional.glsl',uniforms:{direction:[1,0]}},
+  'gl-dreamy':{file:'Dreamy.glsl',uniforms:{}}
+}
+function ensureCanvasSize(canvas,w,h){if(canvas.width!==w)canvas.width=w;if(canvas.height!==h)canvas.height=h;return canvas}
+function gpuFxAvailable(){return !gpuFxRuntime.failed&&Boolean(window.PIXI?.Application&&window.PIXI?.filters)}
+async function ensureGpuFxRuntime(w,h){
+  if(!gpuFxAvailable())return null
+  try{
+    const PIXI=window.PIXI
+    if(!gpuFxRuntime.app){
+      const sourceCanvas=document.createElement('canvas'),app=new PIXI.Application()
+      await app.init({width:w,height:h,backgroundAlpha:0,preference:'webgl',autoStart:false,antialias:false,preserveDrawingBuffer:true,resolution:1})
+      const texture=PIXI.Texture.from(sourceCanvas),sprite=new PIXI.Sprite(texture)
+      sprite.width=w;sprite.height=h;app.stage.addChild(sprite)
+      Object.assign(gpuFxRuntime,{app,sourceCanvas,sourceCtx:sourceCanvas.getContext('2d'),texture,sprite,width:w,height:h})
+    }
+    if(gpuFxRuntime.width!==w||gpuFxRuntime.height!==h){
+      gpuFxRuntime.width=w;gpuFxRuntime.height=h;gpuFxRuntime.app.renderer.resize(w,h);ensureCanvasSize(gpuFxRuntime.sourceCanvas,w,h)
+      gpuFxRuntime.texture.destroy(true);gpuFxRuntime.texture=PIXI.Texture.from(gpuFxRuntime.sourceCanvas);gpuFxRuntime.sprite.texture=gpuFxRuntime.texture;gpuFxRuntime.sprite.width=w;gpuFxRuntime.sprite.height=h
+    }
+    return gpuFxRuntime
+  }catch(error){console.warn('PixiJS GPU effects unavailable, using Canvas fallback.',error);gpuFxRuntime.failed=true;return null}
+}
+function pixiFilterFor(effect,intensity,w,h,progress){
+  const PIXI=window.PIXI,F=PIXI?.filters;if(!PIXI||!F)return null
+  const i=clamp(Number(intensity)||.65,.1,1)
+  try{
+    let filter=gpuFxRuntime.filters.get(effect)
+    if(!filter){
+      if(effect==='bloom')filter=new F.AdvancedBloomFilter({threshold:.55,bloomScale:1.05,brightness:1,blur:6,quality:3})
+      else if(effect==='glitch')filter=new F.GlitchFilter({slices:7,offset:28,direction:0,fillMode:2,seed:.2,average:false,minSize:8,sampleSize:256})
+      else if(effect==='crt')filter=new F.CRTFilter({curvature:1.2,lineWidth:1,lineContrast:.22,noise:.08,noiseSize:1.2,vignetting:.28,vignettingAlpha:.65,vignettingBlur:.35})
+      else if(effect==='oldfilm')filter=new F.OldFilmFilter({sepia:.28,noise:.16,noiseSize:1.2,scratch:.35,scratchDensity:.25,scratchWidth:1.2,vignetting:.3,vignettingAlpha:.55,vignettingBlur:.35})
+      else if(effect==='rgbsplit')filter=new F.RGBSplitFilter({red:{x:-6,y:0},green:{x:0,y:0},blue:{x:6,y:0}})
+      else if(effect==='pixelate')filter=new F.PixelateFilter(8)
+      else if(effect==='bulge')filter=new F.BulgePinchFilter({center:{x:.5,y:.5},radius:Math.min(w,h)*.36,strength:.35})
+      else if(effect==='dreamblur')filter=new PIXI.BlurFilter({strength:4,quality:3})
+      if(filter)gpuFxRuntime.filters.set(effect,filter)
+    }
+    if(!filter)return null
+    if(effect==='bloom'){filter.bloomScale=.55+1.25*i;filter.blur=3+8*i;filter.threshold=.75-.35*i}
+    if(effect==='glitch'){filter.offset=8+48*i;filter.slices=Math.round(3+10*i);filter.seed=(progress*9.17)%1;filter.red={x:-8*i,y:0};filter.blue={x:8*i,y:0};filter.refresh?.()}
+    if(effect==='crt'){filter.noise=.03+.22*i;filter.lineContrast=.12+.3*i;filter.curvature=.7+1.2*i;filter.time=progress*6;filter.seed=(progress*13.1)%1}
+    if(effect==='oldfilm'){filter.noise=.05+.25*i;filter.sepia=.12+.42*i;filter.scratch=.12+.55*i;filter.scratchDensity=.15+.42*i;filter.seed=(progress*17.3)%1;filter.time=progress*4}
+    if(effect==='rgbsplit'){filter.red={x:-3-11*i,y:0};filter.green={x:0,y:1.5*i};filter.blue={x:3+11*i,y:0}}
+    if(effect==='pixelate')filter.size=3+Math.round(19*i)
+    if(effect==='bulge'){filter.radius=Math.min(w,h)*(.22+.28*i);filter.strength=.12+.62*i}
+    if(effect==='dreamblur')filter.strength=1.5+8*i
+    return filter
+  }catch(error){console.warn('Pixi filter setup failed.',effect,error);return null}
+}
+function applyGpuFallback(targetCtx,baseCanvas,effect,intensity,w,h,progress,alpha=1){
+  const i=clamp(Number(intensity)||.65,.1,1)
+  targetCtx.save();targetCtx.globalAlpha=alpha
+  if(effect==='pixelate'){
+    const small=ensureCanvasSize(gpuFxFallback,Math.max(24,Math.round(w/(3+18*i))),Math.max(24,Math.round(h/(3+18*i)))),sctx=small.getContext('2d');sctx.clearRect(0,0,small.width,small.height);sctx.drawImage(baseCanvas,0,0,small.width,small.height);targetCtx.imageSmoothingEnabled=false;targetCtx.drawImage(small,0,0,w,h);targetCtx.imageSmoothingEnabled=true
+  }else if(effect==='dreamblur'||effect==='bloom'){
+    targetCtx.filter=`blur(${effect==='bloom'?2+5*i:2+9*i}px)`;targetCtx.drawImage(baseCanvas,0,0);targetCtx.filter='none';targetCtx.globalCompositeOperation=effect==='bloom'?'screen':'source-over';targetCtx.globalAlpha=alpha*(effect==='bloom'?.58:.72);targetCtx.drawImage(baseCanvas,0,0)
+  }else if(effect==='glitch'){
+    targetCtx.drawImage(baseCanvas,0,0);const slices=5+Math.round(i*7),hh=h/slices;for(let s=0;s<slices;s++){const y=s*hh,off=Math.sin(s*19.7+progress*41)*w*.025*i;targetCtx.drawImage(baseCanvas,0,y,w,hh,off,y,w,hh)}
+  }else if(effect==='crt'){
+    targetCtx.drawImage(baseCanvas,0,0);targetCtx.globalAlpha=alpha*(.12+.22*i);targetCtx.fillStyle='#000';for(let y=0;y<h;y+=4)targetCtx.fillRect(0,y,w,1)
+  }else if(effect==='oldfilm'){
+    targetCtx.filter=`sepia(${.2+.45*i}) contrast(${1+.08*i})`;targetCtx.drawImage(baseCanvas,0,0);targetCtx.filter='none';targetCtx.globalAlpha=alpha*(.04+.08*i);targetCtx.fillStyle='#fff';for(let n=0;n<90;n++){const x=(Math.sin(n*12.93+progress*33)*9999%1+1)%1*w,y=(Math.sin(n*8.17+progress*19)*7777%1+1)%1*h;targetCtx.fillRect(x,y,1,1)}
+  }else if(effect==='rgbsplit'){
+    targetCtx.drawImage(baseCanvas,0,0);targetCtx.globalCompositeOperation='screen';targetCtx.globalAlpha=alpha*.28;targetCtx.filter='sepia(1) saturate(8) hue-rotate(300deg)';targetCtx.drawImage(baseCanvas,-10*i,0);targetCtx.filter='sepia(1) saturate(8) hue-rotate(150deg)';targetCtx.drawImage(baseCanvas,10*i,0);targetCtx.filter='none'
+  }else if(effect==='bulge'){
+    targetCtx.drawImage(baseCanvas,0,0);const scale=1+.05*i;targetCtx.globalAlpha=alpha*.5;targetCtx.drawImage(baseCanvas,w*(1-scale)/2,h*(1-scale)/2,w*scale,h*scale)
+  }else targetCtx.drawImage(baseCanvas,0,0)
+  targetCtx.restore()
+}
+async function drawVisualWithEffects(ctx,source,asset,clip,w,h,progress=0,alpha=1){
+  const effect=clip.gpuEffect||'none'
+  if(effect==='none'){applyClipDrawing(ctx,source,asset,clip,w,h,progress,alpha);return}
+  const base=ensureCanvasSize(gpuFxScratch,w,h),bctx=base.getContext('2d');bctx.clearRect(0,0,w,h);applyClipDrawing(bctx,source,asset,{...clip,opacity:1},w,h,progress,1)
+  const rt=await ensureGpuFxRuntime(w,h)
+  if(rt){
+    try{rt.sourceCtx.clearRect(0,0,w,h);rt.sourceCtx.drawImage(base,0,0);rt.texture.source.update();const filter=pixiFilterFor(effect,clip.gpuIntensity,w,h,progress);if(filter){rt.sprite.filters=[filter];rt.app.renderer.render({container:rt.app.stage,clear:true});ctx.save();ctx.globalAlpha=(clip.opacity??1)*alpha;ctx.drawImage(rt.app.canvas,0,0,w,h);ctx.restore();return}}
+    catch(error){console.warn('GPU effect frame failed, falling back to Canvas.',error)}
+  }
+  applyGpuFallback(ctx,base,effect,clip.gpuIntensity,w,h,progress,(clip.opacity??1)*alpha)
+}
+function isGlTransition(name){return Boolean(GL_TRANSITIONS[name])}
+function ensureGlContext(w,h){
+  if(glTransitionRuntime.failed)return null
+  try{const canvas=ensureCanvasSize(glTransitionRuntime.canvas,w,h);let gl=glTransitionRuntime.gl;if(!gl){gl=canvas.getContext('webgl',{alpha:true,preserveDrawingBuffer:true,antialias:false});if(!gl)throw new Error('WebGL unavailable');glTransitionRuntime.gl=gl}gl.viewport(0,0,w,h);return gl}catch(error){console.warn('GL transitions unavailable.',error);glTransitionRuntime.failed=true;return null}
+}
+async function glTransitionSource(name){
+  if(glTransitionRuntime.sources.has(name))return glTransitionRuntime.sources.get(name)
+  const def=GL_TRANSITIONS[name];if(!def)return null
+  const p=fetch(`./vendor/gl-transitions/${def.file}`).then(r=>{if(!r.ok)throw new Error(`Shader ${def.file} ${r.status}`);return r.text()})
+  glTransitionRuntime.sources.set(name,p);return p
+}
+function glCompile(gl,type,source){const sh=gl.createShader(type);gl.shaderSource(sh,source);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh)||'GL shader compile failed');return sh}
+async function glProgram(name,gl){
+  if(glTransitionRuntime.programs.has(name))return glTransitionRuntime.programs.get(name)
+  const body=await glTransitionSource(name);if(!body)return null
+  const vs=`attribute vec2 a_position;varying vec2 v_uv;void main(){v_uv=(a_position+1.0)*0.5;gl_Position=vec4(a_position,0.0,1.0);}`
+  const fs=`precision highp float;uniform sampler2D u_from;uniform sampler2D u_to;uniform float progress;uniform float ratio;varying vec2 v_uv;vec4 getFromColor(vec2 uv){return texture2D(u_from,clamp(uv,0.0,1.0));}vec4 getToColor(vec2 uv){return texture2D(u_to,clamp(uv,0.0,1.0));}${body}\nvoid main(){gl_FragColor=transition(v_uv);}`
+  const program=gl.createProgram();gl.attachShader(program,glCompile(gl,gl.VERTEX_SHADER,vs));gl.attachShader(program,glCompile(gl,gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program)||'GL program link failed')
+  const pos=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,pos);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW)
+  const data={program,pos};glTransitionRuntime.programs.set(name,data);return data
+}
+function glTexture(gl,unit,source){const tex=gl.createTexture();gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);return tex}
+async function renderGlTransition(fromCanvas,toCanvas,name,progress,w,h){
+  const gl=ensureGlContext(w,h);if(!gl)return null
+  try{const compiled=await glProgram(name,gl);if(!compiled)return null;const {program,pos}=compiled;gl.useProgram(program);gl.bindBuffer(gl.ARRAY_BUFFER,pos);const loc=gl.getAttribLocation(program,'a_position');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);const t0=glTexture(gl,0,fromCanvas),t1=glTexture(gl,1,toCanvas);gl.uniform1i(gl.getUniformLocation(program,'u_from'),0);gl.uniform1i(gl.getUniformLocation(program,'u_to'),1);gl.uniform1f(gl.getUniformLocation(program,'progress'),clamp(progress,0,1));gl.uniform1f(gl.getUniformLocation(program,'ratio'),w/h);const defs=GL_TRANSITIONS[name]?.uniforms||{};for(const [key,value] of Object.entries(defs)){const u=gl.getUniformLocation(program,key);if(!u)continue;if(Array.isArray(value)){if(value.length===2)gl.uniform2f(u,value[0],value[1]);else if(value.length===4)gl.uniform4f(u,...value)}else gl.uniform1f(u,value)}gl.drawArrays(gl.TRIANGLES,0,6);gl.deleteTexture(t0);gl.deleteTexture(t1);return glTransitionRuntime.canvas}catch(error){console.warn('GL transition failed, using dissolve fallback.',name,error);return null}
+}
+function nextTimelineRow(row,project=state.project){const rows=clipTimeline(project),index=rows.findIndex(r=>r.clip.id===row.clip.id);return index>=0?rows[index+1]||null:null}
+async function incomingTransitionSource(row,project=state.project){
+  const next=nextTimelineRow(row,project);if(!next)return null;const asset=getAsset(next.clip.assetId,project),url=state.urls[next.clip.assetId];if(!asset||!url)return null
+  if(asset.type==='image')return {row:next,asset,source:await loadImage(url)}
+  let video=transitionSourceNodes.get(next.clip.id);if(!video){video=document.createElement('video');video.preload='auto';video.playsInline=true;video.muted=true;video.style.display='none';document.body.append(video);transitionSourceNodes.set(next.clip.id,video)}
+  if(video.src!==url){video.src=url;video.load();await waitLoaded(video).catch(()=>{})}
+  const target=Math.max(0,next.clip.start||0);if(video.readyState>=1&&Math.abs((video.currentTime||0)-target)>.04){video.currentTime=target;await waitSeek(video).catch(()=>{})}
+  return video.readyState>=2?{row:next,asset,source:video}:null
+}
+async function drawGlTransition(ctx,source,asset,row,time,w,h,progress){
+  const d=Math.min(Number(row.clip.transitionDuration)||.35,row.duration/2),remaining=row.end-time
+  if(d<=0||remaining<0||remaining>d){await drawVisualWithEffects(ctx,source,asset,row.clip,w,h,progress,1);return true}
+  const incoming=await incomingTransitionSource(row);if(!incoming){await drawVisualWithEffects(ctx,source,asset,row.clip,w,h,progress,1);return false}
+  const fromCanvas=document.createElement('canvas'),toCanvas=document.createElement('canvas');fromCanvas.width=toCanvas.width=w;fromCanvas.height=toCanvas.height=h
+  await drawVisualWithEffects(fromCanvas.getContext('2d'),source,asset,row.clip,w,h,progress,1)
+  await drawVisualWithEffects(toCanvas.getContext('2d'),incoming.source,incoming.asset,incoming.row.clip,w,h,0,1)
+  const p=clamp(1-remaining/d,0,1),result=await renderGlTransition(fromCanvas,toCanvas,row.clip.transition,p,w,h)
+  if(result)ctx.drawImage(result,0,0,w,h);else{ctx.save();ctx.globalAlpha=1-p;ctx.drawImage(fromCanvas,0,0);ctx.globalAlpha=p;ctx.drawImage(toCanvas,0,0);ctx.restore()}
+  return true
+}
+
 function transitionStyle(row,time,w,h) {
   const clip=row.clip, d=Math.min(Number(clip.transitionDuration)||.35,row.duration/2)
   const none={alpha:1,tx:0,ty:0,scale:1,rotation:0,blur:0,overlay:null,overlayAlpha:0}
@@ -673,13 +813,14 @@ function transitionStyle(row,time,w,h) {
   return out
 }
 function transitionAlpha(row,time) { return transitionStyle(row,time,1,1).alpha }
-function drawClipWithTransition(ctx,source,asset,row,time,w,h,progress) {
+async function drawClipWithTransition(ctx,source,asset,row,time,w,h,progress) {
+  if(isGlTransition(row.clip.transition)){await drawGlTransition(ctx,source,asset,row,time,w,h,progress);return}
   const fx=transitionStyle(row,time,w,h)
   ctx.save()
   ctx.translate(fx.tx,fx.ty)
   ctx.translate(w/2,h/2); ctx.rotate(fx.rotation||0); ctx.scale(fx.scale,fx.scale); ctx.translate(-w/2,-h/2)
   const clip = fx.blur ? {...row.clip, blur:(row.clip.blur||0)+fx.blur} : row.clip
-  applyClipDrawing(ctx,source,asset,clip,w,h,progress,fx.alpha)
+  await drawVisualWithEffects(ctx,source,asset,clip,w,h,progress,fx.alpha)
   ctx.restore()
   if (fx.overlay && fx.overlayAlpha>0) {
     ctx.save(); ctx.fillStyle=fx.overlay; ctx.globalAlpha=fx.overlayAlpha; ctx.fillRect(0,0,w,h); ctx.restore()
@@ -730,14 +871,14 @@ async function drawOverlays(ctx,project,time,width,height){
     const asset=getAsset(clip.assetId,project),url=state.urls[clip.assetId];if(!asset||!url)continue
     const local=Math.max(0,time-(clip.timelineStart||0)),progress=local/Math.max(.05,overlayDuration(clip))
     if(asset.type==='image'){
-      try{const img=await loadImage(url);applyClipDrawing(ctx,img,asset,clip,width,height,progress,1)}catch{}
+      try{const img=await loadImage(url);await drawVisualWithEffects(ctx,img,asset,clip,width,height,progress,1)}catch{}
     }else if(asset.type==='video'){
       const el=overlayVideoFor(clip,url),target=(clip.start||0)+local*(clip.speed||1)
       el.playbackRate=clamp(clip.speed||1,.25,4)
       if(el.readyState>=1&&(!state.playing||Math.abs((el.currentTime||0)-target)>.3))el.currentTime=clamp(target,clip.start||0,Math.max(clip.start||0,(clip.end||asset.duration)-.03))
       if(state.playing&&el.paused&&el.readyState>=2)el.play().catch(()=>{})
       if(!state.playing&&!el.paused)el.pause()
-      if(el.readyState>=2)applyClipDrawing(ctx,el,asset,clip,width,height,progress,1)
+      if(el.readyState>=2)await drawVisualWithEffects(ctx,el,asset,clip,width,height,progress,1)
     }
   }
 }
@@ -782,9 +923,9 @@ async function drawPreview() {
       const progress=(state.currentTime-row.start)/row.duration
       if (asset.type==='video') {
         ensurePreviewVideo(row,asset,url)
-        if (previewVideo.readyState>=2) drawClipWithTransition(ctx,previewVideo,asset,row,state.currentTime,w,h,progress)
+        if (previewVideo.readyState>=2) await drawClipWithTransition(ctx,previewVideo,asset,row,state.currentTime,w,h,progress)
       } else if (asset.type==='image') {
-        try { const img=await loadImage(url); drawClipWithTransition(ctx,img,asset,row,state.currentTime,w,h,progress) } catch {}
+        try { const img=await loadImage(url); await drawClipWithTransition(ctx,img,asset,row,state.currentTime,w,h,progress) } catch {}
       }
     }
   }
@@ -893,8 +1034,8 @@ function normalizeProject(p) {
   p.background ||= '#0b0d12'; p.assets ||= []; p.clips ||= []; p.overlays ||= []; p.elements ||= []; p.texts ||= p.textOverlays || []; p.audioClips ||= []
   if(p.soundtrack && !p.audioClips.length){const a=p.assets.find(x=>x.id===p.soundtrack.assetId);if(a)p.audioClips.push({id:uid(),assetId:a.id,timelineStart:0,sourceStart:0,sourceEnd:a.duration||30,volume:p.soundtrack.volume??.7,speed:1,fadeIn:0,fadeOut:0,muted:false})}
   p.soundtrack=null
-  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
-  for (const c of p.overlays) Object.assign(c,{timelineStart:0,lane:2,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,motion:'none',offsetX:0,offsetY:0,scale:.36,fit:'contain',opacity:1,flipX:false,flipY:false,volume:0},c)
+  for (const c of p.clips) Object.assign(c,{brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',transition:'none',transitionDuration:.35,offsetX:0,offsetY:0,flipX:false,flipY:false,audioFadeIn:0,audioFadeOut:0},c)
+  for (const c of p.overlays) Object.assign(c,{timelineStart:0,lane:2,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',offsetX:0,offsetY:0,scale:.36,fit:'contain',opacity:1,flipX:false,flipY:false,volume:0},c)
   return p
 }
 async function createProject(ratio='16:9') {
@@ -906,7 +1047,7 @@ async function openProject(id) {
   for (const asset of state.project.assets) { const blob=await getBlob(asset.id); if(blob) state.urls[asset.id]=URL.createObjectURL(blob) }
   state.history=[];state.future=[];state.currentTime=0;state.selected=null;state.view='editor';render()
 }
-function revokeUrls() { Object.values(state.urls).forEach(url=>URL.revokeObjectURL(url)); state.urls={}; imageCache.clear();for(const el of overlayPreviewNodes.values()){el.pause();el.remove()}overlayPreviewNodes.clear() }
+function revokeUrls() { Object.values(state.urls).forEach(url=>URL.revokeObjectURL(url)); state.urls={}; imageCache.clear();for(const el of overlayPreviewNodes.values()){el.pause();el.remove()}overlayPreviewNodes.clear();for(const el of transitionSourceNodes.values()){el.pause();el.remove()}transitionSourceNodes.clear() }
 async function goHome() { stopPlayback(); if(state.project) await saveProject(state.project); revokeUrls(); state.project=null;state.view='home';state.projects=await listProjects();render() }
 
 function pushHistory() {
@@ -989,7 +1130,7 @@ async function importFiles(files, addVisuals=true) {
   state.project.updatedAt=Date.now(); await saveProject(state.project); state.projects=await listProjects(); toast(tr('imported'),'success'); renderEditor()
 }
 function defaultClip(asset) {
-  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
+  return { id:uid(),assetId:asset.id,start:0,end:asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4),speed:1,volume:1,scale:1,rotation:0,opacity:1,fit:'cover',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',transition:'none',transitionDuration:.35,audioFadeIn:0,audioFadeOut:0 }
 }
 function nextOverlayLane(at=state.currentTime){
   const occupied=lane=>(state.project?.overlays||[]).some(c=>(c.lane||2)===lane&&at<(c.timelineStart||0)+overlayDuration(c)&&at+0.05>=(c.timelineStart||0))
@@ -997,7 +1138,7 @@ function nextOverlayLane(at=state.currentTime){
 }
 function defaultOverlayClip(asset,timelineStart=state.currentTime,lane=nextOverlayLane(timelineStart)){
   const end=asset.type==='image'?Math.max(1,asset.duration||4):Math.max(.1,asset.duration||4)
-  return {id:uid(),assetId:asset.id,timelineStart:Math.max(0,timelineStart||0),lane,start:0,end,speed:1,volume:0,scale:.38,rotation:0,opacity:1,fit:'contain',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,motion:'none',filterPreset:'original'}
+  return {id:uid(),assetId:asset.id,timelineStart:Math.max(0,timelineStart||0),lane,start:0,end,speed:1,volume:0,scale:.38,rotation:0,opacity:1,fit:'contain',offsetX:0,offsetY:0,flipX:false,flipY:false,brightness:100,exposure:0,contrast:100,saturation:100,temperature:0,vignette:0,grain:0,hue:0,blur:0,grayscale:0,sepia:0,invert:0,fadeAmount:0,shadows:0,gpuEffect:'none',gpuIntensity:.65,motion:'none',filterPreset:'original'}
 }
 function addAssetToOverlay(id,at=state.currentTime,lane){const asset=getAsset(id);if(!asset||asset.type==='audio')return;mutate(p=>{const c=defaultOverlayClip(asset,Math.max(0,at||0),lane||nextOverlayLane(at));p.overlays.push(c);state.selected={type:'overlay',id:c.id};state.tool='edit';state.sheet=isMobileViewport()?'edit':null})}
 function addAssetToTimeline(id) { const asset=getAsset(id); if(!asset)return; if(asset.type==='audio')return addAudioToTimeline(id); mutate(p=>p.clips.push(defaultClip(asset))); }
@@ -1178,7 +1319,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.2.16</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.3.0</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1186,7 +1327,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.2.16</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.3.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1223,7 +1364,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.2.16</div>
+      <div class="home-rail-version">v2.3.0</div>
     </aside>
 
     <div class="home-surface">
@@ -1527,7 +1668,9 @@ function editPanel(){
 function effectsPanel(){
   const c=selectedVisual(); if(!c)return effectsEmpty()
   const presets=['original','vivid','warm','cool','cinematic','film','dream','crisp','retro','soft','neon','matte','sunset','ice','noir','mono','tealorange','bleach','rose','forest','gold','highkey','lowkey','cyber']
-  return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')],['driftup',tr('driftUp')],['driftdown',tr('driftDown')],['spin',tr('spin')],['bounce',tr('bounce')],['swing',tr('swing')],['breath',tr('breath')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
+  const gpu=[['none',state.language==='el'?'Χωρίς GPU':'No GPU'],['bloom','Bloom'],['glitch','Glitch'],['crt','CRT'],['oldfilm',state.language==='el'?'Παλιό φιλμ':'Old Film'],['rgbsplit','RGB Split'],['pixelate','Pixelate'],['bulge','Bulge'],['dreamblur',state.language==='el'?'Dream Blur':'Dream Blur']]
+  const glyph={none:'circle',bloom:'sun',glitch:'effects',crt:'video',oldfilm:'grain',rgbsplit:'palette',pixelate:'projects',bulge:'circle',dreamblur:'droplet'}
+  return `<div class="panel-grid"><div class="panel-section borderless-mobile gpu-lab"><div class="panel-heading-row"><div><h3>${state.language==='el'?'GPU Effects':'GPU Effects'}</h3><small>PixiJS Filters · GPU accelerated</small></div><span class="gpu-badge">GPU</span></div><div class="gpu-effect-grid">${gpu.map(([v,l])=>`<button class="gpu-effect-card ${c.gpuEffect===v?'active':''}" data-action="clip-set" data-key="gpuEffect" data-value="${v}"><span>${svgIcon(glyph[v]||'effects',19)}</span><strong>${l}</strong><small>${v==='none'?'Canvas':(state.language==='el'?'Πραγματικό εφέ':'Live effect')}</small></button>`).join('')}</div>${c.gpuEffect&&c.gpuEffect!=='none'?`<div class="gpu-effect-focus"><div><strong>${state.language==='el'?'Ένταση εφέ':'Effect intensity'}</strong><small>${Math.round((c.gpuIntensity??.65)*100)}%</small></div>${rangeField('gpuIntensity',c.gpuIntensity??.65,.1,1,.05,true,'clip')}</div>`:''}<p class="helper gpu-helper">${state.language==='el'?'Τα GPU effects εφαρμόζονται σε preview και export. Αν η GPU δεν είναι διαθέσιμη, το Edituno χρησιμοποιεί ασφαλές Canvas fallback.':'GPU effects are applied to preview and export. If GPU rendering is unavailable, Edituno uses a safe Canvas fallback.'}</p></div><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n=>`<button class="preset-card ${c.filterPreset===n?'active':''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase()+n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none',tr('none')],['zoom',tr('zoom')],['zoomout',tr('zoomOut')],['kenburns',tr('kenBurns')],['panleft',tr('panLeft')],['panright',tr('panRight')],['pulse',tr('pulse')],['float',tr('float')],['shake',tr('shake')],['driftup',tr('driftUp')],['driftdown',tr('driftDown')],['spin',tr('spin')],['bounce',tr('bounce')],['swing',tr('swing')],['breath',tr('breath')]].map(([v,l])=>`<button class="motion-card ${c.motion===v?'active':''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`
 }
 function motionGlyph(v){const m={none:'circle',zoom:'zoomin',zoomout:'zoomout',kenburns:'expand',panleft:'left',panright:'right',pulse:'circle',float:'movevertical',shake:'movehorizontal',driftup:'movevertical',driftdown:'movevertical',spin:'rotate',bounce:'movevertical',swing:'rotate',breath:'circle'};return svgIcon(m[v]||'effects',20)}
 function adjustPanel(){
@@ -1539,8 +1682,8 @@ function adjustPanel(){
 function adjustGlyph(k){const m={brightness:'sun',exposure:'half',contrast:'half',saturation:'droplet',temperature:'thermo',vignette:'circle',grain:'grain',hue:'palette',blur:'droplet',grayscale:'half',sepia:'palette',invert:'half',opacity:'circle',fadeAmount:'half',shadows:'half'};return svgIcon(m[k]||'adjust',19)}
 function transitionPanel(){
   const c=selectedClip(); if(!c)return `<div class="empty-state"><b>${state.language==='el'?'Μεταβάσεις V1':'V1 transitions'}</b><span>${state.language==='el'?'Οι μεταβάσεις εφαρμόζονται ανάμεσα στα κύρια clips της V1.':'Transitions are applied between primary V1 clips.'}</span></div>`
-  const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')],['slideup',tr('slideUp')],['slidedown',tr('slideDown')],['spin',tr('spin')],['dipblack',tr('dipBlack')],['dipwhite',tr('dipWhite')],['push',tr('pushTransition')],['softzoom',tr('softZoom')]]
-  return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v,l])=>`<button class="transition-card ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b><em>${svgIcon(v==='zoom'||v==='softzoom'?'zoomin':v==='spin'?'rotate':v.includes('slide')||v==='push'?'right':v==='flash'?'sun':v==='blur'?'droplet':'transition',18)}</em></span><strong>${l}</strong><small>${c.transition===v?(state.language==='el'?'Επιλεγμένο':'Selected'):''}</small></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration',c.transitionDuration,.1,1.5,.05,true,'clip')}</div></div>`
+  const opts=[['none',tr('none')],['dissolve',tr('dissolve')],['fade',tr('fade')],['flash',tr('flash')],['slideleft',tr('slideLeft')],['slideright',tr('slideRight')],['zoom',tr('zoom')],['blur',tr('blurTransition')],['slideup',tr('slideUp')],['slidedown',tr('slideDown')],['spin',tr('spin')],['dipblack',tr('dipBlack')],['dipwhite',tr('dipWhite')],['push',tr('pushTransition')],['softzoom',tr('softZoom')],['gl-crosszoom','Cross Zoom'],['gl-swirl','Swirl'],['gl-mosaic','Mosaic'],['gl-circlecrop','Circle Crop'],['gl-directional','Directional'],['gl-dreamy','Dreamy']]
+  return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v,l])=>`<button class="transition-card ${c.transition===v?'active':''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b>${v.startsWith('gl-')?'<u>GL</u>':''}<em>${svgIcon(v==='zoom'||v==='softzoom'?'zoomin':v==='spin'?'rotate':v.includes('slide')||v==='push'?'right':v==='flash'?'sun':v==='blur'?'droplet':'transition',18)}</em></span><strong>${l}</strong><small>${c.transition===v?(state.language==='el'?'Επιλεγμένο':'Selected'):''}</small></button>`).join('')}</div>${isGlTransition(c.transition)?`<p class="helper gl-transition-note">${state.language==='el'?'MIT shader transition · gl-transitions · πραγματικό WebGL blend δύο frames':'MIT shader transition · gl-transitions · real WebGL two-frame blend'}</p>`:''}<div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration',c.transitionDuration,.1,1.5,.05,true,'clip')}</div></div>`
 }
 const ELEMENT_PRESETS=[
   {kind:'subscribe',name:'Subscribe',icon:'play',color:'#ff2d2d'},
@@ -1849,9 +1992,9 @@ async function exportProjectLocal(quality,fps,onProgress,signal) {
       if(asset.type==='video'){
         const v=document.createElement('video');v.src=url;v.playsInline=true;v.preload='auto';await waitLoaded(v);v.currentTime=Math.min(clip.start,Math.max(0,(v.duration||asset.duration)-.03));await waitSeek(v);v.playbackRate=clamp(clip.speed,.25,4)
         const src=audioContext.createMediaElementSource(v),gain=audioContext.createGain(),now=audioContext.currentTime,clipVol=clamp(clip.volume,0,1),fi=Math.min(clip.audioFadeIn||0,dur/2),fo=Math.min(clip.audioFadeOut||0,dur/2);gain.gain.setValueAtTime(fi?0:clipVol,now);if(fi)gain.gain.linearRampToValueAtTime(clipVol,now+fi);if(fo){gain.gain.setValueAtTime(clipVol,now+dur-fo);gain.gain.linearRampToValueAtTime(0,now+dur)};src.connect(gain).connect(dest);await v.play()
-        await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/dur);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
+        await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};await drawClipWithTransition(ctx,v,asset,row,global+elapsed,w,h,elapsed/dur);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal);v.pause();src.disconnect();gain.disconnect()
       } else if(asset.type==='image'){
-        const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};drawClipWithTransition(ctx,img,asset,row,global+elapsed,w,h,elapsed/dur);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
+        const img=await loadImage(url);await renderSegment(dur,fps,async elapsed=>{ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h);const row={clip,start:global,end:global+dur,duration:dur};await drawClipWithTransition(ctx,img,asset,row,global+elapsed,w,h,elapsed/dur);await drawOverlays(ctx,project,global+elapsed,w,h);drawElements(ctx,project,global+elapsed,w,h);drawTexts(ctx,project,global+elapsed,w,h);onProgress((global+elapsed)/total)},signal)
       }
       global+=dur
     }
@@ -2077,7 +2220,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.16',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.3.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
