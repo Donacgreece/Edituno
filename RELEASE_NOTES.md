@@ -1,5 +1,15 @@
 # Release Notes
 
+## v2.2.12
+
+Expanded preview release.
+
+- Enlarged the actual preview frame inside the existing viewer area without changing the editor panel size.
+- Removed the oversized internal preview insets that wasted usable space.
+- Optimized preview padding separately for desktop and mobile.
+- Applied the improvement consistently to 16:9, 9:16, 1:1 and 4:5 formats.
+- Preserved the v2.2.11 header/nav cleanup and v2.2.10 editor startup hotfix.
+
 ## v2.2.11
 
 Editor header and home rail cleanup release.

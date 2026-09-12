@@ -86,6 +86,15 @@ if (js.includes("<button data-action=\"about\">${svgIcon('circle',18)}<span>${el
 if (js.includes('editor-brand desktop-editor-only')) {
   throw new Error('Editor header must not contain the desktop logo')
 }
+if (!js.includes('const padX = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0)')) {
+  throw new Error('Expanded preview sizing logic is missing')
+}
+if (!css.includes('.preview-zone{min-height:0;display:grid;place-items:center;padding:6px;')) {
+  throw new Error('Desktop preview padding optimization is missing')
+}
+if (!css.includes('.preview-zone{padding:3px;min-height:0}')) {
+  throw new Error('Mobile preview padding optimization is missing')
+}
 if (!template.includes('maximum-scale=1') || !template.includes('user-scalable=no')) {
   throw new Error('Mobile viewport lock is missing')
 }
@@ -119,4 +128,4 @@ for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
-console.log(`Built Edituno v2.2.11 -> ${dist}`)
+console.log(`Built Edituno v2.2.12 -> ${dist}`)
