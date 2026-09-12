@@ -182,7 +182,7 @@ const meydaCandidates = [
   path.join(root,'public','vendor','meyda.min.js')
 ]
 copyVendor(smartcropCandidates,path.join(vendorDir,'smartcrop.js'),'Smartcrop.js 2.0.5',15000)
-copyVendor(meydaCandidates,path.join(vendorDir,'meyda.min.js'),'Meyda 5.6.3',50000)
+copyVendor(meydaCandidates,path.join(vendorDir,'meyda.min.js'),'Meyda 5.6.3',12000)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -202,4 +202,4 @@ if (!fs.readFileSync(path.join(dist, 'LICENSE.md'), 'utf8').includes('PolyForm-N
 if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('Third-party material')) throw new Error('Production license scope missing')
 if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notice:')) throw new Error('Production required notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
-console.log(`Built Edituno v2.4.0 -> ${dist}`)
+console.log(`Built Edituno v2.4.1 -> ${dist}`)

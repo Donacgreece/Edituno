@@ -42,7 +42,7 @@ jobs:
           test -f node_modules/smartcrop/smartcrop.js
           test -f node_modules/meyda/dist/web/meyda.min.js
           test "$(wc -c < node_modules/smartcrop/smartcrop.js)" -gt 15000
-          test "$(wc -c < node_modules/meyda/dist/web/meyda.min.js)" -gt 50000
+          test "$(wc -c < node_modules/meyda/dist/web/meyda.min.js)" -gt 12000
           grep -Fq "Copyright" node_modules/smartcrop/smartcrop.js
           echo "Smartcrop.js 2.0.5 and Meyda 5.6.3 verified."
 
@@ -125,7 +125,7 @@ jobs:
           test $(wc -c < dist/vendor/pixi.min.js) -gt 500000
           test $(wc -c < dist/vendor/pixi-filters.min.js) -gt 100000
           test $(wc -c < dist/vendor/smartcrop.js) -gt 15000
-          test $(wc -c < dist/vendor/meyda.min.js) -gt 50000
+          test $(wc -c < dist/vendor/meyda.min.js) -gt 12000
           grep -Fq 'vendor/smartcrop.js' dist/index.html
           grep -Fq 'vendor/meyda.min.js' dist/index.html
           grep -Fq 'smartcrop-2.0.5' dist/index.html
@@ -150,7 +150,7 @@ jobs:
           grep -Fq 'PolyForm-Noncommercial-1.0.0' dist/LICENSE.md
           grep -Fq 'Required Notice:' dist/NOTICE
           grep -Fq 'third-party' dist/LICENSE_SCOPE.md
-          grep -Fq 'edituno-studio-v2.4.0' dist/sw.js
+          grep -Fq 'edituno-studio-v2.4.1' dist/sw.js
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 

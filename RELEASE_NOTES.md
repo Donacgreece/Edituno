@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.4.1
+
+Phase 2 deployment hotfix.
+
+- Fixed the GitHub Actions smart-engine verification threshold for the official Meyda 5.6.3 minified browser bundle.
+- Meyda 5.6.3 `dist/web/meyda.min.js` is intentionally compact, so CI now validates it with an appropriate minimum size instead of rejecting the legitimate package.
+- The same corrected threshold is used by the production vendor copy guard.
+- Auto Reframe, silence detection, beat detection, timeline smart guides and beat-driven cuts from v2.4.0 remain unchanged.
+
 ## v2.4.0
 
 Smart editing Phase 2.
