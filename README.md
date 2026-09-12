@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.10**
+Current packaged release: **v2.2.11**
 
 ## Third-party and legal notes
 

@@ -80,6 +80,12 @@ const requiredRuntimeMarkers = [
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
 }
+if (js.includes("<button data-action=\"about\">${svgIcon('circle',18)}<span>${el?'Σχετικά':'About'}</span></button>")) {
+  throw new Error('Desktop rail must not contain a duplicate About button')
+}
+if (js.includes('editor-brand desktop-editor-only')) {
+  throw new Error('Editor header must not contain the desktop logo')
+}
 if (!template.includes('maximum-scale=1') || !template.includes('user-scalable=no')) {
   throw new Error('Mobile viewport lock is missing')
 }
@@ -113,4 +119,4 @@ for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
-console.log(`Built Edituno v2.2.10 -> ${dist}`)
+console.log(`Built Edituno v2.2.11 -> ${dist}`)

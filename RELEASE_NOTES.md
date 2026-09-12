@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.2.11
+
+Editor header and home rail cleanup release.
+
+- Removed the Edituno logo from the editor header for a cleaner workspace.
+- Removed the duplicate About entry from the desktop left rail.
+- Kept Support available from the dedicated Support button and from Settings.
+- Preserved the v2.2.10 editor startup hotfix and all Support, Install, SEO, sitemap and social metadata improvements.
+
 ## v2.2.10
 
 Editor startup stability hotfix.
