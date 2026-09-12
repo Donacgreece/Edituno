@@ -1,5 +1,9 @@
 # Release Notes
 
+## v2.2.9
+
+Support navigation polish. The desktop Support control and menu Support entries now open the internal Edituno support/about page. PayPal is only opened from the dedicated PayPal CTA inside that page.
+
 ## v2.2.8
 
 - Desktop home rail now shows Support instead of Installation.
@@ -7,7 +11,6 @@
 - Android and Windows use a direct native install action when available, without instructional steps.
 - Manual installation steps are reserved for Apple flows that require them.
 - About is fully scrollable on mobile so all information remains accessible.
-- About page now keeps a single PayPal support CTA in the dedicated Support section.
 
 
 ## v2.2.7

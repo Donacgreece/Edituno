@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.8**
+Current packaged release: **v2.2.9**
 
 ## Third-party and legal notes
 
@@ -115,6 +115,5 @@ The in-app About page explains the local-first model and includes optional proje
 - Android and Windows use the native PWA install prompt when the browser exposes it.
 - Apple devices show the platform-specific manual steps when a direct browser install prompt is not available.
 - Installed status is shown only inside the Installation entry instead of occupying separate home or About UI.
-- The desktop home rail uses a direct Support link to the optional PayPal page.
+- The desktop home rail and Support menu entries open the internal Edituno Support page. PayPal opens only from the dedicated support CTA inside that page.
 - The About page remains fully scrollable on mobile so all product and support information is accessible.
-- The About page exposes one clear PayPal support action in the dedicated Support section, avoiding duplicate donation buttons.
