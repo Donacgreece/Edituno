@@ -55,3 +55,10 @@ The libraries are implementation engines. Edituno's interface, presets, project 
 - Meyda 5.6.3, MIT: local audio feature extraction for silence and beat analysis.
 
 Edituno adds its own multi-frame video sampling, stable crop transform mapping, silence-region detection, beat peak selection, BPM estimation, timeline guides and beat-driven V1 cutting workflow around those engines.
+
+
+## Phase 3 direct canvas editing engine (v2.5.0)
+
+- Konva 10.5.0, MIT: browser interaction layer for direct selection and transforms inside the preview.
+
+Edituno maps Konva transforms back into its own project properties. Text, overlays and stickers can be selected directly in the preview, dragged, uniformly resized and rotated with a Transformer. Edituno adds center/third snapping guides, mobile-sized handles, fallback controls when Konva is unavailable, and keeps final rendering/export inside Edituno's existing canvas pipeline.

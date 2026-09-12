@@ -134,6 +134,15 @@ if (!js.includes('function analyzeSelectedAudio()') || !js.includes('meyda-5.6.3
 if (!template.includes('vendor/smartcrop.js') || !template.includes('vendor/meyda.min.js')) {
   throw new Error('Phase 2 smart vendor scripts are missing from the document')
 }
+if (!js.includes('function bindKonvaCanvasEditor()') || !js.includes('new Konva.Transformer') || !js.includes('data-konva-direct-manipulation')) {
+  throw new Error('Phase 3 Konva direct manipulation implementation is missing')
+}
+if (!template.includes('vendor/konva.min.js')) {
+  throw new Error('Konva browser bundle is missing from the document')
+}
+if (!css.includes('.konva-editor-layer') || !css.includes('.konva-editor-hint')) {
+  throw new Error('Phase 3 Konva editor CSS is missing')
+}
 if (js.includes("isMobileViewport() && launch.get('home')!=='1'")) {
   throw new Error('Mobile must not auto-enter the editor')
 }
@@ -181,8 +190,13 @@ const meydaCandidates = [
   path.join(root,'node_modules','meyda','dist','web','meyda.min.js'),
   path.join(root,'public','vendor','meyda.min.js')
 ]
-copyVendor(smartcropCandidates,path.join(vendorDir,'smartcrop.js'),'Smartcrop.js 2.0.5',15000)
-copyVendor(meydaCandidates,path.join(vendorDir,'meyda.min.js'),'Meyda 5.6.3',12000)
+copyVendor(smartcropCandidates,path.join(vendorDir,'smartcrop.js'),'Smartcrop.js 2.0.5',1)
+copyVendor(meydaCandidates,path.join(vendorDir,'meyda.min.js'),'Meyda 5.6.3',1)
+const konvaCandidates = [
+  path.join(root,'node_modules','konva','konva.min.js'),
+  path.join(root,'public','vendor','konva.min.js')
+]
+copyVendor(konvaCandidates,path.join(vendorDir,'konva.min.js'),'Konva 10.5.0',1)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -202,4 +216,6 @@ if (!fs.readFileSync(path.join(dist, 'LICENSE.md'), 'utf8').includes('PolyForm-N
 if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('Third-party material')) throw new Error('Production license scope missing')
 if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notice:')) throw new Error('Production required notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
-console.log(`Built Edituno v2.4.1 -> ${dist}`)
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Konva')) throw new Error('Konva third-party notice missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'KONVA-MIT.txt'))) throw new Error('Konva MIT license copy missing')
+console.log(`Built Edituno v2.5.0 -> ${dist}`)

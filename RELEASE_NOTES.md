@@ -1,5 +1,21 @@
 # Release Notes
 
+## v2.5.0
+
+Konva direct canvas editing.
+
+- Added Konva 10.5.0 as the Phase 3 MIT-licensed interaction engine.
+- Text, V2/V3 overlays, Fluent Emoji overlays and built-in stickers/elements can be selected directly from the preview.
+- Added direct drag, uniform corner resize and rotation with a Konva Transformer.
+- Added center and rule-of-thirds snapping guides.
+- Added larger transformer handles on mobile.
+- Added persistent text scale and rotation to the Edituno project model and export renderer.
+- Added direct text double-click/tap focus into the text editor.
+- Added object-position controls for built-in elements and a compact direct-manipulation hint in the Inspector.
+- Preserved Edituno's existing renderer and export path. Konva is used for interaction only, so preview and export continue to use the same project data.
+- Replaced fragile smart-engine byte-size assumptions in CI with exact package-version and non-empty browser-bundle verification.
+- Added Konva MIT notice, license copy and license-scope separation.
+
 ## v2.4.1
 
 Phase 2 deployment hotfix.

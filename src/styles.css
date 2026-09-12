@@ -435,3 +435,18 @@ html[data-theme="light"] .sheet-grabber:after{background:#B9C1CE}html[data-theme
 .smart-guide-layer{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}.smart-beat-guide{position:absolute;top:24px;bottom:0;width:1px;background:#7D9AFF;box-shadow:0 0 0 1px rgba(125,154,255,.04)}.smart-beat-guide:before{content:"";position:absolute;top:0;left:-2px;width:5px;height:5px;border-radius:50%;background:#7D9AFF}.smart-silence-guide{position:absolute;top:24px;bottom:0;background:rgba(255,196,86,.045);border-left:1px solid rgba(255,196,86,.12);border-right:1px solid rgba(255,196,86,.08)}
 html[data-theme="light"] .smart-tool-card{background:linear-gradient(180deg,#fff,#F9FBFF)}html[data-theme="light"] .smart-tool-icon{background:#EEF3FF;color:#4166D9}html[data-theme="light"] .smart-reframe-status,html[data-theme="light"] .smart-metrics>div{background:#F8FAFD}html[data-theme="light"] .smart-analysis-note{background:#F2FBF7}
 @media(max-width:979px){.smart-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.smart-action-row,.smart-audio-actions{grid-template-columns:1fr 1fr}.smart-tool-card{border-radius:13px}}
+
+
+/* Phase 3 Konva direct canvas manipulation */
+.konva-editor-layer{position:absolute;inset:0;z-index:8;pointer-events:none;visibility:visible;touch-action:none}
+.konva-editor-layer.active{pointer-events:auto}
+.konva-editor-layer.hidden-by-playback{visibility:hidden;pointer-events:none}
+.konva-editor-layer.runtime-unavailable{display:none}
+.konva-editor-layer>.konvajs-content{position:absolute!important;inset:0!important}
+.konva-editor-layer canvas{display:block!important;max-width:none!important;max-height:none!important}
+.konva-editor-hint{display:grid;grid-template-columns:34px minmax(0,1fr);gap:9px;align-items:center;padding:9px 10px;border:1px solid color-mix(in srgb,var(--line) 72%,#7E99FF 28%);border-radius:11px;background:linear-gradient(180deg,rgba(126,153,255,.08),rgba(126,153,255,.025))}
+.konva-hint-mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(126,153,255,.14);color:#A8B8FF;border:1px solid rgba(126,153,255,.2);font-size:12px;font-weight:800}
+.konva-editor-hint>span:last-child{min-width:0;display:grid;gap:2px}.konva-editor-hint strong{font-size:9px;color:var(--text)}.konva-editor-hint small{font-size:8px;line-height:1.35;color:var(--muted)}
+html[data-theme="light"] .konva-editor-hint{background:linear-gradient(180deg,#F5F8FF,#FBFCFF);border-color:#D8E1FA}
+html[data-theme="light"] .konva-hint-mark{background:#EAF0FF;color:#3F62D2;border-color:#D2DDFC}
+@media(max-width:979px){.konva-editor-hint{padding:8px 9px;border-radius:10px}.konva-hint-mark{width:28px;height:28px}.konva-editor-hint small{font-size:7.5px}}

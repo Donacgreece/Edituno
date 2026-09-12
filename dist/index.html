@@ -37,15 +37,15 @@
   <script>
   (()=>{try{const saved=JSON.parse(localStorage.getItem('edituno-preferences')||'{}');const pref=['system','dark','light'].includes(saved.theme)?saved.theme:'system';const theme=pref==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):pref;document.documentElement.dataset.theme=theme;document.documentElement.dataset.themePreference=pref;document.documentElement.style.colorScheme=theme;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='light'?'#F4F6FA':'#08090D'}catch{document.documentElement.dataset.theme='dark'}})();
   </script>
-  <link rel="manifest" href="./manifest.webmanifest?v=2.4.1" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.4.1" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.4.1" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.4.1" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.4.1" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.4.1" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.4.1" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.4.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.4.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.5.0" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.5.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.5.0" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.5.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.5.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.5.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.5.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.5.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.5.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno | Free local video editor</title>
   <script type="application/ld+json">
   {
@@ -512,6 +512,21 @@ html[data-theme="light"] .sheet-grabber:after{background:#B9C1CE}html[data-theme
 html[data-theme="light"] .smart-tool-card{background:linear-gradient(180deg,#fff,#F9FBFF)}html[data-theme="light"] .smart-tool-icon{background:#EEF3FF;color:#4166D9}html[data-theme="light"] .smart-reframe-status,html[data-theme="light"] .smart-metrics>div{background:#F8FAFD}html[data-theme="light"] .smart-analysis-note{background:#F2FBF7}
 @media(max-width:979px){.smart-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.smart-action-row,.smart-audio-actions{grid-template-columns:1fr 1fr}.smart-tool-card{border-radius:13px}}
 
+
+/* Phase 3 Konva direct canvas manipulation */
+.konva-editor-layer{position:absolute;inset:0;z-index:8;pointer-events:none;visibility:visible;touch-action:none}
+.konva-editor-layer.active{pointer-events:auto}
+.konva-editor-layer.hidden-by-playback{visibility:hidden;pointer-events:none}
+.konva-editor-layer.runtime-unavailable{display:none}
+.konva-editor-layer>.konvajs-content{position:absolute!important;inset:0!important}
+.konva-editor-layer canvas{display:block!important;max-width:none!important;max-height:none!important}
+.konva-editor-hint{display:grid;grid-template-columns:34px minmax(0,1fr);gap:9px;align-items:center;padding:9px 10px;border:1px solid color-mix(in srgb,var(--line) 72%,#7E99FF 28%);border-radius:11px;background:linear-gradient(180deg,rgba(126,153,255,.08),rgba(126,153,255,.025))}
+.konva-hint-mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(126,153,255,.14);color:#A8B8FF;border:1px solid rgba(126,153,255,.2);font-size:12px;font-weight:800}
+.konva-editor-hint>span:last-child{min-width:0;display:grid;gap:2px}.konva-editor-hint strong{font-size:9px;color:var(--text)}.konva-editor-hint small{font-size:8px;line-height:1.35;color:var(--muted)}
+html[data-theme="light"] .konva-editor-hint{background:linear-gradient(180deg,#F5F8FF,#FBFCFF);border-color:#D8E1FA}
+html[data-theme="light"] .konva-hint-mark{background:#EAF0FF;color:#3F62D2;border-color:#D2DDFC}
+@media(max-width:979px){.konva-editor-hint{padding:8px 9px;border-radius:10px}.konva-hint-mark{width:28px;height:28px}.konva-editor-hint small{font-size:7.5px}}
+
   </style>
 </head>
 <body>
@@ -531,10 +546,11 @@ html[data-theme="light"] .smart-tool-card{background:linear-gradient(180deg,#fff
 
 
 
-  <script src="./vendor/pixi.min.js?v=2.4.1"></script>
-  <script src="./vendor/pixi-filters.min.js?v=2.4.1"></script>
-  <script src="./vendor/smartcrop.js?v=2.4.1"></script>
-  <script src="./vendor/meyda.min.js?v=2.4.1"></script>
+  <script src="./vendor/pixi.min.js?v=2.5.0"></script>
+  <script src="./vendor/pixi-filters.min.js?v=2.5.0"></script>
+  <script src="./vendor/smartcrop.js?v=2.5.0"></script>
+  <script src="./vendor/meyda.min.js?v=2.5.0"></script>
+  <script src="./vendor/konva.min.js?v=2.5.0"></script>
 
   <script>
     window.__dismissEditunoSplash = function () {};
@@ -566,7 +582,7 @@ html[data-theme="light"] .smart-tool-card{background:linear-gradient(180deg,#fff
 
       try {
 // @ts-nocheck
-/* Edituno v2.4.1 Smart Tools release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.5.0 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -2024,7 +2040,9 @@ function drawTexts(ctx, project, time, width, height) {
         ctx.save();
         ctx.globalAlpha = clamp(alpha, 0, 1);
         ctx.translate(item.x * width, item.y * height + dy);
-        ctx.scale(scale, scale);
+        ctx.rotate((item.rotation || 0) * Math.PI / 180);
+        const userScale = item.scale ?? 1;
+        ctx.scale(scale * userScale, scale * userScale);
         const fs = (item.fontSize || 44) * (width / 960);
         ctx.font = `${item.weight || 700} ${fs}px Inter, system-ui, -apple-system, Segoe UI, sans-serif`;
         ctx.textAlign = item.align || 'center';
@@ -2088,6 +2106,10 @@ async function drawPreview() {
     if (empty)
         empty.classList.toggle('hidden', hasVisual);
     updatePreviewSelectionOverlay();
+    if (state.playing)
+        setKonvaEditorVisible(false);
+    else if (!konvaRuntime.interacting)
+        syncKonvaCanvasEditor();
 }
 function ensurePreviewVideo(row, asset, url) {
     const desired = sourceTime(row, state.currentTime);
@@ -2278,6 +2300,10 @@ function normalizeProject(p) {
         Object.assign(c, { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, gpuEffect: 'none', gpuIntensity: .65, motion: 'none', transition: 'none', transitionDuration: .35, offsetX: 0, offsetY: 0, flipX: false, flipY: false, audioFadeIn: 0, audioFadeOut: 0, smartReframe: null }, c);
     for (const c of p.overlays)
         Object.assign(c, { timelineStart: 0, lane: 2, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, gpuEffect: 'none', gpuIntensity: .65, motion: 'none', offsetX: 0, offsetY: 0, scale: .36, fit: 'contain', opacity: 1, flipX: false, flipY: false, volume: 0 }, c);
+    for (const c of p.elements)
+        Object.assign(c, { x: .5, y: .5, scale: 1, rotation: 0, opacity: 1, z: 20 }, c);
+    for (const t of p.texts)
+        Object.assign(t, { x: .5, y: .5, scale: 1, rotation: 0, align: 'center' }, t);
     return p;
 }
 async function createProject(ratio = '16:9') {
@@ -2904,6 +2930,9 @@ function duplicateSelected() {
     const element = selectedElement();
     if (element)
         return mutate(p => { const c = { ...clone(element), id: uid(), timelineStart: (element.timelineStart || 0) + .25 }; p.elements.push(c); state.selected = { type: 'element', id: c.id }; });
+    const text = selectedText();
+    if (text)
+        return mutate(p => { const c = { ...clone(text), id: uid(), x: clamp((text.x ?? .5) + .03, 0, 1), y: clamp((text.y ?? .5) + .03, 0, 1) }; p.texts.push(c); state.selected = { type: 'text', id: c.id }; });
     const audio = selectedAudio();
     if (audio)
         return mutate(p => { const c = { ...clone(audio), id: uid(), timelineStart: (audio.timelineStart || 0) + .25 }; p.audioClips.push(c); state.selected = { type: 'audio', id: c.id }; });
@@ -2954,7 +2983,7 @@ function addText(kind = 'title') {
         sticker: { text: '✨', fontSize: 90, y: .28, weight: 700, color: '#ffffff', background: '#00000000', strokeWidth: 0, strokeColor: '#000000', animation: 'pop' }
     };
     const q = presets[kind];
-    mutate(p => { const item = { id: uid(), start, end, x: .5, align: 'center', ...q }; p.texts.push(item); state.selected = { type: 'text', id: item.id }; state.tool = 'text'; state.sheet = 'text'; });
+    mutate(p => { const item = { id: uid(), start, end, x: .5, align: 'center', scale: 1, rotation: 0, ...q }; p.texts.push(item); state.selected = { type: 'text', id: item.id }; state.tool = 'text'; state.sheet = 'text'; });
 }
 function parseSrt(text) {
     return text.replace(/\r/g, '').trim().split(/\n\n+/).map(block => {
@@ -2974,7 +3003,7 @@ async function importSrt(file) {
     if (!rows.length)
         return;
     mutate(p => { for (const r of rows)
-        p.texts.push({ id: uid(), text: r.text, start: r.start, end: r.end, x: .5, y: .83, fontSize: 44, color: '#ffffff', background: '#111827D9', weight: 800, align: 'center', strokeWidth: 0, strokeColor: '#000000', animation: 'fade' }); });
+        p.texts.push({ id: uid(), text: r.text, start: r.start, end: r.end, x: .5, y: .83, fontSize: 44, color: '#ffffff', background: '#111827D9', weight: 800, align: 'center', strokeWidth: 0, strokeColor: '#000000', animation: 'fade', scale: 1, rotation: 0 }); });
     toast(tr('srtImported'), 'success');
 }
 function applyFilter(name) {
@@ -3085,7 +3114,7 @@ function aboutPage() {
     $('#app').innerHTML = `<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back', 18)}<span>${el ? 'Αρχική' : 'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta ? `<div class="about-hero-actions">${installCta}</div>` : ''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el ? 'Create locally. Edit freely.' : 'Create locally. Edit freely.'}</span><div class="about-version">v2.4.1</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta ? `<div class="about-hero-actions">${installCta}</div>` : ''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el ? 'Create locally. Edit freely.' : 'Create locally. Edit freely.'}</span><div class="about-version">v2.5.0</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder', 20)}<strong>${el ? 'Τοπικά και ιδιωτικά' : 'Local and private'}</strong><p>${el ? 'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.' : 'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install', 20)}<strong>${el ? 'Εγκαθίσταται σαν app' : 'Installs like an app'}</strong><p>${el ? 'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.' : 'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -3093,7 +3122,7 @@ function aboutPage() {
         <article>${svgIcon('check', 20)}<strong>${el ? 'Δωρεάν, χωρίς watermark' : 'Free, no watermark'}</strong><p>${el ? 'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.' : 'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el ? 'SUPPORT' : 'SUPPORT'}</span><h2>${el ? 'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.' : 'Help Edituno keep getting better.'}</h2><p>${el ? 'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.' : 'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el ? 'Υποστήριξη ανάπτυξης' : 'Support development'}</strong>${svgIcon('right', 18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.4.1</span><span>${el ? 'Local-first video editor' : 'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.5.0</span><span>${el ? 'Local-first video editor' : 'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen ? installModal() : ''}`;
 }
@@ -3130,7 +3159,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings', 18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart', 18)}<span>${el ? 'Υποστήριξη' : 'Support'}</span></button>
-      <div class="home-rail-version">v2.4.1</div>
+      <div class="home-rail-version">v2.5.0</div>
     </aside>
 
     <div class="home-surface">
@@ -3284,9 +3313,272 @@ function installModal() {
     const directArea = appleManual ? `<div class="install-steps">${steps.map((step, i) => `<div class="install-step"><b>${i + 1}</b><span class="install-step-icon">${step[0]}</span><p>${step[1]}</p></div>`).join('')}</div>` : (canPrompt ? `<button class="install-primary" data-action="install-confirm">${svgIcon('install', 19)}<span>${el ? 'Εγκατάσταση τώρα' : 'Install now'}</span></button>` : `<div class="install-waiting">${svgIcon('install', 22)}<span><strong>${el ? 'Η άμεση εγκατάσταση δεν είναι διαθέσιμη ακόμη' : 'Direct install is not available yet'}</strong><small>${el ? 'Σε Android, Windows και Chrome/Edge το κουμπί εγκατάστασης ενεργοποιείται αυτόματα μόλις ο browser το επιτρέψει.' : 'On Android, Windows and Chrome/Edge the install button activates automatically as soon as the browser allows it.'}</small></span></div>`);
     return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}"><div class="modal-head"><div><span class="eyebrow">${escapeHtml(env.label.toUpperCase())}</span><h2>${title}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close', 18)}</button></div><div class="modal-body"><div class="install-device-card"><span class="install-device-icon">${svgIcon(appleManual ? 'share' : env.platform === 'windows' ? 'video' : 'install', 24)}</span><span><strong>${escapeHtml(env.label)}</strong><small>${copy}</small></span></div>${directArea}<div class="install-privacy">${svgIcon('folder', 17)}<span>${el ? 'Η εγκατάσταση δεν ανεβάζει τα projects σου. Παραμένουν τοπικά στη συσκευή.' : 'Installing does not upload your projects. They remain local on your device.'}</span></div></div></section></div>`;
 }
+const konvaRuntime = { stage: null, layer: null, transformer: null, container: null, nodes: new Map(), interacting: false, historyPushed: false, visible: false, failed: false };
+const konvaMeasureCanvas = document.createElement('canvas');
+function konvaAvailable() { return !konvaRuntime.failed && Boolean(window.Konva?.Stage && window.Konva?.Layer && window.Konva?.Transformer); }
+function konvaEditableSelection() { return ['overlay', 'element', 'text'].includes(state.selected?.type); }
+function destroyKonvaCanvasEditor() {
+    const failed = konvaRuntime.failed;
+    try {
+        konvaRuntime.stage?.destroy?.();
+    }
+    catch { }
+    Object.assign(konvaRuntime, { stage: null, layer: null, transformer: null, container: null, nodes: new Map(), interacting: false, historyPushed: false, visible: false, failed });
+}
+function setKonvaEditorVisible(show) {
+    const container = konvaRuntime.container || $('#konva-editor-layer');
+    if (!container)
+        return;
+    container.classList.toggle('active', Boolean(show));
+    container.classList.toggle('hidden-by-playback', !show);
+    konvaRuntime.visible = Boolean(show);
+}
+function konvaOverlayGeometry(clip, width, height) {
+    const asset = getAsset(clip.assetId), sw = Math.max(1, asset?.width || width), sh = Math.max(1, asset?.height || height), sr = sw / sh, tr = width / height;
+    let dw, dh;
+    const fit = clip.fit || 'contain';
+    if ((fit === 'cover' && sr > tr) || (fit === 'contain' && sr < tr)) {
+        dh = height;
+        dw = dh * sr;
+    }
+    else {
+        dw = width;
+        dh = dw / sr;
+    }
+    return { x: width / 2 + (clip.offsetX || 0) * width, y: height / 2 + (clip.offsetY || 0) * height, width: Math.max(12, dw), height: Math.max(12, dh), scale: clip.scale ?? .36, rotation: clip.rotation || 0, offsetX: dw / 2, offsetY: dh / 2 };
+}
+function konvaElementGeometry(item, width, height) {
+    const [cw] = previewDimensions(state.project.ratio), pixelScale = width / Math.max(1, cw), baseH = Math.max(28 * pixelScale, height * .065), baseW = width * .22;
+    let w = baseW, h = baseH;
+    if (item.kind === 'emoji') {
+        w = h = Math.max(34 * pixelScale, baseH * 1.45);
+    }
+    else if (item.kind === 'lowerthird') {
+        w = baseW * 2;
+        h = baseH * 1.5;
+    }
+    else if (item.kind === 'like' || item.kind === 'bell' || item.kind === 'circle') {
+        w = h = baseH * 1.1;
+    }
+    else if (item.kind === 'arrow') {
+        w = baseW * 1.15;
+        h = baseH * .9;
+    }
+    else if (item.kind === 'label') {
+        w = baseW * 1.12;
+        h = baseH * 1.08;
+    }
+    return { x: (item.x ?? .5) * width, y: (item.y ?? .5) * height, width: Math.max(16, w), height: Math.max(16, h), scale: item.scale ?? 1, rotation: item.rotation || 0, offsetX: w / 2, offsetY: h / 2 };
+}
+function konvaTextGeometry(item, width, height) {
+    const ctx = konvaMeasureCanvas.getContext('2d'), fontPx = Math.max(8, (item.fontSize || 44) * (width / 960)), lines = String(item.text || '').split(/\n/).slice(0, 6), lineH = fontPx * 1.16;
+    ctx.font = `${item.weight || 700} ${fontPx}px Inter, system-ui, -apple-system, Segoe UI, sans-serif`;
+    const maxW = Math.max(fontPx * .6, ...lines.map(line => ctx.measureText(line || ' ').width)), totalH = Math.max(lineH, lineH * lines.length), padX = fontPx * .28, padY = fontPx * .16;
+    const w = maxW + padX * 2, h = totalH + padY * 2, align = item.align || 'center';
+    return { x: (item.x ?? .5) * width, y: (item.y ?? .5) * height, width: Math.max(18, w), height: Math.max(18, h), scale: item.scale ?? 1, rotation: item.rotation || 0, offsetX: align === 'left' ? padX : align === 'right' ? w - padX : w / 2, offsetY: h / 2 };
+}
+function konvaEntriesAt(time = state.currentTime) {
+    if (!state.project)
+        return [];
+    const entries = [];
+    for (const item of activeOverlaysAt(time, state.project))
+        entries.push({ type: 'overlay', id: item.id, model: item, geometry: konvaOverlayGeometry });
+    for (const item of activeElementsAt(time, state.project))
+        entries.push({ type: 'element', id: item.id, model: item, geometry: konvaElementGeometry });
+    for (const item of state.project.texts || [])
+        if (time >= item.start && time <= item.end)
+            entries.push({ type: 'text', id: item.id, model: item, geometry: konvaTextGeometry });
+    return entries;
+}
+function konvaSelectEntry(entry, focusText = false) {
+    if (!entry)
+        return;
+    if (entry.type === 'overlay') {
+        state.selected = { type: 'overlay', id: entry.id };
+        state.tool = 'edit';
+        state.sheet = isMobileViewport() ? 'edit' : null;
+    }
+    else if (entry.type === 'element') {
+        state.selected = { type: 'element', id: entry.id };
+        state.tool = 'elements';
+        state.sheet = isMobileViewport() ? 'elements' : null;
+    }
+    else {
+        state.selected = { type: 'text', id: entry.id };
+        state.tool = 'text';
+        state.sheet = isMobileViewport() ? 'text' : null;
+    }
+    renderEditor();
+    if (focusText && entry.type === 'text')
+        setTimeout(() => { const field = $('[data-bind-text="text"]'); field?.focus?.(); field?.select?.(); }, 50);
+}
+function clearKonvaGuides() {
+    if (!konvaRuntime.layer)
+        return;
+    konvaRuntime.layer.find('.edituno-konva-guide').forEach(node => node.destroy());
+}
+function drawKonvaGuide(x1, y1, x2, y2) {
+    const Konva = window.Konva;
+    if (!Konva || !konvaRuntime.layer)
+        return;
+    konvaRuntime.layer.add(new Konva.Line({ points: [x1, y1, x2, y2], stroke: '#7E99FF', strokeWidth: 1, dash: [5, 4], opacity: .86, listening: false, name: 'edituno-konva-guide' }));
+}
+function snapKonvaNode(node, width, height) {
+    clearKonvaGuides();
+    const box = node.getClientRect({ skipShadow: true, skipStroke: true }), cx = box.x + box.width / 2, cy = box.y + box.height / 2, threshold = isMobileViewport() ? 8 : 6;
+    const xs = [width / 3, width / 2, width * 2 / 3], ys = [height / 3, height / 2, height * 2 / 3];
+    let bestX = null, bestY = null;
+    for (const x of xs) {
+        const d = x - cx;
+        if (Math.abs(d) <= threshold && (!bestX || Math.abs(d) < Math.abs(bestX.d)))
+            bestX = { x, d };
+    }
+    for (const y of ys) {
+        const d = y - cy;
+        if (Math.abs(d) <= threshold && (!bestY || Math.abs(d) < Math.abs(bestY.d)))
+            bestY = { y, d };
+    }
+    if (bestX) {
+        node.x(node.x() + bestX.d);
+        drawKonvaGuide(bestX.x, 0, bestX.x, height);
+    }
+    if (bestY) {
+        node.y(node.y() + bestY.d);
+        drawKonvaGuide(0, bestY.y, width, bestY.y);
+    }
+    konvaRuntime.layer.batchDraw();
+}
+function syncModelFromKonvaNode(entry, node, width, height) {
+    const model = entry.model, scale = clamp(Math.abs(node.scaleX() || 1), entry.type === 'overlay' ? .08 : .2, 4), rotation = ((node.rotation() % 360) + 540) % 360 - 180;
+    if (entry.type === 'overlay') {
+        model.offsetX = clamp((node.x() - width / 2) / Math.max(1, width), -.95, .95);
+        model.offsetY = clamp((node.y() - height / 2) / Math.max(1, height), -.95, .95);
+    }
+    else {
+        model.x = clamp(node.x() / Math.max(1, width), 0, 1);
+        model.y = clamp(node.y() / Math.max(1, height), 0, 1);
+    }
+    model.scale = scale;
+    model.rotation = Math.round(rotation * 10) / 10;
+}
+function beginKonvaInteraction() {
+    if (konvaRuntime.interacting)
+        return;
+    konvaRuntime.interacting = true;
+    konvaRuntime.historyPushed = true;
+    pushHistory();
+}
+function endKonvaInteraction(entry, node, width, height) {
+    syncModelFromKonvaNode(entry, node, width, height);
+    clearKonvaGuides();
+    konvaRuntime.interacting = false;
+    state.project.updatedAt = Date.now();
+    queueSave();
+    drawPreview();
+    setTimeout(() => syncKonvaCanvasEditor(true), 0);
+}
+function syncKonvaCanvasEditor(force = false) {
+    const { stage, layer, container } = konvaRuntime, frame = $('.preview-frame');
+    if (!stage || !layer || !container || !frame || !konvaAvailable())
+        return;
+    if (state.playing) {
+        setKonvaEditorVisible(false);
+        return;
+    }
+    const width = Math.max(1, frame.clientWidth), height = Math.max(1, frame.clientHeight);
+    if (stage.width() !== width || stage.height() !== height) {
+        stage.size({ width, height });
+    }
+    if (konvaRuntime.interacting && !force)
+        return;
+    layer.destroyChildren();
+    konvaRuntime.nodes.clear();
+    konvaRuntime.transformer = null;
+    const Konva = window.Konva, entries = konvaEntriesAt();
+    setKonvaEditorVisible(entries.length > 0 && state.selected?.type !== 'clip');
+    for (const entry of entries) {
+        const g = entry.geometry(entry.model, width, height), selected = state.selected?.type === entry.type && state.selected?.id === entry.id;
+        const node = new Konva.Rect({
+            x: g.x, y: g.y, width: g.width, height: g.height, offsetX: g.offsetX, offsetY: g.offsetY,
+            scaleX: g.scale, scaleY: g.scale, rotation: g.rotation || 0,
+            fill: 'rgba(126,153,255,0.008)', stroke: 'rgba(126,153,255,0)', strokeWidth: 1,
+            draggable: selected, listening: true, name: `edituno-konva-node ${entry.type}`, id: `konva-${entry.type}-${entry.id}`
+        });
+        node.setAttr('editunoType', entry.type);
+        node.setAttr('editunoId', entry.id);
+        node.on('mouseenter', () => { stage.container().style.cursor = selected ? 'move' : 'pointer'; });
+        node.on('mouseleave', () => { stage.container().style.cursor = 'default'; });
+        node.on('click tap', ev => { ev.cancelBubble = true; if (!selected)
+            konvaSelectEntry(entry, false); });
+        if (entry.type === 'text')
+            node.on('dblclick dbltap', ev => { ev.cancelBubble = true; konvaSelectEntry(entry, true); });
+        if (selected) {
+            node.dragBoundFunc(pos => entry.type === 'overlay' ? { x: clamp(pos.x, -width * .45, width * 1.45), y: clamp(pos.y, -height * .45, height * 1.45) } : { x: clamp(pos.x, 0, width), y: clamp(pos.y, 0, height) });
+            node.on('dragstart', () => beginKonvaInteraction());
+            node.on('dragmove', () => { snapKonvaNode(node, width, height); syncModelFromKonvaNode(entry, node, width, height); drawPreview(); });
+            node.on('dragend', () => endKonvaInteraction(entry, node, width, height));
+        }
+        layer.add(node);
+        konvaRuntime.nodes.set(`${entry.type}:${entry.id}`, node);
+    }
+    const selectedEntry = entries.find(e => state.selected?.type === e.type && state.selected?.id === e.id), selectedNode = selectedEntry ? konvaRuntime.nodes.get(`${selectedEntry.type}:${selectedEntry.id}`) : null;
+    if (selectedNode) {
+        const transformer = new Konva.Transformer({
+            nodes: [selectedNode], rotateEnabled: true, keepRatio: true, flipEnabled: false,
+            enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+            anchorSize: isMobileViewport() ? 15 : 11, anchorCornerRadius: 6, padding: 4,
+            borderStroke: '#7E99FF', borderStrokeWidth: 1.5, anchorFill: '#F7F8FA', anchorStroke: '#5575E8', anchorStrokeWidth: 2,
+            rotateAnchorOffset: isMobileViewport() ? 30 : 26, rotationSnaps: [0, 90, 180, 270], rotationSnapTolerance: 5,
+            boundBoxFunc: (oldBox, newBox) => {
+                const min = isMobileViewport() ? 28 : 22, max = Math.max(width, height) * 4;
+                if (Math.abs(newBox.width) < min || Math.abs(newBox.height) < min || Math.abs(newBox.width) > max || Math.abs(newBox.height) > max)
+                    return oldBox;
+                return newBox;
+            }
+        });
+        transformer.on('transformstart', () => beginKonvaInteraction());
+        transformer.on('transform', () => { syncModelFromKonvaNode(selectedEntry, selectedNode, width, height); drawPreview(); });
+        transformer.on('transformend', () => endKonvaInteraction(selectedEntry, selectedNode, width, height));
+        layer.add(transformer);
+        konvaRuntime.transformer = transformer;
+    }
+    layer.draw();
+}
+function bindKonvaCanvasEditor() {
+    destroyKonvaCanvasEditor();
+    const container = $('#konva-editor-layer'), frame = $('.preview-frame');
+    if (!container || !frame || !konvaAvailable()) {
+        container?.classList.add('runtime-unavailable');
+        return;
+    }
+    try {
+        const Konva = window.Konva, width = Math.max(1, frame.clientWidth), height = Math.max(1, frame.clientHeight);
+        const stage = new Konva.Stage({ container, width, height }), layer = new Konva.Layer();
+        stage.add(layer);
+        Object.assign(konvaRuntime, { stage, layer, container, nodes: new Map(), interacting: false, historyPushed: false });
+        stage.on('click tap', ev => { if (ev.target === stage && konvaEditableSelection()) {
+            state.selected = null;
+            renderEditor();
+        } });
+        syncKonvaCanvasEditor(true);
+    }
+    catch (error) {
+        console.warn('Konva canvas editor unavailable; using Edituno fallback controls.', error);
+        konvaRuntime.failed = true;
+        destroyKonvaCanvasEditor();
+        container.classList.add('runtime-unavailable');
+    }
+}
+function konvaManipulationHint() {
+    return `<div class="konva-editor-hint"><span class="konva-hint-mark">K</span><span><strong>${state.language === 'el' ? 'Άμεσος χειρισμός στον καμβά' : 'Direct canvas controls'}</strong><small>${state.language === 'el' ? 'Σύρε · άλλαξε μέγεθος · περιστροφή · έξυπνο snapping' : 'Drag · resize · rotate · smart snapping'} · Konva 10.5.0 · MIT</small></span></div>`;
+}
 function selectedTransformTarget() { return selectedVisual() || selectedElement(); }
 function updatePreviewSelectionOverlay() {
     const box = $('#preview-selection-box'), frame = $('.preview-frame'), target = selectedTransformTarget();
+    if (konvaAvailable() && konvaEditableSelection()) {
+        box?.classList.add('hidden');
+        return;
+    }
     if (!box || !frame || !target) {
         box?.classList.add('hidden');
         return;
@@ -3302,6 +3594,8 @@ function updatePreviewSelectionOverlay() {
     box.style.transform = `rotate(${target.rotation || 0}deg)`;
 }
 function bindPreviewInteractions() {
+    if (konvaAvailable() && konvaEditableSelection())
+        return;
     const layer = $('#preview-interaction-layer'), frame = $('.preview-frame'), target = selectedTransformTarget();
     if (!layer || !frame || !target)
         return;
@@ -3413,6 +3707,7 @@ function renderEditor() {
     document.body.classList.toggle('mobile-app-shell', isMobileViewport());
     scheduleMobileViewportSync();
     const app = $('#app'), p = state.project, dur = projectDuration(), rows = clipTimeline(), mobile = isMobileViewport(), totalWidth = Math.max(360, Math.ceil(dur * state.pxPerSec) + 72);
+    destroyKonvaCanvasEditor();
     app.innerHTML = `<div class="studio-editor ${mobile ? 'editor-mobile' : 'editor-desktop'}">
     <header class="editor-topbar">
       <div class="editor-topbar-left"><button class="round-icon" data-action="back" aria-label="${tr('back')}">${svgIcon('back', 19)}</button></div>
@@ -3426,7 +3721,7 @@ function renderEditor() {
       <section class="editor-center">
         <div class="viewer-shell">
           <div class="viewer-toolbar"><div><span class="viewer-ratio">${escapeHtml(p.ratio)}</span><span class="viewer-quality">${state.preferences.previewQuality}</span></div><div class="viewer-actions"><button data-action="undo" aria-label="${tr('undo')}">${svgIcon('undo', 15)}</button><button data-action="redo" aria-label="${tr('redo')}">${svgIcon('redo', 15)}</button></div></div>
-          <div class="preview-zone"><div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div id="preview-interaction-layer" class="preview-interaction-layer ${['clip', 'overlay', 'element'].includes(state.selected?.type) ? 'active' : ''}" aria-label="Canvas interaction layer"><div id="preview-selection-box" class="preview-selection-box hidden"><i class="selection-handle"></i></div></div><div class="preview-empty ${rows.length ? 'hidden' : ''}"><span>${svgIcon('media', 25)}</span><strong>${state.language === 'el' ? 'Πρόσθεσε media' : 'Add media'}</strong><small>${state.language === 'el' ? 'Video, φωτογραφίες ή audio' : 'Video, photos or audio'}</small><button class="viewer-add" data-action="pick-media">${svgIcon('plus', 16)}<span>Import</span></button></div></div></div></div>
+          <div class="preview-zone"><div class="preview-wrap"><div class="preview-frame"><canvas id="preview-canvas"></canvas><div id="konva-editor-layer" class="konva-editor-layer" data-konva-direct-manipulation="true" aria-label="Direct canvas editor"></div><div id="preview-interaction-layer" class="preview-interaction-layer ${state.selected?.type === 'clip' || (!konvaAvailable() && ['overlay', 'element'].includes(state.selected?.type)) ? 'active' : ''}" aria-label="Canvas interaction layer"><div id="preview-selection-box" class="preview-selection-box hidden"><i class="selection-handle"></i></div></div><div class="preview-empty ${rows.length ? 'hidden' : ''}"><span>${svgIcon('media', 25)}</span><strong>${state.language === 'el' ? 'Πρόσθεσε media' : 'Add media'}</strong><small>${state.language === 'el' ? 'Video, φωτογραφίες ή audio' : 'Video, photos or audio'}</small><button class="viewer-add" data-action="pick-media">${svgIcon('plus', 16)}<span>Import</span></button></div></div></div></div>
           <div class="transport-bar"><button class="transport-btn" data-action="jump-start" aria-label="Start">${svgIcon('back', 17)}</button><button class="transport-play" data-action="play-toggle" aria-label="${tr('play')}"><span id="play-icon">${state.playing ? 'Ⅱ' : svgIcon('play', 18)}</span></button><span class="timecode" id="timecode">${fmtTime(state.currentTime)} <i>/</i> ${fmtTime(dur)}</span><input class="viewer-seek" id="seekbar" type="range" min="0" max="${Math.max(.01, dur)}" step="0.01" value="${state.currentTime}"></div>
         </div>
 
@@ -3450,6 +3745,7 @@ function renderEditor() {
         updatePlaybackUi();
         bindTimelineInteractions();
         bindTimelineResizeInteractions();
+        bindKonvaCanvasEditor();
         bindPreviewInteractions();
         bindBottomSheetGesture();
         const sc = $('#timeline-scroll');
@@ -3529,7 +3825,10 @@ function panelContent(tool) { if (tool === 'media')
     return isMobileViewport() ? transitionPanel() : desktopInspectorToolPanel('transitions'); if (tool === 'canvas')
     return canvasPanel(); return ''; }
 function mediaPanel() { const list = state.project.assets || []; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length ? `<div class="media-list">${list.map(a => `<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type === 'video' ? svgIcon('video', 18) : a.type === 'image' ? svgIcon('media', 18) : svgIcon('audio', 18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration ? fmtTime(a.duration) : ''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><div class="media-actions"><button class="media-action" data-action="${a.type === 'audio' ? 'add-audio' : 'add-asset'}" data-id="${a.id}">${svgIcon('plus', 14)}<span>${tr('add')}</span></button>${a.type !== 'audio' ? `<button class="media-action overlay-add" data-action="add-overlay" data-id="${a.id}">${svgIcon('copy', 14)}<span>${state.language === 'el' ? 'Overlay' : 'Overlay'}</span></button>` : ''}</div></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`; }
-function textPanel(showAdd = true) { const t = selectedText(); return `<div class="panel-grid">${showAdd ? `<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>${svgIcon('effects', 17)}</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>` : ''}${t ? `<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight == 600 ? 'selected' : ''}>600</option><option ${t.weight == 700 ? 'selected' : ''}>700</option><option ${t.weight == 800 ? 'selected' : ''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color, '#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background, '#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation === 'none' ? 'selected' : ''}>${tr('none')}</option><option value="fade" ${t.animation === 'fade' ? 'selected' : ''}>Fade</option><option value="pop" ${t.animation === 'pop' ? 'selected' : ''}>Pop</option><option value="slide" ${t.animation === 'slide' ? 'selected' : ''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x', t.x, 0, 1, .01, true, 'text')}${rangeField('y', t.y, 0, 1, .01, true, 'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>` : ''}</div>`; }
+function textPanel(showAdd = true) {
+    const t = selectedText();
+    return `<div class="panel-grid">${showAdd ? `<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>${svgIcon('effects', 17)}</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>` : ''}${t ? `${konvaManipulationHint()}<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight == 600 ? 'selected' : ''}>600</option><option ${t.weight == 700 ? 'selected' : ''}>700</option><option ${t.weight == 800 ? 'selected' : ''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color, '#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background, '#111827')}"></label></div><div class="field-grid two"><label class="field"><span>${state.language === 'el' ? 'Στοίχιση' : 'Alignment'}</span><select data-bind-text="align"><option value="left" ${t.align === 'left' ? 'selected' : ''}>${state.language === 'el' ? 'Αριστερά' : 'Left'}</option><option value="center" ${(t.align || 'center') === 'center' ? 'selected' : ''}>${state.language === 'el' ? 'Κέντρο' : 'Center'}</option><option value="right" ${t.align === 'right' ? 'selected' : ''}>${state.language === 'el' ? 'Δεξιά' : 'Right'}</option></select></label><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation === 'none' ? 'selected' : ''}>${tr('none')}</option><option value="fade" ${t.animation === 'fade' ? 'selected' : ''}>Fade</option><option value="pop" ${t.animation === 'pop' ? 'selected' : ''}>Pop</option><option value="slide" ${t.animation === 'slide' ? 'selected' : ''}>Slide up</option></select></label></div></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x', t.x, 0, 1, .01, true, 'text')}${rangeField('y', t.y, 0, 1, .01, true, 'text')}${rangeField('scale', t.scale ?? 1, .2, 4, .01, true, 'text')}${rangeField('rotation', t.rotation || 0, -180, 180, 1, true, 'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><div class="smart-action-row"><button class="secondary-btn" data-action="duplicate">${svgIcon('copy', 15)}<span>${tr('duplicate')}</span></button><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>` : ''}</div>`;
+}
 function safeColor(v, fallback) { return /^#[0-9a-f]{6}$/i.test(v || '') ? v : fallback; }
 function audioPanel() {
     const audios = state.project.assets.filter(a => a.type === 'audio'), c = selectedAudio();
@@ -3562,7 +3861,7 @@ function editPanel() {
     const c = selectedVisual(), a = getAsset(c?.assetId);
     if (!c)
         return effectsEmpty();
-    return `<div class="panel-grid compact-panels">${smartReframePanel()}<div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split', 19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy', 19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left', 19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right', 19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash', 19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0, (a?.duration || c.end) - .05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start + .05}" max="${a?.duration || c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed', c.speed, .25, 8, .05, true, 'clip')}${a?.type === 'video' ? `${rangeField('volume', c.volume, 0, 1, .01, true, 'clip')}${rangeField('audioFadeIn', c.audioFadeIn || 0, 0, Math.min(5, clipDuration(c) / 2), .05, true, 'clip')}${rangeField('audioFadeOut', c.audioFadeOut || 0, 0, Math.min(5, clipDuration(c) / 2), .05, true, 'clip')}` : ''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale', c.scale, .2, 3, .01, true, 'clip')}${rangeField('rotation', c.rotation, -180, 180, 1, true, 'clip')}<div class="field-grid two">${rangeField('offsetX', c.offsetX, -.7, .7, .01, true, 'clip')}${rangeField('offsetY', c.offsetY, -.7, .7, .01, true, 'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit === 'cover' ? 'active' : ''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit === 'contain' ? 'active' : ''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX ? 'active' : ''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY ? 'active' : ''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`;
+    return `<div class="panel-grid compact-panels">${smartReframePanel()}${state.selected?.type === 'overlay' ? konvaManipulationHint() : ''}<div class="mobile-quick-actions"><button class="sheet-action" data-action="split"><i>${svgIcon('split', 19)}</i>${tr('split')}</button><button class="sheet-action" data-action="duplicate"><i>${svgIcon('copy', 19)}</i>${tr('duplicate')}</button><button class="sheet-action" data-action="move" data-value="-1"><i>${svgIcon('left', 19)}</i>${tr('moveLeft')}</button><button class="sheet-action" data-action="move" data-value="1"><i>${svgIcon('right', 19)}</i>${tr('moveRight')}</button><button class="sheet-action danger" data-action="delete-selected"><i>${svgIcon('trash', 19)}</i>${tr('delete')}</button></div><div class="panel-section"><h3>${tr('trim')}</h3><div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-clip="start" type="number" step="0.05" min="0" max="${Math.max(0, (a?.duration || c.end) - .05)}" value="${c.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-clip="end" type="number" step="0.05" min="${c.start + .05}" max="${a?.duration || c.end}" value="${c.end.toFixed(2)}"></label></div>${rangeField('speed', c.speed, .25, 8, .05, true, 'clip')}${a?.type === 'video' ? `${rangeField('volume', c.volume, 0, 1, .01, true, 'clip')}${rangeField('audioFadeIn', c.audioFadeIn || 0, 0, Math.min(5, clipDuration(c) / 2), .05, true, 'clip')}${rangeField('audioFadeOut', c.audioFadeOut || 0, 0, Math.min(5, clipDuration(c) / 2), .05, true, 'clip')}` : ''}</div><div class="panel-section"><h3>${tr('transform')}</h3>${rangeField('scale', c.scale, .2, 3, .01, true, 'clip')}${rangeField('rotation', c.rotation, -180, 180, 1, true, 'clip')}<div class="field-grid two">${rangeField('offsetX', c.offsetX, -.7, .7, .01, true, 'clip')}${rangeField('offsetY', c.offsetY, -.7, .7, .01, true, 'clip')}</div><div class="format-grid"><button class="format-btn ${c.fit === 'cover' ? 'active' : ''}" data-action="clip-set" data-key="fit" data-value="cover">${tr('cover')}</button><button class="format-btn ${c.fit === 'contain' ? 'active' : ''}" data-action="clip-set" data-key="fit" data-value="contain">${tr('contain')}</button><button class="format-btn ${c.flipX ? 'active' : ''}" data-action="clip-toggle" data-key="flipX">↔</button><button class="format-btn ${c.flipY ? 'active' : ''}" data-action="clip-toggle" data-key="flipY">↕</button></div></div></div>`;
 }
 function effectsPanel() {
     const c = selectedVisual();
@@ -3604,7 +3903,7 @@ function addElement(kind) { const isEmoji = String(kind).startsWith('emoji:'); c
 function elementPanel() {
     const selected = selectedElement(), fluent = fluentMatches(), q = escapeHtml(state.fluentQuery || ''), style = state.fluentStyle || 'color';
     const fluentSection = `<div class="panel-section borderless-mobile fluent-section"><div class="panel-heading-row"><div><h3>Microsoft Fluent Emoji</h3><small>${state.fluentCatalog.length ? `${state.fluentCatalog.length.toLocaleString()} assets · MIT` : 'MIT · 1,285 Color + 1,285 3D assets'}</small></div><div class="fluent-style-toggle"><button class="${style === 'color' ? 'active' : ''}" data-action="fluent-style" data-value="color">Color</button><button class="${style === '3d' ? 'active' : ''}" data-action="fluent-style" data-value="3d">3D</button></div></div><label class="fluent-search">${svgIcon('search', 15)}<input data-fluent-search type="search" value="${q}" placeholder="${state.language === 'el' ? 'Αναζήτηση 1.285 στοιχείων' : 'Search 1,285 elements'}"></label>${state.fluentLoading ? `<div class="fluent-loading">${state.language === 'el' ? 'Φόρτωση πλήρους βιβλιοθήκης…' : 'Loading full library…'}</div>` : state.fluentError ? `<div class="fluent-error"><span>${state.language === 'el' ? 'Δεν φορτώθηκε η βιβλιοθήκη.' : 'Library could not load.'}</span><button data-action="fluent-retry">Retry</button></div>` : state.fluentCatalog.length ? `<div class="fluent-grid">${fluent.map(entry => { const path = fluentStylePath(entry, style); return `<button class="fluent-card" data-action="add-fluent" data-name="${escapeHtml(entry.name)}" data-path="${escapeHtml(path)}" title="${escapeHtml(entry.name)}"><span><img loading="lazy" decoding="async" src="${escapeHtml(fluentRawUrl(path))}" alt=""></span><small>${escapeHtml(entry.name)}</small></button>`; }).join('')}</div>${fluent.length < state.fluentCatalog.filter(x => !state.fluentQuery || x.name.toLowerCase().includes(String(state.fluentQuery).toLowerCase())).length ? `<button class="secondary-btn full" data-action="fluent-more">${state.language === 'el' ? 'Περισσότερα' : 'Load more'}</button>` : ''}` : `<button class="secondary-btn full" data-action="fluent-retry">${state.language === 'el' ? 'Φόρτωση Fluent library' : 'Load Fluent library'}</button>`}<p class="helper">${state.language === 'el' ? 'Τα Fluent Emoji φορτώνονται κατά απαίτηση από το επίσημο Microsoft repository. Μόλις τα προσθέσεις σε project αποθηκεύονται τοπικά στη συσκευή.' : 'Fluent Emoji are loaded on demand from the official Microsoft repository. Once added to a project they are stored locally on your device.'}</p></div>`;
-    return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Creator στοιχεία' : 'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e => `<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon, 20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Γρήγορα stickers' : 'Quick stickers'}</h3><div class="emoji-library">${EMOJI_PRESETS.map(e => `<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div></div>${fluentSection}${selected ? `<div class="panel-section"><h3>${state.language === 'el' ? 'Επιλεγμένο στοιχείο' : 'Selected element'}</h3>${rangeField('scale', selected.scale, .2, 3, .01, true, 'element')}${rangeField('rotation', selected.rotation, -180, 180, 1, true, 'element')}${rangeField('opacity', selected.opacity, 0, 1, .01, true, 'element')}${selected.kind !== 'emoji' ? `<label class="field"><span>${state.language === 'el' ? 'Χρώμα' : 'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color, '#2455F5')}"></label>` : ''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>` : ''}</div>`;
+    return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Creator στοιχεία' : 'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e => `<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon, 20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Γρήγορα stickers' : 'Quick stickers'}</h3><div class="emoji-library">${EMOJI_PRESETS.map(e => `<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div></div>${fluentSection}${selected ? `${konvaManipulationHint()}<div class="panel-section"><h3>${state.language === 'el' ? 'Επιλεγμένο στοιχείο' : 'Selected element'}</h3>${rangeField('scale', selected.scale, .2, 3, .01, true, 'element')}${rangeField('rotation', selected.rotation, -180, 180, 1, true, 'element')}<div class="field-grid two">${rangeField('x', selected.x ?? .5, 0, 1, .01, true, 'element')}${rangeField('y', selected.y ?? .5, 0, 1, .01, true, 'element')}</div>${rangeField('opacity', selected.opacity, 0, 1, .01, true, 'element')}${selected.kind !== 'emoji' ? `<label class="field"><span>${state.language === 'el' ? 'Χρώμα' : 'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color, '#2455F5')}"></label>` : ''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>` : ''}</div>`;
 }
 function clipPanel() {
     const c = selectedVisual();
@@ -4831,7 +5130,7 @@ async function init() {
         if (!state.fluentCatalog.length)
             setTimeout(() => ensureFluentCatalog(), 900);
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=2.4.1', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=2.5.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

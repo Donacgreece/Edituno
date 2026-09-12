@@ -37,3 +37,8 @@ PixiJS 8.20.1, PixiJS Filters 6.1.5 and the explicitly MIT-licensed gl-transitio
 ## Phase 2 smart editing engines
 
 Smartcrop.js 2.0.5 and Meyda 5.6.3 are third-party MIT-licensed components. They are not relicensed under PolyForm. Edituno's Auto Reframe sampling/orchestration, audio analysis heuristics, timeline guide rendering and beat-driven editing workflow are first-party Edituno material under `PolyForm-Noncommercial-1.0.0`, while the upstream Smartcrop.js and Meyda code retain their MIT rights and notices.
+
+
+## Phase 3 canvas interaction engine
+
+Konva 10.5.0 is a third-party MIT-licensed component and is not relicensed under PolyForm. Edituno uses it only as the browser interaction layer for direct canvas selection and transformation. Edituno's media rendering, export output, timeline/project data model, snapping policy, object geometry mapping and interface remain first-party Edituno material under `PolyForm-Noncommercial-1.0.0`.

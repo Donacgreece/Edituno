@@ -35,16 +35,24 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund --package-lock=false
 
-      - name: Verify pinned smart editing engines
+      - name: Verify pinned editing engines
         shell: bash
         run: |
           set -euo pipefail
-          test -f node_modules/smartcrop/smartcrop.js
-          test -f node_modules/meyda/dist/web/meyda.min.js
-          test "$(wc -c < node_modules/smartcrop/smartcrop.js)" -gt 15000
-          test "$(wc -c < node_modules/meyda/dist/web/meyda.min.js)" -gt 12000
-          grep -Fq "Copyright" node_modules/smartcrop/smartcrop.js
-          echo "Smartcrop.js 2.0.5 and Meyda 5.6.3 verified."
+          node <<'NODE'
+          const fs = require('fs');
+          const checks = [
+            ['smartcrop', '2.0.5', 'node_modules/smartcrop/smartcrop.js'],
+            ['meyda', '5.6.3', 'node_modules/meyda/dist/web/meyda.min.js'],
+            ['konva', '10.5.0', 'node_modules/konva/konva.min.js'],
+          ];
+          for (const [name, expected, file] of checks) {
+            const meta = JSON.parse(fs.readFileSync(`node_modules/${name}/package.json`, 'utf8'));
+            if (meta.version !== expected) throw new Error(`${name}: expected ${expected}, got ${meta.version}`);
+            if (!fs.existsSync(file) || fs.statSync(file).size <= 0) throw new Error(`${name}: browser bundle missing or empty`);
+            console.log(`${name} ${expected}: OK`);
+          }
+          NODE
 
       - name: Resolve active Pages domain
         shell: bash
@@ -111,6 +119,7 @@ jobs:
           test -f dist/vendor/pixi-filters.min.js
           test -f dist/vendor/smartcrop.js
           test -f dist/vendor/meyda.min.js
+          test -f dist/vendor/konva.min.js
           test -f dist/vendor/gl-transitions/CrossZoom.glsl
           test -f dist/vendor/gl-transitions/Swirl.glsl
           test -f dist/vendor/gl-transitions/AdvancedMosaic.glsl
@@ -122,12 +131,18 @@ jobs:
           test -f dist/THIRD_PARTY_LICENSES/GL-TRANSITIONS-MIT.txt
           test -f dist/THIRD_PARTY_LICENSES/SMARTCROP-MIT.txt
           test -f dist/THIRD_PARTY_LICENSES/MEYDA-MIT.txt
+          test -f dist/THIRD_PARTY_LICENSES/KONVA-MIT.txt
           test $(wc -c < dist/vendor/pixi.min.js) -gt 500000
           test $(wc -c < dist/vendor/pixi-filters.min.js) -gt 100000
-          test $(wc -c < dist/vendor/smartcrop.js) -gt 15000
-          test $(wc -c < dist/vendor/meyda.min.js) -gt 12000
+          test -s dist/vendor/smartcrop.js
+          test -s dist/vendor/meyda.min.js
+          test -s dist/vendor/konva.min.js
           grep -Fq 'vendor/smartcrop.js' dist/index.html
           grep -Fq 'vendor/meyda.min.js' dist/index.html
+          grep -Fq 'vendor/konva.min.js' dist/index.html
+          grep -Fq 'data-konva-direct-manipulation="true"' dist/index.html
+          grep -Fq 'function bindKonvaCanvasEditor()' dist/index.html
+          grep -Fq 'new Konva.Transformer' dist/index.html
           grep -Fq 'smartcrop-2.0.5' dist/index.html
           grep -Fq 'meyda-5.6.3' dist/index.html
           grep -Fq 'data-action="smart-reframe"' dist/index.html
@@ -150,7 +165,7 @@ jobs:
           grep -Fq 'PolyForm-Noncommercial-1.0.0' dist/LICENSE.md
           grep -Fq 'Required Notice:' dist/NOTICE
           grep -Fq 'third-party' dist/LICENSE_SCOPE.md
-          grep -Fq 'edituno-studio-v2.4.1' dist/sw.js
+          grep -Fq 'edituno-studio-v2.5.0' dist/sw.js
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 

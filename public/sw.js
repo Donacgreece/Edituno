@@ -1,4 +1,4 @@
-const CACHE = 'edituno-studio-v2.4.1'
+const CACHE = 'edituno-studio-v2.5.0'
 const CORE = [
   './',
   './manifest.webmanifest',
@@ -6,6 +6,7 @@ const CORE = [
   './vendor/pixi-filters.min.js',
   './vendor/smartcrop.js',
   './vendor/meyda.min.js',
+  './vendor/konva.min.js',
   './vendor/gl-transitions/CrossZoom.glsl',
   './vendor/gl-transitions/AdvancedMosaic.glsl',
   './vendor/gl-transitions/CircleCrop.glsl',

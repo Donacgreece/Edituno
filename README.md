@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.4.1**
+Current packaged release: **v2.5.0**
 
 ## License
 
@@ -152,3 +152,19 @@ Phase 2 adds local, non-cloud smart editing:
 - Auto Reframe powered by Smartcrop.js 2.0.5. Image clips use content-aware framing and video clips use a three-frame stability pass before Edituno maps the result to its own scale and offset model.
 - Smart Audio powered by Meyda 5.6.3. Edituno extracts local audio features, detects silence regions and beat peaks, estimates BPM, renders timeline guides and can split V1 clips to the detected rhythm.
 - All analysis happens on the user's device. Media is not uploaded for these features.
+
+
+### Direct canvas editing in v2.5.0
+
+Phase 3 adds a Konva-powered manipulation layer without replacing Edituno's renderer:
+
+- Click text, overlays and stickers directly inside the preview to select them.
+- Drag selected objects directly on the canvas.
+- Resize from four corner handles with locked proportions.
+- Rotate with a dedicated rotation handle and 0/90/180/270 degree snapping.
+- Snap to center and rule-of-thirds guides while dragging.
+- Text now supports persistent scale and rotation in preview and export.
+- Existing Inspector controls remain available as a precise fallback.
+- The Konva interaction layer hides during playback and does not alter exported pixels by itself.
+
+Konva is pinned to 10.5.0 and remains MIT-licensed. See `THIRD_PARTY_NOTICES.md`.

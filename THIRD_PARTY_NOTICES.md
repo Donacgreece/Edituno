@@ -86,3 +86,15 @@ Edituno uses Smartcrop.js as the content-aware framing engine behind Auto Refram
 - License copy: `THIRD_PARTY_LICENSES/MEYDA-MIT.txt`
 
 Edituno uses Meyda for local audio feature extraction used by Smart Audio analysis. Edituno's silence segmentation, beat peak selection, timeline guides and beat-driven cut orchestration are first-party code. Meyda remains MIT-licensed.
+
+
+## Konva
+
+- Component: `konva` 10.5.0
+- Upstream: https://github.com/konvajs/konva
+- License: MIT
+- Original work copyright: 2011-2013 Eric Rowell (KineticJS)
+- Modified work copyright: 2014-present Anton Lavrenov (Konva)
+- License copy: `THIRD_PARTY_LICENSES/KONVA-MIT.txt`
+
+Edituno uses Konva as the interaction engine for direct on-canvas selection, drag, resize, rotation and snapping of text, overlays and stickers. Edituno's project model, rendering/export pipeline, transform mapping, UI and editor workflow remain first-party code. Konva remains independently MIT-licensed and is not relicensed under PolyForm.
