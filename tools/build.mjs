@@ -152,6 +152,12 @@ if (!js.includes('function prepareSourceAacPassthrough(') || !js.includes('funct
 if (!js.includes('function exportProjectAppleMediabunny(') || !js.includes('MediabunnyAacEncoder') || !js.includes("A.registerAacEncoder()")) {
   throw new Error('Apple WASM AAC export engine is missing')
 }
+if (!js.includes('function exportProjectAppleMovPcm(') || !js.includes("new M.MovOutputFormat") || !js.includes("codec: 'pcm-s16'") || !js.includes("type: 'video/quicktime'")) {
+  throw new Error('Apple MOV/PCM compatibility export engine is missing')
+}
+if (!js.includes('function validateApplePcmMov(') || !js.includes("blobChunkContainsAscii(blob, 'sowt')")) {
+  throw new Error('Apple PCM MOV structural validation is missing')
+}
 if (!template.includes('vendor/mediabunny.min.cjs') || !template.includes('vendor/mediabunny-aac-encoder.min.js')) {
   throw new Error('Mediabunny browser runtimes are missing from the document')
 }
@@ -283,4 +289,4 @@ if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Mediabunny')) throw new Error('Mediabunny third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MEDIABUNNY-MPL-2.0.txt'))) throw new Error('Mediabunny MPL-2.0 license copy missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'FFMPEG-LGPL-2.1.txt'))) throw new Error('FFmpeg LGPL-2.1 license copy missing')
-console.log(`Built Edituno v2.7.0 -> ${dist}`)
+console.log(`Built Edituno v2.7.1 -> ${dist}`)

@@ -1,5 +1,17 @@
 # Release Notes
 
+## v2.7.1
+
+iPhone/iPad MOV + PCM compatibility export.
+
+- Apple mobile projects with audible audio no longer use AAC for the final export.
+- iPhone and iPad now export a QuickTime `.mov` file with H.264/AVC video and 48 kHz stereo 16-bit PCM audio.
+- This removes Safari's AAC encoder and AAC-in-MP4 metadata path from the final Apple mobile output entirely.
+- PCM audio is uncompressed, so the audio track is larger than AAC but remains modest compared with 1080p video bitrate.
+- Export validates the QuickTime container, the audio handler and the classic QuickTime `sowt` PCM sample entry before presenting the file as successful.
+- Desktop and non-Apple export behavior remains unchanged.
+- No new third-party dependency was added.
+
 ## v2.7.0
 
 Apple mobile export engine replacement.
