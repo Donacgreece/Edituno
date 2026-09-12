@@ -19,6 +19,7 @@ function renderSiteTokens(value) {
     .replaceAll('__EDITUNO_SITE_URL__', siteUrl)
     .replaceAll('__EDITUNO_SHARE_URL__', shareUrl)
 }
+const packageMeta = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 const template = fs.readFileSync(path.join(root, 'src', 'index.template.html'), 'utf8')
 const css = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8')
 const js = fs.readFileSync(path.join(root, '.build', 'app.js'), 'utf8')
@@ -26,6 +27,11 @@ const js = fs.readFileSync(path.join(root, '.build', 'app.js'), 'utf8')
 // Fail the build if the compiled application is not valid classic-script JavaScript.
 // This catches startup-breaking issues before they can reach GitHub Pages.
 new Function(js)
+
+if (packageMeta.license !== 'PolyForm-Noncommercial-1.0.0') throw new Error('Edituno SPDX license metadata is missing or incorrect')
+for (const file of ['LICENSE.md', 'LICENSE_SCOPE.md', 'NOTICE', 'THIRD_PARTY_NOTICES.md']) {
+  if (!fs.existsSync(path.join(root, file))) throw new Error(`Required legal file missing: ${file}`)
+}
 
 const dist = path.join(root, 'dist')
 fs.rmSync(dist, { recursive: true, force: true })
@@ -138,6 +144,9 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
+for (const file of ['LICENSE.md', 'LICENSE_SCOPE.md', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'OPEN_SOURCE_STACK.md']) {
+  fs.copyFileSync(path.join(root, file), path.join(dist, file))
+}
 for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
   const target = path.join(dist, filename)
   const rendered = renderSiteTokens(fs.readFileSync(target, 'utf8'))
@@ -146,4 +155,8 @@ for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
-console.log(`Built Edituno v2.2.15 -> ${dist}`)
+if (!fs.readFileSync(path.join(dist, 'LICENSE.md'), 'utf8').includes('PolyForm-Noncommercial-1.0.0')) throw new Error('Production license metadata missing')
+if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('Third-party material')) throw new Error('Production license scope missing')
+if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notice:')) throw new Error('Production required notice missing')
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
+console.log(`Built Edituno v2.2.16 -> ${dist}`)

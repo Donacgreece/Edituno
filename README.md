@@ -83,12 +83,26 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.15**
+Current packaged release: **v2.2.16**
+
+## License
+
+Edituno's original first-party code and documentation are source-available under the **PolyForm Noncommercial License 1.0.0**.
+
+- SPDX identifier: `PolyForm-Noncommercial-1.0.0`
+- Official terms: https://polyformproject.org/licenses/noncommercial/1.0.0
+- Commercial use requires separate written permission or a commercial license from the Edituno copyright holder.
+- Third-party libraries, icon geometry and artwork are not relicensed by Edituno and remain under their original upstream licenses.
+
+See `LICENSE.md`, `LICENSE_SCOPE.md`, `NOTICE` and `THIRD_PARTY_NOTICES.md` for the complete project licensing scope.
 
 ## Third-party and legal notes
 
 See:
 
+- `LICENSE.md`
+- `LICENSE_SCOPE.md`
+- `NOTICE`
 - `OPEN_SOURCE_STACK.md`
 - `THIRD_PARTY_NOTICES.md`
 - `RELEASE_NOTES.md`

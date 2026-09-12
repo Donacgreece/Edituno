@@ -1,5 +1,16 @@
 # Release Notes
 
+## v2.2.16
+
+Licensing and third-party scope release.
+
+- Licensed Edituno first-party code and documentation under `PolyForm-Noncommercial-1.0.0`.
+- Added `LICENSE.md`, `LICENSE_SCOPE.md` and the PolyForm `Required Notice`.
+- Explicitly excluded third-party libraries, icon geometry and artwork from the Edituno PolyForm grant so their upstream licenses remain unchanged.
+- Expanded `THIRD_PARTY_NOTICES.md` with current upstream license references.
+- Added licensing metadata to `package.json`, the source headers and `llms.txt`.
+- Production builds now publish the legal files alongside the web application.
+
 ## v2.2.15
 
 Settings symmetry and preference polish release.

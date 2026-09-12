@@ -21,3 +21,9 @@ Edituno is an installable PWA video editor focused on privacy, speed and ease of
 
 ## Repository
 - https://github.com/Donacgreece/Edituno
+
+## License
+- Edituno first-party code: PolyForm-Noncommercial-1.0.0
+- License terms: https://polyformproject.org/licenses/noncommercial/1.0.0
+- Edituno is source-available for noncommercial use. Third-party components and assets retain their own upstream licenses.
+- Licensing scope and third-party notices are published with the repository and production bundle.

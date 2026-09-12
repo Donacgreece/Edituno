@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.2.15",
+  "version": "2.2.16",
   "private": true,
   "description": "Free local video editor PWA with direct device install, optional PayPal support and mobile-first About experience",
   "scripts": {
@@ -10,5 +10,12 @@
   },
   "devDependencies": {
     "typescript": "5.7.2"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "author": "Dimitris Galatsanos",
+  "homepage": "https://edituno.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Donacgreece/Edituno.git"
   }
 }

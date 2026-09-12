@@ -70,6 +70,10 @@ jobs:
           test -f dist/robots.txt
           test -f dist/sitemap.xml
           test -f dist/llms.txt
+          test -f dist/LICENSE.md
+          test -f dist/LICENSE_SCOPE.md
+          test -f dist/NOTICE
+          test -f dist/THIRD_PARTY_NOTICES.md
           grep -Fq "$EDITUNO_SITE_URL" dist/index.html
           grep -Fq "$SHARE_URL" dist/index.html
           grep -Fq "$SITEMAP_URL" dist/robots.txt
@@ -85,7 +89,10 @@ jobs:
           grep -Fq 'prefers-color-scheme: light' dist/index.html
           grep -Fq 'data-key="autoSave"' dist/index.html
           grep -Fq 'theme-option-check' dist/index.html
-          grep -Fq 'edituno-studio-v2.2.15' dist/sw.js
+          grep -Fq 'PolyForm-Noncommercial-1.0.0' dist/LICENSE.md
+          grep -Fq 'Required Notice:' dist/NOTICE
+          grep -Fq 'third-party' dist/LICENSE_SCOPE.md
+          grep -Fq 'edituno-studio-v2.2.16' dist/sw.js
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 
