@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.2.13
+
+Mobile Support dock polish release.
+
+- Replaced the fourth mobile bottom dock item icon from circle to heart.
+- Renamed the fourth mobile bottom dock item from About / Σχετικά to Support / Υποστήριξη.
+- Kept the same internal destination, so the button still opens the Support page.
+- Preserved the expanded preview layout, editor startup fix, header cleanup and support navigation improvements.
+
 ## v2.2.12
 
 Expanded preview release.
