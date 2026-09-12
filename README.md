@@ -18,3 +18,8 @@ A mobile-first local video editor PWA with a professional desktop workspace.
 The Fluent catalog metadata is prefetched and cached in the background. Individual artwork is downloaded only when needed so the initial PWA does not ship thousands of unused files. Selected assets are stored locally inside the project.
 
 Run `npm run build` to rebuild `dist`.
+
+
+## v2.2.2
+- Desktop sidebars repacked for safer widths and cleaner tool layout.
+- Timeline clips, audio, overlays and elements now expose resize handles.

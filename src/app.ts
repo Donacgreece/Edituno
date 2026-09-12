@@ -1306,19 +1306,20 @@ function renderEditor() {
     ${state.projectHubOpen?mobileProjectHubModal():''}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}${confirmationModal()}
   </div><div class="toast-stack" id="toasts"></div>`
   requestAnimationFrame(()=>{
-    fitPreviewFrame();updatePlaybackUi();bindTimelineInteractions();bindPreviewInteractions();bindBottomSheetGesture()
+    fitPreviewFrame();updatePlaybackUi();bindTimelineInteractions();bindTimelineResizeInteractions();bindPreviewInteractions();bindBottomSheetGesture()
     const sc=$('#timeline-scroll');if(sc){const restore=()=>{const max=Math.max(0,sc.scrollWidth-sc.clientWidth);sc.scrollTop=0;sc.scrollLeft=clamp(state.timelineScrollLeft||0,0,max)};restore();requestAnimationFrame(restore);sc.addEventListener('scroll',()=>{state.timelineScrollLeft=sc.scrollLeft},{passive:true})}
     const sh=$('.sheet-content');if(sh){sh.scrollTop=state.sheetScrollTop||0;sh.addEventListener('scroll',()=>{state.sheetScrollTop=sh.scrollTop},{passive:true})}
     if(state.tool==='elements'||state.sheet==='elements')ensureFluentCatalog()
   })
 }
 function timelineRuler(dur,width){if(!dur)return'';const every=dur>180?30:dur>60?10:dur>20?5:2;let out='';for(let t=0;t<=dur+.001;t+=every)out+=`<span style="left:${t*state.pxPerSec}px">${fmtTime(t).slice(0,5)}</span>`;return out}
-function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
-function timelineOverlay(c){const a=getAsset(c.assetId),w=Math.max(54,overlayDuration(c)*state.pxPerSec),left=Math.max(0,(c.timelineStart||0)*state.pxPerSec);return `<button class="timeline-overlay ${a?.type==='image'?'image':''} ${state.selected?.type==='overlay'&&state.selected.id===c.id?'selected':''}" data-action="select-overlay" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(a?.name||'Overlay')}</strong><small>V${c.lane||2} · ${fmtTime(overlayDuration(c))}</small></button>`}
-function timelineElement(c){const w=Math.max(48,(c.duration||3)*state.pxPerSec),left=Math.max(0,(c.timelineStart||0)*state.pxPerSec);return `<button class="timeline-element ${state.selected?.type==='element'&&state.selected.id===c.id?'selected':''}" data-action="select-element" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(c.label||c.kind||'Element')}</strong><small>E1 · ${fmtTime(c.duration||3)}</small></button>`}
+function timelineResizeHandle(kind,id){return `<span class="timeline-resize-handle end" data-resize-kind="${kind}" data-id="${id}" aria-label="Resize"></span>`}
+function timelineClip(row,index){const a=getAsset(row.clip.assetId),w=Math.max(68,row.duration*state.pxPerSec);const transition=row.clip.transition&&row.clip.transition!=='none';return `<div class="timeline-clip-wrap ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-id="${row.clip.id}" style="width:${w}px"><button class="timeline-clip ${a?.type==='image'?'image':''} ${state.selected?.type==='clip'&&state.selected.id===row.clip.id?'selected':''}" data-action="select-clip" data-id="${row.clip.id}"><strong>${escapeHtml(a?.name||'Clip')}</strong><small>${fmtTime(row.duration)}</small></button>${timelineResizeHandle('clip',row.clip.id)}${index<state.project.clips.length-1?`<button class="timeline-transition ${transition?'active':''}" data-action="select-transition" data-id="${row.clip.id}" aria-label="${tr('transitions')}">${svgIcon('transition',14)}</button>`:''}</div>`}
+function timelineOverlay(c){const a=getAsset(c.assetId),w=Math.max(54,overlayDuration(c)*state.pxPerSec),left=Math.max(0,(c.timelineStart||0)*state.pxPerSec);return `<button class="timeline-overlay ${a?.type==='image'?'image':''} ${state.selected?.type==='overlay'&&state.selected.id===c.id?'selected':''}" data-action="select-overlay" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(a?.name||'Overlay')}</strong><small>V${c.lane||2} · ${fmtTime(overlayDuration(c))}</small>${timelineResizeHandle('overlay',c.id)}</button>`}
+function timelineElement(c){const w=Math.max(48,(c.duration||3)*state.pxPerSec),left=Math.max(0,(c.timelineStart||0)*state.pxPerSec);return `<button class="timeline-element ${state.selected?.type==='element'&&state.selected.id===c.id?'selected':''}" data-action="select-element" data-id="${c.id}" style="left:${left}px;width:${w}px"><strong>${escapeHtml(c.label||c.kind||'Element')}</strong><small>E1 · ${fmtTime(c.duration||3)}</small>${timelineResizeHandle('element',c.id)}</button>`}
 function timelineText(t){const w=Math.max(54,(t.end-t.start)*state.pxPerSec);return `<button class="timeline-text ${state.selected?.type==='text'&&state.selected.id===t.id?'selected':''}" data-action="select-text" data-id="${t.id}" style="left:${(t.start||0)*state.pxPerSec}px;width:${w}px">${escapeHtml(t.text)}</button>`}
 function waveformBars(asset,count=36){const peaks=asset?.waveform||[];if(!state.preferences.showWaveforms)return'';let out='';for(let i=0;i<count;i++){const v=peaks.length?peaks[Math.floor(i*peaks.length/count)]:(.28+.6*Math.abs(Math.sin(i*1.73)));out+=`<i style="height:${Math.max(12,Math.round(v*86))}%"></i>`}return out}
-function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small></button>`}
+function timelineAudio(c){const a=getAsset(c.assetId),w=Math.max(72,audioClipDuration(c)*state.pxPerSec),left=(c.timelineStart||0)*state.pxPerSec;return `<button class="timeline-audio ${state.selected?.type==='audio'&&state.selected.id===c.id?'selected':''}" data-action="select-audio" data-id="${c.id}" style="left:${left}px;width:${w}px"><span class="audio-wave">${waveformBars(a)}</span><strong>${escapeHtml(a?.name||'Audio')}</strong><small>${Math.round((c.volume??.8)*100)}%</small>${timelineResizeHandle('audio',c.id)}</button>`}
 function toolButton(tool,iconName,label){return `<button class="tool-btn ${state.tool===tool?'active':''}" data-action="tool" data-tool="${tool}" aria-pressed="${state.tool===tool?'true':'false'}"><span class="tool-icon">${svgIcon(iconName,20)}</span><span>${label}</span></button>`}
 function sheetTitle(){if(state.sheet==='edit')return tr('quickEdit');if(state.sheet==='effects')return tr('effects');if(state.sheet==='adjust')return tr('adjust');if(state.sheet==='transitions')return tr('transitions');if(state.sheet==='text'&&selectedText())return tr('selectedText');return tr(state.sheet||'project')}
 const EDITOR_TOOL_DEFS=[['media','media'],['edit','edit'],['text','text'],['elements','effects'],['audio','audio'],['effects','effects'],['adjust','adjust'],['transitions','transition'],['canvas','canvas']]
@@ -1396,6 +1397,90 @@ function commitTimelineDragNoRender(item,newStart,el){
   queueSave()
   drawPreview()
   updatePlaybackUi()
+}
+
+function bindTimelineResizeInteractions(){
+  const scroll=$('#timeline-scroll'); if(!scroll)return
+  const startResize=(handle,resolve,getDuration,setDuration)=>{
+    handle.addEventListener('pointerdown',e=>{
+      if(e.button!==undefined&&e.pointerType==='mouse'&&e.button!==0)return
+      const item=resolve(handle.dataset.id); if(!item)return
+      e.preventDefault(); e.stopPropagation()
+      const target=handle.closest('.timeline-clip-wrap,.timeline-audio,.timeline-overlay,.timeline-element'); if(!target)return
+      const origin=getDuration(item), startX=e.clientX
+      handle.setPointerCapture?.(e.pointerId)
+      target.classList.add('resizing')
+      const move=ev=>{
+        if(ev.pointerId!==e.pointerId)return
+        ev.preventDefault()
+        const delta=(ev.clientX-startX)/state.pxPerSec
+        const next=Math.max(.25,origin+delta)
+        target.style.width=`${Math.max(40,next*state.pxPerSec)}px`
+      }
+      const finish=ev=>{
+        window.removeEventListener('pointermove',move)
+        window.removeEventListener('pointerup',finish)
+        window.removeEventListener('pointercancel',finish)
+        target.classList.remove('resizing')
+        const delta=((ev?.clientX??startX)-startX)/state.pxPerSec
+        const next=Math.max(.25,origin+delta)
+        pushHistory()
+        setDuration(item,next)
+      }
+      window.addEventListener('pointermove',move,{passive:false})
+      window.addEventListener('pointerup',finish,{passive:false})
+      window.addEventListener('pointercancel',finish,{passive:false})
+    },{passive:false})
+  }
+
+  $$('.timeline-resize-handle[data-resize-kind="clip"]').forEach(handle=>startResize(
+    handle,
+    id=>state.project?.clips.find(c=>c.id===id),
+    clip=>clipDuration(clip),
+    (clip,next)=>{
+      const asset=getAsset(clip.assetId)
+      const maxDuration=asset?.type==='image'?120:Math.max(.25,(asset?.duration||clip.end)-clip.start)
+      const clamped=clamp(next,.25,maxDuration/Math.max(.05,clip.speed||1))
+      clip.end=clip.start+(clamped*Math.max(.05,clip.speed||1))
+      state.project.updatedAt=Date.now(); queueSave(); drawPreview(); updatePlaybackUi(); renderEditor()
+    }
+  ))
+
+  $$('.timeline-resize-handle[data-resize-kind="audio"]').forEach(handle=>startResize(
+    handle,
+    id=>state.project?.audioClips.find(c=>c.id===id),
+    clip=>audioClipDuration(clip),
+    (clip,next)=>{
+      const asset=getAsset(clip.assetId)
+      const maxDuration=Math.max(.25,(asset?.duration||clip.sourceEnd)-clip.sourceStart)
+      const clamped=clamp(next,.25,maxDuration/Math.max(.05,clip.speed||1))
+      clip.sourceEnd=clip.sourceStart+(clamped*Math.max(.05,clip.speed||1))
+      state.project.updatedAt=Date.now(); queueSave(); drawPreview(); updatePlaybackUi(); syncAudioTracks(true); renderEditor()
+    }
+  ))
+
+  $$('.timeline-resize-handle[data-resize-kind="overlay"]').forEach(handle=>startResize(
+    handle,
+    id=>state.project?.overlays.find(c=>c.id===id),
+    clip=>overlayDuration(clip),
+    (clip,next)=>{
+      const asset=getAsset(clip.assetId)
+      const maxDuration=asset?.type==='image'?120:Math.max(.25,(asset?.duration||clip.end)-clip.start)
+      const clamped=clamp(next,.25,maxDuration/Math.max(.05,clip.speed||1))
+      clip.end=clip.start+(clamped*Math.max(.05,clip.speed||1))
+      state.project.updatedAt=Date.now(); queueSave(); drawPreview(); updatePlaybackUi(); renderEditor()
+    }
+  ))
+
+  $$('.timeline-resize-handle[data-resize-kind="element"]').forEach(handle=>startResize(
+    handle,
+    id=>state.project?.elements.find(c=>c.id===id),
+    item=>Math.max(.25,item.duration||3),
+    (item,next)=>{
+      item.duration=clamp(next,.25,120)
+      state.project.updatedAt=Date.now(); queueSave(); drawPreview(); updatePlaybackUi(); renderEditor()
+    }
+  ))
 }
 
 function bindTimelineInteractions(){
