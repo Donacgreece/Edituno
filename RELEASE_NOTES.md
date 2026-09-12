@@ -1,5 +1,20 @@
 # Release Notes
 
+## v2.6.0
+
+Production Export Engine.
+
+- Replaces the primary realtime MediaRecorder export path with deterministic, timestamped WebCodecs rendering when the browser supports it.
+- Every output frame is rendered at an exact timeline timestamp instead of depending on wall-clock video playback.
+- Video sources are frame-seeked explicitly before composition, including deterministic overlay rendering.
+- Embedded V1 audio, overlay audio and A1 audio are mixed offline against the exact project timeline.
+- Audio is encoded as AAC and video as AVC/H.264 with explicit timestamps before MP4 muxing.
+- 1080p bitrate is raised substantially for upload-ready quality, with higher targets for 60 fps and 4K.
+- Adds periodic keyframes and quality-oriented WebCodecs configuration.
+- Keeps the v2.5.1 MediaRecorder exporter as a compatibility fallback for browsers without the required WebCodecs codecs.
+- Adds pinned mp4-muxer 5.2.2 under its original MIT license.
+- Preserves GPU effects, shader transitions, Smart Tools, Konva direct manipulation, themes and PWA behavior.
+
 ## v2.5.1
 
 ### Deployment verification hotfix

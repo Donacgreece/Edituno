@@ -62,3 +62,9 @@ Edituno adds its own multi-frame video sampling, stable crop transform mapping, 
 - Konva 10.5.0, MIT: browser interaction layer for direct selection and transforms inside the preview.
 
 Edituno maps Konva transforms back into its own project properties. Text, overlays and stickers can be selected directly in the preview, dragged, uniformly resized and rotated with a Transformer. Edituno adds center/third snapping guides, mobile-sized handles, fallback controls when Konva is unavailable, and keeps final rendering/export inside Edituno's existing canvas pipeline.
+
+## Deterministic export engine (v2.6.0)
+
+- mp4-muxer 5.2.2, MIT: MP4 container muxing for timestamped AVC/H.264 and AAC WebCodecs output.
+
+Edituno supplies the deterministic frame clock, exact source seeking, Canvas/WebGL composition, OfflineAudioContext mix, audio/video timestamps and browser capability fallback.

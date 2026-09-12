@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.5.1 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.6.0 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1553,7 +1553,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.5.1</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.6.0</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1561,7 +1561,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.5.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.6.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1598,7 +1598,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.5.1</div>
+      <div class="home-rail-version">v2.6.0</div>
     </aside>
 
     <div class="home-surface">
@@ -2452,7 +2452,243 @@ async function validateExportBlob(blob){
   }
 }
 
-async function exportProjectLocal(quality,fps,onProgress,signal) {
+function webCodecsExportAvailable(){
+  return Boolean((window).VideoEncoder&&(window).AudioEncoder&&(window).VideoFrame&&(window).AudioData&&(window).Mp4Muxer?.Muxer&&(window).Mp4Muxer?.ArrayBufferTarget)
+}
+function exportBitrate(quality,fps){
+  const f=Math.max(24,Number(fps)||30)
+  if(Number(quality)>=2160)return f>=50?68_000_000:48_000_000
+  if(Number(quality)>=1080)return f>=50?26_000_000:18_000_000
+  return f>=50?12_000_000:8_000_000
+}
+async function chooseAvcEncoderConfig(width,height,fps,quality){
+  const Encoder=(window).VideoEncoder
+  const pixels=width*height,high=pixels>1920*1080||fps>30
+  const codecs=pixels>=3840*2160?['avc1.640033','avc1.4d0033','avc1.420033']:high?['avc1.64002a','avc1.4d002a','avc1.42002a']:['avc1.640028','avc1.4d0028','avc1.420028']
+  for(const codec of codecs){
+    const rich={codec,width,height,framerate:fps,bitrate:exportBitrate(quality,fps),bitrateMode:'variable',latencyMode:'quality',hardwareAcceleration:'prefer-hardware',avc:{format:'avc'}}
+    try{const support=await Encoder.isConfigSupported(rich);if(support.supported)return support.config}catch{}
+    const basic={codec,width,height,framerate:fps,bitrate:exportBitrate(quality,fps),avc:{format:'avc'}}
+    try{const support=await Encoder.isConfigSupported(basic);if(support.supported)return support.config}catch{}
+  }
+  return null
+}
+async function chooseAacEncoderConfig(sampleRate=48000,channels=2){
+  const Encoder=(window).AudioEncoder
+  const candidates=[192000,160000,128000]
+  for(const bitrate of candidates){
+    const config={codec:'mp4a.40.2',sampleRate,numberOfChannels:channels,bitrate}
+    try{const support=await Encoder.isConfigSupported(config);if(support.supported)return support.config}catch{}
+  }
+  return null
+}
+function waitEncoderQueue(encoder,max=5){
+  if((encoder.encodeQueueSize||0)<=max)return Promise.resolve()
+  return new Promise(resolve=>{
+    const old=encoder.ondequeue
+    const done=()=>{if((encoder.encodeQueueSize||0)<=max){encoder.ondequeue=old||null;resolve()}else requestAnimationFrame(done)}
+    encoder.ondequeue=()=>{try{if(typeof old==='function')old()}catch{};done()}
+    done()
+  })
+}
+function createDeterministicVideoElement(url){
+  const video=document.createElement('video')
+  video.preload='auto';video.muted=true;video.playsInline=true;video.setAttribute('playsinline','')
+  Object.assign(video.style,{position:'fixed',left:'-8px',top:'-8px',width:'2px',height:'2px',opacity:'0.001',pointerEvents:'none',zIndex:'-1'})
+  video.src=url;document.body.append(video);video.load();return video
+}
+function waitMediaEvent(media,name,signal,timeout=4000){
+  return new Promise((resolve,reject)=>{
+    let done=false
+    const finish=()=>{if(done)return;done=true;clearTimeout(timer);media.removeEventListener(name,finish);signal?.removeEventListener('abort',abort);resolve()}
+    const abort=()=>{if(done)return;done=true;clearTimeout(timer);media.removeEventListener(name,finish);reject(new DOMException('Aborted','AbortError'))}
+    const timer=setTimeout(finish,timeout)
+    media.addEventListener(name,finish,{once:true});signal?.addEventListener('abort',abort,{once:true})
+  })
+}
+async function seekExportFrameExact(video,time,signal){
+  if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+  if(video.readyState<1)await waitMediaEvent(video,'loadedmetadata',signal,5000)
+  const maxTime=Math.max(0,(Number.isFinite(video.duration)?video.duration:time)-.015),target=clamp(time,0,maxTime)
+  if(Math.abs((video.currentTime||0)-target)>.001||video.readyState<2){
+    video.currentTime=target
+    if(video.seeking)await waitMediaEvent(video,'seeked',signal,2500)
+  }
+  if(typeof video.requestVideoFrameCallback==='function'){
+    await new Promise((resolve,reject)=>{
+      let done=false
+      const timer=setTimeout(()=>{if(!done){done=true;resolve()}},180)
+      const abort=()=>{if(done)return;done=true;clearTimeout(timer);reject(new DOMException('Aborted','AbortError'))}
+      signal?.addEventListener('abort',abort,{once:true})
+      video.requestVideoFrameCallback(()=>{if(done)return;done=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);resolve()})
+    })
+  }else{
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))
+  }
+}
+function destroyDeterministicSources(map){
+  for(const value of map.values())if(value?.tagName==='VIDEO')cleanupExportMedia(value)
+  map.clear()
+}
+async function deterministicSourceFor(clip,asset,key,sources,signal){
+  const url=state.urls[asset.id];if(!url)return null
+  if(asset.type==='image'){
+    if(!sources.has(key))sources.set(key,await loadImage(url))
+    return sources.get(key)
+  }
+  let video=sources.get(key)
+  if(!video){video=createDeterministicVideoElement(url);sources.set(key,video);await waitMediaEvent(video,'loadeddata',signal,5000)}
+  return video
+}
+async function drawDeterministicPrimary(ctx,project,time,w,h,sources,signal){
+  const row=activeAt(time,project);if(!row)return
+  const asset=getAsset(row.clip.assetId,project);if(!asset)return
+  const source=await deterministicSourceFor(row.clip,asset,`primary:${row.clip.id}`,sources,signal);if(!source)return
+  const sourceAt=sourceTime(row,time),progress=(time-row.start)/Math.max(.001,row.duration)
+  if(asset.type==='video')await seekExportFrameExact(source,sourceAt,signal)
+  if(isGlTransition(row.clip.transition)){
+    const d=Math.min(Number(row.clip.transitionDuration)||.35,row.duration/2),remaining=row.end-time
+    const next=nextTimelineRow(row,project)
+    if(d>0&&remaining>=0&&remaining<=d&&next){
+      const incomingAsset=getAsset(next.clip.assetId,project)
+      if(incomingAsset){
+        const incoming=await deterministicSourceFor(next.clip,incomingAsset,`primary:${next.clip.id}`,sources,signal)
+        const p=clamp(1-remaining/d,0,1)
+        if(incomingAsset.type==='video'&&incoming)await seekExportFrameExact(incoming,(next.clip.start||0)+p*d*(next.clip.speed||1),signal)
+        if(incoming){
+          const fromCanvas=document.createElement('canvas'),toCanvas=document.createElement('canvas');fromCanvas.width=toCanvas.width=w;fromCanvas.height=toCanvas.height=h
+          await drawVisualWithEffects(fromCanvas.getContext('2d'),source,asset,row.clip,w,h,progress,1)
+          await drawVisualWithEffects(toCanvas.getContext('2d'),incoming,incomingAsset,next.clip,w,h,p,1)
+          const result=await renderGlTransition(fromCanvas,toCanvas,row.clip.transition,p,w,h)
+          if(result){ctx.drawImage(result,0,0,w,h);return}
+          ctx.save();ctx.globalAlpha=1-p;ctx.drawImage(fromCanvas,0,0);ctx.globalAlpha=p;ctx.drawImage(toCanvas,0,0);ctx.restore();return
+        }
+      }
+    }
+  }
+  await drawClipWithTransition(ctx,source,asset,row,time,w,h,progress)
+}
+async function drawDeterministicOverlays(ctx,project,time,w,h,sources,signal){
+  for(const clip of activeOverlaysAt(time,project)){
+    const asset=getAsset(clip.assetId,project);if(!asset)continue
+    const source=await deterministicSourceFor(clip,asset,`overlay:${clip.id}`,sources,signal);if(!source)continue
+    const local=Math.max(0,time-(clip.timelineStart||0)),progress=local/Math.max(.05,overlayDuration(clip))
+    if(asset.type==='video')await seekExportFrameExact(source,(clip.start||0)+local*(clip.speed||1),signal)
+    await drawVisualWithEffects(ctx,source,asset,clip,w,h,progress,1)
+  }
+}
+async function decodeOfflineAudio(assetId,ctx,cache){
+  if(cache.has(assetId))return cache.get(assetId)
+  const promise=(async()=>{try{const blob=await getBlob(assetId);if(!blob)return null;return await ctx.decodeAudioData(await blob.arrayBuffer())}catch{return null}})()
+  cache.set(assetId,promise);return promise
+}
+function connectOfflineSource(ctx,master,buffer,when,sourceStart,sourceEnd,speed,volume,fadeIn,fadeOut){
+  if(!buffer||sourceEnd<=sourceStart||volume<=0)return false
+  const source=ctx.createBufferSource(),gain=ctx.createGain(),rate=clamp(speed||1,.25,4),timelineDuration=(sourceEnd-sourceStart)/rate
+  source.buffer=buffer;source.playbackRate.value=rate;source.connect(gain);gain.connect(master)
+  const start=Math.max(0,when),vol=clamp(volume,0,2),fi=Math.min(Math.max(0,fadeIn||0),timelineDuration/2),fo=Math.min(Math.max(0,fadeOut||0),timelineDuration/2)
+  gain.gain.setValueAtTime(fi>0?0:vol,start)
+  if(fi>0)gain.gain.linearRampToValueAtTime(vol,start+fi)
+  if(fo>0){gain.gain.setValueAtTime(vol,start+timelineDuration-fo);gain.gain.linearRampToValueAtTime(0,start+timelineDuration)}
+  source.start(start,clamp(sourceStart,0,Math.max(0,buffer.duration-.001)),Math.max(.001,Math.min(sourceEnd,buffer.duration)-sourceStart))
+  return true
+}
+async function renderOfflineProjectAudio(project,sampleRate=48000){
+  const duration=Math.max(.05,projectDuration(project)),frames=Math.max(1,Math.ceil(duration*sampleRate)),Ctx=(window).OfflineAudioContext
+  if(!Ctx)return {buffer:null,hasAudio:false}
+  const ctx=new Ctx(2,frames,sampleRate),master=ctx.createDynamicsCompressor(),cache=new Map();master.connect(ctx.destination)
+  master.threshold.value=-2;master.knee.value=8;master.ratio.value=4;master.attack.value=.003;master.release.value=.15
+  let hasAudio=false
+  for(const row of clipTimeline(project)){
+    const clip=row.clip,asset=getAsset(clip.assetId,project);if(!asset||asset.type!=='video'||(clip.volume??1)<=0)continue
+    const buffer=await decodeOfflineAudio(asset.id,ctx,cache);if(!buffer)continue
+    hasAudio=connectOfflineSource(ctx,master,buffer,row.start,clip.start||0,clip.end||buffer.duration,clip.speed||1,clip.volume??1,clip.audioFadeIn||0,clip.audioFadeOut||0)||hasAudio
+  }
+  for(const clip of project.overlays||[]){
+    const asset=getAsset(clip.assetId,project);if(!asset||asset.type!=='video'||(clip.volume??0)<=0)continue
+    const buffer=await decodeOfflineAudio(asset.id,ctx,cache);if(!buffer)continue
+    hasAudio=connectOfflineSource(ctx,master,buffer,clip.timelineStart||0,clip.start||0,clip.end||buffer.duration,clip.speed||1,clip.volume??0,0,0)||hasAudio
+  }
+  for(const clip of project.audioClips||[]){
+    if(clip.muted||(clip.volume??.8)<=0)continue
+    const buffer=await decodeOfflineAudio(clip.assetId,ctx,cache);if(!buffer)continue
+    hasAudio=connectOfflineSource(ctx,master,buffer,clip.timelineStart||0,clip.sourceStart||0,clip.sourceEnd||buffer.duration,clip.speed||1,clip.volume??.8,clip.fadeIn||0,clip.fadeOut||0)||hasAudio
+  }
+  return {buffer:hasAudio?await ctx.startRendering():null,hasAudio}
+}
+async function encodeOfflineAudio(buffer,encoder,onProgress,signal){
+  if(!buffer)return 0
+  const AudioDataCtor=(window).AudioData,channels=Math.min(2,buffer.numberOfChannels),block=1024,total=buffer.length
+  let chunks=0
+  for(let offset=0;offset<total;offset+=block){
+    if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+    const frames=Math.min(block,total-offset),data=new Float32Array(frames*2)
+    const left=buffer.getChannelData(0),right=buffer.getChannelData(channels>1?1:0)
+    data.set(left.subarray(offset,offset+frames),0);data.set(right.subarray(offset,offset+frames),frames)
+    const audioData=new AudioDataCtor({format:'f32-planar',sampleRate:buffer.sampleRate,numberOfFrames:frames,numberOfChannels:2,timestamp:Math.round(offset/buffer.sampleRate*1e6),data})
+    encoder.encode(audioData);audioData.close();chunks++
+    if((encoder.encodeQueueSize||0)>8)await waitEncoderQueue(encoder,4)
+    if(chunks%24===0){onProgress?.(offset/total);await Promise.resolve()}
+  }
+  await encoder.flush();onProgress?.(1);return chunks
+}
+async function exportProjectWebCodecs(quality,fps,onProgress,signal){
+  const project=state.project
+  if(!project)throw new Error('empty')
+  const [w,h]=exportDimensions(project.ratio,quality),duration=Math.max(.05,projectDuration(project)),MuxerLib=(window).Mp4Muxer
+  const videoConfig=await chooseAvcEncoderConfig(w,h,fps,quality);if(!videoConfig)throw new Error('webcodecs-video')
+  const audioMix=await renderOfflineProjectAudio(project,48000)
+  const audioConfig=audioMix.hasAudio?await chooseAacEncoderConfig(48000,2):null
+  if(audioMix.hasAudio&&!audioConfig)throw new Error('webcodecs-audio')
+  const target=new MuxerLib.ArrayBufferTarget()
+  const muxer=new MuxerLib.Muxer({target,video:{codec:'avc',width:w,height:h,frameRate:fps},audio:audioConfig?{codec:'aac',numberOfChannels:2,sampleRate:48000}:undefined,fastStart:'in-memory',firstTimestampBehavior:'strict'})
+  let videoError=null,audioError=null,videoChunks=0,audioChunks=0
+  const VideoEncoderCtor=(window).VideoEncoder,AudioEncoderCtor=(window).AudioEncoder,VideoFrameCtor=(window).VideoFrame
+  const videoEncoder=new VideoEncoderCtor({output:(chunk,meta)=>{videoChunks++;muxer.addVideoChunk(chunk,meta)},error:error=>{videoError=error}})
+  videoEncoder.configure(videoConfig)
+  let audioEncoder=null
+  if(audioConfig){audioEncoder=new AudioEncoderCtor({output:(chunk,meta)=>{audioChunks++;muxer.addAudioChunk(chunk,meta)},error:error=>{audioError=error}});audioEncoder.configure(audioConfig)}
+  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{alpha:false,desynchronized:false}),sources=new Map()
+  const frameDurationUs=Math.round(1e6/fps),frameCount=Math.max(1,Math.ceil(duration*fps))
+  try{
+    for(let index=0;index<frameCount;index++){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      if(videoError)throw videoError
+      const time=Math.min(duration,index/fps)
+      ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h)
+      await drawDeterministicPrimary(ctx,project,time,w,h,sources,signal)
+      await drawDeterministicOverlays(ctx,project,time,w,h,sources,signal)
+      drawElements(ctx,project,time,w,h);drawTexts(ctx,project,time,w,h)
+      const actualDurationUs=Math.max(1,Math.min(frameDurationUs,Math.round((duration-time)*1e6))),frame=new VideoFrameCtor(canvas,{timestamp:index*frameDurationUs,duration:actualDurationUs})
+      videoEncoder.encode(frame,{keyFrame:index===0||index%Math.max(1,Math.round(fps*2))===0});frame.close()
+      if((videoEncoder.encodeQueueSize||0)>6)await waitEncoderQueue(videoEncoder,3)
+      onProgress(Math.min(.78,(index+1)/frameCount*.78))
+    }
+    await videoEncoder.flush();if(videoError)throw videoError
+    if(audioEncoder&&audioMix.buffer){await encodeOfflineAudio(audioMix.buffer,audioEncoder,p=>onProgress(.78+p*.18),signal);if(audioError)throw audioError}
+    muxer.finalize();onProgress(.98)
+    if(!target.buffer||target.buffer.byteLength<4096||videoChunks<1)throw new Error('webcodecs-empty')
+    if(audioMix.hasAudio&&audioChunks<1)throw new Error('webcodecs-no-audio')
+    const blob=new Blob([target.buffer],{type:'video/mp4'});await validateExportBlob(blob);onProgress(1)
+    return {blob,extension:'mp4',mime:'video/mp4'}
+  }finally{
+    destroyDeterministicSources(sources)
+    try{videoEncoder.close()}catch{}
+    try{audioEncoder?.close()}catch{}
+  }
+}
+async function exportProjectLocal(quality,fps,onProgress,signal){
+  if(webCodecsExportAvailable()){
+    try{return await exportProjectWebCodecs(quality,fps,onProgress,signal)}
+    catch(error){
+      if(error?.name==='AbortError')throw error
+      console.warn('Deterministic WebCodecs export unavailable; falling back to realtime export.',error)
+      onProgress(0)
+    }
+  }
+  return exportProjectRealtimeFallback(quality,fps,onProgress,signal)
+}
+async function exportProjectRealtimeFallback(quality,fps,onProgress,signal) {
   const project=state.project
   if(!project||(project.clips?.length||0)+(project.overlays?.length||0)+(project.elements?.length||0)===0)throw new Error('empty')
   if(typeof HTMLCanvasElement.prototype.captureStream!=='function'||typeof MediaRecorder==='undefined')throw new Error('mediarecorder')
@@ -2823,7 +3059,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.5.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.6.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

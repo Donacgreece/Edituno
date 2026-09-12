@@ -137,14 +137,20 @@ if (!template.includes('vendor/smartcrop.js') || !template.includes('vendor/meyd
 if (!js.includes('function bindKonvaCanvasEditor()') || !js.includes('new Konva.Transformer') || !js.includes('data-konva-direct-manipulation')) {
   throw new Error('Phase 3 Konva direct manipulation implementation is missing')
 }
-if (!js.includes('function exportCanvasStream(') || !js.includes('function syncExportVideoFrame(') || !js.includes('await validateExportBlob(blob)')) {
-  throw new Error('Export Engine v2 runtime is missing')
+if (!js.includes('function exportProjectWebCodecs(') || !js.includes('function renderOfflineProjectAudio(') || !js.includes('new VideoFrameCtor(')) {
+  throw new Error('Deterministic WebCodecs export engine is missing')
 }
-if (!js.includes('canvas.captureStream(0)') || !js.includes('keepAlive.connect(audioContext.destination)')) {
-  throw new Error('Export moving-frame/audio keep-alive path is missing')
+if (!js.includes("codec: 'mp4a.40.2'") || !js.includes("codec: 'avc'")) {
+  throw new Error('Deterministic AVC/AAC export codec configuration is missing')
 }
-if (!js.includes('blob = await done') || !js.includes('await audioContext.close().catch')) {
-  throw new Error('Export finalization/audio lifetime guard is missing')
+if (!js.includes('function seekExportFrameExact(') || !js.includes('function drawDeterministicOverlays(')) {
+  throw new Error('Deterministic frame seeking/rendering path is missing')
+}
+if (!js.includes('function exportProjectRealtimeFallback(') || !js.includes('function exportCanvasStream(')) {
+  throw new Error('Realtime compatibility export fallback is missing')
+}
+if (!template.includes('vendor/mp4-muxer.js')) {
+  throw new Error('mp4-muxer browser bundle is missing from the document')
 }
 if (!template.includes('vendor/konva.min.js')) {
   throw new Error('Konva browser bundle is missing from the document')
@@ -206,6 +212,11 @@ const konvaCandidates = [
   path.join(root,'public','vendor','konva.min.js')
 ]
 copyVendor(konvaCandidates,path.join(vendorDir,'konva.min.js'),'Konva 10.5.0',1)
+const mp4MuxerCandidates = [
+  path.join(root,'node_modules','mp4-muxer','build','mp4-muxer.js'),
+  path.join(root,'public','vendor','mp4-muxer.js')
+]
+copyVendor(mp4MuxerCandidates,path.join(vendorDir,'mp4-muxer.js'),'mp4-muxer 5.2.2',1)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -227,4 +238,6 @@ if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notic
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Konva')) throw new Error('Konva third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'KONVA-MIT.txt'))) throw new Error('Konva MIT license copy missing')
-console.log(`Built Edituno v2.5.1 -> ${dist}`)
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## mp4-muxer')) throw new Error('mp4-muxer third-party notice missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4-MUXER-MIT.txt'))) throw new Error('mp4-muxer MIT license copy missing')
+console.log(`Built Edituno v2.6.0 -> ${dist}`)

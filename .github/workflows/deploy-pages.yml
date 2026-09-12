@@ -45,6 +45,7 @@ jobs:
             ['smartcrop', '2.0.5', 'node_modules/smartcrop/smartcrop.js'],
             ['meyda', '5.6.3', 'node_modules/meyda/dist/web/meyda.min.js'],
             ['konva', '10.5.0', 'node_modules/konva/konva.min.js'],
+            ['mp4-muxer', '5.2.2', 'node_modules/mp4-muxer/build/mp4-muxer.js'],
           ];
           for (const [name, expected, file] of checks) {
             const meta = JSON.parse(fs.readFileSync(`node_modules/${name}/package.json`, 'utf8'));
@@ -122,6 +123,7 @@ jobs:
           test -f dist/vendor/smartcrop.js
           test -f dist/vendor/meyda.min.js
           test -f dist/vendor/konva.min.js
+          test -f dist/vendor/mp4-muxer.js
           test -f dist/vendor/gl-transitions/CrossZoom.glsl
           test -f dist/vendor/gl-transitions/Swirl.glsl
           test -f dist/vendor/gl-transitions/AdvancedMosaic.glsl
@@ -134,14 +136,19 @@ jobs:
           test -f dist/THIRD_PARTY_LICENSES/SMARTCROP-MIT.txt
           test -f dist/THIRD_PARTY_LICENSES/MEYDA-MIT.txt
           test -f dist/THIRD_PARTY_LICENSES/KONVA-MIT.txt
+          test -f dist/THIRD_PARTY_LICENSES/MP4-MUXER-MIT.txt
           test $(wc -c < dist/vendor/pixi.min.js) -gt 500000
           test $(wc -c < dist/vendor/pixi-filters.min.js) -gt 100000
           test -s dist/vendor/smartcrop.js
           test -s dist/vendor/meyda.min.js
           test -s dist/vendor/konva.min.js
+          test -s dist/vendor/mp4-muxer.js
           grep -Fq 'vendor/smartcrop.js' dist/index.html
           grep -Fq 'vendor/meyda.min.js' dist/index.html
           grep -Fq 'vendor/konva.min.js' dist/index.html
+          grep -Fq 'vendor/mp4-muxer.js' dist/index.html
+          grep -Fq 'function exportProjectWebCodecs(' dist/index.html
+          grep -Fq 'function renderOfflineProjectAudio(' dist/index.html
           grep -Fq 'data-konva-direct-manipulation="true"' dist/index.html
           grep -Fq 'function bindKonvaCanvasEditor()' dist/index.html
           grep -Fq 'new Konva.Transformer' dist/index.html

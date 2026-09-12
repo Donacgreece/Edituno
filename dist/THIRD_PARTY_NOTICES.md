@@ -98,3 +98,13 @@ Edituno uses Meyda for local audio feature extraction used by Smart Audio analys
 - License copy: `THIRD_PARTY_LICENSES/KONVA-MIT.txt`
 
 Edituno uses Konva as the interaction engine for direct on-canvas selection, drag, resize, rotation and snapping of text, overlays and stickers. Edituno's project model, rendering/export pipeline, transform mapping, UI and editor workflow remain first-party code. Konva remains independently MIT-licensed and is not relicensed under PolyForm.
+
+## mp4-muxer
+
+- Component: `mp4-muxer` 5.2.2
+- Upstream: https://github.com/Vanilagy/mp4-muxer
+- License: MIT
+- Copyright: 2023 Vanilagy
+- License copy: `THIRD_PARTY_LICENSES/MP4-MUXER-MIT.txt`
+
+Edituno uses the pinned mp4-muxer package only to multiplex timestamped WebCodecs AVC video and AAC audio into an MP4 container. Edituno's frame rendering, timeline timing, audio mixing, effects and synchronization logic remain first-party Edituno code. mp4-muxer remains MIT-licensed.

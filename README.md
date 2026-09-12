@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.5.1**
+**Current release: v2.6.0**
 
 </div>
 
@@ -214,12 +214,13 @@ Konva handles interaction only. Final project rendering remains inside Edituno's
 
 Edituno includes a browser-local export pipeline built around:
 
-- Canvas rendering
-- `captureStream`
-- MediaRecorder
-- Web Audio
-- Manual canvas frame capture where supported
-- Audio/video synchronization recovery
+- Canvas and WebGL composition
+- Deterministic fixed-frame timeline rendering
+- WebCodecs H.264/AVC video encoding
+- OfflineAudioContext timeline mixing
+- WebCodecs AAC audio encoding
+- Timestamped MP4 muxing with mp4-muxer
+- MediaRecorder compatibility fallback
 - Post-export validation
 
 Current quality presets include:
@@ -300,6 +301,7 @@ The installed version keeps the same local-first project workflow as the browser
 | Smart framing | Smartcrop.js |
 | Audio analysis | Meyda |
 | Canvas interaction | Konva |
+| MP4 muxing | mp4-muxer 5.2.2 |
 | Storage | Browser local storage / IndexedDB-style local project storage |
 | App model | Progressive Web App |
 | Deployment | GitHub Pages + GitHub Actions |
