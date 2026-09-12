@@ -307,8 +307,8 @@ body.mobile-app-shell .about-main{padding-bottom:max(34px,calc(20px + env(safe-a
 @media(max-width:520px){.about-brand-card{min-height:210px}.about-grid{margin-top:12px}.support-section{margin-top:12px}.about-footer{padding-bottom:max(24px,env(safe-area-inset-bottom))}}
 
 
-/* v2.2.14 adaptive theme system. Dark remains canonical; light is a tokenized visual layer. */
-.theme-segment{grid-template-columns:repeat(3,minmax(0,1fr))}.theme-segment button{grid-template-columns:minmax(0,1fr) 18px;padding:0 8px}.theme-segment button>span{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}.theme-segment button>span .ui-icon{opacity:.82}
+/* v2.2.15 autosave setting and theme selector spacing polish. */
+.theme-segment{grid-template-columns:repeat(3,minmax(0,1fr))}.theme-segment button{display:grid;grid-template-columns:16px minmax(0,1fr) 16px;gap:6px;align-items:center;padding:0 7px;text-align:left}.theme-option-icon,.theme-option-check{display:grid;place-items:center;min-width:0}.theme-option-icon .ui-icon{opacity:.82}.theme-option-label{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.theme-option-check{justify-self:end;color:currentColor}
 html[data-theme="light"]{
   color-scheme:light;
   --bg:#F4F6FA;--bg-2:#EEF2F7;--surface:#FFFFFF;--surface-2:#F8FAFC;--surface-3:#EEF2F6;
@@ -383,8 +383,8 @@ html[data-theme="light"] .about-hero-copy,html[data-theme="light"] .about-grid a
 html[data-theme="light"] .about-install-btn{background:#18212E;color:#fff}html[data-theme="light"] .support-section{background:linear-gradient(120deg,#FFFFFF,#EEF3FF)}
 html[data-theme="light"] .home-rail-support{color:#667085}html[data-theme="light"] .home-rail-support:hover{color:#1F2937}
 @media(min-width:700px){html[data-theme="light"] .settings-panel{background:#FAFBFD}html[data-theme="light"] .settings-card{background:linear-gradient(180deg,#FFFFFF,#F7F9FC)}html[data-theme="light"] .settings-header{background:linear-gradient(180deg,rgba(255,255,255,.82),transparent)}}
-@media(max-width:699px){.theme-segment button{padding:0 6px;font-size:11px}.theme-segment button>span{gap:4px}}
-/* v2.2.14 light-theme coverage for dialogs and creator panels */
+@media(max-width:699px){.theme-segment button{grid-template-columns:14px minmax(0,1fr) 14px;gap:4px;padding:0 6px;font-size:11px}.theme-option-label{font-size:11px}.theme-option-icon .ui-icon,.theme-option-check .ui-icon{width:13px;height:13px}}
+/* v2.2.15 light-theme coverage for dialogs and creator panels */
 html[data-theme="light"] .toast{background:#fff;color:#2B3442;border-color:var(--line-strong)}
 html[data-theme="light"] .app-modal-backdrop{background:rgba(37,47,65,.3)}
 html[data-theme="light"] .project-action-sheet,html[data-theme="light"] .rename-dialog,html[data-theme="light"] .confirm-dialog{background:#fff;box-shadow:0 28px 90px rgba(34,48,72,.18)}

@@ -83,7 +83,9 @@ jobs:
           grep -Fq 'data-action="set-theme"' dist/index.html
           grep -Fq 'html[data-theme="light"]' dist/index.html
           grep -Fq 'prefers-color-scheme: light' dist/index.html
-          grep -Fq 'edituno-studio-v2.2.14' dist/sw.js
+          grep -Fq 'data-key="autoSave"' dist/index.html
+          grep -Fq 'theme-option-check' dist/index.html
+          grep -Fq 'edituno-studio-v2.2.15' dist/sw.js
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 

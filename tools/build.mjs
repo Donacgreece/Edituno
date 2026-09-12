@@ -78,7 +78,10 @@ const requiredRuntimeMarkers = [
   'appinstalled',
   'function applyTheme(',
   "data-action=\"set-theme\"",
-  "theme:'system'"
+  "theme:'system'",
+  "autoSave: true",
+  'data-key="autoSave"',
+  'theme-option-check'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -110,6 +113,12 @@ if (!css.includes('html[data-theme="light"]') || !css.includes('.theme-segment')
 if (!template.includes('prefers-color-scheme: light')) {
   throw new Error('Theme bootstrap is missing from the document head')
 }
+if (!css.includes('.theme-option-label') || !css.includes('.theme-option-check')) {
+  throw new Error('Theme selector spacing CSS is missing')
+}
+if (!js.includes("data-key=\"autoSave\"") || !js.includes('autoSave: true')) {
+  throw new Error('Autosave preference setting is missing')
+}
 if (js.includes("isMobileViewport() && launch.get('home')!=='1'")) {
   throw new Error('Mobile must not auto-enter the editor')
 }
@@ -137,4 +146,4 @@ for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
-console.log(`Built Edituno v2.2.14 -> ${dist}`)
+console.log(`Built Edituno v2.2.15 -> ${dist}`)

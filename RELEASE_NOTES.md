@@ -1,5 +1,15 @@
 # Release Notes
 
+## v2.2.15
+
+Settings symmetry and preference polish release.
+
+- Added a dedicated Storage card paired with Export.
+- Added a functional Auto save On / Off preference, enabled by default.
+- When Auto save is disabled, background debounce writes stop while deliberate project navigation still persists the project safely.
+- Rebuilt the System / Dark / Light selector layout so the active checkmark has a dedicated column and cannot overlap the theme label.
+- Preserved the adaptive theme system, expanded preview, support navigation, SEO, sitemap and PWA behavior.
+
 ## v2.2.14
 
 Adaptive Theme System release.

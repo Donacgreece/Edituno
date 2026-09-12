@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.2.14 adaptive theme system production source. TypeScript is canonical; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.2.15 autosave setting and theme selector polish production source. TypeScript is canonical; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -102,7 +102,7 @@ function setupSystemThemeWatcher(){
 
 
 function loadPreferences() {
-  const defaults={snap:true,defaultQuality:1080,defaultFps:30,previewQuality:'balanced',timelineScale:48,showWaveforms:true,theme:'system'}
+  const defaults={snap:true,defaultQuality:1080,defaultFps:30,previewQuality:'balanced',timelineScale:48,showWaveforms:true,autoSave:true,theme:'system'}
   try { return {...defaults,...JSON.parse(localStorage.getItem('edituno-preferences')||'{}')} } catch { return defaults }
 }
 function savePreferences() {
@@ -110,7 +110,7 @@ function savePreferences() {
 }
 function preferenceLabel(key) {
   const el=state.language==='el'
-  const labels={snap:el?'Μαγνήτιση στο timeline':'Timeline snapping',showWaveforms:el?'Waveforms ήχου':'Audio waveforms',previewQuality:el?'Ποιότητα preview':'Preview quality',defaultQuality:el?'Προεπιλεγμένη εξαγωγή':'Default export',defaultFps:el?'Προεπιλεγμένα FPS':'Default FPS',timelineScale:el?'Μέγεθος timeline':'Timeline scale'}
+  const labels={snap:el?'Μαγνήτιση στο timeline':'Timeline snapping',showWaveforms:el?'Waveforms ήχου':'Audio waveforms',autoSave:el?'Αυτόματη αποθήκευση':'Auto save',previewQuality:el?'Ποιότητα preview':'Preview quality',defaultQuality:el?'Προεπιλεγμένη εξαγωγή':'Default export',defaultFps:el?'Προεπιλεγμένα FPS':'Default FPS',timelineScale:el?'Μέγεθος timeline':'Timeline scale'}
   return labels[key]||key
 }
 
@@ -139,7 +139,7 @@ const STRINGS = {
     align:'Alignment', start:'Start', end:'End', weight:'Weight', loop:'Loop soundtrack', installApp:'Install app', browserLimit:'Your browser may export WebM instead of MP4.',
     unsupported:'This file format is not supported by this browser.', imported:'Media imported', srtImported:'Subtitles imported', deleted:'Deleted',
     timeline:'Timeline', share:'Share', download:'Save file', cancel:'Cancel', back:'Back', project:'Project', local:'Local editor',
-    autoSave:'Autosaved', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.', rename:'Rename', projectOptions:'Project options', renameProject:'Rename project', saveChanges:'Save', confirmDelete:'Delete project', keepProject:'Keep project', deleteProjectBody:'This removes the project and its local media from this device.', clearAllTitle:'Delete all projects?', clearAllBody:'This permanently removes every local Edituno project and its media from this device.', duplicatedProject:'Project duplicated', fitAudio:'Fit to video', movePlayhead:'Move to playhead', alignClip:'Align to clip', dragTimeline:'Drag to timeline', invert:'Invert', spin:'Spin', bounce:'Bounce', swing:'Swing', driftUp:'Drift up', driftDown:'Drift down', slideUp:'Slide up', slideDown:'Slide down', dipBlack:'Dip to black', dipWhite:'Dip to white',
+    autoSave:'Autosaved', autoSaveOff:'Autosave off', add:'Add', noAudio:'Import an audio file to use music.', noMedia:'No imported media yet.', rename:'Rename', projectOptions:'Project options', renameProject:'Rename project', saveChanges:'Save', confirmDelete:'Delete project', keepProject:'Keep project', deleteProjectBody:'This removes the project and its local media from this device.', clearAllTitle:'Delete all projects?', clearAllBody:'This permanently removes every local Edituno project and its media from this device.', duplicatedProject:'Project duplicated', fitAudio:'Fit to video', movePlayhead:'Move to playhead', alignClip:'Align to clip', dragTimeline:'Drag to timeline', invert:'Invert', spin:'Spin', bounce:'Bounce', swing:'Swing', driftUp:'Drift up', driftDown:'Drift down', slideUp:'Slide up', slideDown:'Slide down', dipBlack:'Dip to black', dipWhite:'Dip to white',
     selectedText:'Selected text', textStyle:'Text style', position:'Position', apply:'Apply', installHint:'Install Edituno',
     desktopMedia:'Project media', inspector:'Properties', adjust:'Adjust', transitions:'Transitions', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide left', slideRight:'Slide right', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Reset', timelineZoom:'Timeline zoom', transitionDuration:'Duration', newBlank:'New blank project', resume:'Resume editing', editLocally:'Edit locally. Export anywhere.', chooseProject:'Choose project', mobileReady:'Ready to edit', noUploadShort:'No upload. No watermark.', blurFill:'Blur fill', breath:'Breath', pushTransition:'Push', softZoom:'Soft zoom', fadeAmount:'Fade', shadows:'Shadows'
   },
@@ -167,7 +167,7 @@ const STRINGS = {
     align:'Στοίχιση', start:'Έναρξη', end:'Τέλος', weight:'Πάχος', loop:'Επανάληψη μουσικής', installApp:'Εγκατάσταση εφαρμογής', browserLimit:'Ο browser μπορεί να κάνει export σε WebM αντί MP4.',
     unsupported:'Αυτό το format δεν υποστηρίζεται από τον browser.', imported:'Τα media προστέθηκαν', srtImported:'Οι υπότιτλοι προστέθηκαν', deleted:'Διαγράφηκε',
     timeline:'Timeline', share:'Κοινοποίηση', download:'Αποθήκευση αρχείου', cancel:'Ακύρωση', back:'Πίσω', project:'Project', local:'Τοπικός editor',
-    autoSave:'Αυτόματη αποθήκευση', add:'Προσθήκη', noAudio:'Κάνε import αρχείο ήχου για μουσική.', noMedia:'Δεν υπάρχουν media ακόμα.', rename:'Μετονομασία', projectOptions:'Επιλογές project', renameProject:'Μετονομασία project', saveChanges:'Αποθήκευση', confirmDelete:'Διαγραφή project', keepProject:'Διατήρηση project', deleteProjectBody:'Το project και τα τοπικά media του θα διαγραφούν από αυτή τη συσκευή.', clearAllTitle:'Διαγραφή όλων των projects;', clearAllBody:'Θα διαγραφούν μόνιμα όλα τα τοπικά projects του Edituno και τα media τους από αυτή τη συσκευή.', duplicatedProject:'Το project αντιγράφηκε',
+    autoSave:'Αυτόματη αποθήκευση', autoSaveOff:'Αυτόματη αποθήκευση κλειστή', add:'Προσθήκη', noAudio:'Κάνε import αρχείο ήχου για μουσική.', noMedia:'Δεν υπάρχουν media ακόμα.', rename:'Μετονομασία', projectOptions:'Επιλογές project', renameProject:'Μετονομασία project', saveChanges:'Αποθήκευση', confirmDelete:'Διαγραφή project', keepProject:'Διατήρηση project', deleteProjectBody:'Το project και τα τοπικά media του θα διαγραφούν από αυτή τη συσκευή.', clearAllTitle:'Διαγραφή όλων των projects;', clearAllBody:'Θα διαγραφούν μόνιμα όλα τα τοπικά projects του Edituno και τα media τους από αυτή τη συσκευή.', duplicatedProject:'Το project αντιγράφηκε',
     fitAudio:'Προσαρμογή στο video', movePlayhead:'Μεταφορά στο playhead', alignClip:'Στοίχιση με clip', dragTimeline:'Σύρε στο timeline', invert:'Αντιστροφή', spin:'Περιστροφή', bounce:'Αναπήδηση', swing:'Αιώρηση', driftUp:'Κίνηση πάνω', driftDown:'Κίνηση κάτω', slideUp:'Slide πάνω', slideDown:'Slide κάτω', dipBlack:'Βύθιση σε μαύρο', dipWhite:'Βύθιση σε λευκό', selectedText:'Επιλεγμένο κείμενο', textStyle:'Στυλ κειμένου', position:'Θέση', apply:'Εφαρμογή', installHint:'Εγκατάσταση Edituno',
     desktopMedia:'Media project', inspector:'Ιδιότητες', adjust:'Ρυθμίσεις', transitions:'Μεταβάσεις', projectHub:'Projects', quickEdit:'Edit', dissolve:'Dissolve', slideLeft:'Slide αριστερά', slideRight:'Slide δεξιά', blurTransition:'Blur', kenBurns:'Ken Burns', pulse:'Pulse', float:'Float', reset:'Επαναφορά', timelineZoom:'Zoom timeline', transitionDuration:'Διάρκεια', newBlank:'Νέο κενό project', resume:'Συνέχεια επεξεργασίας', editLocally:'Επεξεργασία τοπικά. Export παντού.', chooseProject:'Επίλεξε project', mobileReady:'Έτοιμο για επεξεργασία', noUploadShort:'Χωρίς upload. Χωρίς watermark.', blurFill:'Blur fill', breath:'Αναπνοή', pushTransition:'Push', softZoom:'Απαλό zoom', fadeAmount:'Fade', shadows:'Σκιές'
   }
@@ -438,6 +438,10 @@ function queueSave() {
   clearTimeout(saveTimer)
   if (!state.project) return
   state.project.updatedAt = Date.now()
+  if (!state.preferences.autoSave) {
+    const el = $('#save-state'); if (el) el.textContent = tr('autoSaveOff')
+    return
+  }
   saveTimer = setTimeout(async()=>{
     await saveProject(state.project)
     state.projects = await listProjects()
@@ -1171,7 +1175,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.2.14</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.2.15</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1179,7 +1183,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.2.14</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.2.15</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1216,7 +1220,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.2.14</div>
+      <div class="home-rail-version">v2.2.15</div>
     </aside>
 
     <div class="home-surface">
@@ -1320,10 +1324,11 @@ function settingsModal(){
     <header class="settings-header"><div><span class="eyebrow">EDITUNO</span><h2>${tr('settings')}</h2></div><button type="button" class="round-icon" data-action="settings-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></header>
     <div class="settings-scroll">
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('language',18)}</span><div><strong>${tr('language')}</strong><small>${el?'Interface':'Interface'}</small></div></div><div class="language-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el"><span>Ελληνικά</span><i>${state.language==='el'?svgIcon('check',14):''}</i></button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en"><span>English</span><i>${state.language==='en'?svgIcon('check',14):''}</i></button></div></section>
-      <section class="settings-card theme-settings-card"><div class="settings-card-title"><span>${svgIcon('sun',18)}</span><div><strong>${el?'Εμφάνιση':'Appearance'}</strong><small>${el?'Θέμα εφαρμογής':'App theme'}</small></div></div><div class="language-segment theme-segment"><button type="button" class="${p.theme==='system'?'active':''}" data-action="set-theme" data-value="system"><span>${svgIcon('monitor',14)}${el?'Σύστημα':'System'}</span><i>${p.theme==='system'?svgIcon('check',14):''}</i></button><button type="button" class="${p.theme==='dark'?'active':''}" data-action="set-theme" data-value="dark"><span>${svgIcon('moon',14)}${el?'Σκούρο':'Dark'}</span><i>${p.theme==='dark'?svgIcon('check',14):''}</i></button><button type="button" class="${p.theme==='light'?'active':''}" data-action="set-theme" data-value="light"><span>${svgIcon('sun',14)}${el?'Φωτεινό':'Light'}</span><i>${p.theme==='light'?svgIcon('check',14):''}</i></button></div></section>
+      <section class="settings-card theme-settings-card"><div class="settings-card-title"><span>${svgIcon('sun',18)}</span><div><strong>${el?'Εμφάνιση':'Appearance'}</strong><small>${el?'Θέμα εφαρμογής':'App theme'}</small></div></div><div class="language-segment theme-segment"><button type="button" class="${p.theme==='system'?'active':''}" data-action="set-theme" data-value="system"><span class="theme-option-icon">${svgIcon('monitor',14)}</span><span class="theme-option-label">${el?'Σύστημα':'System'}</span><i class="theme-option-check">${p.theme==='system'?svgIcon('check',14):''}</i></button><button type="button" class="${p.theme==='dark'?'active':''}" data-action="set-theme" data-value="dark"><span class="theme-option-icon">${svgIcon('moon',14)}</span><span class="theme-option-label">${el?'Σκούρο':'Dark'}</span><i class="theme-option-check">${p.theme==='dark'?svgIcon('check',14):''}</i></button><button type="button" class="${p.theme==='light'?'active':''}" data-action="set-theme" data-value="light"><span class="theme-option-icon">${svgIcon('sun',14)}</span><span class="theme-option-label">${el?'Φωτεινό':'Light'}</span><i class="theme-option-check">${p.theme==='light'?svgIcon('check',14):''}</i></button></div></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('timeline',18)}</span><div><strong>Timeline</strong><small>${el?'Editing behavior':'Editing behavior'}</small></div></div><button class="setting-row" data-action="pref-toggle" data-key="snap"><span><strong>${preferenceLabel('snap')}</strong><small>${el?'Αυτόματη ευθυγράμμιση clips':'Snap clips to edit points'}</small></span><i class="switch ${p.snap?'on':''}"><b></b></i></button><button class="setting-row" data-action="pref-toggle" data-key="showWaveforms"><span><strong>${preferenceLabel('showWaveforms')}</strong><small>${el?'Waveforms στο audio track':'Show waveforms in audio track'}</small></span><i class="switch ${p.showWaveforms?'on':''}"><b></b></i></button><label class="setting-slider"><span><strong>${preferenceLabel('timelineScale')}</strong><b>${p.timelineScale||48}</b></span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('effects',18)}</span><div><strong>${el?'Playback':'Playback'}</strong><small>${el?'Preview performance':'Preview performance'}</small></div></div><label class="setting-select"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('export',18)}</span><div><strong>${tr('export')}</strong><small>${el?'Defaults':'Defaults'}</small></div></div><div class="settings-split"><label class="setting-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+p.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="setting-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24 fps</option><option value="30" ${+p.defaultFps===30?'selected':''}>30 fps</option><option value="60" ${+p.defaultFps===60?'selected':''}>60 fps</option></select></label></div></section>
+      <section class="settings-card storage-settings-card"><div class="settings-card-title"><span>${svgIcon('folder',18)}</span><div><strong>${el?'Αποθήκευση':'Storage'}</strong><small>${el?'Projects και αλλαγές':'Projects and changes'}</small></div></div><button class="setting-row" data-action="pref-toggle" data-key="autoSave"><span><strong>${preferenceLabel('autoSave')}</strong><small>${p.autoSave?(el?'On · αποθήκευση αλλαγών κατά την επεξεργασία':'On · save changes while editing'):(el?'Off · αποθήκευση όταν βγαίνεις από το project':'Off · save when leaving the project')}</small></span><i class="switch ${p.autoSave?'on':''}"><b></b></i></button></section>
       <section class="settings-card">${installEntryHtml('settings')}<button class="settings-link" data-action="persist-storage"><span>${svgIcon('folder',18)}</span><span><strong>${tr('requestStorage')}</strong><small>${el?'Κράτησε τα projects διαθέσιμα':'Keep projects available'}</small></span>${svgIcon('right',16)}</button><button class="settings-link" data-action="about"><span>${svgIcon('heart',18)}</span><span><strong>${el?'Υποστήριξη':'Support'}</strong><small>${el?'Σχετικά με το Edituno και PayPal support':'About Edituno and PayPal support'}</small></span>${svgIcon('right',16)}</button></section>
       <button class="settings-danger" data-action="clear-all">${svgIcon('trash',16)}<span>${tr('clearAll')}</span></button>
     </div>
@@ -1902,7 +1907,7 @@ function bindGlobalEvents() {
     if(a==='language'){state.language=state.language==='el'?'en':'el';state.homeMenuOpen=false;render();return}
     if(a==='set-lang'){state.language=el.dataset.value;state.homeMenuOpen=false;render();return}
     if(a==='set-theme'){state.preferences.theme=normalizeTheme(el.dataset.value);applyTheme(state.preferences.theme);savePreferences();render();return}
-    if(a==='pref-toggle'){const key=el.dataset.key;state.preferences[key]=!state.preferences[key];if(key==='showWaveforms')renderEditor();savePreferences();render();return}
+    if(a==='pref-toggle'){const key=el.dataset.key;state.preferences[key]=!state.preferences[key];if(key==='autoSave'){clearTimeout(saveTimer);if(state.preferences.autoSave&&state.project)queueSave()}if(key==='showWaveforms')renderEditor();savePreferences();render();return}
     if(a==='settings'){state.homeMenuOpen=false;state.settingsOpen=true;render();return}
     if(a==='settings-close'){state.settingsOpen=false;render();return}
     if(a==='about'){state.homeMenuOpen=false;state.settingsOpen=false;if(state.view==='editor'){stopPlayback();if(state.project)await saveProject(state.project)}state.view='about';state.installOpen=false;render();return}
@@ -2069,7 +2074,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.14',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.15',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
