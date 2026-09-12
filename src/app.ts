@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.2.6 automatic-domain SEO production source. TypeScript is canonical; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.2.7 about, support and smart install production source. TypeScript is canonical; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s)
 const $$ = (s, root = document) => [...root.querySelectorAll(s)]
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)))
@@ -16,6 +16,45 @@ const fmtTime = value => {
 }
 
 const EDITUNO_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAMT0lEQVR4nO3dy3EcyRWGUVDBFe0YLmUO6YssGF/oziwZYwYZWmoBBQUR76583Jv/OWsuEsGq+1VmNRof/vjy4w6APP/YvQAA9hAAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACDUx90LAA7315+f3vLP/vmvn7NXwm8+/PHlx+41AKd549B/jhisIQDAMBfn/mNKMJUAAAMMH/0PycAkAgBcMnX0PyQDwwkAcKNlo/8hGRhIAIB32zL6H5KBIfweAPA+26d/kTUcQACAd6gzeeuspC8BAN6q2syttp52vAMAXld81HolcBs7AOAVxaf/XYcV1iQAwEu6zNYu6yxFAABCCQDwrF6P1b1WW4EAAE/rOE87rnkjAQCe0HeS9l35egIA/K77DO2+/mUEACCUAAD/54zH5zN+itkEACCUAAD/c9KD80k/yyQCABBKAID/Ou+R+byfaCwBAAglAMDd3bkPy6f+XEN83L0A6vr+zZ1ziM9ffV0+TxAA7u7M+tM9+f+rCviLYLkMfX7599+7VzCZPxn2JDuALIY+8IsARDD3gccE4GTmPvACATiT0Q+8ykvgo5j73OD4N8D3vAd+zA7gEEY/8F4C0J7RD9zGV0H0ZvoDN7MD6MroBy4SgH6MfmAIR0DNmP7AKHYAbRj9wFh2AD2Y/sBwAtCA6Q/M4AioNKMfmEcA6qow/f3NkANUuJCoyXcBFbXlpjXuQzy+uo7/OiBfBPQkO4CKVk5/Qz/Qw/90+4NkAlDOmhvS3Ofe/ZXw158ykEgAClkw+s194BcBqGL29Df6gd94CVzCvOlv7vNGB58CeQP8HDuA/SZNf6MfeJnfBD6T6Q+8yhHQZsMf/41+bnbkKZDznxc4Atpp7PQ3+oF3cQS0jelPNec9LJ/3E40lAHuY/sB23gFsMHD6G/0Md8ybAI//r7IDaMz0B64QgNVGPf6b/kxyxoPzGT/FbAKwlOkP1CEA65j+dNH98bn7+pcRgE4+f/1p+rNG3xnad+XrCcAi/uwG7XScpB3XvJEArDBk+nv2Z71e87TXaisQgB5Mf2A4AZju+uO/6c9GXR6ru6yzFAGozvRnu/qztf4Ka/JVEHNdfPw3/Sml4LdEGP1X2AFM5JM/HKbatK22nnYEoC6P/xRUZ+bWWUlfAjCLwx9OVWHyVljDAfxFsIpMf4q7n79bXgkY/QMJwBRO/0mwOANG/3ACUI7Hf3pZkAGjfxIBAAaYlAGjfyq/BzDelfMfj/+c4WIJzP017AAKMf05xsMJ/sYYGPrrCcBgXv/Cb0z2svweQBUe/4HFBAAglACM5PwHaEQASnD+A6wnAAChBGCYm89/PP4DWwgAQCgBAAglAJs5/wF2EYAxfAAUaEcAAEIJwE7Of4CNBAAglAAM4AUA0JEAAIQSgG28AAD2EgCAUAIAEEoAAEIJAEAoAbjKZ0CBpgRgDx8BArYTAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAMBV37992r0EuIUAwADfv32SAdoRABhGA+hFAGAkWwEaEQAYTwZoQQBgFhmgOAGAuTSAsgQAprMVoCYBgEVkgGoEAJaSAeoQANhAA6hAAGAPWwG2EwDYSQbYSABgPxlgCwGAKjSAxQQACrEVYCUBgHJkgDUEAIqSAWYTAChNA5hHAKA6WwEmEQDoQQYYTgCgExlgIAGAfjSAIQQAWrIV4DoBgMZkgCsEANqTAW4jAHAIDeC9BADOYSvAuwgAnEYGeCMBgDPJAK8SADiZBvACAYDD2QrwHAGACDLAYwIAQWSAhwQA4mgA9wQAEtkKcHd393H3AoANPn/9uXsJ7GcHAHFMf+7ZAUAQo5+HBAAiGP08JgBwOKOf53gHACcz/XmBHQCcyejnVQIApzH6eSMBgHMY/byLdwBwCNOf97IDgPaMfm4jANCY0c8VAgAtGf1c5x0A9GP6M4QdAHRi9DOQAEAPRj/DCQBUZ/QziXcAUJrpzzx2AFCU0c9sAgDlGP2sIQBQiNHPSt4BQBWmP4vZAcB+Rj9bCADsZPSzkQDAHkY/23kHABuY/lRgBwBLGf3UIQCwiNFPNQIA0xn91OQdAMxl+lOWHQDMYvRTnADAeEY/LQgAjGT004h3ADCM6U8vdgAwgNFPR3YAcJXpT1MCABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSgD2+f/u0ewlAOgG46vPXn7uXAHALAQAIJQAAoQQAIJQAAIQSgG18EAjYSwAAQgnAAD4JCnQkAAChBGAnrwGAjQQAIJQAjOE1ANCOAGzmFAjYRQAAQgkAQCgBGObm1wBOgYAtBAAglACUYBMArCcAI/kwKNCIAACEEoAqnAIBiwnAYE6BgC4EoBCbAGAlARjvyiZAA4BlBAAglACUYxMArCEAU3gVDNQnABXZBAALCMAsFzcBGgDMJgB1aQAwlQBM5E0AUJkAzOUgCChLAKrTAGASAZju+kGQBgAzCEAPGgAMJwArDHkbrAHAWB93LyDF568/TXBCXL/UfYJuDQHo5P6+cm9QlqecXhwBrTNqcLvHqGnUlekRZxkBWEoDOJXp35EArKYBnMf0b0oAGtMAKnAd9vXhjy8/dq8h0dh7xnMTW7iMu7MD2GPste4RjPVM/wMIwDYaQF+m/xkcAW02fHC7l5jKFXsSAdhvxsO7m4rhXKjncQR0JidCjOWKOpIdQAnz7i5PWFzk4jyYAFQx+wnLzca7uCATCEAhC3bZ7jpe5TrMIQDlrDlsdQfyGxdeIAGoaOULNzdkOBdbMgEoasuHLtyfIVxd3BOAuip88M5NewAXEs8RgNIq3LpwkelflgA0IAM0ZfQX5zeBG3AX0ZHrtj4B6MG9RC+u2BYcATXjOIjijP5G7ACacXdRmeuzFzuArmwFKMXo70gAepMBtjP6+3IE1Jt7j71cga3ZARzCVoDFjP4DCMBRZIAFjP5jCMCZlIDhzP3zCMDJZIAhjP5TCUAEJeAG5v7xBCCLEvAqcz+HAOQSA34x9DMJAHd3YhDJ0EcAeJYqHMOs50kCABDKV0EAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACE+g/T5cMpa6VPkQAAAABJRU5ErkJggg=='
+
+
+const PAYPAL_SUPPORT_URL = 'https://www.paypal.com/paypalme/DimitrisGalatsanos'
+const INSTALL_STATE_KEY = 'edituno-pwa-installed-v1'
+
+function isStandaloneMode() {
+  try {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+      window.matchMedia('(display-mode: fullscreen)').matches ||
+      window.navigator.standalone === true ||
+      document.referrer.startsWith('android-app://')
+  } catch { return false }
+}
+function storedInstallState() {
+  try { return localStorage.getItem(INSTALL_STATE_KEY) === '1' } catch { return false }
+}
+function markAppInstalled() {
+  try { localStorage.setItem(INSTALL_STATE_KEY, '1') } catch {}
+}
+function isAppInstalled() {
+  const installed=isStandaloneMode() || storedInstallState()
+  if(installed && !storedInstallState()) markAppInstalled()
+  return installed
+}
+function installEnvironment() {
+  const ua=String(navigator.userAgent||'')
+  const touchMac=/Macintosh/i.test(ua) && Number(navigator.maxTouchPoints||0)>1
+  const ios=/iPhone|iPad|iPod/i.test(ua) || touchMac
+  const android=/Android/i.test(ua)
+  const windows=/Windows/i.test(ua)
+  const mac=!ios && /Macintosh|Mac OS X/i.test(ua)
+  const edge=/Edg\//i.test(ua)
+  const firefox=/Firefox|FxiOS/i.test(ua)
+  const chrome=!edge && /Chrome|CriOS/i.test(ua)
+  const safari=!chrome && !edge && /Safari/i.test(ua)
+  let platform=ios?'ios':android?'android':windows?'windows':mac?'mac':'desktop'
+  let browser=edge?'edge':firefox?'firefox':chrome?'chrome':safari?'safari':'browser'
+  return {platform,browser,ios,android,windows,mac,label:platform==='ios'?'iPhone / iPad':platform==='android'?'Android':platform==='windows'?'Windows':platform==='mac'?'Mac':'Desktop'}
+}
 
 function safeLanguage() {
   try {
@@ -1084,6 +1123,40 @@ function svgIcon(name,size=20) {
   return `<svg class="ui-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]||icons.effects}</svg>`
 }
 function renderLogo() { return `<span class="logo-lockup"><img class="logo-img" src="${EDITUNO_ICON}" alt="Edituno"><span>Edituno</span></span>` }
+function installEntryHtml(kind='menu'){
+  const installed=isAppInstalled(), el=state.language==='el'
+  if(installed){
+    if(kind==='settings')return `<div class="settings-link installed-state" aria-label="${el?'Το Edituno είναι εγκατεστημένο':'Edituno is installed'}"><span>${svgIcon('check',18)}</span><span><strong>${el?'Εγκατεστημένο':'Installed'}</strong><small>${el?'Το Edituno είναι ήδη στη συσκευή σου':'Edituno is already on this device'}</small></span><span class="installed-dot"></span></div>`
+    return `<div class="home-menu-row installed-state"><span class="menu-row-icon">${svgIcon('check',18)}</span><span><strong>${el?'Εγκατεστημένο':'Installed'}</strong><small>${el?'Έτοιμο για χρήση από τη συσκευή σου':'Ready from your device'}</small></span><span class="installed-dot"></span></div>`
+  }
+  if(kind==='settings')return `<button class="settings-link" data-action="install"><span>${svgIcon('install',18)}</span><span><strong>${tr('installApp')}</strong><small>${el?'Έξυπνη εγκατάσταση για τη συσκευή σου':'Smart install for your device'}</small></span>${svgIcon('right',16)}</button>`
+  return `<button type="button" class="home-menu-row" data-action="install"><span class="menu-row-icon">${svgIcon('install',18)}</span><span><strong>${tr('install')}</strong><small>${el?'Εγκατάσταση για αυτή τη συσκευή':'Install for this device'}</small></span>${svgIcon('right',16)}</button>`
+}
+function aboutPage(){
+  const el=state.language==='el', installed=isAppInstalled()
+  document.body.classList.remove('editor-open')
+  document.body.classList.toggle('mobile-app-shell',isMobileViewport())
+  const title=el?'Video editing που μένει στη συσκευή σου.':'Video editing that stays on your device.'
+  const intro=el?'Το Edituno είναι ένας δωρεάν, installable video editor για γρήγορη δημιουργία χωρίς account, upload ή watermark. Τα media και τα projects σου παραμένουν τοπικά στη συσκευή σου.':'Edituno is a free, installable video editor for fast creation without an account, upload or watermark. Your media and projects stay local on your device.'
+  const installCta=installed
+    ? `<div class="about-installed">${svgIcon('check',18)}<span><strong>${el?'Το Edituno είναι εγκατεστημένο':'Edituno is installed'}</strong><small>${el?'Μπορείς να το ανοίγεις σαν κανονική εφαρμογή.':'Open it like a regular app from your device.'}</small></span></div>`
+    : `<button class="about-install-btn" data-action="install">${svgIcon('install',19)}<span>${el?'Εγκατάσταση Edituno':'Install Edituno'}</span></button>`
+  $('#app').innerHTML=`<div class="about-page">
+    <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
+    <main class="about-main">
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p><div class="about-hero-actions">${installCta}<a class="about-support-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer">${svgIcon('circle',18)}<span>${el?'Υποστήριξε το Edituno':'Support Edituno'}</span></a></div></div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.2.7</div></div></section>
+      <section class="about-grid">
+        <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
+        <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Σε Android, Windows, Mac, iPhone και iPad, με οδηγίες προσαρμοσμένες στη συσκευή.':'On Android, Windows, Mac, iPhone and iPad, with device-specific guidance.'}</p></article>
+        <article>${svgIcon('video',20)}<strong>${el?'Πλήρες δημιουργικό workflow':'Complete creative workflow'}</strong><p>${el?'Timeline, captions, audio, effects, transitions, adjustments και export μέχρι 4K όταν το υποστηρίζει η συσκευή.':'Timeline, captions, audio, effects, transitions, adjustments and up to 4K export when supported.'}</p></article>
+        <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
+      </section>
+      <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
+      <footer class="about-footer"><span>Edituno v2.2.7</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+    </main>
+  </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
+}
+
 function homeMenuPopover(){
   if(!state.homeMenuOpen)return''
   const el=state.language==='el'
@@ -1093,7 +1166,8 @@ function homeMenuPopover(){
     <div class="home-menu-language"><span>${el?'Γλώσσα':'Language'}</span><div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></div>
     <div class="home-menu-list">
       <button type="button" class="home-menu-row" data-action="settings"><span class="menu-row-icon">${svgIcon('settings',18)}</span><span><strong>${tr('settings')}</strong><small>${el?'Timeline, export, storage':'Timeline, export, storage'}</small></span>${svgIcon('right',16)}</button>
-      <button type="button" class="home-menu-row" data-action="install"><span class="menu-row-icon">${svgIcon('install',18)}</span><span><strong>${tr('install')}</strong><small>${el?'Πρόσθεσέ το στην αρχική οθόνη':'Add Edituno to your device'}</small></span>${svgIcon('right',16)}</button>
+      <button type="button" class="home-menu-row" data-action="about"><span class="menu-row-icon">${svgIcon('circle',18)}</span><span><strong>${el?'Σχετικά με το Edituno':'About Edituno'}</strong><small>${el?'Δυνατότητες και υποστήριξη':'Features and support'}</small></span>${svgIcon('right',16)}</button>
+      ${installEntryHtml('menu')}
     </div>
     <div class="home-menu-note"><span class="status-dot"></span><span>${el?'Τοπική επεξεργασία. Τα media δεν ανεβαίνουν σε server.':'Local editing. Your media is not uploaded to a server.'}</span></div>
   </aside>`
@@ -1111,11 +1185,12 @@ function renderHome() {
       <nav class="home-rail-nav" aria-label="Edituno">
         <button class="active" data-action="home-top">${svgIcon('home',18)}<span>Home</span></button>
         <button data-action="projects-scroll">${svgIcon('projects',18)}<span>Projects</span></button>
+        <button data-action="about">${svgIcon('circle',18)}<span>${el?'Σχετικά':'About'}</span></button>
       </nav>
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
-      <button class="home-rail-link" data-action="install">${svgIcon('install',18)}<span>${tr('install')}</span></button>
-      <div class="home-rail-version">v2.0</div>
+      ${isAppInstalled()?`<div class="home-rail-link installed-state">${svgIcon('check',18)}<span>${el?'Εγκατεστημένο':'Installed'}</span></div>`:`<button class="home-rail-link" data-action="install">${svgIcon('install',18)}<span>${tr('install')}</span></button>`}
+      <div class="home-rail-version">v2.2.7</div>
     </aside>
 
     <div class="home-surface">
@@ -1159,6 +1234,7 @@ function renderHome() {
         <button class="active" data-action="home-top">${svgIcon('home',19)}<span>Home</span></button>
         <button class="dock-create" data-action="create" data-ratio="9:16"><span>${svgIcon('plus',22)}</span></button>
         <button data-action="projects-scroll">${svgIcon('projects',19)}<span>Projects</span></button>
+        <button data-action="about">${svgIcon('circle',19)}<span>${el?'Σχετικά':'About'}</span></button>
       </nav>
     </div>
     ${homeMenuPopover()}${state.settingsOpen?settingsModal():''}${state.installOpen?installModal():''}${projectActionsModal()}${renameProjectModal()}${confirmationModal()}
@@ -1221,19 +1297,44 @@ function settingsModal(){
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('timeline',18)}</span><div><strong>Timeline</strong><small>${el?'Editing behavior':'Editing behavior'}</small></div></div><button class="setting-row" data-action="pref-toggle" data-key="snap"><span><strong>${preferenceLabel('snap')}</strong><small>${el?'Αυτόματη ευθυγράμμιση clips':'Snap clips to edit points'}</small></span><i class="switch ${p.snap?'on':''}"><b></b></i></button><button class="setting-row" data-action="pref-toggle" data-key="showWaveforms"><span><strong>${preferenceLabel('showWaveforms')}</strong><small>${el?'Waveforms στο audio track':'Show waveforms in audio track'}</small></span><i class="switch ${p.showWaveforms?'on':''}"><b></b></i></button><label class="setting-slider"><span><strong>${preferenceLabel('timelineScale')}</strong><b>${p.timelineScale||48}</b></span><input data-pref="timelineScale" type="range" min="28" max="100" step="4" value="${p.timelineScale||48}"></label></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('effects',18)}</span><div><strong>${el?'Playback':'Playback'}</strong><small>${el?'Preview performance':'Preview performance'}</small></div></div><label class="setting-select"><span>${preferenceLabel('previewQuality')}</span><select data-pref="previewQuality"><option value="performance" ${p.previewQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${p.previewQuality==='balanced'?'selected':''}>Balanced</option><option value="quality" ${p.previewQuality==='quality'?'selected':''}>Quality</option></select></label></section>
       <section class="settings-card"><div class="settings-card-title"><span>${svgIcon('export',18)}</span><div><strong>${tr('export')}</strong><small>${el?'Defaults':'Defaults'}</small></div></div><div class="settings-split"><label class="setting-select"><span>${preferenceLabel('defaultQuality')}</span><select data-pref="defaultQuality"><option value="720" ${+p.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+p.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+p.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="setting-select"><span>${preferenceLabel('defaultFps')}</span><select data-pref="defaultFps"><option value="24" ${+p.defaultFps===24?'selected':''}>24 fps</option><option value="30" ${+p.defaultFps===30?'selected':''}>30 fps</option><option value="60" ${+p.defaultFps===60?'selected':''}>60 fps</option></select></label></div></section>
-      <section class="settings-card"><button class="settings-link" data-action="install"><span>${svgIcon('install',18)}</span><span><strong>${tr('installApp')}</strong><small>PWA · Offline</small></span>${svgIcon('right',16)}</button><button class="settings-link" data-action="persist-storage"><span>${svgIcon('folder',18)}</span><span><strong>${tr('requestStorage')}</strong><small>${el?'Κράτησε τα projects διαθέσιμα':'Keep projects available'}</small></span>${svgIcon('right',16)}</button></section>
+      <section class="settings-card">${installEntryHtml('settings')}<button class="settings-link" data-action="persist-storage"><span>${svgIcon('folder',18)}</span><span><strong>${tr('requestStorage')}</strong><small>${el?'Κράτησε τα projects διαθέσιμα':'Keep projects available'}</small></span>${svgIcon('right',16)}</button><button class="settings-link" data-action="about"><span>${svgIcon('circle',18)}</span><span><strong>${el?'Σχετικά και υποστήριξη':'About & support'}</strong><small>${el?'Πληροφορίες για το Edituno και PayPal support':'About Edituno and PayPal support'}</small></span>${svgIcon('right',16)}</button></section>
       <button class="settings-danger" data-action="clear-all">${svgIcon('trash',16)}<span>${tr('clearAll')}</span></button>
     </div>
   </section></div>`
 }
-function installModal(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);return `<div class="modal-backdrop" data-action="install-close"><section class="modal"><div class="modal-head"><h2>${tr('installTitle')}</h2><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-card"><strong>Edituno</strong><p>${ios?tr('iosInstall'):tr('chromeInstall')}</p>${!ios&&state.installPrompt?`<button class="primary-btn full" data-action="install-confirm">${tr('installApp')}</button>`:''}</div></div></section></div>`}
-
-function mobileProjectHubModal(){
-  const projects=state.projects||[]
-  return `<div class="project-hub-backdrop" data-action="mobile-hub-close"><section class="project-hub"><div class="project-hub-head"><div>${renderLogo()}<span>${tr('projectHub')}</span></div><button class="icon-btn" data-action="mobile-hub-close">${svgIcon('close')}</button></div><div class="project-hub-body"><button class="primary-btn full" data-action="create" data-ratio="9:16">${svgIcon('plus',18)} ${tr('newBlank')}</button>${projects.length?`<div class="hub-project-list">${projects.slice(0,10).map(p=>`<button class="hub-project" data-action="open-project" data-id="${p.id}"><span class="hub-thumb">${svgIcon('play',18)}</span><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.ratio||'16:9')} · ${new Date(p.updatedAt).toLocaleDateString(state.language==='el'?'el-GR':'en-US')}</small></span></button>`).join('')}</div>`:`<div class="empty-state"><b>${tr('noProjects')}</b></div>`}<div class="hub-footer"><button class="secondary-btn" data-action="language">${state.language==='el'?'English':'Ελληνικά'}</button><button class="secondary-btn" data-action="settings">${tr('settings')}</button></div></div></section></div>`
+function installModal(){
+  const el=state.language==='el', env=installEnvironment(), installed=isAppInstalled(), promptReady=!!state.installPrompt
+  if(installed)return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal"><div class="modal-head"><div><span class="eyebrow">EDITUNO APP</span><h2>${el?'Ήδη εγκατεστημένο':'Already installed'}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-success">${svgIcon('check',28)}<strong>${el?'Το Edituno είναι έτοιμο στη συσκευή σου':'Edituno is ready on your device'}</strong><p>${el?'Δεν θα σου εμφανίσουμε ξανά προτροπή εγκατάστασης σε αυτόν τον browser.':'We will not show the install prompt again in this browser.'}</p></div></div></section></div>`
+  let title='',copy='',steps=[],canPrompt=false
+  if(env.platform==='ios'){
+    title=el?'Εγκατάσταση σε iPhone / iPad':'Install on iPhone / iPad'
+    copy=el?'Το iOS χρησιμοποιεί το Add to Home Screen αντί για κλασικό installer.':'iOS uses Add to Home Screen instead of a classic installer.'
+    steps=env.browser==='safari'?
+      [[svgIcon('share',18),el?'Πάτησε το κουμπί Κοινοποίησης στο Safari.':'Tap the Share button in Safari.'],[svgIcon('plus',18),el?'Επίλεξε «Προσθήκη στην οθόνη αφετηρίας».':'Choose “Add to Home Screen”.'],[svgIcon('check',18),el?'Πάτησε «Προσθήκη» για να ολοκληρωθεί.':'Tap “Add” to finish.']]:
+      [[svgIcon('share',18),el?'Άνοιξε αυτή τη σελίδα στο Safari.':'Open this page in Safari.'],[svgIcon('plus',18),el?'Safari: Κοινοποίηση → Προσθήκη στην οθόνη αφετηρίας.':'Safari: Share → Add to Home Screen.'],[svgIcon('check',18),el?'Επιβεβαίωσε με «Προσθήκη».':'Confirm with “Add”.']]
+  }else if(env.platform==='android'){
+    title=el?'Εγκατάσταση σε Android':'Install on Android'
+    copy=el?'Το Edituno μπορεί να εγκατασταθεί σαν κανονική εφαρμογή και να ανοίγει full screen.':'Edituno can install like a regular app and open full screen.'
+    canPrompt=promptReady
+    steps=[[svgIcon('more',18),el?'Αν δεν εμφανιστεί installer, άνοιξε το μενού του browser.':'If the installer does not appear, open the browser menu.'],[svgIcon('install',18),el?'Επίλεξε «Install app» ή «Add to Home screen».':'Choose “Install app” or “Add to Home screen”.'],[svgIcon('check',18),el?'Επιβεβαίωσε την εγκατάσταση.':'Confirm the installation.']]
+  }else if(env.platform==='windows'){
+    title=el?'Εγκατάσταση σε Windows':'Install on Windows'
+    copy=el?'Εγκατέστησε το Edituno ως desktop app για δικό του παράθυρο και γρήγορη εκκίνηση.':'Install Edituno as a desktop app for its own window and quick launch.'
+    canPrompt=promptReady
+    steps=[[svgIcon('install',18),el?'Σε Chrome ή Edge χρησιμοποίησε το εικονίδιο εγκατάστασης στη γραμμή διεύθυνσης.':'In Chrome or Edge, use the install icon in the address bar.'],[svgIcon('check',18),el?'Πάτησε Install και επίλεξε αν θέλεις shortcut.':'Choose Install and add a shortcut if you want.']]
+  }else if(env.platform==='mac'){
+    title=el?'Εγκατάσταση σε Mac':'Install on Mac'
+    copy=el?'Χρησιμοποίησε την εγκατάσταση του browser ή στο Safari το Add to Dock.':'Use your browser installer or Safari Add to Dock.'
+    canPrompt=promptReady
+    steps=env.browser==='safari'?[[svgIcon('plus',18),el?'Safari: File → Add to Dock.':'Safari: File → Add to Dock.'],[svgIcon('check',18),el?'Επιβεβαίωσε το όνομα Edituno και πάτησε Add.':'Confirm Edituno and choose Add.']]:[[svgIcon('install',18),el?'Chrome: χρησιμοποίησε το Install icon στη γραμμή διεύθυνσης.':'Chrome: use the Install icon in the address bar.'],[svgIcon('check',18),el?'Επιβεβαίωσε με Install.':'Confirm with Install.']]
+  }else{
+    title=el?'Εγκατάσταση Edituno':'Install Edituno'
+    copy=el?'Ο browser σου μπορεί να προσθέσει το Edituno σαν εφαρμογή όταν υποστηρίζει PWA installation.':'Your browser can add Edituno as an app when PWA installation is supported.'
+    canPrompt=promptReady
+    steps=[[svgIcon('more',18),el?'Άνοιξε το menu του browser και αναζήτησε Install app.':'Open the browser menu and look for Install app.'],[svgIcon('check',18),el?'Επιβεβαίωσε την εγκατάσταση.':'Confirm the installation.']]
+  }
+  return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}"><div class="modal-head"><div><span class="eyebrow">${escapeHtml(env.label.toUpperCase())}</span><h2>${title}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-device-card"><span class="install-device-icon">${svgIcon(env.platform==='ios'?'share':env.platform==='windows'?'video':'install',24)}</span><span><strong>${escapeHtml(env.label)}</strong><small>${copy}</small></span></div>${canPrompt?`<button class="install-primary" data-action="install-confirm">${svgIcon('install',19)}<span>${el?'Εγκατάσταση τώρα':'Install now'}</span></button>`:''}<div class="install-steps">${steps.map((step,i)=>`<div class="install-step"><b>${i+1}</b><span class="install-step-icon">${step[0]}</span><p>${step[1]}</p></div>`).join('')}</div>${!canPrompt&&env.platform!=='ios'?`<p class="install-hint">${el?'Αν δεν βλέπεις επιλογή εγκατάστασης, δοκίμασε Chrome ή Edge και βεβαιώσου ότι η σελίδα φορτώνει μέσω HTTPS.':'If no install option appears, try Chrome or Edge and make sure the page is loaded over HTTPS.'}</p>`:''}<div class="install-privacy">${svgIcon('folder',17)}<span>${el?'Η εγκατάσταση δεν ανεβάζει τα projects σου. Παραμένουν τοπικά στη συσκευή.':'Installing does not upload your projects. They remain local on your device.'}</span></div></div></section></div>`
 }
-
-function selectedTransformTarget(){return selectedVisual()||selectedElement()}
 function updatePreviewSelectionOverlay(){
   const box=$('#preview-selection-box'),frame=$('.preview-frame'),target=selectedTransformTarget();if(!box||!frame||!target){box?.classList.add('hidden');return}
   box.classList.remove('hidden')
@@ -1672,7 +1773,7 @@ function renderExportModal() {
   const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+state.preferences.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${tr('browserLimit')} ${state.language==='el'?'Το 4K απαιτεί αρκετή μνήμη και η διαθεσιμότητα εξαρτάται από browser και συσκευή.':'4K needs substantial memory and availability depends on the browser and device.'}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
 }
 
-function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); state.view==='editor'?renderEditor():renderHome() }
+function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); if(state.view==='editor')renderEditor(); else if(state.view==='about')aboutPage(); else renderHome() }
 
 function toast(message,type='') {
   let root=$('#toasts'); if(!root){root=document.createElement('div');root.id='toasts';root.className='toast-stack';document.body.append(root)}
@@ -1773,9 +1874,11 @@ function bindGlobalEvents() {
     if(a==='pref-toggle'){const key=el.dataset.key;state.preferences[key]=!state.preferences[key];if(key==='showWaveforms')renderEditor();savePreferences();render();return}
     if(a==='settings'){state.homeMenuOpen=false;state.settingsOpen=true;render();return}
     if(a==='settings-close'){state.settingsOpen=false;render();return}
-    if(a==='install'){state.homeMenuOpen=false;state.installOpen=true;render();return}
+    if(a==='about'){state.homeMenuOpen=false;state.settingsOpen=false;if(state.view==='editor'){stopPlayback();if(state.project)await saveProject(state.project)}state.view='about';state.installOpen=false;render();return}
+    if(a==='about-home'){state.projects=await listProjects();state.view='home';state.installOpen=false;render();return}
+    if(a==='install'){state.homeMenuOpen=false;if(isAppInstalled()){toast(state.language==='el'?'Το Edituno είναι ήδη εγκατεστημένο':'Edituno is already installed','success');return}state.installOpen=true;render();return}
     if(a==='install-close'){state.installOpen=false;render();return}
-    if(a==='install-confirm'&&state.installPrompt){await state.installPrompt.prompt();await state.installPrompt.userChoice;state.installPrompt=null;state.installOpen=false;render();return}
+    if(a==='install-confirm'&&state.installPrompt){await state.installPrompt.prompt();const choice=await state.installPrompt.userChoice;if(choice?.outcome==='accepted')markAppInstalled();state.installPrompt=null;state.installOpen=false;render();return}
     if(a==='persist-storage'){const ok=await navigator.storage?.persist?.();toast(ok?'✓ '+tr('persistent'):tr('storage'));return}
     if(a==='clear-all'){state.confirmDialog={type:'clear-all'};render();return}
     if(a==='home-top'){window.scrollTo({top:0,behavior:'smooth'});return}
@@ -1883,7 +1986,8 @@ function bindGlobalEvents() {
     }
   },true)
   window.addEventListener('pageshow',()=>normalizeViewportAfterKeyboard())
-  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();state.installPrompt=e})
+  window.addEventListener('beforeinstallprompt',e=>{if(isAppInstalled())return;e.preventDefault();state.installPrompt=e;if(state.installOpen)render()})
+  window.addEventListener('appinstalled',()=>{markAppInstalled();state.installPrompt=null;state.installOpen=false;render();toast(state.language==='el'?'Το Edituno εγκαταστάθηκε':'Edituno installed','success')})
   window.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&document.activeElement?.id==='project-rename-input'){
       e.preventDefault()
@@ -1906,6 +2010,7 @@ async function init() {
   const bootStarted=performance.now()
   syncMobileViewport(true)
   try {
+    if(isStandaloneMode())markAppInstalled()
     bindGlobalEvents()
     const launch=new URLSearchParams(location.search)
     try { state.projects=await listProjects() } catch(storageError){ console.warn('Edituno local storage unavailable:',storageError);state.projects=[] }
@@ -1931,7 +2036,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.6',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.2.7',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

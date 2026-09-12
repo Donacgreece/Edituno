@@ -1,5 +1,18 @@
 # Release Notes
 
+## v2.2.7
+
+About, Support and Smart Install release.
+
+- Added a dedicated About Edituno page with feature and privacy information.
+- Added optional PayPal support button.
+- Added device-aware installation UI for iPhone/iPad, Android, Windows, Mac and other desktop browsers.
+- Added native PWA prompt handling where supported.
+- Added iOS Add to Home Screen instructions.
+- Added installed-state persistence so the install offer is not shown again after successful installation.
+- Added appinstalled handling and standalone-mode detection.
+
+
 ## v2.2.6
 
 Automatic domain awareness release.

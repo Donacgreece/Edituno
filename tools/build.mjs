@@ -70,7 +70,11 @@ const requiredRuntimeMarkers = [
   '4K · 2160p',
   'edituno-share.png',
   'application/ld+json',
-  'application/ld+json'
+  'application/ld+json',
+  'function aboutPage()',
+  'function installEnvironment()',
+  'PAYPAL_SUPPORT_URL',
+  'appinstalled'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -108,4 +112,4 @@ for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
-console.log(`Built Edituno v2.2.6 -> ${dist}`)
+console.log(`Built Edituno v2.2.7 -> ${dist}`)

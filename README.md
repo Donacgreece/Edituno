@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.6**
+Current packaged release: **v2.2.7**
 
 ## Third-party and legal notes
 
@@ -100,3 +100,11 @@ Edituno does not hardcode the production hostname anymore. The GitHub Pages work
 Until a custom domain is configured, the build uses `https://donacgreece.github.io/Edituno/`. After `edituno.com` is configured as the GitHub Pages custom domain, scheduled deployment checks automatically detect it and rebuild the discovery metadata without any source-code change.
 
 The social preview image is stored at `public/og/edituno-share.png`, while its public absolute URL is generated at build time from the active domain.
+
+## Install, About and Support
+
+Edituno includes a smart PWA installation flow that detects iPhone/iPad, Android, Windows, Mac and other desktop environments. Supported browsers use the native installation prompt. iOS users receive visual Add to Home Screen steps. Once installation is confirmed, Edituno remembers the installed state and stops presenting the install offer in that browser.
+
+The in-app About page explains the local-first model and includes optional project support through PayPal:
+
+- https://www.paypal.com/paypalme/DimitrisGalatsanos

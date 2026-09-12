@@ -1,8 +1,8 @@
 {
   "name": "edituno",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "private": true,
-  "description": "Free local video editor PWA with mobile-first editing, desktop workspace, SEO-ready metadata and social sharing preview",
+  "description": "Free local video editor PWA with smart device-aware install, About and optional PayPal support",
   "scripts": {
     "build": "tsc -p tsconfig.json && node tools/build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
