@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.9**
+Current packaged release: **v2.2.10**
 
 ## Third-party and legal notes
 
@@ -117,3 +117,8 @@ The in-app About page explains the local-first model and includes optional proje
 - Installed status is shown only inside the Installation entry instead of occupying separate home or About UI.
 - The desktop home rail and Support menu entries open the internal Edituno Support page. PayPal opens only from the dedicated support CTA inside that page.
 - The About page remains fully scrollable on mobile so all product and support information is accessible.
+
+
+## Editor startup stability
+
+v2.2.10 restores the `selectedTransformTarget()` helper used by the preview interaction layer. This fixes the runtime crash that could replace the editor with the startup error screen on desktop and mobile. The production build now explicitly validates that this helper is present before deployment.

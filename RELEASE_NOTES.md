@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.2.10
+
+Editor startup stability hotfix.
+
+- Restored the missing `selectedTransformTarget()` helper required by preview interactions.
+- Fixed the editor crash that could occur immediately after opening a project on desktop and mobile.
+- Added a production build guard so this helper cannot silently disappear again.
+- Preserved v2.2.9 Support navigation, smart install, auto-domain SEO, sitemap and social metadata.
+
 ## v2.2.9
 
 Support navigation polish. The desktop Support control and menu Support entries now open the internal Edituno support/about page. PayPal is only opened from the dedicated PayPal CTA inside that page.
