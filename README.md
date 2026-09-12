@@ -1,174 +1,544 @@
+<div align="center">
+
+<img src="./public/og/edituno-share.png" alt="Edituno - Local Video Editor" width="100%">
+
 # Edituno
 
-![Edituno social preview](./public/og/edituno-share.png)
+### A local-first video editor for the web
 
-**Edituno** is a free local video editor built as an installable PWA. It lets you cut video, add captions, effects, transitions, music and overlays, then export directly on your device without upload and without watermark.
+**Edit video, audio, text, overlays, effects and transitions directly on your device.  
+No uploads. No watermark. Installable as a PWA.**
 
-## Product links
+[![Live App](https://img.shields.io/badge/Live_App-Open_Edituno-2455F5?style=for-the-badge)](https://donacgreece.github.io/Edituno/)
+[![PWA](https://img.shields.io/badge/PWA-Installable-111827?style=for-the-badge)](https://donacgreece.github.io/Edituno/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-- Current website: https://donacgreece.github.io/Edituno/
-- Planned custom domain: https://edituno.com/
-- Social preview image: https://donacgreece.github.io/Edituno/og/edituno-share.png
-- Repository: https://github.com/Donacgreece/Edituno
+**Current release: v2.5.1**
 
-## What Edituno does
+</div>
 
-- Local on-device editing for privacy and speed
-- Video, image, audio, text and element layers
-- Captions and SRT subtitle import
-- Filters, motion presets, adjustments and transitions
-- Mobile-first editing flow with a professional desktop workspace
-- 720p, 1080p and 4K export when supported by the browser and device
-- Greek and English interface
-- Installable PWA with offline support
+---
 
-## SEO and discoverability package
+## What is Edituno?
 
-This release includes a complete foundation for Google, link sharing and AI discovery:
+Edituno is a browser-based video editor designed around a simple principle:
 
-- Canonical URL targeting the current GitHub Pages deployment until `edituno.com` is connected
-- Improved title and meta description
-- Open Graph and Twitter card tags
-- Dedicated social share image at `public/og/edituno-share.png`
-- Structured data using `schema.org/SoftwareApplication`
-- `robots.txt`
-- `sitemap.xml`
-- `llms.txt`
+> **Your media should stay on your device.**
+
+Instead of uploading footage to a remote editing service, Edituno runs the editing workflow locally in the browser. Projects, previews, smart analysis and export are handled on-device whenever the browser supports the required capabilities.
+
+The goal is to bring together the speed of a lightweight mobile editor with the control of a desktop timeline, while keeping the experience installable, private and easy to use.
+
+---
+
+## Why Edituno?
+
+- **Local-first editing**  
+  Video, images and audio remain on the user's device during the normal editing workflow.
+
+- **No mandatory account**  
+  Start editing without creating an online account.
+
+- **No watermark**  
+  Exported projects are not branded with an Edituno watermark.
+
+- **Installable PWA**  
+  Runs from the browser or installs like an app on supported desktop and mobile platforms.
+
+- **Mobile and desktop workflows**  
+  The same project model is presented through a compact mobile interface and a more complete desktop workspace.
+
+- **Real editing tools, not a template generator**  
+  Timeline editing, transforms, filters, GPU effects, transitions, audio layers, text, elements and smart tools are part of the editor itself.
+
+---
+
+## Editing features
+
+### Timeline
+
+- Multi-clip video timeline
+- Split at playhead
+- Duplicate and delete clips
+- Timeline zoom
+- Snap-to-timeline behavior
+- Audio waveforms
+- Multiple overlay lanes
+- Independent audio track
+- Drag and resize timeline items
+- Beat and silence guides
+
+### Video and image
+
+- Scale
+- Position
+- Rotation
+- Crop / cover / contain behavior
+- Horizontal and vertical flip
+- Opacity
+- Playback speed
+- Audio volume
+- Fade in / fade out
+- Motion presets
+- Color and image adjustments
+
+### Text
+
+- Multiple text layers
+- Font size and styling
+- Alignment
+- Color and background controls
+- Position
+- Scale
+- Rotation
+- Direct manipulation inside the preview
+- Persistent transforms in preview and export
+
+### Overlays and elements
+
+- Video and image overlays
+- Stickers and visual elements
+- Searchable Fluent Emoji element library
+- Direct canvas selection
+- Drag
+- Resize
+- Rotate
+- Center snapping
+- Rule-of-thirds snapping
+
+### Captions
+
+- Caption workflow
+- SRT subtitle import
+- Timeline-aware subtitle rendering
+
+---
+
+## GPU effects
+
+Edituno includes a GPU-assisted effects pipeline powered by:
+
+- **PixiJS 8.20.1**
+- **PixiJS Filters 6.1.5**
+
+Available effect modes include:
+
+- Bloom
+- Glitch
+- CRT
+- Old Film
+- RGB Split
+- Pixelate
+- Bulge
+- Dream Blur
+
+Effects are integrated into both preview rendering and the Edituno export pipeline.
+
+When GPU rendering is unavailable, Edituno falls back to Canvas-based rendering where possible.
+
+---
+
+## Shader transitions
+
+Edituno includes selected MIT-licensed transitions from the `gl-transitions` ecosystem:
+
+- Cross Zoom
+- Swirl
+- Mosaic
+- Circle Crop
+- Directional
+- Dreamy
+
+These transitions use true two-frame WebGL compositing instead of simple CSS animations.
+
+If WebGL is unavailable, the editor falls back gracefully instead of breaking the project.
+
+---
+
+## Smart Tools
+
+### Auto Reframe
+
+Powered by **Smartcrop.js 2.0.5**.
+
+Edituno analyzes visual content and adjusts the crop for the active project aspect ratio.
+
+For video clips, Edituno samples multiple points in the clip instead of relying on a single frame, then maps the result into Edituno's own scale and offset system.
+
+Supported project formats include:
+
+- 16:9
+- 9:16
+- 1:1
+- 4:5
+
+### Smart Audio
+
+Powered by **Meyda 5.6.3**.
+
+Audio analysis runs locally and can provide:
+
+- Beat detection
+- BPM estimation
+- Silence detection
+- Silence duration
+- Beat markers
+- Silence markers
+- Configurable beat-cut density
+- Automatic cuts on the primary video track
+
+No cloud audio analysis is required for these tools.
+
+---
+
+## Direct canvas editing
+
+Edituno uses **Konva 10.5.0** as an interaction layer for manipulating objects directly inside the preview.
+
+You can:
+
+- Click an object to select it
+- Drag it directly
+- Resize from corner handles
+- Rotate using a dedicated handle
+- Snap rotation to common angles
+- Snap to center lines
+- Snap to rule-of-thirds guides
+
+Konva handles interaction only. Final project rendering remains inside Edituno's own rendering pipeline.
+
+---
+
+## Export
+
+Edituno includes a browser-local export pipeline built around:
+
+- Canvas rendering
+- `captureStream`
+- MediaRecorder
+- Web Audio
+- Manual canvas frame capture where supported
+- Audio/video synchronization recovery
+- Post-export validation
+
+Current quality presets include:
+
+- 720p
+- 1080p
+- 4K / 2160p when supported by the browser and device
+
+The actual output container and codec depend on browser support.
+
+> Browser media capabilities vary between platforms. Edituno detects supported recording formats at runtime and uses the best available option.
+
+---
+
+## Light and dark themes
+
+Edituno includes:
+
+- System theme
+- Dark mode
+- Light mode
+
+Theme selection is stored locally and the PWA/browser theme color updates with the active appearance.
+
+---
+
+## Languages
+
+The interface currently supports:
+
+- Greek
+- English
+
+---
+
+## Privacy
+
+Edituno is designed as a local-first editor.
+
+During the normal editing workflow:
+
+- Media is imported from the user's device
+- Project data is stored locally
+- Smartcrop analysis runs locally
+- Meyda audio analysis runs locally
+- Preview rendering runs locally
+- Export runs locally
+
+Edituno does not require users to upload their project media to an Edituno server in order to edit a project.
+
+---
+
+## Progressive Web App
+
+Edituno can be installed as a PWA on supported platforms.
+
+### Android and desktop
+
+Supported browsers can use the native PWA install prompt.
+
+### iPhone and iPad
+
+Edituno provides platform-specific Add to Home Screen guidance when a native install prompt is unavailable.
+
+The installed version keeps the same local-first project workflow as the browser version.
+
+---
 
 ## Tech stack
 
-- TypeScript
-- Vanilla UI runtime
-- Progressive Web App architecture
-- Local browser storage
-- GitHub Pages deployment flow
+| Area | Technology |
+|---|---|
+| Language | TypeScript |
+| UI | Vanilla browser UI |
+| Rendering | Canvas 2D + WebGL |
+| GPU effects | PixiJS + PixiJS Filters |
+| Transitions | gl-transitions |
+| Smart framing | Smartcrop.js |
+| Audio analysis | Meyda |
+| Canvas interaction | Konva |
+| Storage | Browser local storage / IndexedDB-style local project storage |
+| App model | Progressive Web App |
+| Deployment | GitHub Pages + GitHub Actions |
 
-## Quick start
+---
+
+## Architecture
+
+Edituno deliberately keeps the editor architecture lightweight.
+
+```text
+User media
+   │
+   ▼
+Local project storage
+   │
+   ├── Timeline model
+   ├── Video / image clips
+   ├── Audio tracks
+   ├── Text layers
+   ├── Overlays
+   └── Elements
+   │
+   ▼
+Edituno renderer
+   │
+   ├── Canvas 2D
+   ├── PixiJS effects
+   ├── WebGL transitions
+   ├── Konva interaction layer
+   └── Smart analysis tools
+   │
+   ▼
+Local export pipeline
+```
+
+The interaction layer and the final renderer are intentionally separated.  
+For example, Konva is used for manipulation handles, while Edituno's own renderer remains responsible for the exported result.
+
+---
+
+## Run locally
+
+### Requirements
+
+- Node.js 22 or newer recommended
+- npm
+- Modern Chromium, Edge, Chrome, Safari or Firefox-based browser with the required media APIs
+
+### Install
 
 ```bash
+git clone https://github.com/Donacgreece/Edituno.git
+cd Edituno
 npm install
+```
+
+### Build
+
+```bash
 npm run build
 ```
 
-Serve the production build locally:
+### Serve the production build
 
 ```bash
 npm run serve
 ```
 
+Then open:
+
+```text
+http://localhost:4173
+```
+
+---
+
 ## Project structure
 
 ```text
-src/                      Source application and HTML template
-public/                   Static assets copied to dist/
-public/og/                Social preview assets
-public/icons/             PWA icons
-public/splash/            iOS splash screens
-dist/                     Production bundle
-.github/workflows/        GitHub Pages deployment workflow
-tools/build.mjs           Production builder
+Edituno/
+├── src/
+│   ├── app.ts
+│   ├── styles.css
+│   └── index.template.html
+│
+├── public/
+│   ├── icons/
+│   ├── splash/
+│   ├── og/
+│   ├── vendor/
+│   └── sw.js
+│
+├── THIRD_PARTY_LICENSES/
+├── dist/
+├── tools/
+│   └── build.mjs
+│
+├── .github/
+│   └── workflows/
+│       └── deploy-pages.yml
+│
+├── LICENSE.md
+├── LICENSE_SCOPE.md
+├── THIRD_PARTY_NOTICES.md
+├── OPEN_SOURCE_STACK.md
+└── RELEASE_NOTES.md
 ```
 
-## Social preview asset
+---
 
-The social thumbnail used by Open Graph and Twitter is stored here:
+## Build and deployment
 
-- Repo path: `public/og/edituno-share.png`
-- Current production URL: `https://donacgreece.github.io/Edituno/og/edituno-share.png`
-- Planned domain URL: `https://edituno.com/og/edituno-share.png`
+The repository includes a GitHub Actions workflow that:
 
-## Deployment notes
+1. installs pinned dependencies
+2. verifies editing engine versions
+3. resolves the active GitHub Pages/custom domain
+4. prepares vendor assets
+5. builds the production bundle
+6. validates SEO, PWA and licensing files
+7. deploys `dist/` to GitHub Pages
 
-The repository ships with a GitHub Pages workflow. The release package also includes a PowerShell deployment helper for the existing one-command workflow.
+The production domain is resolved dynamically, so canonical URLs, Open Graph metadata, `robots.txt`, `sitemap.xml` and `llms.txt` can follow the active Pages domain without hardcoding it into the source.
 
-## Release
+---
 
-Current packaged release: **v2.5.1**
+## Discoverability
 
-## License
+Edituno includes a complete metadata layer for search engines, social sharing and AI-readable project discovery:
 
-Edituno's original first-party code and documentation are source-available under the **PolyForm Noncommercial License 1.0.0**.
+- Canonical URL
+- Open Graph metadata
+- Twitter cards
+- `SoftwareApplication` structured data
+- `robots.txt`
+- `sitemap.xml`
+- `llms.txt`
+- Dedicated 1200×630 social preview image
 
-- SPDX identifier: `PolyForm-Noncommercial-1.0.0`
-- Official terms: https://polyformproject.org/licenses/noncommercial/1.0.0
-- Commercial use requires separate written permission or a commercial license from the Edituno copyright holder.
-- Third-party libraries, icon geometry and artwork are not relicensed by Edituno and remain under their original upstream licenses.
+---
 
-See `LICENSE.md`, `LICENSE_SCOPE.md`, `NOTICE` and `THIRD_PARTY_NOTICES.md` for the complete project licensing scope.
+## Roadmap
 
-## Third-party and legal notes
+Edituno is being developed as a serious browser-native editing environment.
+
+Areas of active development include:
+
+- Export reliability across more browser/device combinations
+- Better audio editing
+- More GPU effects
+- More transitions
+- Richer text animation
+- More advanced smart editing
+- Better project recovery
+- Performance improvements for longer projects
+- Wider codec and container support
+- Further mobile editing improvements
+
+---
+
+## Open-source components
+
+Edituno uses several third-party open-source projects.
+
+Notable components include:
+
+- PixiJS
+- PixiJS Filters
+- gl-transitions
+- Smartcrop.js
+- Meyda
+- Konva
+- Microsoft Fluent Emoji
+- Lucide-derived icon geometry
+
+Each third-party component keeps its original upstream license.
 
 See:
 
-- `LICENSE.md`
-- `LICENSE_SCOPE.md`
-- `NOTICE`
-- `OPEN_SOURCE_STACK.md`
-- `THIRD_PARTY_NOTICES.md`
-- `RELEASE_NOTES.md`
+- [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md)
+- [`THIRD_PARTY_LICENSES/`](./THIRD_PARTY_LICENSES/)
+- [`OPEN_SOURCE_STACK.md`](./OPEN_SOURCE_STACK.md)
+- [`LICENSE_SCOPE.md`](./LICENSE_SCOPE.md)
 
-## Automatic domain awareness
+---
 
-Edituno does not hardcode the production hostname anymore. The GitHub Pages workflow resolves the active Pages custom domain before every build and injects that URL into the canonical tag, Open Graph metadata, Twitter card image, structured data, `robots.txt`, `sitemap.xml` and `llms.txt`.
+## License
 
-Until a custom domain is configured, the build uses `https://donacgreece.github.io/Edituno/`. After `edituno.com` is configured as the GitHub Pages custom domain, scheduled deployment checks automatically detect it and rebuild the discovery metadata without any source-code change.
+Edituno's **original first-party source code and documentation** are licensed under:
 
-The social preview image is stored at `public/og/edituno-share.png`, while its public absolute URL is generated at build time from the active domain.
+**PolyForm Noncommercial License 1.0.0**
 
-## Install, About and Support
+```text
+SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+```
 
-Edituno includes a smart PWA installation flow that detects iPhone/iPad, Android, Windows, Mac and other desktop environments. Supported browsers use the native installation prompt. iOS users receive visual Add to Home Screen steps. Once installation is confirmed, Edituno remembers the installed state and stops presenting the install offer in that browser.
+This means the Edituno first-party code is source-available for permitted noncommercial use under the PolyForm terms.
 
-The in-app About page explains the local-first model and includes optional project support through PayPal:
+Third-party libraries and assets are **not relicensed by Edituno** and continue to use their own upstream licenses.
 
-- https://www.paypal.com/paypalme/DimitrisGalatsanos
+Commercial use of Edituno first-party material requires separate permission or a commercial license from the copyright holder.
 
+See:
 
-## Installation experience
+- [`LICENSE.md`](./LICENSE.md)
+- [`LICENSE_SCOPE.md`](./LICENSE_SCOPE.md)
+- [`NOTICE`](./NOTICE)
+- [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md)
 
-- Android and Windows use the native PWA install prompt when the browser exposes it.
-- Apple devices show the platform-specific manual steps when a direct browser install prompt is not available.
-- Installed status is shown only inside the Installation entry instead of occupying separate home or About UI.
-- The desktop home rail and Support menu entries open the internal Edituno Support page. PayPal opens only from the dedicated support CTA inside that page.
-- The About page remains fully scrollable on mobile so all product and support information is accessible.
+---
 
+## Support the project
 
-## Editor startup stability
+Edituno is independently developed.
 
-v2.2.10 restores the `selectedTransformTarget()` helper used by the preview interaction layer. This fixes the runtime crash that could replace the editor with the startup error screen on desktop and mobile. The production build now explicitly validates that this helper is present before deployment.
+If you find the project useful and want to support its development:
 
+[![Support Edituno](https://img.shields.io/badge/Support_Edituno-PayPal-0070BA?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/DimitrisGalatsanos)
 
-## GPU Effects and Shader Transitions
+---
 
-Edituno v2.3.0 adds a real GPU Effects layer powered by MIT-licensed PixiJS 8.20.1 and PixiJS Filters 6.1.5. Bloom, Glitch, CRT, Old Film, RGB Split, Pixelate, Bulge and Dream Blur are applied to both preview and export, with a Canvas fallback for environments where GPU rendering is unavailable.
+## Links
 
-The Transitions panel also includes six explicitly MIT-licensed shaders from gl-transitions: Cross Zoom, Swirl, Mosaic, Circle Crop, Directional and Dreamy. These run as true two-frame WebGL transitions and gracefully fall back to a dissolve if WebGL is unavailable. See `THIRD_PARTY_NOTICES.md` and `THIRD_PARTY_LICENSES/`.
+**Live app**  
+https://donacgreece.github.io/Edituno/
 
+**GitHub**  
+https://github.com/Donacgreece/Edituno
 
-### Smart editing tools in v2.4.0
+**Planned domain**  
+https://edituno.com/
 
-Phase 2 adds local, non-cloud smart editing:
+---
 
-- Auto Reframe powered by Smartcrop.js 2.0.5. Image clips use content-aware framing and video clips use a three-frame stability pass before Edituno maps the result to its own scale and offset model.
-- Smart Audio powered by Meyda 5.6.3. Edituno extracts local audio features, detects silence regions and beat peaks, estimates BPM, renders timeline guides and can split V1 clips to the detected rhythm.
-- All analysis happens on the user's device. Media is not uploaded for these features.
+<div align="center">
 
+### Edit locally. Keep your media local. Export when you're ready.
 
-### Direct canvas editing in v2.5.0
+**Edituno**
 
-Phase 3 adds a Konva-powered manipulation layer without replacing Edituno's renderer:
-
-- Click text, overlays and stickers directly inside the preview to select them.
-- Drag selected objects directly on the canvas.
-- Resize from four corner handles with locked proportions.
-- Rotate with a dedicated rotation handle and 0/90/180/270 degree snapping.
-- Snap to center and rule-of-thirds guides while dragging.
-- Text now supports persistent scale and rotation in preview and export.
-- Existing Inspector controls remain available as a precise fallback.
-- The Konva interaction layer hides during playback and does not alter exported pixels by itself.
-
-Konva is pinned to 10.5.0 and remains MIT-licensed. See `THIRD_PARTY_NOTICES.md`.
-
-### Export Engine v2.5.1
-
-Local export now keeps video decode, canvas capture and audio muxing on the same realtime export clock. Stalled media is detected and resynchronized, manual canvas frame capture is used where supported, and recording finalization finishes before Web Audio is closed.
+</div>
