@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.7**
+Current packaged release: **v2.2.8**
 
 ## Third-party and legal notes
 
@@ -108,3 +108,13 @@ Edituno includes a smart PWA installation flow that detects iPhone/iPad, Android
 The in-app About page explains the local-first model and includes optional project support through PayPal:
 
 - https://www.paypal.com/paypalme/DimitrisGalatsanos
+
+
+## Installation experience
+
+- Android and Windows use the native PWA install prompt when the browser exposes it.
+- Apple devices show the platform-specific manual steps when a direct browser install prompt is not available.
+- Installed status is shown only inside the Installation entry instead of occupying separate home or About UI.
+- The desktop home rail uses a direct Support link to the optional PayPal page.
+- The About page remains fully scrollable on mobile so all product and support information is accessible.
+- The About page exposes one clear PayPal support action in the dedicated Support section, avoiding duplicate donation buttons.

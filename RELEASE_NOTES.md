@@ -1,5 +1,15 @@
 # Release Notes
 
+## v2.2.8
+
+- Desktop home rail now shows Support instead of Installation.
+- Installed state no longer occupies a separate About or home rail card.
+- Android and Windows use a direct native install action when available, without instructional steps.
+- Manual installation steps are reserved for Apple flows that require them.
+- About is fully scrollable on mobile so all information remains accessible.
+- About page now keeps a single PayPal support CTA in the dedicated Support section.
+
+
 ## v2.2.7
 
 About, Support and Smart Install release.
