@@ -68,3 +68,12 @@ Edituno maps Konva transforms back into its own project properties. Text, overla
 - mp4-muxer 5.2.2, MIT: MP4 container muxing for timestamped AVC/H.264 and AAC WebCodecs output.
 
 Edituno supplies the deterministic frame clock, exact source seeking, Canvas/WebGL composition, OfflineAudioContext mix, audio/video timestamps and browser capability fallback.
+
+
+## Apple mobile export engine (v2.7.0)
+
+- Mediabunny 1.56.2, MPL-2.0: MP4 output and browser media abstraction.
+- @mediabunny/aac-encoder 1.56.2, MPL-2.0: reliable AAC-LC encoding using a size-optimized FFmpeg/WASM encoder.
+- FFmpeg AAC encoder component: upstream license terms preserved separately.
+
+On iPhone and iPad, Edituno intentionally registers the custom AAC encoder even when Safari reports native AAC encoding support. This avoids known WebKit AAC encoder metadata/silent-track failures.

@@ -51,3 +51,8 @@ Konva 10.5.0 is a third-party MIT-licensed component and is not relicensed under
 ## Safari MP4 audio demux fallback
 
 `mp4box` 2.4.1 is a third-party BSD-3-Clause component used only to parse ISO-BMFF/QuickTime containers and expose embedded AAC packets when native Web Audio decoding is unavailable or fails. MP4Box.js is not relicensed under PolyForm. Edituno's audio timeline model, PCM assembly, WebCodecs decoding, AAC metadata normalization, synchronization and export workflow remain first-party material under `PolyForm-Noncommercial-1.0.0`.
+
+
+## Apple mobile production export engine
+
+Mediabunny 1.56.2 and `@mediabunny/aac-encoder` 1.56.2 are third-party MPL-2.0 components used by the Apple mobile export path. The AAC encoder extension includes an FFmpeg AAC encoder build whose upstream licensing remains separate. None of these components are relicensed under PolyForm. Edituno's timeline model, deterministic frame compositor, project audio mix, export selection logic, UI and integration code remain first-party Edituno material under `PolyForm-Noncommercial-1.0.0`.

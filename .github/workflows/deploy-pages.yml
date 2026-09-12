@@ -47,6 +47,8 @@ jobs:
             ['konva', '10.5.0', 'node_modules/konva/konva.min.js'],
             ['mp4-muxer', '5.2.2', 'node_modules/mp4-muxer/build/mp4-muxer.js'],
             ['mp4box', '2.4.1', 'node_modules/mp4box/dist/mp4box.all.mjs'],
+            ['mediabunny', '1.56.2', 'node_modules/mediabunny/dist/bundles/mediabunny.min.cjs'],
+            ['@mediabunny/aac-encoder', '1.56.2', 'node_modules/@mediabunny/aac-encoder/dist/bundles/mediabunny-aac-encoder.min.js'],
           ];
           for (const [name, expected, file] of checks) {
             const meta = JSON.parse(fs.readFileSync(`node_modules/${name}/package.json`, 'utf8'));
@@ -126,6 +128,8 @@ jobs:
           test -f dist/vendor/konva.min.js
           test -f dist/vendor/mp4-muxer.js
           test -f dist/vendor/mp4box.all.mjs
+          test -f dist/vendor/mediabunny.min.cjs
+          test -f dist/vendor/mediabunny-aac-encoder.min.js
           test -f dist/vendor/gl-transitions/CrossZoom.glsl
           test -f dist/vendor/gl-transitions/Swirl.glsl
           test -f dist/vendor/gl-transitions/AdvancedMosaic.glsl
@@ -140,6 +144,8 @@ jobs:
           test -f dist/THIRD_PARTY_LICENSES/KONVA-MIT.txt
           test -f dist/THIRD_PARTY_LICENSES/MP4-MUXER-MIT.txt
           test -f dist/THIRD_PARTY_LICENSES/MP4BOX-BSD-3-CLAUSE.txt
+          test -f dist/THIRD_PARTY_LICENSES/MEDIABUNNY-MPL-2.0.txt
+          test -f dist/THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt
           test $(wc -c < dist/vendor/pixi.min.js) -gt 500000
           test $(wc -c < dist/vendor/pixi-filters.min.js) -gt 100000
           test -s dist/vendor/smartcrop.js
@@ -147,11 +153,16 @@ jobs:
           test -s dist/vendor/konva.min.js
           test -s dist/vendor/mp4-muxer.js
           test -s dist/vendor/mp4box.all.mjs
+          test -s dist/vendor/mediabunny.min.cjs
+          test -s dist/vendor/mediabunny-aac-encoder.min.js
           grep -Fq 'vendor/smartcrop.js' dist/index.html
           grep -Fq 'vendor/meyda.min.js' dist/index.html
           grep -Fq 'vendor/konva.min.js' dist/index.html
           grep -Fq 'vendor/mp4-muxer.js' dist/index.html
           grep -Fq 'mp4box.all.mjs' dist/index.html
+          grep -Fq 'vendor/mediabunny.min.cjs' dist/index.html
+          grep -Fq 'vendor/mediabunny-aac-encoder.min.js' dist/index.html
+          grep -Fq 'function exportProjectAppleMediabunny(' dist/index.html
           grep -Fq 'function exportProjectWebCodecs(' dist/index.html
           grep -Fq 'function renderOfflineProjectAudio(' dist/index.html
           grep -Fq 'data-konva-direct-manipulation="true"' dist/index.html

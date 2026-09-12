@@ -119,3 +119,15 @@ Edituno uses the pinned mp4-muxer package only to multiplex timestamped WebCodec
 - License copy: `THIRD_PARTY_LICENSES/MP4BOX-BSD-3-CLAUSE.txt`
 
 Edituno uses MP4Box.js only as a local ISO-BMFF/QuickTime demuxer fallback so Safari can expose AAC access units to WebCodecs when Web Audio's `decodeAudioData()` cannot decode the embedded audio track. Edituno's timeline audio mix, synchronization, AAC metadata repair and export orchestration remain first-party Edituno code. MP4Box.js remains under its BSD-3-Clause license.
+
+
+## Mediabunny
+
+- Components: `mediabunny` 1.56.2 and `@mediabunny/aac-encoder` 1.56.2
+- Upstream: https://github.com/Vanilagy/mediabunny
+- License: Mozilla Public License 2.0
+- License copy: `THIRD_PARTY_LICENSES/MEDIABUNNY-MPL-2.0.txt`
+
+Edituno uses Mediabunny on Apple mobile devices for deterministic MP4 writing and uses its AAC encoder extension to bypass Safari/WebKit's native AAC AudioEncoder path. Edituno does not modify Mediabunny source files. The Mediabunny components remain MPL-2.0 licensed and are not relicensed under Edituno's PolyForm license.
+
+The `@mediabunny/aac-encoder` extension contains a size-optimized WebAssembly build of FFmpeg's AAC encoder. FFmpeg licensing information is preserved separately in `THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt`. Upstream FFmpeg source is available from https://ffmpeg.org/ and the exact Mediabunny build instructions are documented by the upstream AAC encoder package.

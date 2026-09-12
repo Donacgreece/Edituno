@@ -1,5 +1,17 @@
 # Release Notes
 
+## v2.7.0
+
+Apple mobile export engine replacement.
+
+- Replaced Safari's native AAC AudioEncoder path on iPhone/iPad with `@mediabunny/aac-encoder` 1.56.2, which uses FFmpeg's AAC-LC encoder compiled to WebAssembly.
+- Apple mobile exports are muxed with actively maintained Mediabunny 1.56.2 instead of relying on the deprecated mp4-muxer path.
+- The Edituno renderer remains deterministic: every output frame is rendered at an explicit project timestamp.
+- Audio is rendered once as a 48 kHz stereo timeline mix, then encoded by the WASM AAC encoder independently of Safari's native AAC implementation.
+- Apple mobile projects with expected audio will no longer silently fall back to the known-bad Safari MediaRecorder/native AAC path if the new engine fails.
+- Desktop export keeps the existing v2.6 deterministic WebCodecs path to avoid changing a workflow that is already producing audio.
+- Existing GPU effects, Smart Tools, Konva manipulation, light mode, autosave and licensing remain intact.
+
 ## v2.6.3
 
 iPhone original-audio passthrough export.

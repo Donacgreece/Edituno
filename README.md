@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.6.3**
+**Current release: v2.7.0**
 
 </div>
 
@@ -556,3 +556,7 @@ Edituno includes a dedicated Safari/iPhone audio compatibility path. If native W
 ### iPhone source-audio passthrough
 
 For compatible Apple mobile projects where the original clip audio has not been modified, Edituno avoids Safari AAC re-encoding entirely. The original AAC access units are extracted from the local MP4/QuickTime source and remuxed into the rendered MP4 at timeline-correct timestamps. This preserves source audio quality and avoids Safari encoder-specific silent-audio failures.
+
+### Apple mobile WASM AAC export
+
+On iPhone and iPad, Edituno does not rely on Safari's native AAC encoder for final audio. The deterministic project audio mix is encoded with the Mediabunny AAC extension, which uses a dedicated FFmpeg/WASM AAC-LC encoder, and is written into the final MP4 by Mediabunny. This keeps audio generation independent from Safari's known native AAC encoder issues while preserving the same Edituno timeline and frame renderer.

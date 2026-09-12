@@ -149,6 +149,12 @@ if (!js.includes('function decodeMp4AudioWithWebCodecs(') || !js.includes('funct
 if (!js.includes('function prepareSourceAacPassthrough(') || !js.includes('function muxSourceAacPassthrough(') || !js.includes('addAudioChunkRaw')) {
   throw new Error('iPhone source AAC passthrough export path is missing')
 }
+if (!js.includes('function exportProjectAppleMediabunny(') || !js.includes('MediabunnyAacEncoder') || !js.includes("A.registerAacEncoder()")) {
+  throw new Error('Apple WASM AAC export engine is missing')
+}
+if (!template.includes('vendor/mediabunny.min.cjs') || !template.includes('vendor/mediabunny-aac-encoder.min.js')) {
+  throw new Error('Mediabunny browser runtimes are missing from the document')
+}
 if (!js.includes('function validateExportAudioEnergy(') || !js.includes("throw new Error('export-silent-audio')")) {
   throw new Error('Audible export validation is missing')
 }
@@ -237,6 +243,18 @@ const mp4boxCandidates = [
   path.join(root,'public','vendor','mp4box.all.mjs')
 ]
 copyVendor(mp4boxCandidates,path.join(vendorDir,'mp4box.all.mjs'),'mp4box 2.4.1',1)
+const mediabunnyCandidates = [
+  path.join(root,'node_modules','mediabunny','dist','bundles','mediabunny.min.cjs'),
+  path.join(root,'node_modules','mediabunny','dist','bundles','mediabunny.cjs'),
+  path.join(root,'public','vendor','mediabunny.min.cjs')
+]
+const mediabunnyAacCandidates = [
+  path.join(root,'node_modules','@mediabunny','aac-encoder','dist','bundles','mediabunny-aac-encoder.min.js'),
+  path.join(root,'node_modules','@mediabunny','aac-encoder','dist','bundles','mediabunny-aac-encoder.js'),
+  path.join(root,'public','vendor','mediabunny-aac-encoder.min.js')
+]
+copyVendor(mediabunnyCandidates,path.join(vendorDir,'mediabunny.min.cjs'),'Mediabunny 1.56.2',1)
+copyVendor(mediabunnyAacCandidates,path.join(vendorDir,'mediabunny-aac-encoder.min.js'),'Mediabunny AAC encoder 1.56.2',1)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -262,4 +280,7 @@ if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4-MUXER-MIT.txt'))) throw new Error('mp4-muxer MIT license copy missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## MP4Box.js')) throw new Error('MP4Box.js third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.txt'))) throw new Error('MP4Box.js BSD-3-Clause license copy missing')
-console.log(`Built Edituno v2.6.3 -> ${dist}`)
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Mediabunny')) throw new Error('Mediabunny third-party notice missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MEDIABUNNY-MPL-2.0.txt'))) throw new Error('Mediabunny MPL-2.0 license copy missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'FFMPEG-LGPL-2.1.txt'))) throw new Error('FFmpeg LGPL-2.1 license copy missing')
+console.log(`Built Edituno v2.7.0 -> ${dist}`)

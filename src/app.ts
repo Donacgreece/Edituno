@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.6.3 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.7.0 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1554,7 +1554,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.6.3</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.7.0</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1562,7 +1562,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.6.3</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.7.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1599,7 +1599,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.6.3</div>
+      <div class="home-rail-version">v2.7.0</div>
     </aside>
 
     <div class="home-surface">
@@ -2655,7 +2655,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.6.3'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.7.0'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -2911,6 +2911,98 @@ async function encodeOfflineAudio(buffer,encoder,onProgress,signal){
   }
   await encoder.flush();onProgress?.(1);return chunks
 }
+
+function mediabunnyRuntime(){
+  return (window).Mediabunny||null
+}
+function mediabunnyAacRuntime(){
+  return (window).MediabunnyAacEncoder||null
+}
+function mediabunnyAppleExportAvailable(){
+  const M=mediabunnyRuntime(),A=mediabunnyAacRuntime()
+  return Boolean(M?.Output&&M?.Mp4OutputFormat&&M?.BufferTarget&&M?.CanvasSource&&M?.AudioBufferSource&&M?.Quality&&A?.registerAacEncoder)
+}
+async function exportProjectAppleMediabunny(quality,fps,onProgress,signal){
+  const project=state.project
+  if(!project)throw new Error('empty')
+  const M=mediabunnyRuntime(),A=mediabunnyAacRuntime()
+  if(!mediabunnyAppleExportAvailable())throw new Error('mediabunny-unavailable')
+
+  // Critical: registering the extension intentionally overrides Safari's native AAC encoder.
+  // The extension uses FFmpeg's AAC-LC encoder compiled to WASM.
+  A.registerAacEncoder()
+
+  const audioMix=await renderOfflineProjectAudio(project,48000)
+  if(audioMix.expectedAudio&&!audioMix.hasAudio)throw new Error('offline-audio-decode')
+  if(audioMix.buffer&&audioBufferRms(audioMix.buffer)<=0.000015)throw new Error('export-silent-audio')
+
+  const [w,h]=exportDimensions(project.ratio,quality),duration=Math.max(.05,projectDuration(project))
+  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h
+  const ctx=canvas.getContext('2d',{alpha:false,desynchronized:false})
+  const output=new M.Output({
+    format:new M.Mp4OutputFormat({fastStart:'in-memory'}),
+    target:new M.BufferTarget()
+  })
+  const videoSource=new M.CanvasSource(canvas,{
+    codec:'avc',
+    quality:new M.Quality({bitrate:exportBitrate(quality,fps)})
+  })
+  output.addVideoTrack(videoSource,{frameRate:fps})
+
+  let audioSource=null
+  if(audioMix.hasAudio&&audioMix.buffer){
+    audioSource=new M.AudioBufferSource({
+      codec:'aac',
+      fullCodecString:'mp4a.40.2',
+      quality:new M.Quality({bitrate:192000}),
+      transform:{numberOfChannels:2,sampleRate:48000}
+    })
+    output.addAudioTrack(audioSource)
+  }
+
+  const sources=new Map(),frameCount=Math.max(1,Math.ceil(duration*fps)),frameDuration=1/Math.max(1,fps)
+  try{
+    await output.start()
+
+    for(let index=0;index<frameCount;index++){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      const time=Math.min(duration,index/fps),actualDuration=Math.max(.000001,Math.min(frameDuration,duration-time))
+      ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h)
+      await drawDeterministicPrimary(ctx,project,time,w,h,sources,signal)
+      await drawDeterministicOverlays(ctx,project,time,w,h,sources,signal)
+      drawElements(ctx,project,time,w,h);drawTexts(ctx,project,time,w,h)
+      await videoSource.add(time,actualDuration,{keyFrame:index===0||index%Math.max(1,Math.round(fps*2))===0})
+      onProgress(Math.min(.80,(index+1)/frameCount*.80))
+    }
+
+    if(audioSource&&audioMix.buffer){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      onProgress(.82)
+      await audioSource.add(audioMix.buffer)
+      onProgress(.96)
+    }
+
+    await output.finalize()
+    onProgress(.98)
+
+    const buffer=output.target.buffer
+    if(!buffer||buffer.byteLength<4096)throw new Error('mediabunny-empty')
+    const blob=new Blob([buffer],{type:'video/mp4'})
+    await validateExportBlob(blob,audioMix.expectedAudio)
+
+    // On iPhone do not accept a file if we can positively decode it and confirm silence.
+    if(audioMix.expectedAudio){
+      const audible=await validateExportAudioEnergy(blob,true)
+      if(audible===false)throw new Error('export-silent-audio')
+    }
+
+    onProgress(1)
+    return {blob,extension:'mp4',mime:'video/mp4'}
+  }finally{
+    destroyDeterministicSources(sources)
+  }
+}
+
 async function exportProjectWebCodecs(quality,fps,onProgress,signal){
   const project=state.project
   if(!project)throw new Error('empty')
@@ -2983,6 +3075,19 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
   }
 }
 async function exportProjectLocal(quality,fps,onProgress,signal,prewarmedAudioContext=null){
+  const appleAudioProject=isAppleMobileRuntime()&&projectExpectsAudio(state.project)
+  if(appleAudioProject){
+    try{
+      return await exportProjectAppleMediabunny(quality,fps,onProgress,signal)
+    }catch(error){
+      if(error?.name==='AbortError')throw error
+      console.error('Apple Mediabunny/WASM AAC export failed.',error)
+      // Do not fall back to Safari AudioEncoder/MediaRecorder for audible projects.
+      // Those paths have produced valid-looking but silent MP4 files on iPhone.
+      throw error
+    }
+  }
+
   if(webCodecsExportAvailable()){
     try{return await exportProjectWebCodecs(quality,fps,onProgress,signal)}
     catch(error){
@@ -3171,7 +3276,7 @@ async function beginExport() {
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){
-    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'
     status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
     toast(missingAudio?(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.'):tr('exportFailed'),'error')
     console.error(e)
@@ -3388,7 +3493,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.6.3',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.7.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
