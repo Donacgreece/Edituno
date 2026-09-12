@@ -146,17 +146,24 @@ function copyDir(from, to) {
 copyDir(path.join(root, 'public'), dist)
 const vendorDir = path.join(dist, 'vendor')
 fs.mkdirSync(vendorDir, { recursive: true })
-const pixiCandidates = [path.join(root,'node_modules','pixi.js','dist','pixi.min.js')]
-const filtersCandidates = [path.join(root,'node_modules','pixi-filters','dist','browser','pixi-filters.min.js'),path.join(root,'node_modules','pixi-filters','dist','pixi-filters.min.js')]
-function copyVendor(candidates,target,label) {
-  const source=candidates.find(file=>fs.existsSync(file))
+const pixiCandidates = [
+  path.join(root,'node_modules','pixi.js','dist','pixi.min.js'),
+  path.join(root,'public','vendor','pixi.min.js')
+]
+const filtersCandidates = [
+  path.join(root,'node_modules','pixi-filters','dist','browser','pixi-filters.min.js'),
+  path.join(root,'node_modules','pixi-filters','dist','pixi-filters.min.js'),
+  path.join(root,'public','vendor','pixi-filters.min.js')
+]
+function copyVendor(candidates,target,label,minBytes) {
+  const source=candidates.find(file=>fs.existsSync(file) && fs.statSync(file).size >= minBytes)
   if(source){fs.copyFileSync(source,target);return source}
-  if(process.env.CI)throw new Error(`${label} browser bundle missing from node_modules`)
+  if(process.env.CI)throw new Error(`${label} browser bundle missing or invalid`)
   console.warn(`${label} browser bundle unavailable locally; keeping public/vendor fallback placeholder`)
   return null
 }
-copyVendor(pixiCandidates,path.join(vendorDir,'pixi.min.js'),'PixiJS 8.20.1')
-copyVendor(filtersCandidates,path.join(vendorDir,'pixi-filters.min.js'),'pixi-filters 6.1.5')
+copyVendor(pixiCandidates,path.join(vendorDir,'pixi.min.js'),'PixiJS 8.20.1',500000)
+copyVendor(filtersCandidates,path.join(vendorDir,'pixi-filters.min.js'),'pixi-filters 6.1.5',100000)
 for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
@@ -176,4 +183,4 @@ if (!fs.readFileSync(path.join(dist, 'LICENSE.md'), 'utf8').includes('PolyForm-N
 if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('Third-party material')) throw new Error('Production license scope missing')
 if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notice:')) throw new Error('Production required notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
-console.log(`Built Edituno v2.3.0 -> ${dist}`)
+console.log(`Built Edituno v2.3.1 -> ${dist}`)

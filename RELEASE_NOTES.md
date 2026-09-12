@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.3.1
+
+GPU vendor pipeline hotfix.
+
+- Fixed the GitHub Pages failure caused by the npm `pixi-filters` package not exposing the expected browser bundle path.
+- CI now fetches the official pinned PixiJS 8.20.1 and PixiJS Filters 6.1.5 release browser bundles.
+- Both browser bundles are SHA-256 verified before the production build runs.
+- Phase 1 effects, transitions, export integration and MIT third-party notices remain unchanged.
+
 ## v2.3.0
 
 GPU Effects and Shader Transitions release.

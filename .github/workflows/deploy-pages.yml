@@ -53,6 +53,28 @@ jobs:
           echo "EDITUNO_SITE_URL=$SITE_URL" >> "$GITHUB_ENV"
           echo "Active Edituno site URL: $SITE_URL"
 
+      - name: Fetch pinned GPU browser bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/vendor
+
+          curl -L --fail --retry 4 --retry-all-errors \
+            -o public/vendor/pixi.min.js \
+            "https://github.com/pixijs/pixijs/releases/download/v8.20.1/pixi.min.js"
+
+          echo "9948591083793305468d73915a3ea85032dcf8e32eee7a1328585050d7a14d53  public/vendor/pixi.min.js" | sha256sum -c -
+
+          curl -L --fail --retry 4 --retry-all-errors \
+            -o public/vendor/pixi-filters.min.js \
+            "https://github.com/pixijs/filters/releases/download/v6.1.5/pixi-filters.js"
+
+          echo "f47c352255a82a6da287024987d0b254fa1fdc0e8ddfd7fe4652a9b25a703a2c  public/vendor/pixi-filters.min.js" | sha256sum -c -
+
+          test "$(wc -c < public/vendor/pixi.min.js)" -gt 500000
+          test "$(wc -c < public/vendor/pixi-filters.min.js)" -gt 100000
+          echo "Pinned GPU browser bundles verified."
+
       - name: Build production bundle
         run: npm run build
 
@@ -105,7 +127,7 @@ jobs:
           grep -Fq 'PolyForm-Noncommercial-1.0.0' dist/LICENSE.md
           grep -Fq 'Required Notice:' dist/NOTICE
           grep -Fq 'third-party' dist/LICENSE_SCOPE.md
-          grep -Fq 'edituno-studio-v2.3.0' dist/sw.js
+          grep -Fq 'edituno-studio-v2.3.1' dist/sw.js
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 
