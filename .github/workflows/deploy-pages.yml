@@ -101,8 +101,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          APP_VERSION="$(node -p "require('./package.json').version")"
           SHARE_URL="${EDITUNO_SITE_URL}og/edituno-share.png"
           SITEMAP_URL="${EDITUNO_SITE_URL}sitemap.xml"
+          echo "Verifying Edituno v${APP_VERSION} production bundle"
           test -f dist/index.html
           test -f dist/sw.js
           test -f dist/manifest.webmanifest
@@ -165,7 +167,8 @@ jobs:
           grep -Fq 'PolyForm-Noncommercial-1.0.0' dist/LICENSE.md
           grep -Fq 'Required Notice:' dist/NOTICE
           grep -Fq 'third-party' dist/LICENSE_SCOPE.md
-          grep -Fq 'edituno-studio-v2.5.0' dist/sw.js
+          grep -Fq "edituno-studio-v${APP_VERSION}" dist/sw.js
+          grep -Fq "app=${APP_VERSION}" dist/manifest.webmanifest
           if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
           if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 

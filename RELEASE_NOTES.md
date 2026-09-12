@@ -2,6 +2,13 @@
 
 ## v2.5.1
 
+### Deployment verification hotfix
+
+- Fixed the GitHub Pages verification step that was still hard-coded to the old `edituno-studio-v2.5.0` cache name after the v2.5.1 export-engine release.
+- Deployment verification now reads the version directly from `package.json`, so future version bumps cannot fail for this same reason.
+- The manifest version is now verified dynamically as well.
+- No application feature or export code changed in this hotfix.
+
 Export Engine reliability hotfix.
 
 - Reworked local export so video frames no longer depend blindly on a detached hidden video playback clock.
