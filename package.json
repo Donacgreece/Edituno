@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "private": true,
   "description": "Premium mobile-first local video editor PWA",
   "scripts": {
@@ -9,6 +9,6 @@
     "serve": "python -m http.server 4173 -d dist"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "typescript": "5.7.2"
   }
 }

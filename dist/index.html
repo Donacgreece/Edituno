@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="Edituno" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.webmanifest?v=2.2.1" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.2.1" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.2.1" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.2.1" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.2.1" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.2.1" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.2.1" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.2.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.2.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.2.3" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.2.3" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.2.3" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.2.3" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.2.3" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.2.3" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.2.3" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.2.3" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.2.3" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno Studio · Video editor</title>
   <style>
 
@@ -290,6 +290,30 @@ img{display:block;max-width:100%}
 @media(min-width:980px) and (max-width:1320px){.editor-workspace{grid-template-columns:272px minmax(0,1fr) 312px}.desktop-tool-menu{grid-template-columns:repeat(3,minmax(0,1fr))}.desktop-sidebar-shell .action-row,.desktop-sidebar-shell .audio-actions,.desktop-inspector-scroll .action-row,.desktop-inspector-scroll .audio-actions{grid-template-columns:1fr}}
 @media(min-width:1600px){.editor-workspace{grid-template-columns:320px minmax(0,1fr) 360px}}
 
+/* v2.2.3 symmetry, inspector ownership and settings polish */
+@media(min-width:980px){
+  .desktop-tool-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:10px;overflow:visible}
+  .desktop-tool-menu button{min-width:0;width:100%;height:64px;padding:7px 4px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,#11151d,#0d1016);gap:5px}
+  .desktop-tool-menu button span{height:23px}
+  .desktop-tool-menu button small{max-width:100%;font-size:9px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .desktop-tool-menu button:hover{background:linear-gradient(180deg,#171c26,#11151d);border-color:var(--line-strong)}
+  .desktop-tool-menu button.active{background:linear-gradient(180deg,#1b2440,#151c30);border-color:#4f68bb;color:#9cb0ff;box-shadow:inset 0 0 0 1px rgba(126,153,255,.14),0 8px 20px rgba(0,0,0,.15)}
+  .desktop-inspector-launcher{padding:12px}
+  .inspector-launch-card{width:100%;min-height:160px;padding:18px 15px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(155deg,#141922,#0d1016);color:#eef1f6;display:grid;grid-template-rows:auto auto auto auto;justify-items:start;align-content:center;gap:9px;text-align:left}
+  .inspector-launch-card>span{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#9cb0ff;background:#1a2236;border:1px solid rgba(126,153,255,.16)}
+  .inspector-launch-card strong{font-size:13px;font-weight:620}.inspector-launch-card small{font-size:10px;line-height:1.45;color:#8f97a6}.inspector-launch-card i{margin-top:4px;display:flex;align-items:center;gap:5px;color:#90a6ff;font-size:9px;font-style:normal}
+  .inspector-anchor{display:block;min-width:0;scroll-margin-top:12px}.inspector-anchor + .inspector-anchor{border-top:1px solid rgba(255,255,255,.045)}.inspector-anchor>.panel-grid{width:100%}
+}
+.adjust-mobile{display:grid;gap:12px;padding:12px}.adjust-grid,.motion-grid,.transition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.adjust-tile{min-width:0;min-height:78px;padding:9px 5px 8px;border-radius:13px;border:1px solid var(--line);background:linear-gradient(180deg,#12161e,#0d1016);color:#aeb5c1;display:grid;grid-template-rows:24px minmax(12px,auto) 11px;place-items:center;gap:5px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
+.adjust-tile span{width:26px;height:24px;display:grid;place-items:center;color:#aab2bf}.adjust-tile strong{width:100%;font-size:9px;line-height:1.15;font-weight:580;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.adjust-tile small{font-size:8px;line-height:1;color:#69717f}
+.adjust-tile:hover{background:linear-gradient(180deg,#171c26,#11151c);border-color:var(--line-strong);color:#eef1f6}.adjust-tile.active{background:linear-gradient(180deg,#1b2440,#151c30);border-color:#536fc5;color:white;box-shadow:inset 0 0 0 1px rgba(126,153,255,.14),0 8px 20px rgba(0,0,0,.16)}.adjust-tile.active span{color:#9cb0ff}.adjust-tile.active small{color:#87a0ff}
+.adjust-focus{padding:12px;border-radius:14px;border:1px solid var(--line);background:#101319;display:grid;gap:10px}.adjust-focus-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.adjust-focus-head strong{font-size:12px;font-weight:610}.adjust-focus-head button{min-height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:#171b24;color:#a9b0bc;font-size:9px}
+.motion-card{min-height:76px;padding:9px 5px;border-radius:13px;background:linear-gradient(180deg,#12161e,#0d1016)}.motion-card strong{max-width:100%;font-size:9px;line-height:1.15;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.motion-card.active{background:linear-gradient(180deg,#1b2440,#151c30);border-color:#536fc5;box-shadow:inset 0 0 0 1px rgba(126,153,255,.14)}.transition-card{min-width:0;width:100%}
+@media(min-width:700px){.settings-panel{width:min(720px,calc(100vw - 42px));max-height:min(800px,calc(100dvh - 40px));background:#11151c;border-radius:24px}.settings-header{height:76px;padding:0 22px 0 24px;background:linear-gradient(180deg,rgba(255,255,255,.018),transparent)}.settings-scroll{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px}.settings-card{padding:14px;border-radius:17px;background:linear-gradient(180deg,#11151c,#0e1117);box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}.settings-card:nth-child(5),.settings-danger{grid-column:1/-1}.settings-card-title{padding-bottom:12px}.settings-card-title>span{width:38px;height:38px;border-radius:12px;background:#1a1f2a;color:#b7c2e8}.language-segment{padding:5px;border:1px solid rgba(255,255,255,.04)}.setting-row,.settings-link{min-height:58px}.settings-split{gap:10px}}
+@media(max-width:699px){.settings-scroll{grid-template-columns:1fr}}
+
+
   </style>
 </head>
 <body>
@@ -338,7 +362,7 @@ img{display:block;max-width:100%}
 
       try {
 // @ts-nocheck
-/* Edituno v2.2.1 Stability production source. TypeScript is the canonical source; dist is prebuilt for GitHub Pages. */
+/* Edituno v2.2.3 UI symmetry production source. TypeScript is canonical; dist is prebuilt for GitHub Pages. */
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const clamp = (n, min, max) => Math.min(max, Math.max(min, Number(n)));
@@ -421,7 +445,7 @@ const STRINGS = {
         timeline: 'Timeline', share: 'Share', download: 'Save file', cancel: 'Cancel', back: 'Back', project: 'Project', local: 'Local editor',
         autoSave: 'Autosaved', add: 'Add', noAudio: 'Import an audio file to use music.', noMedia: 'No imported media yet.', rename: 'Rename', projectOptions: 'Project options', renameProject: 'Rename project', saveChanges: 'Save', confirmDelete: 'Delete project', keepProject: 'Keep project', deleteProjectBody: 'This removes the project and its local media from this device.', clearAllTitle: 'Delete all projects?', clearAllBody: 'This permanently removes every local Edituno project and its media from this device.', duplicatedProject: 'Project duplicated', fitAudio: 'Fit to video', movePlayhead: 'Move to playhead', alignClip: 'Align to clip', dragTimeline: 'Drag to timeline', invert: 'Invert', spin: 'Spin', bounce: 'Bounce', swing: 'Swing', driftUp: 'Drift up', driftDown: 'Drift down', slideUp: 'Slide up', slideDown: 'Slide down', dipBlack: 'Dip to black', dipWhite: 'Dip to white',
         selectedText: 'Selected text', textStyle: 'Text style', position: 'Position', apply: 'Apply', installHint: 'Install Edituno',
-        desktopMedia: 'Project media', inspector: 'Properties', adjust: 'Adjust', transitions: 'Transitions', projectHub: 'Projects', quickEdit: 'Edit', dissolve: 'Dissolve', slideLeft: 'Slide left', slideRight: 'Slide right', blurTransition: 'Blur', kenBurns: 'Ken Burns', pulse: 'Pulse', float: 'Float', reset: 'Reset', timelineZoom: 'Timeline zoom', transitionDuration: 'Duration', newBlank: 'New blank project', resume: 'Resume editing', editLocally: 'Edit locally. Export anywhere.', chooseProject: 'Choose project', mobileReady: 'Ready to edit', noUploadShort: 'No upload. No watermark.', blurFill: 'Blur fill'
+        desktopMedia: 'Project media', inspector: 'Properties', adjust: 'Adjust', transitions: 'Transitions', projectHub: 'Projects', quickEdit: 'Edit', dissolve: 'Dissolve', slideLeft: 'Slide left', slideRight: 'Slide right', blurTransition: 'Blur', kenBurns: 'Ken Burns', pulse: 'Pulse', float: 'Float', reset: 'Reset', timelineZoom: 'Timeline zoom', transitionDuration: 'Duration', newBlank: 'New blank project', resume: 'Resume editing', editLocally: 'Edit locally. Export anywhere.', chooseProject: 'Choose project', mobileReady: 'Ready to edit', noUploadShort: 'No upload. No watermark.', blurFill: 'Blur fill', breath: 'Breath', pushTransition: 'Push', softZoom: 'Soft zoom', fadeAmount: 'Fade', shadows: 'Shadows'
     },
     el: {
         create: 'Δημιουργία project', import: 'Εισαγωγή media', recent: 'Πρόσφατα projects', noProjects: 'Δεν υπάρχουν projects ακόμα', home: 'Αρχική',
@@ -449,7 +473,7 @@ const STRINGS = {
         timeline: 'Timeline', share: 'Κοινοποίηση', download: 'Αποθήκευση αρχείου', cancel: 'Ακύρωση', back: 'Πίσω', project: 'Project', local: 'Τοπικός editor',
         autoSave: 'Αυτόματη αποθήκευση', add: 'Προσθήκη', noAudio: 'Κάνε import αρχείο ήχου για μουσική.', noMedia: 'Δεν υπάρχουν media ακόμα.', rename: 'Μετονομασία', projectOptions: 'Επιλογές project', renameProject: 'Μετονομασία project', saveChanges: 'Αποθήκευση', confirmDelete: 'Διαγραφή project', keepProject: 'Διατήρηση project', deleteProjectBody: 'Το project και τα τοπικά media του θα διαγραφούν από αυτή τη συσκευή.', clearAllTitle: 'Διαγραφή όλων των projects;', clearAllBody: 'Θα διαγραφούν μόνιμα όλα τα τοπικά projects του Edituno και τα media τους από αυτή τη συσκευή.', duplicatedProject: 'Το project αντιγράφηκε',
         fitAudio: 'Προσαρμογή στο video', movePlayhead: 'Μεταφορά στο playhead', alignClip: 'Στοίχιση με clip', dragTimeline: 'Σύρε στο timeline', invert: 'Αντιστροφή', spin: 'Περιστροφή', bounce: 'Αναπήδηση', swing: 'Αιώρηση', driftUp: 'Κίνηση πάνω', driftDown: 'Κίνηση κάτω', slideUp: 'Slide πάνω', slideDown: 'Slide κάτω', dipBlack: 'Βύθιση σε μαύρο', dipWhite: 'Βύθιση σε λευκό', selectedText: 'Επιλεγμένο κείμενο', textStyle: 'Στυλ κειμένου', position: 'Θέση', apply: 'Εφαρμογή', installHint: 'Εγκατάσταση Edituno',
-        desktopMedia: 'Media project', inspector: 'Ιδιότητες', adjust: 'Ρυθμίσεις', transitions: 'Μεταβάσεις', projectHub: 'Projects', quickEdit: 'Edit', dissolve: 'Dissolve', slideLeft: 'Slide αριστερά', slideRight: 'Slide δεξιά', blurTransition: 'Blur', kenBurns: 'Ken Burns', pulse: 'Pulse', float: 'Float', reset: 'Επαναφορά', timelineZoom: 'Zoom timeline', transitionDuration: 'Διάρκεια', newBlank: 'Νέο κενό project', resume: 'Συνέχεια επεξεργασίας', editLocally: 'Επεξεργασία τοπικά. Export παντού.', chooseProject: 'Επίλεξε project', mobileReady: 'Έτοιμο για επεξεργασία', noUploadShort: 'Χωρίς upload. Χωρίς watermark.', blurFill: 'Blur fill'
+        desktopMedia: 'Media project', inspector: 'Ιδιότητες', adjust: 'Ρυθμίσεις', transitions: 'Μεταβάσεις', projectHub: 'Projects', quickEdit: 'Edit', dissolve: 'Dissolve', slideLeft: 'Slide αριστερά', slideRight: 'Slide δεξιά', blurTransition: 'Blur', kenBurns: 'Ken Burns', pulse: 'Pulse', float: 'Float', reset: 'Επαναφορά', timelineZoom: 'Zoom timeline', transitionDuration: 'Διάρκεια', newBlank: 'Νέο κενό project', resume: 'Συνέχεια επεξεργασίας', editLocally: 'Επεξεργασία τοπικά. Export παντού.', chooseProject: 'Επίλεξε project', mobileReady: 'Έτοιμο για επεξεργασία', noUploadShort: 'Χωρίς upload. Χωρίς watermark.', blurFill: 'Blur fill', breath: 'Αναπνοή', pushTransition: 'Push', softZoom: 'Απαλό zoom', fadeAmount: 'Fade', shadows: 'Σκιές'
     }
 };
 const FLUENT_TREE_API = 'https://api.github.com/repos/microsoft/fluentui-emoji/git/trees/main?recursive=1';
@@ -964,6 +988,9 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
         case 'swing':
             motionRot = Math.sin(p * Math.PI * 4) * .035;
             break;
+        case 'breath':
+            motionScale = 1 + .035 * Math.pow(Math.sin(p * Math.PI), 2);
+            break;
     }
     ctx.translate(motionX, motionY);
     ctx.rotate(((clip.rotation || 0) * Math.PI / 180) + motionRot);
@@ -991,6 +1018,24 @@ function applyClipDrawing(ctx, source, asset, clip, width, height, localProgress
         ctx.globalCompositeOperation = 'soft-light';
         ctx.globalAlpha = Math.min(.28, Math.abs(temperature) / 180);
         ctx.fillStyle = temperature > 0 ? '#ff9a5a' : '#5a8dff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+    }
+    const fadeAmount = clip.fadeAmount ?? 0;
+    if (fadeAmount > 0) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.globalAlpha = Math.min(.34, fadeAmount / 290);
+        ctx.fillStyle = '#cbd3df';
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+    }
+    const shadows = clip.shadows ?? 0;
+    if (shadows !== 0) {
+        ctx.save();
+        ctx.globalCompositeOperation = shadows > 0 ? 'screen' : 'multiply';
+        ctx.globalAlpha = Math.min(.26, Math.abs(shadows) / 380);
+        ctx.fillStyle = shadows > 0 ? '#566170' : '#11141a';
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
     }
@@ -1079,6 +1124,16 @@ function transitionStyle(row, time, w, h) {
         case 'dipwhite':
             out.overlay = '#ffffff';
             out.overlayAlpha = Math.sin((1 - progress) * Math.PI / 2) * .9;
+            break;
+        case 'push':
+            out.tx = (atStart ? 1 : -1) * w * .42 * edge;
+            out.scale = .97 + .03 * progress;
+            out.alpha = .5 + .5 * progress;
+            break;
+        case 'softzoom':
+            out.scale = .9 + .1 * progress;
+            out.blur = 6 * edge;
+            out.alpha = .45 + .55 * progress;
             break;
     }
     return out;
@@ -1525,9 +1580,9 @@ function normalizeProject(p) {
     }
     p.soundtrack = null;
     for (const c of p.clips)
-        Object.assign(c, { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', transition: 'none', transitionDuration: .35, offsetX: 0, offsetY: 0, flipX: false, flipY: false, audioFadeIn: 0, audioFadeOut: 0 }, c);
+        Object.assign(c, { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, motion: 'none', transition: 'none', transitionDuration: .35, offsetX: 0, offsetY: 0, flipX: false, flipY: false, audioFadeIn: 0, audioFadeOut: 0 }, c);
     for (const c of p.overlays)
-        Object.assign(c, { timelineStart: 0, lane: 2, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', offsetX: 0, offsetY: 0, scale: .36, fit: 'contain', opacity: 1, flipX: false, flipY: false, volume: 0 }, c);
+        Object.assign(c, { timelineStart: 0, lane: 2, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, motion: 'none', offsetX: 0, offsetY: 0, scale: .36, fit: 'contain', opacity: 1, flipX: false, flipY: false, volume: 0 }, c);
     return p;
 }
 async function createProject(ratio = '16:9') {
@@ -1699,7 +1754,7 @@ async function importFiles(files, addVisuals = true) {
     renderEditor();
 }
 function defaultClip(asset) {
-    return { id: uid(), assetId: asset.id, start: 0, end: asset.type === 'image' ? Math.max(1, asset.duration || 4) : Math.max(.1, asset.duration || 4), speed: 1, volume: 1, scale: 1, rotation: 0, opacity: 1, fit: 'cover', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', transition: 'none', transitionDuration: .35, audioFadeIn: 0, audioFadeOut: 0 };
+    return { id: uid(), assetId: asset.id, start: 0, end: asset.type === 'image' ? Math.max(1, asset.duration || 4) : Math.max(.1, asset.duration || 4), speed: 1, volume: 1, scale: 1, rotation: 0, opacity: 1, fit: 'cover', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, motion: 'none', transition: 'none', transitionDuration: .35, audioFadeIn: 0, audioFadeOut: 0 };
 }
 function nextOverlayLane(at = state.currentTime) {
     const occupied = lane => (state.project?.overlays || []).some(c => (c.lane || 2) === lane && at < (c.timelineStart || 0) + overlayDuration(c) && at + 0.05 >= (c.timelineStart || 0));
@@ -1707,7 +1762,7 @@ function nextOverlayLane(at = state.currentTime) {
 }
 function defaultOverlayClip(asset, timelineStart = state.currentTime, lane = nextOverlayLane(timelineStart)) {
     const end = asset.type === 'image' ? Math.max(1, asset.duration || 4) : Math.max(.1, asset.duration || 4);
-    return { id: uid(), assetId: asset.id, timelineStart: Math.max(0, timelineStart || 0), lane, start: 0, end, speed: 1, volume: 0, scale: .38, rotation: 0, opacity: 1, fit: 'contain', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, motion: 'none', filterPreset: 'original' };
+    return { id: uid(), assetId: asset.id, timelineStart: Math.max(0, timelineStart || 0), lane, start: 0, end, speed: 1, volume: 0, scale: .38, rotation: 0, opacity: 1, fit: 'contain', offsetX: 0, offsetY: 0, flipX: false, flipY: false, brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, motion: 'none', filterPreset: 'original' };
 }
 function addAssetToOverlay(id, at = state.currentTime, lane) { const asset = getAsset(id); if (!asset || asset.type === 'audio')
     return; mutate(p => { const c = defaultOverlayClip(asset, Math.max(0, at || 0), lane || nextOverlayLane(at)); p.overlays.push(c); state.selected = { type: 'overlay', id: c.id }; state.tool = 'edit'; state.sheet = isMobileViewport() ? 'edit' : null; }); }
@@ -2290,15 +2345,33 @@ function desktopToolTitleFor(tool) { if (tool === 'edit')
     return tr('adjust'); if (tool === 'transitions')
     return tr('transitions'); return tr(tool); }
 function desktopInspector() { return `${state.selected?.type === 'clip' || state.selected?.type === 'overlay' ? clipPanel() : state.selected?.type === 'element' ? elementPanel() : state.selected?.type === 'text' ? textPanel() : state.selected?.type === 'audio' ? audioClipPanel() : canvasPanel()}`; }
+const INSPECTOR_ONLY_TOOLS = new Set(['edit', 'effects', 'adjust', 'transitions']);
+function desktopInspectorToolPanel(tool) {
+    const el = state.language === 'el';
+    const meta = {
+        edit: { icon: 'edit', title: tr('quickEdit'), body: el ? 'Trim και Μετασχηματισμός βρίσκονται στο Inspector δεξιά.' : 'Trim and Transform are in the Inspector on the right.' },
+        effects: { icon: 'effects', title: tr('effects'), body: el ? 'Φίλτρα και Κίνηση βρίσκονται στο Inspector δεξιά.' : 'Filters and Motion are in the Inspector on the right.' },
+        adjust: { icon: 'adjust', title: tr('adjust'), body: el ? 'Οι ρυθμίσεις εικόνας βρίσκονται στο Inspector δεξιά.' : 'Image adjustments are in the Inspector on the right.' },
+        transitions: { icon: 'transition', title: tr('transitions'), body: el ? 'Οι μεταβάσεις του clip βρίσκονται στο Inspector δεξιά.' : 'Clip transitions are in the Inspector on the right.' }
+    }[tool];
+    if (!meta)
+        return '';
+    return `<div class="panel-grid desktop-inspector-launcher"><button class="inspector-launch-card" data-action="inspector-focus" data-target="${tool}"><span>${svgIcon(meta.icon, 22)}</span><strong>${meta.title}</strong><small>${meta.body}</small><i>${el ? 'Μετάβαση στο Inspector' : 'Go to Inspector'} ${svgIcon('right', 14)}</i></button></div>`;
+}
+function focusInspectorSection(tool) {
+    const root = $('.desktop-inspector-scroll'), node = root?.querySelector(`[data-inspector-section="${tool}"]`);
+    if (node)
+        node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 function panelContent(tool) { if (tool === 'media')
     return mediaPanel(); if (tool === 'edit')
-    return editPanel(); if (tool === 'text')
+    return isMobileViewport() ? editPanel() : desktopInspectorToolPanel('edit'); if (tool === 'text')
     return textPanel(true); if (tool === 'elements')
     return elementPanel(); if (tool === 'audio')
     return audioPanel(); if (tool === 'effects')
-    return effectsPanel(); if (tool === 'adjust')
-    return adjustPanel(); if (tool === 'transitions')
-    return transitionPanel(); if (tool === 'canvas')
+    return isMobileViewport() ? effectsPanel() : desktopInspectorToolPanel('effects'); if (tool === 'adjust')
+    return isMobileViewport() ? adjustPanel() : desktopInspectorToolPanel('adjust'); if (tool === 'transitions')
+    return isMobileViewport() ? transitionPanel() : desktopInspectorToolPanel('transitions'); if (tool === 'canvas')
     return canvasPanel(); return ''; }
 function mediaPanel() { const list = state.project.assets || []; return `<div class="panel-grid"><button class="primary-btn full" data-action="pick-media">＋ ${tr('addMedia')}</button>${list.length ? `<div class="media-list">${list.map(a => `<div class="media-row ${a.type}" data-drag-asset="${a.id}" data-drag-type="${a.type}"><div class="media-type">${a.type === 'video' ? svgIcon('video', 18) : a.type === 'image' ? svgIcon('media', 18) : svgIcon('audio', 18)}</div><div class="media-copy"><strong>${escapeHtml(a.name)}</strong><span>${a.type} · ${a.duration ? fmtTime(a.duration) : ''} · ${fmtBytes(a.size)}<em class="drag-hint"> · ${tr('dragTimeline')}</em></span></div><div class="media-actions"><button class="media-action" data-action="${a.type === 'audio' ? 'add-audio' : 'add-asset'}" data-id="${a.id}">${svgIcon('plus', 14)}<span>${tr('add')}</span></button>${a.type !== 'audio' ? `<button class="media-action overlay-add" data-action="add-overlay" data-id="${a.id}">${svgIcon('copy', 14)}<span>${state.language === 'el' ? 'Overlay' : 'Overlay'}</span></button>` : ''}</div></div>`).join('')}</div>` : `<div class="empty-state"><b>${tr('noMedia')}</b></div>`}</div>`; }
 function textPanel(showAdd = true) { const t = selectedText(); return `<div class="panel-grid">${showAdd ? `<div class="action-row"><button class="sheet-action" data-action="add-text" data-kind="title"><i>T</i>${tr('addTitle')}</button><button class="sheet-action" data-action="add-text" data-kind="caption"><i>CC</i>${tr('addCaption')}</button><button class="sheet-action" data-action="add-text" data-kind="sticker"><i>${svgIcon('effects', 17)}</i>${tr('addSticker')}</button></div><button class="secondary-btn" data-action="open-srt">CC ${tr('importSrt')}</button>` : ''}${t ? `<div class="panel-section"><h3>${tr('textStyle')}</h3><div class="field-grid"><label class="field"><span>${tr('textContent')}</span><textarea data-bind-text="text">${escapeHtml(t.text)}</textarea></label><div class="field-grid two"><label class="field"><span>${tr('fontSize')}</span><input data-bind-text="fontSize" type="number" min="12" max="180" value="${t.fontSize}"></label><label class="field"><span>${tr('weight')}</span><select data-bind-text="weight"><option ${t.weight == 600 ? 'selected' : ''}>600</option><option ${t.weight == 700 ? 'selected' : ''}>700</option><option ${t.weight == 800 ? 'selected' : ''}>800</option></select></label></div><div class="field-grid two"><label class="field"><span>${tr('color')}</span><input data-bind-text="color" type="color" value="${safeColor(t.color, '#ffffff')}"></label><label class="field"><span>${tr('textBackground')}</span><input data-bind-text="background" type="color" value="${safeColor(t.background, '#111827')}"></label></div><label class="field"><span>${tr('animation')}</span><select data-bind-text="animation"><option value="none" ${t.animation === 'none' ? 'selected' : ''}>${tr('none')}</option><option value="fade" ${t.animation === 'fade' ? 'selected' : ''}>Fade</option><option value="pop" ${t.animation === 'pop' ? 'selected' : ''}>Pop</option><option value="slide" ${t.animation === 'slide' ? 'selected' : ''}>Slide up</option></select></label></div></div><div class="panel-section"><h3>${tr('position')}</h3>${rangeField('x', t.x, 0, 1, .01, true, 'text')}${rangeField('y', t.y, 0, 1, .01, true, 'text')}<div class="field-grid two"><label class="field"><span>${tr('start')}</span><input data-bind-text="start" type="number" step="0.1" min="0" value="${t.start.toFixed(2)}"></label><label class="field"><span>${tr('end')}</span><input data-bind-text="end" type="number" step="0.1" min="0" value="${t.end.toFixed(2)}"></label></div></div><button class="danger-btn" data-action="delete-selected">${tr('delete')}</button>` : ''}</div>`; }
@@ -2325,24 +2398,24 @@ function effectsPanel() {
     if (!c)
         return effectsEmpty();
     const presets = ['original', 'vivid', 'warm', 'cool', 'cinematic', 'film', 'dream', 'crisp', 'retro', 'soft', 'neon', 'matte', 'sunset', 'ice', 'noir', 'mono', 'tealorange', 'bleach', 'rose', 'forest', 'gold', 'highkey', 'lowkey', 'cyber'];
-    return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n => `<button class="preset-card ${c.filterPreset === n ? 'active' : ''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase() + n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none', tr('none')], ['zoom', tr('zoom')], ['zoomout', tr('zoomOut')], ['kenburns', tr('kenBurns')], ['panleft', tr('panLeft')], ['panright', tr('panRight')], ['pulse', tr('pulse')], ['float', tr('float')], ['shake', tr('shake')], ['driftup', tr('driftUp')], ['driftdown', tr('driftDown')], ['spin', tr('spin')], ['bounce', tr('bounce')], ['swing', tr('swing')]].map(([v, l]) => `<button class="motion-card ${c.motion === v ? 'active' : ''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`;
+    return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${tr('filter')}</h3><div class="preset-carousel">${presets.map(n => `<button class="preset-card ${c.filterPreset === n ? 'active' : ''}" data-action="filter" data-value="${n}"><div class="preset-preview" style="${filterPreviewStyle(n)}"></div><strong>${n[0].toUpperCase() + n.slice(1)}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${tr('motion')}</h3><div class="motion-grid">${[['none', tr('none')], ['zoom', tr('zoom')], ['zoomout', tr('zoomOut')], ['kenburns', tr('kenBurns')], ['panleft', tr('panLeft')], ['panright', tr('panRight')], ['pulse', tr('pulse')], ['float', tr('float')], ['shake', tr('shake')], ['driftup', tr('driftUp')], ['driftdown', tr('driftDown')], ['spin', tr('spin')], ['bounce', tr('bounce')], ['swing', tr('swing')], ['breath', tr('breath')]].map(([v, l]) => `<button class="motion-card ${c.motion === v ? 'active' : ''}" data-action="clip-set" data-key="motion" data-value="${v}"><span>${motionGlyph(v)}</span><strong>${l}</strong></button>`).join('')}</div></div></div>`;
 }
-function motionGlyph(v) { const m = { none: 'circle', zoom: 'zoomin', zoomout: 'zoomout', kenburns: 'expand', panleft: 'left', panright: 'right', pulse: 'circle', float: 'movevertical', shake: 'movehorizontal', driftup: 'movevertical', driftdown: 'movevertical', spin: 'rotate', bounce: 'movevertical', swing: 'rotate' }; return svgIcon(m[v] || 'effects', 20); }
+function motionGlyph(v) { const m = { none: 'circle', zoom: 'zoomin', zoomout: 'zoomout', kenburns: 'expand', panleft: 'left', panright: 'right', pulse: 'circle', float: 'movevertical', shake: 'movehorizontal', driftup: 'movevertical', driftdown: 'movevertical', spin: 'rotate', bounce: 'movevertical', swing: 'rotate', breath: 'circle' }; return svgIcon(m[v] || 'effects', 20); }
 function adjustPanel() {
     const c = selectedVisual();
     if (!c)
         return effectsEmpty();
-    const defs = { brightness: [50, 150, 1], exposure: [-50, 50, 1], contrast: [50, 160, 1], saturation: [0, 200, 1], temperature: [-50, 50, 1], vignette: [0, 100, 1], grain: [0, 100, 1], hue: [-180, 180, 1], blur: [0, 8, .1], grayscale: [0, 100, 1], sepia: [0, 100, 1], invert: [0, 100, 1], opacity: [0, 1, .01] };
+    const defs = { brightness: [50, 150, 1], exposure: [-50, 50, 1], contrast: [50, 160, 1], saturation: [0, 200, 1], temperature: [-50, 50, 1], vignette: [0, 100, 1], grain: [0, 100, 1], hue: [-180, 180, 1], blur: [0, 8, .1], grayscale: [0, 100, 1], sepia: [0, 100, 1], invert: [0, 100, 1], opacity: [0, 1, .01], fadeAmount: [0, 100, 1], shadows: [-100, 100, 1] };
     const key = defs[state.adjustKey] ? state.adjustKey : 'brightness', [min, max, step] = defs[key], value = c[key] ?? (key === 'opacity' ? 1 : 0);
     return `<div class="adjust-mobile"><div class="adjust-grid">${Object.keys(defs).map(k => `<button class="adjust-tile ${key === k ? 'active' : ''}" data-action="adjust-select" data-key="${k}"><span>${adjustGlyph(k)}</span><strong>${tr(k)}</strong><small>${Number(c[k] ?? 0).toFixed(step < 1 ? 1 : 0)}</small></button>`).join('')}</div><div class="adjust-focus"><div class="adjust-focus-head"><strong>${tr(key)}</strong><button data-action="reset-adjustment" data-key="${key}">${tr('reset')}</button></div>${rangeField(key, value, min, max, step, true, 'clip')}</div></div>`;
 }
-function adjustGlyph(k) { const m = { brightness: 'sun', exposure: 'half', contrast: 'half', saturation: 'droplet', temperature: 'thermo', vignette: 'circle', grain: 'grain', hue: 'palette', blur: 'droplet', grayscale: 'half', sepia: 'palette', invert: 'half', opacity: 'circle' }; return svgIcon(m[k] || 'adjust', 19); }
+function adjustGlyph(k) { const m = { brightness: 'sun', exposure: 'half', contrast: 'half', saturation: 'droplet', temperature: 'thermo', vignette: 'circle', grain: 'grain', hue: 'palette', blur: 'droplet', grayscale: 'half', sepia: 'palette', invert: 'half', opacity: 'circle', fadeAmount: 'half', shadows: 'half' }; return svgIcon(m[k] || 'adjust', 19); }
 function transitionPanel() {
     const c = selectedClip();
     if (!c)
         return `<div class="empty-state"><b>${state.language === 'el' ? 'Μεταβάσεις V1' : 'V1 transitions'}</b><span>${state.language === 'el' ? 'Οι μεταβάσεις εφαρμόζονται ανάμεσα στα κύρια clips της V1.' : 'Transitions are applied between primary V1 clips.'}</span></div>`;
-    const opts = [['none', tr('none')], ['dissolve', tr('dissolve')], ['fade', tr('fade')], ['flash', tr('flash')], ['slideleft', tr('slideLeft')], ['slideright', tr('slideRight')], ['zoom', tr('zoom')], ['blur', tr('blurTransition')], ['slideup', tr('slideUp')], ['slidedown', tr('slideDown')], ['spin', tr('spin')], ['dipblack', tr('dipBlack')], ['dipwhite', tr('dipWhite')]];
-    return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v, l]) => `<button class="transition-card ${c.transition === v ? 'active' : ''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b><em>${svgIcon(v === 'zoom' ? 'zoomin' : v === 'spin' ? 'rotate' : v.includes('slide') ? 'right' : v === 'flash' ? 'sun' : v === 'blur' ? 'droplet' : 'transition', 18)}</em></span><strong>${l}</strong><small>${c.transition === v ? (state.language === 'el' ? 'Επιλεγμένο' : 'Selected') : ''}</small></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration', c.transitionDuration, .1, 1.5, .05, true, 'clip')}</div></div>`;
+    const opts = [['none', tr('none')], ['dissolve', tr('dissolve')], ['fade', tr('fade')], ['flash', tr('flash')], ['slideleft', tr('slideLeft')], ['slideright', tr('slideRight')], ['zoom', tr('zoom')], ['blur', tr('blurTransition')], ['slideup', tr('slideUp')], ['slidedown', tr('slideDown')], ['spin', tr('spin')], ['dipblack', tr('dipBlack')], ['dipwhite', tr('dipWhite')], ['push', tr('pushTransition')], ['softzoom', tr('softZoom')]];
+    return `<div class="panel-grid"><div class="transition-grid">${opts.map(([v, l]) => `<button class="transition-card ${c.transition === v ? 'active' : ''}" data-action="clip-set" data-key="transition" data-value="${v}"><span class="transition-preview t-${v}"><i></i><b></b><em>${svgIcon(v === 'zoom' || v === 'softzoom' ? 'zoomin' : v === 'spin' ? 'rotate' : v.includes('slide') || v === 'push' ? 'right' : v === 'flash' ? 'sun' : v === 'blur' ? 'droplet' : 'transition', 18)}</em></span><strong>${l}</strong><small>${c.transition === v ? (state.language === 'el' ? 'Επιλεγμένο' : 'Selected') : ''}</small></button>`).join('')}</div><div class="panel-section borderless-mobile"><h3>${tr('duration')}</h3>${rangeField('transitionDuration', c.transitionDuration, .1, 1.5, .05, true, 'clip')}</div></div>`;
 }
 const ELEMENT_PRESETS = [
     { kind: 'subscribe', name: 'Subscribe', icon: 'play', color: '#ff2d2d' },
@@ -2360,8 +2433,12 @@ function elementPanel() {
     const fluentSection = `<div class="panel-section borderless-mobile fluent-section"><div class="panel-heading-row"><div><h3>Microsoft Fluent Emoji</h3><small>${state.fluentCatalog.length ? `${state.fluentCatalog.length.toLocaleString()} assets · MIT` : 'MIT · 1,285 Color + 1,285 3D assets'}</small></div><div class="fluent-style-toggle"><button class="${style === 'color' ? 'active' : ''}" data-action="fluent-style" data-value="color">Color</button><button class="${style === '3d' ? 'active' : ''}" data-action="fluent-style" data-value="3d">3D</button></div></div><label class="fluent-search">${svgIcon('search', 15)}<input data-fluent-search type="search" value="${q}" placeholder="${state.language === 'el' ? 'Αναζήτηση 1.285 στοιχείων' : 'Search 1,285 elements'}"></label>${state.fluentLoading ? `<div class="fluent-loading">${state.language === 'el' ? 'Φόρτωση πλήρους βιβλιοθήκης…' : 'Loading full library…'}</div>` : state.fluentError ? `<div class="fluent-error"><span>${state.language === 'el' ? 'Δεν φορτώθηκε η βιβλιοθήκη.' : 'Library could not load.'}</span><button data-action="fluent-retry">Retry</button></div>` : state.fluentCatalog.length ? `<div class="fluent-grid">${fluent.map(entry => { const path = fluentStylePath(entry, style); return `<button class="fluent-card" data-action="add-fluent" data-name="${escapeHtml(entry.name)}" data-path="${escapeHtml(path)}" title="${escapeHtml(entry.name)}"><span><img loading="lazy" decoding="async" src="${escapeHtml(fluentRawUrl(path))}" alt=""></span><small>${escapeHtml(entry.name)}</small></button>`; }).join('')}</div>${fluent.length < state.fluentCatalog.filter(x => !state.fluentQuery || x.name.toLowerCase().includes(String(state.fluentQuery).toLowerCase())).length ? `<button class="secondary-btn full" data-action="fluent-more">${state.language === 'el' ? 'Περισσότερα' : 'Load more'}</button>` : ''}` : `<button class="secondary-btn full" data-action="fluent-retry">${state.language === 'el' ? 'Φόρτωση Fluent library' : 'Load Fluent library'}</button>`}<p class="helper">${state.language === 'el' ? 'Τα Fluent Emoji φορτώνονται κατά απαίτηση από το επίσημο Microsoft repository. Μόλις τα προσθέσεις σε project αποθηκεύονται τοπικά στη συσκευή.' : 'Fluent Emoji are loaded on demand from the official Microsoft repository. Once added to a project they are stored locally on your device.'}</p></div>`;
     return `<div class="panel-grid"><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Creator στοιχεία' : 'Creator elements'}</h3><div class="element-library">${ELEMENT_PRESETS.map(e => `<button class="element-card" data-action="add-element" data-value="${e.kind}"><span style="--element-color:${e.color}">${svgIcon(e.icon, 20)}</span><strong>${e.name}</strong></button>`).join('')}</div></div><div class="panel-section borderless-mobile"><h3>${state.language === 'el' ? 'Γρήγορα stickers' : 'Quick stickers'}</h3><div class="emoji-library">${EMOJI_PRESETS.map(e => `<button class="emoji-card" data-action="add-element" data-value="emoji:${e}">${e}</button>`).join('')}</div></div>${fluentSection}${selected ? `<div class="panel-section"><h3>${state.language === 'el' ? 'Επιλεγμένο στοιχείο' : 'Selected element'}</h3>${rangeField('scale', selected.scale, .2, 3, .01, true, 'element')}${rangeField('rotation', selected.rotation, -180, 180, 1, true, 'element')}${rangeField('opacity', selected.opacity, 0, 1, .01, true, 'element')}${selected.kind !== 'emoji' ? `<label class="field"><span>${state.language === 'el' ? 'Χρώμα' : 'Color'}</span><input data-bind-element="color" type="color" value="${safeColor(selected.color, '#2455F5')}"></label>` : ''}<button class="danger-btn" data-action="delete-selected">${tr('delete')}</button></div>` : ''}</div>`;
 }
-function clipPanel() { const c = selectedVisual(); if (!c)
-    return effectsEmpty(); return `<div class="desktop-clip-stack">${editPanel()}${effectsPanel()}<div class="panel-section"><h3>${tr('adjust')}</h3>${rangeField('brightness', c.brightness, 50, 150, 1, false, 'clip')}${rangeField('exposure', c.exposure, -50, 50, 1, false, 'clip')}${rangeField('contrast', c.contrast, 50, 160, 1, false, 'clip')}${rangeField('saturation', c.saturation, 0, 200, 1, false, 'clip')}${rangeField('temperature', c.temperature, -50, 50, 1, false, 'clip')}${rangeField('vignette', c.vignette, 0, 100, 1, false, 'clip')}${rangeField('grain', c.grain, 0, 100, 1, false, 'clip')}${rangeField('hue', c.hue, -180, 180, 1, false, 'clip')}${rangeField('blur', c.blur, 0, 8, .1, false, 'clip')}${rangeField('grayscale', c.grayscale, 0, 100, 1, false, 'clip')}${rangeField('sepia', c.sepia, 0, 100, 1, false, 'clip')}${rangeField('invert', c.invert || 0, 0, 100, 1, false, 'clip')}</div>${transitionPanel()}</div>`; }
+function clipPanel() {
+    const c = selectedVisual();
+    if (!c)
+        return effectsEmpty();
+    return `<div class="desktop-clip-stack"><section class="inspector-anchor" data-inspector-section="edit">${editPanel()}</section><section class="inspector-anchor" data-inspector-section="effects">${effectsPanel()}</section><section class="inspector-anchor" data-inspector-section="adjust">${adjustPanel()}</section><section class="inspector-anchor" data-inspector-section="transitions">${transitionPanel()}</section></div>`;
+}
 function filterPreviewStyle(n) { const f = { original: '', vivid: 'filter:saturate(1.4) contrast(1.1)', warm: 'filter:sepia(.25) saturate(1.2)', cool: 'filter:hue-rotate(18deg)', mono: 'filter:grayscale(1) contrast(1.15)', film: 'filter:sepia(.3) saturate(.8) contrast(1.1)', dream: 'filter:brightness(1.15) saturate(1.05);opacity:.82', crisp: 'filter:contrast(1.3) saturate(1.12)', cinematic: 'filter:contrast(1.2) saturate(.9) sepia(.08)', retro: 'filter:sepia(.3) saturate(.85) contrast(.95)', soft: 'filter:brightness(1.1) contrast(.9)', neon: 'filter:saturate(1.65) contrast(1.25) hue-rotate(8deg)', matte: 'filter:saturate(.8) contrast(.86) brightness(1.07)', sunset: 'filter:sepia(.22) saturate(1.35) hue-rotate(-8deg)', ice: 'filter:saturate(1.05) hue-rotate(18deg) brightness(1.04)', noir: 'filter:grayscale(1) contrast(1.45) brightness(.96)', tealorange: 'filter:saturate(1.22) contrast(1.2) hue-rotate(-16deg)', bleach: 'filter:saturate(.62) contrast(1.34) brightness(1.1)', rose: 'filter:saturate(1.18) sepia(.12) hue-rotate(-12deg)', forest: 'filter:saturate(1.08) hue-rotate(18deg) contrast(1.12)', gold: 'filter:sepia(.18) saturate(1.16) brightness(1.05)', highkey: 'filter:brightness(1.18) contrast(.88)', lowkey: 'filter:brightness(.82) contrast(1.36)', cyber: 'filter:saturate(1.7) contrast(1.32) hue-rotate(28deg)' }; return f[n] || ''; }
 function rangeField(key, value, min, max, step, show, scope) { return `<label class="field"><span>${tr(key.split('.').pop())}<b>${show ? Number(value).toFixed(step < 1 ? 2 : 0) : Math.round(value)}</b></span><input data-bind-${scope}="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`; }
 function canvasPanel() { const p = state.project; return `<div class="panel-grid"><div class="panel-section"><h3>${tr('projectCanvas')}</h3><div class="canvas-ratio-grid">${[['16:9', 'Landscape'], ['9:16', 'Vertical'], ['1:1', 'Square'], ['4:5', 'Portrait']].map(([r, label]) => `<button class="canvas-ratio-card ${p.ratio === r ? 'active' : ''}" data-action="ratio" data-value="${r}"><span class="ratio-shape ratio-${r.replace(':', '-')}"></span><strong>${r}</strong><small>${label}</small></button>`).join('')}</div></div><div class="panel-section"><label class="field"><span>${tr('background')}</span><input data-bind-project="background" type="color" value="${safeColor(p.background, '#0b0d12')}"></label></div><div class="install-card"><strong>${tr('private')}</strong><p>${tr('privateSub')}</p></div></div>`; }
@@ -3119,6 +3196,12 @@ function bindGlobalEvents() {
             renderEditor();
             if (state.tool === 'elements')
                 ensureFluentCatalog();
+            if (!isMobileViewport() && INSPECTOR_ONLY_TOOLS.has(state.tool))
+                requestAnimationFrame(() => focusInspectorSection(state.tool));
+            return;
+        }
+        if (a === 'inspector-focus') {
+            focusInspectorSection(el.dataset.target);
             return;
         }
         if (a === 'select-transition') {
@@ -3146,7 +3229,7 @@ function bindGlobalEvents() {
             const c = selectedVisual();
             if (!c)
                 return;
-            const defaults = { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, opacity: 1 };
+            const defaults = { brightness: 100, exposure: 0, contrast: 100, saturation: 100, temperature: 0, vignette: 0, grain: 0, hue: 0, blur: 0, grayscale: 0, sepia: 0, invert: 0, fadeAmount: 0, shadows: 0, opacity: 1 };
             mutate(p => { const list = state.selected?.type === 'overlay' ? p.overlays : p.clips; list.find(x => x.id === c.id)[el.dataset.key] = defaults[el.dataset.key] ?? 0; });
             return;
         }
@@ -3513,7 +3596,7 @@ async function init() {
         if (!state.fluentCatalog.length)
             setTimeout(() => ensureFluentCatalog(), 900);
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=2.2.1', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=2.2.3', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

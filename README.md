@@ -1,4 +1,4 @@
-# Edituno Studio v2.2.1
+# Edituno Studio v2.2.3
 
 A mobile-first local video editor PWA with a professional desktop workspace.
 
@@ -23,3 +23,7 @@ Run `npm run build` to rebuild `dist`.
 ## v2.2.2
 - Desktop sidebars repacked for safer widths and cleaner tool layout.
 - Timeline clips, audio, overlays and elements now expose resize handles.
+
+## v2.2.3
+
+Desktop UI symmetry release. The nine editor tools use a 3 x 3 layout, desktop clip controls are owned by the right Inspector, Motion and Transitions now fill complete 3-column grids, and Adjustments and Settings have been visually rebuilt.
