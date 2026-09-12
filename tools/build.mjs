@@ -75,7 +75,10 @@ const requiredRuntimeMarkers = [
   'function aboutPage()',
   'function installEnvironment()',
   'PAYPAL_SUPPORT_URL',
-  'appinstalled'
+  'appinstalled',
+  'function applyTheme(',
+  "data-action=\"set-theme\"",
+  "theme:'system'"
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -100,6 +103,12 @@ if (!template.includes('maximum-scale=1') || !template.includes('user-scalable=n
 }
 if (!css.includes('.timeline-audio') || !css.includes('.asset-browser') || !css.includes('.studio-home')) {
   throw new Error('Responsive multitrack/mobile-home CSS validation failed')
+}
+if (!css.includes('html[data-theme="light"]') || !css.includes('.theme-segment')) {
+  throw new Error('Adaptive light theme CSS is missing')
+}
+if (!template.includes('prefers-color-scheme: light')) {
+  throw new Error('Theme bootstrap is missing from the document head')
 }
 if (js.includes("isMobileViewport() && launch.get('home')!=='1'")) {
   throw new Error('Mobile must not auto-enter the editor')
@@ -128,4 +137,4 @@ for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
-console.log(`Built Edituno v2.2.13 -> ${dist}`)
+console.log(`Built Edituno v2.2.14 -> ${dist}`)

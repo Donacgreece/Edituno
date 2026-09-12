@@ -1,5 +1,17 @@
 # Release Notes
 
+## v2.2.14
+
+Adaptive Theme System release.
+
+- Added System, Dark and Light appearance modes in Settings using the existing rounded segmented-control language.
+- Added persistent theme preference through Edituno preferences.
+- Added live system-theme following when System is selected.
+- Added dynamic browser/PWA theme-color updates.
+- Added an early theme bootstrap to prevent a dark flash when launching in Light mode.
+- Added a comprehensive Light palette across Home, Settings, editor, timeline, Inspector, mobile sheets, install flow and Support page.
+- Preserved all v2.2.13 behavior, expanded preview sizing, startup stability, SEO, sitemap and Support navigation.
+
 ## v2.2.13
 
 Mobile Support dock polish release.
