@@ -137,6 +137,15 @@ if (!template.includes('vendor/smartcrop.js') || !template.includes('vendor/meyd
 if (!js.includes('function bindKonvaCanvasEditor()') || !js.includes('new Konva.Transformer') || !js.includes('data-konva-direct-manipulation')) {
   throw new Error('Phase 3 Konva direct manipulation implementation is missing')
 }
+if (!js.includes('function exportCanvasStream(') || !js.includes('function syncExportVideoFrame(') || !js.includes('await validateExportBlob(blob)')) {
+  throw new Error('Export Engine v2 runtime is missing')
+}
+if (!js.includes('canvas.captureStream(0)') || !js.includes('keepAlive.connect(audioContext.destination)')) {
+  throw new Error('Export moving-frame/audio keep-alive path is missing')
+}
+if (!js.includes('blob = await done') || !js.includes('await audioContext.close().catch')) {
+  throw new Error('Export finalization/audio lifetime guard is missing')
+}
 if (!template.includes('vendor/konva.min.js')) {
   throw new Error('Konva browser bundle is missing from the document')
 }
@@ -218,4 +227,4 @@ if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notic
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Konva')) throw new Error('Konva third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'KONVA-MIT.txt'))) throw new Error('Konva MIT license copy missing')
-console.log(`Built Edituno v2.5.0 -> ${dist}`)
+console.log(`Built Edituno v2.5.1 -> ${dist}`)

@@ -83,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.5.0**
+Current packaged release: **v2.5.1**
 
 ## License
 
@@ -168,3 +168,7 @@ Phase 3 adds a Konva-powered manipulation layer without replacing Edituno's rend
 - The Konva interaction layer hides during playback and does not alter exported pixels by itself.
 
 Konva is pinned to 10.5.0 and remains MIT-licensed. See `THIRD_PARTY_NOTICES.md`.
+
+### Export Engine v2.5.1
+
+Local export now keeps video decode, canvas capture and audio muxing on the same realtime export clock. Stalled media is detected and resynchronized, manual canvas frame capture is used where supported, and recording finalization finishes before Web Audio is closed.

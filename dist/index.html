@@ -37,15 +37,15 @@
   <script>
   (()=>{try{const saved=JSON.parse(localStorage.getItem('edituno-preferences')||'{}');const pref=['system','dark','light'].includes(saved.theme)?saved.theme:'system';const theme=pref==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):pref;document.documentElement.dataset.theme=theme;document.documentElement.dataset.themePreference=pref;document.documentElement.style.colorScheme=theme;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='light'?'#F4F6FA':'#08090D'}catch{document.documentElement.dataset.theme='dark'}})();
   </script>
-  <link rel="manifest" href="./manifest.webmanifest?v=2.5.0" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.5.0" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.5.0" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.5.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.5.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.5.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.5.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.5.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.5.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.5.1" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.5.1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.5.1" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.5.1" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.5.1" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.5.1" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.5.1" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.5.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.5.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno | Free local video editor</title>
   <script type="application/ld+json">
   {
@@ -546,11 +546,11 @@ html[data-theme="light"] .konva-hint-mark{background:#EAF0FF;color:#3F62D2;borde
 
 
 
-  <script src="./vendor/pixi.min.js?v=2.5.0"></script>
-  <script src="./vendor/pixi-filters.min.js?v=2.5.0"></script>
-  <script src="./vendor/smartcrop.js?v=2.5.0"></script>
-  <script src="./vendor/meyda.min.js?v=2.5.0"></script>
-  <script src="./vendor/konva.min.js?v=2.5.0"></script>
+  <script src="./vendor/pixi.min.js?v=2.5.1"></script>
+  <script src="./vendor/pixi-filters.min.js?v=2.5.1"></script>
+  <script src="./vendor/smartcrop.js?v=2.5.1"></script>
+  <script src="./vendor/meyda.min.js?v=2.5.1"></script>
+  <script src="./vendor/konva.min.js?v=2.5.1"></script>
 
   <script>
     window.__dismissEditunoSplash = function () {};
@@ -582,7 +582,7 @@ html[data-theme="light"] .konva-hint-mark{background:#EAF0FF;color:#3F62D2;borde
 
       try {
 // @ts-nocheck
-/* Edituno v2.5.0 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.5.1 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -3114,7 +3114,7 @@ function aboutPage() {
     $('#app').innerHTML = `<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back', 18)}<span>${el ? 'Αρχική' : 'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta ? `<div class="about-hero-actions">${installCta}</div>` : ''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el ? 'Create locally. Edit freely.' : 'Create locally. Edit freely.'}</span><div class="about-version">v2.5.0</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta ? `<div class="about-hero-actions">${installCta}</div>` : ''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el ? 'Create locally. Edit freely.' : 'Create locally. Edit freely.'}</span><div class="about-version">v2.5.1</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder', 20)}<strong>${el ? 'Τοπικά και ιδιωτικά' : 'Local and private'}</strong><p>${el ? 'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.' : 'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install', 20)}<strong>${el ? 'Εγκαθίσταται σαν app' : 'Installs like an app'}</strong><p>${el ? 'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.' : 'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -3122,7 +3122,7 @@ function aboutPage() {
         <article>${svgIcon('check', 20)}<strong>${el ? 'Δωρεάν, χωρίς watermark' : 'Free, no watermark'}</strong><p>${el ? 'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.' : 'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el ? 'SUPPORT' : 'SUPPORT'}</span><h2>${el ? 'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.' : 'Help Edituno keep getting better.'}</h2><p>${el ? 'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.' : 'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el ? 'Υποστήριξη ανάπτυξης' : 'Support development'}</strong>${svgIcon('right', 18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.5.0</span><span>${el ? 'Local-first video editor' : 'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.5.1</span><span>${el ? 'Local-first video editor' : 'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen ? installModal() : ''}`;
 }
@@ -3159,7 +3159,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings', 18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart', 18)}<span>${el ? 'Υποστήριξη' : 'Support'}</span></button>
-      <div class="home-rail-version">v2.5.0</div>
+      <div class="home-rail-version">v2.5.1</div>
     </aside>
 
     <div class="home-surface">
@@ -4281,17 +4281,16 @@ async function decodeAudioAsset(assetId, audioContext) { const url = state.urls[
 catch {
     return null;
 } }
-async function scheduleAudioTracks(project, audioContext, dest) {
+async function scheduleAudioTracks(project, audioContext, dest, zeroTime = audioContext.currentTime + .12) {
     const decoded = [];
     for (const clip of project.audioClips || []) {
         const buffer = await decodeAudioAsset(clip.assetId, audioContext);
         if (buffer)
             decoded.push({ clip, buffer });
     }
-    const zero = audioContext.currentTime + .04;
     const nodes = [];
     for (const { clip, buffer } of decoded) {
-        const source = audioContext.createBufferSource(), gain = audioContext.createGain(), duration = audioClipDuration(clip), start = zero + (clip.timelineStart || 0), vol = clip.muted ? 0 : clamp(clip.volume ?? .8, 0, 1), fadeIn = Math.min(clip.fadeIn || 0, duration / 2), fadeOut = Math.min(clip.fadeOut || 0, duration / 2);
+        const source = audioContext.createBufferSource(), gain = audioContext.createGain(), duration = audioClipDuration(clip), start = zeroTime + (clip.timelineStart || 0), vol = clip.muted ? 0 : clamp(clip.volume ?? .8, 0, 1), fadeIn = Math.min(clip.fadeIn || 0, duration / 2), fadeOut = Math.min(clip.fadeOut || 0, duration / 2);
         source.buffer = buffer;
         source.playbackRate.value = clamp(clip.speed || 1, .5, 2);
         source.connect(gain).connect(dest);
@@ -4307,18 +4306,129 @@ async function scheduleAudioTracks(project, audioContext, dest) {
     }
     return nodes;
 }
+function exportSleep(ms, signal) {
+    if (ms <= 0)
+        return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(resolve, ms);
+        if (signal)
+            signal.addEventListener('abort', () => { clearTimeout(timer); reject(new DOMException('Aborted', 'AbortError')); }, { once: true });
+    });
+}
+function attachExportMedia(media) {
+    media.playsInline = true;
+    media.preload = 'auto';
+    media.setAttribute('playsinline', '');
+    media.setAttribute('aria-hidden', 'true');
+    Object.assign(media.style, { position: 'fixed', left: '0', top: '0', width: '2px', height: '2px', opacity: '0.001', pointerEvents: 'none', zIndex: '-1' });
+    document.body.append(media);
+    return media;
+}
+function cleanupExportMedia(media) {
+    if (!media)
+        return;
+    try {
+        media.pause();
+    }
+    catch { }
+    try {
+        media.removeAttribute('src');
+        media.load();
+    }
+    catch { }
+    try {
+        media.remove();
+    }
+    catch { }
+}
+function waitExportSeek(media, signal, timeout = 900) {
+    if (!media.seeking)
+        return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        let settled = false;
+        const finish = () => { if (settled)
+            return; settled = true; clearTimeout(timer); media.removeEventListener('seeked', finish); signal?.removeEventListener('abort', abort); resolve(); };
+        const abort = () => { if (settled)
+            return; settled = true; clearTimeout(timer); media.removeEventListener('seeked', finish); reject(new DOMException('Aborted', 'AbortError')); };
+        const timer = setTimeout(finish, timeout);
+        media.addEventListener('seeked', finish, { once: true });
+        signal?.addEventListener('abort', abort, { once: true });
+    });
+}
+async function syncExportVideoFrame(video, target, signal, force = false) {
+    const maxTime = Math.max(0, (Number.isFinite(video.duration) ? video.duration : target) - .025), safe = clamp(target, 0, maxTime);
+    if (force || video.readyState < 2 || Math.abs((video.currentTime || 0) - safe) > .16) {
+        video.currentTime = safe;
+        await waitExportSeek(video, signal);
+    }
+}
+function exportCanvasStream(canvas, fps) {
+    let stream = null, commit = () => { };
+    try {
+        const manual = canvas.captureStream(0), track = manual.getVideoTracks()[0];
+        if (track && typeof track.requestFrame === 'function') {
+            stream = manual;
+            commit = () => { try {
+                track.requestFrame();
+            }
+            catch { } };
+        }
+        else {
+            for (const t of manual.getTracks())
+                try {
+                    t.stop();
+                }
+                catch { }
+        }
+    }
+    catch { }
+    if (!stream)
+        stream = canvas.captureStream(fps);
+    return { stream, commit };
+}
+async function validateExportBlob(blob) {
+    if (!blob || blob.size < 2048)
+        throw new Error('empty-export');
+    const url = URL.createObjectURL(blob), probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.muted = true;
+    probe.playsInline = true;
+    probe.src = url;
+    try {
+        await new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(new Error('export-probe-timeout')), 6000);
+            probe.onloadedmetadata = () => { clearTimeout(timer); resolve(); };
+            probe.onerror = () => { clearTimeout(timer); reject(new Error('export-probe-failed')); };
+        });
+        if (!probe.videoWidth || !probe.videoHeight)
+            throw new Error('export-no-video-track');
+    }
+    finally {
+        probe.removeAttribute('src');
+        probe.load();
+        URL.revokeObjectURL(url);
+    }
+}
 async function exportProjectLocal(quality, fps, onProgress, signal) {
     const project = state.project;
     if (!project || (project.clips?.length || 0) + (project.overlays?.length || 0) + (project.elements?.length || 0) === 0)
         throw new Error('empty');
+    if (typeof HTMLCanvasElement.prototype.captureStream !== 'function' || typeof MediaRecorder === 'undefined')
+        throw new Error('mediarecorder');
     const [w, h] = exportDimensions(project.ratio, quality), canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
-    const ctx = canvas.getContext('2d', { alpha: false }), stream = canvas.captureStream(fps);
-    const audioContext = new AudioContext(), dest = audioContext.createMediaStreamDestination();
-    const atrack = dest.stream.getAudioTracks()[0];
-    if (atrack)
-        stream.addTrack(atrack);
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: false });
+    const capture = exportCanvasStream(canvas, fps), stream = capture.stream, commitFrame = capture.commit;
+    if (!stream.getVideoTracks().length)
+        throw new Error('video-track');
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx)
+        throw new Error('audio-context');
+    const audioContext = new AudioCtx(), dest = audioContext.createMediaStreamDestination();
+    const audioTrack = dest.stream.getAudioTracks()[0];
+    if (audioTrack)
+        stream.addTrack(audioTrack);
     const mime = pickMime();
     if (!mime)
         throw new Error('mediarecorder');
@@ -4327,9 +4437,16 @@ async function exportProjectLocal(quality, fps, onProgress, signal) {
     recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
     const done = new Promise((resolve, reject) => { recorder.onerror = () => reject(new Error('record')); recorder.onstop = () => resolve(new Blob(chunks, { type: mime })); });
     await audioContext.resume();
-    const audioNodes = await scheduleAudioTracks(project, audioContext, dest);
-    recorder.start(500);
-    let global = 0, total = projectDuration(project);
+    const exportZero = audioContext.currentTime + .16;
+    const audioNodes = await scheduleAudioTracks(project, audioContext, dest, exportZero);
+    let exportError = null, blob = null, global = 0, total = projectDuration(project);
+    recorder.start(250);
+    ctx.fillStyle = project.background || '#0b0d12';
+    ctx.fillRect(0, 0, w, h);
+    commitFrame();
+    const leadMs = Math.max(0, (exportZero - audioContext.currentTime) * 1000);
+    if (leadMs)
+        await exportSleep(leadMs, signal);
     try {
         for (const clip of project.clips) {
             if (signal?.aborted)
@@ -4339,53 +4456,132 @@ async function exportProjectLocal(quality, fps, onProgress, signal) {
                 continue;
             const dur = clipDuration(clip);
             if (asset.type === 'video') {
-                const v = document.createElement('video');
-                v.src = url;
-                v.playsInline = true;
-                v.preload = 'auto';
-                await waitLoaded(v);
-                v.currentTime = Math.min(clip.start, Math.max(0, (v.duration || asset.duration) - .03));
-                await waitSeek(v);
-                v.playbackRate = clamp(clip.speed, .25, 4);
-                const src = audioContext.createMediaElementSource(v), gain = audioContext.createGain(), now = audioContext.currentTime, clipVol = clamp(clip.volume, 0, 1), fi = Math.min(clip.audioFadeIn || 0, dur / 2), fo = Math.min(clip.audioFadeOut || 0, dur / 2);
-                gain.gain.setValueAtTime(fi ? 0 : clipVol, now);
-                if (fi)
-                    gain.gain.linearRampToValueAtTime(clipVol, now + fi);
-                if (fo) {
-                    gain.gain.setValueAtTime(clipVol, now + dur - fo);
-                    gain.gain.linearRampToValueAtTime(0, now + dur);
+                const v = attachExportMedia(document.createElement('video'));
+                let src = null, gain = null, keepAlive = null;
+                try {
+                    v.src = url;
+                    v.load();
+                    await waitLoaded(v);
+                    v.playbackRate = clamp(clip.speed || 1, .25, 4);
+                    await syncExportVideoFrame(v, clip.start || 0, signal, true);
+                    src = audioContext.createMediaElementSource(v);
+                    gain = audioContext.createGain();
+                    keepAlive = audioContext.createGain();
+                    keepAlive.gain.value = 0;
+                    src.connect(gain);
+                    gain.connect(dest);
+                    gain.connect(keepAlive);
+                    keepAlive.connect(audioContext.destination);
+                    const now = audioContext.currentTime, clipVol = clamp(clip.volume ?? 1, 0, 1), fi = Math.min(clip.audioFadeIn || 0, dur / 2), fo = Math.min(clip.audioFadeOut || 0, dur / 2);
+                    gain.gain.cancelScheduledValues(now);
+                    gain.gain.setValueAtTime(fi ? 0 : clipVol, now);
+                    if (fi)
+                        gain.gain.linearRampToValueAtTime(clipVol, now + fi);
+                    if (fo) {
+                        gain.gain.setValueAtTime(clipVol, now + dur - fo);
+                        gain.gain.linearRampToValueAtTime(0, now + dur);
+                    }
+                    await v.play();
+                    let lastMediaTime = v.currentTime, lastAdvance = performance.now();
+                    await renderSegment(dur, fps, async (elapsed) => {
+                        const expected = (clip.start || 0) + elapsed * (clip.speed || 1);
+                        const current = v.currentTime || 0;
+                        if (Math.abs(current - lastMediaTime) > .002) {
+                            lastMediaTime = current;
+                            lastAdvance = performance.now();
+                        }
+                        const stalled = performance.now() - lastAdvance > 280;
+                        if (stalled || Math.abs(current - expected) > .20) {
+                            await syncExportVideoFrame(v, expected, signal, true);
+                            lastMediaTime = v.currentTime;
+                            lastAdvance = performance.now();
+                            if (v.paused)
+                                await v.play();
+                        }
+                        ctx.fillStyle = project.background || '#0b0d12';
+                        ctx.fillRect(0, 0, w, h);
+                        const row = { clip, start: global, end: global + dur, duration: dur };
+                        await drawClipWithTransition(ctx, v, asset, row, global + elapsed, w, h, elapsed / Math.max(.001, dur));
+                        await drawOverlays(ctx, project, global + elapsed, w, h);
+                        drawElements(ctx, project, global + elapsed, w, h);
+                        drawTexts(ctx, project, global + elapsed, w, h);
+                        commitFrame();
+                        onProgress(Math.min(1, (global + elapsed) / Math.max(.001, total)));
+                    }, signal);
                 }
-                ;
-                src.connect(gain).connect(dest);
-                await v.play();
-                await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; await drawClipWithTransition(ctx, v, asset, row, global + elapsed, w, h, elapsed / dur); await drawOverlays(ctx, project, global + elapsed, w, h); drawElements(ctx, project, global + elapsed, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
-                v.pause();
-                src.disconnect();
-                gain.disconnect();
+                finally {
+                    try {
+                        v.pause();
+                    }
+                    catch { }
+                    try {
+                        src?.disconnect();
+                    }
+                    catch { }
+                    try {
+                        gain?.disconnect();
+                    }
+                    catch { }
+                    try {
+                        keepAlive?.disconnect();
+                    }
+                    catch { }
+                    cleanupExportMedia(v);
+                }
             }
             else if (asset.type === 'image') {
                 const img = await loadImage(url);
-                await renderSegment(dur, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); const row = { clip, start: global, end: global + dur, duration: dur }; await drawClipWithTransition(ctx, img, asset, row, global + elapsed, w, h, elapsed / dur); await drawOverlays(ctx, project, global + elapsed, w, h); drawElements(ctx, project, global + elapsed, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
+                await renderSegment(dur, fps, async (elapsed) => {
+                    ctx.fillStyle = project.background || '#0b0d12';
+                    ctx.fillRect(0, 0, w, h);
+                    const row = { clip, start: global, end: global + dur, duration: dur };
+                    await drawClipWithTransition(ctx, img, asset, row, global + elapsed, w, h, elapsed / Math.max(.001, dur));
+                    await drawOverlays(ctx, project, global + elapsed, w, h);
+                    drawElements(ctx, project, global + elapsed, w, h);
+                    drawTexts(ctx, project, global + elapsed, w, h);
+                    commitFrame();
+                    onProgress(Math.min(1, (global + elapsed) / Math.max(.001, total)));
+                }, signal);
             }
             global += dur;
         }
         if (global < total) {
             const rest = total - global;
-            await renderSegment(rest, fps, async (elapsed) => { ctx.fillStyle = project.background || '#0b0d12'; ctx.fillRect(0, 0, w, h); await drawOverlays(ctx, project, global + elapsed, w, h); drawElements(ctx, project, global + elapsed, w, h); drawTexts(ctx, project, global + elapsed, w, h); onProgress((global + elapsed) / total); }, signal);
+            await renderSegment(rest, fps, async (elapsed) => {
+                ctx.fillStyle = project.background || '#0b0d12';
+                ctx.fillRect(0, 0, w, h);
+                await drawOverlays(ctx, project, global + elapsed, w, h);
+                drawElements(ctx, project, global + elapsed, w, h);
+                drawTexts(ctx, project, global + elapsed, w, h);
+                commitFrame();
+                onProgress(Math.min(1, (global + elapsed) / Math.max(.001, total)));
+            }, signal);
         }
     }
+    catch (error) {
+        exportError = error;
+    }
+    for (const node of audioNodes || [])
+        try {
+            node.stop();
+        }
+        catch { }
+    if (recorder.state !== 'inactive')
+        recorder.stop();
+    try {
+        blob = await done;
+    }
     finally {
-        for (const n of audioNodes || [])
+        for (const track of stream.getTracks())
             try {
-                n.stop();
+                track.stop();
             }
             catch { }
-        ;
-        if (recorder.state !== 'inactive')
-            recorder.stop();
         await audioContext.close().catch(() => { });
     }
-    const blob = await done;
+    if (exportError)
+        throw exportError;
+    await validateExportBlob(blob);
     onProgress(1);
     return { blob, extension: mime.includes('mp4') ? 'mp4' : 'webm', mime };
 }
@@ -4394,14 +4590,24 @@ function waitLoaded(media) { if (media.readyState >= 2)
     return Promise.resolve(); return new Promise((resolve, reject) => { media.onloadeddata = resolve; media.onerror = reject; }); }
 function waitSeek(media) { if (!media.seeking)
     return Promise.resolve(); return new Promise(resolve => media.addEventListener('seeked', resolve, { once: true })); }
-function renderSegment(duration, fps, draw, signal) { return new Promise((resolve, reject) => { const start = performance.now(), interval = 1000 / fps; let last = -interval; const tick = async (now) => { if (signal?.aborted)
-    return reject(new DOMException('Aborted', 'AbortError')); const ms = now - start; if (ms - last >= interval - 1) {
-    last = ms;
-    await draw(Math.min(duration, ms / 1000));
-} if (ms >= duration * 1000)
-    resolve();
-else
-    requestAnimationFrame(tick); }; requestAnimationFrame(tick); }); }
+async function renderSegment(duration, fps, draw, signal) {
+    const start = performance.now(), interval = 1000 / Math.max(1, fps);
+    let slot = 0;
+    while (true) {
+        if (signal?.aborted)
+            throw new DOMException('Aborted', 'AbortError');
+        const elapsed = Math.min(duration, (performance.now() - start) / 1000);
+        await draw(elapsed);
+        if (elapsed >= duration)
+            return;
+        slot = Math.max(slot + 1, Math.floor((performance.now() - start) / interval) + 1);
+        const wait = start + slot * interval - performance.now();
+        if (wait > 1)
+            await exportSleep(wait, signal);
+        else
+            await new Promise(resolve => requestAnimationFrame(() => resolve()));
+    }
+}
 function getAsset(id, project = state.project) { return project?.assets?.find(a => a.id === id); }
 async function beginExport() {
     if (!state.project || ((state.project.clips?.length || 0) + (state.project.overlays?.length || 0) + (state.project.elements?.length || 0) === 0)) {
@@ -5130,7 +5336,7 @@ async function init() {
         if (!state.fluentCatalog.length)
             setTimeout(() => ensureFluentCatalog(), 900);
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=2.5.0', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=2.5.1', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

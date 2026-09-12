@@ -1,5 +1,18 @@
 # Release Notes
 
+## v2.5.1
+
+Export Engine reliability hotfix.
+
+- Reworked local export so video frames no longer depend blindly on a detached hidden video playback clock.
+- Export media is kept alive in the document and automatically resynchronized if the media clock stalls or drifts.
+- Uses manual canvas `requestFrame()` capture when supported by the browser.
+- Embedded V1 video audio now stays connected to both the export stream and a zero-gain AudioContext keep-alive path.
+- MediaRecorder finalization now completes before the AudioContext is closed.
+- The render loop is serialized so asynchronous effects and transitions cannot collapse into a first-frame-only recording.
+- Adds a post-export validation pass before download.
+- Phase 1 GPU effects, Phase 2 Smart Tools and Phase 3 Konva manipulation remain unchanged.
+
 ## v2.5.0
 
 Konva direct canvas editing.
