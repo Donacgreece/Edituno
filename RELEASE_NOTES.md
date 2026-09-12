@@ -1,15 +1,29 @@
-# Edituno Release Notes
+# Release Notes
 
-- Fixed desktop sidebar overflow and reorganized tool actions.
-- Added visible resize handles for clips, audio, overlays and elements in the timeline.
-- Preserved 4K export and existing mobile stability fixes.
-## v2.2.3 UI Symmetry
+## v2.2.4
 
-- Desktop editor tool menu is now a balanced 3 x 3 grid.
-- Clip edit, effects, adjustments and transitions are owned by the right Inspector on desktop, removing duplicate control panels.
-- Motion now has 15 functional presets, including Breath.
-- Transitions now have 15 functional presets, including Push and Soft zoom.
-- Adjustments now have 15 functional controls, including Fade and Shadows.
-- Adjustment cards and Settings modal received a visual polish pass.
-- PWA cache version bumped to v2.2.3.
+SEO, social sharing and discoverability release.
 
+### Added
+- Open Graph and Twitter card metadata
+- Dedicated share image at `public/og/edituno-share.png`
+- Structured data with `SoftwareApplication` schema
+- `robots.txt`
+- `sitemap.xml`
+- `llms.txt`
+- Professional repository README
+
+### Improved
+- Title, meta description and canonical URL targeting `https://edituno.com/`
+- Manifest metadata and screenshots
+- PWA cache versioning and asset cache busting
+- GitHub Pages workflow checks for SEO and social assets
+
+## v2.2.3
+
+Desktop UI symmetry release. The nine editor tools use a 3 x 3 layout, desktop clip controls are owned by the right Inspector, Motion and Transitions fill complete 3-column grids, and Adjustments and Settings were visually rebuilt.
+
+## v2.2.2
+
+- Desktop sidebars repacked for safer widths and cleaner tool layout.
+- Timeline clips, audio, overlays and elements expose resize handles.

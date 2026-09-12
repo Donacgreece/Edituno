@@ -25,6 +25,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --package-lock=false
+
+      - name: Build production bundle
+        run: npm run build
+
       - name: Verify Edituno Studio production bundle
         shell: bash
         run: |
@@ -33,30 +44,20 @@ jobs:
           test -f dist/sw.js
           test -f dist/manifest.webmanifest
           test -f dist/icons/icon-512.png
-          test -f src/app.ts
+          test -f dist/og/edituno-share.png
+          test -f dist/robots.txt
+          test -f dist/sitemap.xml
+          test -f dist/llms.txt
           grep -Fq "maximum-scale=1" dist/index.html
           grep -Fq "user-scalable=no" dist/index.html
           grep -Fq "timeline-audio" dist/index.html
-          grep -Fq "studio-home" dist/index.html
-          grep -Fq "editor-topbar" dist/index.html
-          grep -Fq "mobile-tool-dock" dist/index.html
-          grep -Fq "project-action-sheet" dist/index.html
-          grep -Fq "confirm-dialog" dist/index.html
-          grep -Fq "preferredAudioInsertTime" dist/index.html
-          grep -Fq "mediaImportContext" dist/index.html
-          grep -Fq "mobile-app-shell" dist/index.html
-          grep -Fq "normalizeViewportAfterKeyboard" dist/index.html
-          grep -Fq "lastStableHeight" dist/index.html
-          grep -Fq "scrollbar-thumb" dist/index.html
-          grep -Fq "timeline-overlay-row" dist/index.html
-          grep -Fq "canvas-ratio-grid" dist/index.html
-          grep -Fq "transition-card" dist/index.html
-          grep -Fq "preset-card" dist/index.html
-          grep -Fq "element-library" dist/index.html
-          grep -Fq "function addAssetToOverlay" dist/index.html
-          grep -Fq "bindBottomSheetGesture" dist/index.html
-          grep -Fq "FLUENT_TREE_API" dist/index.html
           grep -Fq "desktop-tool-menu" dist/index.html
+          grep -Fq "application/ld+json" dist/index.html
+          grep -Fq "https://edituno.com/" dist/index.html
+          grep -Fq "https://edituno.com/og/edituno-share.png" dist/index.html
+          grep -Fq "twitter:card" dist/index.html
+          grep -Fq "og:image" dist/index.html
+          grep -Fq "SoftwareApplication" dist/index.html
           grep -Fq "4K · 2160p" dist/index.html
 
       - name: Configure Pages

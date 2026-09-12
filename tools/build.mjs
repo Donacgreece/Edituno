@@ -50,7 +50,11 @@ const requiredRuntimeMarkers = [
   'function bindBottomSheetGesture()',
   'FLUENT_TREE_API',
   'desktop-tool-menu',
-  '4K · 2160p'
+  '4K · 2160p',
+  'edituno-share.png',
+  'application/ld+json',
+  'https://edituno.com/',
+  'https://edituno.com/og/edituno-share.png'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -80,4 +84,4 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v2.2.3 -> ${dist}`)
+console.log(`Built Edituno v2.2.4 -> ${dist}`)

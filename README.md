@@ -1,29 +1,92 @@
-# Edituno Studio v2.2.3
+# Edituno
 
-A mobile-first local video editor PWA with a professional desktop workspace.
+![Edituno social preview](./public/og/edituno-share.png)
 
-## Included in v2.2.1
+**Edituno** is a free local video editor built as an installable PWA. It lets you cut video, add captions, effects, transitions, music and overlays, then export directly on your device without upload and without watermark.
 
-- Draggable editor sheets with collapsed, half and full snap positions
-- Timeline and panel position preservation during edits and rerenders
-- Desktop tool parity for Media, Edit, Text, Elements, Audio, Effects, Adjust, Transitions and Canvas
-- V1 plus overlay video/image layers, audio, elements and text tracks
-- Direct canvas drag, resize and pinch scaling
-- Complete Microsoft Fluent Emoji catalog browser with 1,285 Color SVG and 1,285 3D PNG choices, loaded lazily from the official MIT-licensed repository and cached locally
-- Local project storage and autosave
-- 720p, 1080p and 4K local export when supported by the browser/device
-- Greek and English UI
-- Installable PWA with the official Edituno logo
+## Product links
 
-The Fluent catalog metadata is prefetched and cached in the background. Individual artwork is downloaded only when needed so the initial PWA does not ship thousands of unused files. Selected assets are stored locally inside the project.
+- Website: https://edituno.com/
+- Social preview image: https://edituno.com/og/edituno-share.png
+- Repository: https://github.com/Donacgreece/Edituno
 
-Run `npm run build` to rebuild `dist`.
+## What Edituno does
 
+- Local on-device editing for privacy and speed
+- Video, image, audio, text and element layers
+- Captions and SRT subtitle import
+- Filters, motion presets, adjustments and transitions
+- Mobile-first editing flow with a professional desktop workspace
+- 720p, 1080p and 4K export when supported by the browser and device
+- Greek and English interface
+- Installable PWA with offline support
 
-## v2.2.2
-- Desktop sidebars repacked for safer widths and cleaner tool layout.
-- Timeline clips, audio, overlays and elements now expose resize handles.
+## SEO and discoverability package
 
-## v2.2.3
+This release includes a complete foundation for Google, link sharing and AI discovery:
 
-Desktop UI symmetry release. The nine editor tools use a 3 x 3 layout, desktop clip controls are owned by the right Inspector, Motion and Transitions now fill complete 3-column grids, and Adjustments and Settings have been visually rebuilt.
+- Canonical URL targeting `https://edituno.com/`
+- Improved title and meta description
+- Open Graph and Twitter card tags
+- Dedicated social share image at `public/og/edituno-share.png`
+- Structured data using `schema.org/SoftwareApplication`
+- `robots.txt`
+- `sitemap.xml`
+- `llms.txt`
+
+## Tech stack
+
+- TypeScript
+- Vanilla UI runtime
+- Progressive Web App architecture
+- Local browser storage
+- GitHub Pages deployment flow
+
+## Quick start
+
+```bash
+npm install
+npm run build
+```
+
+Serve the production build locally:
+
+```bash
+npm run serve
+```
+
+## Project structure
+
+```text
+src/                      Source application and HTML template
+public/                   Static assets copied to dist/
+public/og/                Social preview assets
+public/icons/             PWA icons
+public/splash/            iOS splash screens
+dist/                     Production bundle
+.github/workflows/        GitHub Pages deployment workflow
+tools/build.mjs           Production builder
+```
+
+## Social preview asset
+
+The social thumbnail used by Open Graph and Twitter is stored here:
+
+- Repo path: `public/og/edituno-share.png`
+- Production URL: `https://edituno.com/og/edituno-share.png`
+
+## Deployment notes
+
+The repository ships with a GitHub Pages workflow. The release package also includes a PowerShell deployment helper for the existing one-command workflow.
+
+## Release
+
+Current packaged release: **v2.2.4**
+
+## Third-party and legal notes
+
+See:
+
+- `OPEN_SOURCE_STACK.md`
+- `THIRD_PARTY_NOTICES.md`
+- `RELEASE_NOTES.md`

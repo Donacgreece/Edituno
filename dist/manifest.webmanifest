@@ -1,9 +1,9 @@
 {
   "name": "Edituno Studio",
   "short_name": "Edituno",
-  "description": "Premium mobile-first local video editor. No watermark. No upload required.",
+  "description": "Free local video editor for fast edits, captions, effects and exports directly on your device. No upload. No watermark.",
   "id": "./",
-  "start_url": "./?app=2.2.3",
+  "start_url": "./?app=2.2.4",
   "scope": "./",
   "display": "standalone",
   "display_override": [
@@ -49,6 +49,26 @@
           "sizes": "192x192"
         }
       ]
+    },
+    {
+      "name": "Open studio",
+      "short_name": "Studio",
+      "url": "./?home=1",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./og/edituno-share.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Edituno social preview"
     }
   ]
 }

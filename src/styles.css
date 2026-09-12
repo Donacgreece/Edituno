@@ -266,7 +266,7 @@ img{display:block;max-width:100%}
 @media(min-width:980px) and (max-width:1320px){.editor-workspace{grid-template-columns:272px minmax(0,1fr) 312px}.desktop-tool-menu{grid-template-columns:repeat(3,minmax(0,1fr))}.desktop-sidebar-shell .action-row,.desktop-sidebar-shell .audio-actions,.desktop-inspector-scroll .action-row,.desktop-inspector-scroll .audio-actions{grid-template-columns:1fr}}
 @media(min-width:1600px){.editor-workspace{grid-template-columns:320px minmax(0,1fr) 360px}}
 
-/* v2.2.3 symmetry, inspector ownership and settings polish */
+/* v2.2.4 SEO, social sharing and discoverability release */
 @media(min-width:980px){
   .desktop-tool-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:10px;overflow:visible}
   .desktop-tool-menu button{min-width:0;width:100%;height:64px;padding:7px 4px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,#11151d,#0d1016);gap:5px}
