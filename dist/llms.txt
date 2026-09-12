@@ -3,10 +3,10 @@
 > Free local video editor for mobile and desktop. Edit videos directly on your device with no upload and no watermark.
 
 ## Canonical URL
-- https://edituno.com/
+- https://donacgreece.github.io/Edituno/
 
 ## Social Preview
-- https://edituno.com/og/edituno-share.png
+- https://donacgreece.github.io/Edituno/og/edituno-share.png
 
 ## Summary
 Edituno is an installable PWA video editor focused on privacy, speed and ease of use. It supports video, image, audio and text tracks, captions, transitions, effects, filters, timeline editing and direct device export.

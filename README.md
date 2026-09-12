@@ -6,8 +6,9 @@
 
 ## Product links
 
-- Website: https://edituno.com/
-- Social preview image: https://edituno.com/og/edituno-share.png
+- Current website: https://donacgreece.github.io/Edituno/
+- Planned custom domain: https://edituno.com/
+- Social preview image: https://donacgreece.github.io/Edituno/og/edituno-share.png
 - Repository: https://github.com/Donacgreece/Edituno
 
 ## What Edituno does
@@ -25,7 +26,7 @@
 
 This release includes a complete foundation for Google, link sharing and AI discovery:
 
-- Canonical URL targeting `https://edituno.com/`
+- Canonical URL targeting the current GitHub Pages deployment until `edituno.com` is connected
 - Improved title and meta description
 - Open Graph and Twitter card tags
 - Dedicated social share image at `public/og/edituno-share.png`
@@ -73,7 +74,8 @@ tools/build.mjs           Production builder
 The social thumbnail used by Open Graph and Twitter is stored here:
 
 - Repo path: `public/og/edituno-share.png`
-- Production URL: `https://edituno.com/og/edituno-share.png`
+- Current production URL: `https://donacgreece.github.io/Edituno/og/edituno-share.png`
+- Planned domain URL: `https://edituno.com/og/edituno-share.png`
 
 ## Deployment notes
 
@@ -81,7 +83,7 @@ The repository ships with a GitHub Pages workflow. The release package also incl
 
 ## Release
 
-Current packaged release: **v2.2.4**
+Current packaged release: **v2.2.6**
 
 ## Third-party and legal notes
 
@@ -90,3 +92,11 @@ See:
 - `OPEN_SOURCE_STACK.md`
 - `THIRD_PARTY_NOTICES.md`
 - `RELEASE_NOTES.md`
+
+## Automatic domain awareness
+
+Edituno does not hardcode the production hostname anymore. The GitHub Pages workflow resolves the active Pages custom domain before every build and injects that URL into the canonical tag, Open Graph metadata, Twitter card image, structured data, `robots.txt`, `sitemap.xml` and `llms.txt`.
+
+Until a custom domain is configured, the build uses `https://donacgreece.github.io/Edituno/`. After `edituno.com` is configured as the GitHub Pages custom domain, scheduled deployment checks automatically detect it and rebuild the discovery metadata without any source-code change.
+
+The social preview image is stored at `public/og/edituno-share.png`, while its public absolute URL is generated at build time from the active domain.

@@ -2,6 +2,23 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const root = process.cwd()
+const fallbackSiteUrl = 'https://donacgreece.github.io/Edituno/'
+function normalizeSiteUrl(value) {
+  const raw = String(value || fallbackSiteUrl).trim()
+  const parsed = new URL(raw)
+  if (parsed.protocol !== 'https:' && parsed.hostname !== 'localhost') throw new Error('EDITUNO_SITE_URL must use HTTPS')
+  parsed.hash = ''
+  parsed.search = ''
+  if (!parsed.pathname.endsWith('/')) parsed.pathname += '/'
+  return parsed.toString()
+}
+const siteUrl = normalizeSiteUrl(process.env.EDITUNO_SITE_URL || fallbackSiteUrl)
+const shareUrl = new URL('og/edituno-share.png', siteUrl).toString()
+function renderSiteTokens(value) {
+  return value
+    .replaceAll('__EDITUNO_SITE_URL__', siteUrl)
+    .replaceAll('__EDITUNO_SHARE_URL__', shareUrl)
+}
 const template = fs.readFileSync(path.join(root, 'src', 'index.template.html'), 'utf8')
 const css = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8')
 const js = fs.readFileSync(path.join(root, '.build', 'app.js'), 'utf8')
@@ -14,7 +31,7 @@ const dist = path.join(root, 'dist')
 fs.rmSync(dist, { recursive: true, force: true })
 fs.mkdirSync(dist, { recursive: true })
 
-const html = template
+const html = renderSiteTokens(template)
   .replace('__EDITUNO_CSS__', () => css)
   .replace('__EDITUNO_JS__', () => js)
 
@@ -53,8 +70,7 @@ const requiredRuntimeMarkers = [
   '4K · 2160p',
   'edituno-share.png',
   'application/ld+json',
-  'https://edituno.com/',
-  'https://edituno.com/og/edituno-share.png'
+  'application/ld+json'
 ]
 for (const marker of requiredRuntimeMarkers) {
   if (!js.includes(marker) && !html.includes(marker)) throw new Error(`Production validation failed: ${marker} missing`)
@@ -84,4 +100,12 @@ function copyDir(from, to) {
 }
 
 copyDir(path.join(root, 'public'), dist)
-console.log(`Built Edituno v2.2.4 -> ${dist}`)
+for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
+  const target = path.join(dist, filename)
+  const rendered = renderSiteTokens(fs.readFileSync(target, 'utf8'))
+  fs.writeFileSync(target, rendered)
+}
+if (!html.includes(siteUrl) || !html.includes(shareUrl)) throw new Error('Dynamic site URL injection failed')
+if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) throw new Error('Dynamic sitemap URL injection failed')
+if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
+console.log(`Built Edituno v2.2.6 -> ${dist}`)

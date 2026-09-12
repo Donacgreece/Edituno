@@ -10,4 +10,4 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
-Sitemap: https://edituno.com/sitemap.xml
+Sitemap: https://donacgreece.github.io/Edituno/sitemap.xml

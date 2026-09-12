@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.2.4",
+  "version": "2.2.6",
   "private": true,
   "description": "Free local video editor PWA with mobile-first editing, desktop workspace, SEO-ready metadata and social sharing preview",
   "scripts": {

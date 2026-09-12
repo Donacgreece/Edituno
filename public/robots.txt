@@ -10,4 +10,4 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
-Sitemap: https://edituno.com/sitemap.xml
+Sitemap: __EDITUNO_SITE_URL__sitemap.xml

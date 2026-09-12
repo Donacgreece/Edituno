@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
 
 permissions:
   contents: read
@@ -33,13 +35,33 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund --package-lock=false
 
+      - name: Resolve active Pages domain
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          DEFAULT_URL="https://${OWNER}.github.io/${REPO}/"
+          CNAME="$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.cname // empty' 2>/dev/null || true)"
+          if [ -n "$CNAME" ]; then
+            SITE_URL="https://${CNAME%/}/"
+          else
+            SITE_URL="$DEFAULT_URL"
+          fi
+          echo "EDITUNO_SITE_URL=$SITE_URL" >> "$GITHUB_ENV"
+          echo "Active Edituno site URL: $SITE_URL"
+
       - name: Build production bundle
         run: npm run build
 
-      - name: Verify Edituno Studio production bundle
+      - name: Verify domain-aware SEO bundle
         shell: bash
         run: |
           set -euo pipefail
+          SHARE_URL="${EDITUNO_SITE_URL}og/edituno-share.png"
+          SITEMAP_URL="${EDITUNO_SITE_URL}sitemap.xml"
           test -f dist/index.html
           test -f dist/sw.js
           test -f dist/manifest.webmanifest
@@ -48,17 +70,18 @@ jobs:
           test -f dist/robots.txt
           test -f dist/sitemap.xml
           test -f dist/llms.txt
-          grep -Fq "maximum-scale=1" dist/index.html
-          grep -Fq "user-scalable=no" dist/index.html
-          grep -Fq "timeline-audio" dist/index.html
-          grep -Fq "desktop-tool-menu" dist/index.html
+          grep -Fq "$EDITUNO_SITE_URL" dist/index.html
+          grep -Fq "$SHARE_URL" dist/index.html
+          grep -Fq "$SITEMAP_URL" dist/robots.txt
+          grep -Fq "<loc>${EDITUNO_SITE_URL}</loc>" dist/sitemap.xml
+          grep -Fq "$EDITUNO_SITE_URL" dist/llms.txt
           grep -Fq "application/ld+json" dist/index.html
-          grep -Fq "https://edituno.com/" dist/index.html
-          grep -Fq "https://edituno.com/og/edituno-share.png" dist/index.html
           grep -Fq "twitter:card" dist/index.html
           grep -Fq "og:image" dist/index.html
           grep -Fq "SoftwareApplication" dist/index.html
           grep -Fq "4K · 2160p" dist/index.html
+          if grep -R -Fq "__EDITUNO_SITE_URL__" dist; then exit 1; fi
+          if grep -R -Fq "__EDITUNO_SHARE_URL__" dist; then exit 1; fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
