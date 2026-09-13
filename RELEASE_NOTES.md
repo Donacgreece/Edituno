@@ -1,5 +1,22 @@
 # Release Notes
 
+## v2.9.0
+
+LibAV/FFmpeg WASM Safari Audio Engine.
+
+- Replaces the failing Safari/iOS WebCodecs AAC decode path with a separately loaded libav.js 6.10.9.0 / FFmpeg 9.0 WebAssembly audio backend.
+- Embedded video speech, A1 music, audible overlays, trim, speed, volume and fades are processed offline by FFmpeg filters. No project-length real-time playback pass is required.
+- Source media is presented to libav.js through seekable readahead files, avoiding whole-file copies into the WASM filesystem for long inputs.
+- Mixed audio is encoded as 48 kHz stereo AAC at 192 kbps by FFmpeg's built-in AAC encoder, then remuxed with Edituno's deterministic H.264 video through Mediabunny.
+- Windows/Chromium desktop export is deliberately left on the existing working path. The new backend is selected for Safari/iOS audible exports.
+- Safari's `audioTracks.length === 0` is no longer treated as definitive proof that an exported MP4 lacks audio; structural and Mediabunny validation remain authoritative.
+- The first-party Edituno license remains PolyForm Noncommercial 1.0.0. The LibAV/FFmpeg runtime remains a separate LGPL component with corresponding source distributed alongside the production build.
+- CI rejects GPL/nonfree FFmpeg configuration and external x264/x265, FDK-AAC, FAAC, LAME, libopus and libvorbis libraries for this runtime.
+- A separate patent notice documents that codec patent questions are independent of open-source copyright licensing.
+- The older `@mediabunny/aac-encoder` runtime is no longer distributed by v2.9.0; the pinned LibAV/FFmpeg build now owns both AAC decoding and AAC encoding on Safari/WebKit.
+- The LibAV runtime is lazy-loaded as separate files and supports a documented compatible-runtime base-path override.
+- The corresponding-source archive includes libav.js, pristine FFmpeg 9.0, emfiberthreads source, generated configuration and the reproducible build recipe.
+
 ## v2.8.2
 
 Safari AAC decoder regression fix.

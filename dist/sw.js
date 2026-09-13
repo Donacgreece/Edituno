@@ -1,4 +1,4 @@
-const CACHE = 'edituno-studio-v2.8.2'
+const CACHE = 'edituno-studio-v2.9.0'
 const CORE = [
   './',
   './manifest.webmanifest',
@@ -8,7 +8,6 @@ const CORE = [
   './vendor/meyda.min.js',
   './vendor/konva.min.js',
   './vendor/mediabunny.min.cjs',
-  './vendor/mediabunny-aac-encoder.min.js',
   './vendor/mp4-muxer.js',
   './vendor/mp4box.all.mjs',
   './vendor/gl-transitions/CrossZoom.glsl',

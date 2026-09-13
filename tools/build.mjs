@@ -140,6 +140,15 @@ if (!js.includes('function bindKonvaCanvasEditor()') || !js.includes('new Konva.
 if (!js.includes('function exportProjectWebCodecs(') || !js.includes('function renderOfflineProjectAudio(') || !js.includes('new VideoFrameCtor(')) {
   throw new Error('Deterministic WebCodecs export engine is missing')
 }
+if (!js.includes('function exportProjectSafariLibavAudio(') || !js.includes('function mixProjectAudioWithLibav(') || !js.includes('EDITUNO_LIBAV_VERSION')) {
+  throw new Error('LibAV Safari audio export engine is missing')
+}
+if (!js.includes('function loadEditunoLibavAudioFrontend()') || !js.includes('EDITUNO_LIBAV_DEFAULT_BASE') || !js.includes('edituno-audio-cli')) {
+  throw new Error('Lazy, replaceable LibAV audio runtime loader is missing')
+}
+if (!js.includes("audioMode:'libav-ffmpeg-wasm'") && !js.includes("audioMode: 'libav-ffmpeg-wasm'")) {
+  throw new Error('LibAV Safari audio result marker is missing')
+}
 if (!js.includes('function prewarmExportAudioContext()') || !js.includes('function projectExpectsAudio(') || !js.includes('function renderMediaClockSegment(')) {
   throw new Error('Mobile audio export reliability layer is missing')
 }
@@ -185,8 +194,8 @@ if (!js.includes('function validateDirectAudioOutput(') || !js.includes("audioMo
 if (!js.includes('function validateApplePcmMov(') || !js.includes("blobChunkContainsAscii(blob, 'sowt')")) {
   throw new Error('Apple PCM MOV structural validation is missing')
 }
-if (!template.includes('vendor/mediabunny.min.cjs') || !template.includes('vendor/mediabunny-aac-encoder.min.js')) {
-  throw new Error('Mediabunny browser runtimes are missing from the document')
+if (!template.includes('vendor/mediabunny.min.cjs')) {
+  throw new Error('Mediabunny browser runtime is missing from the document')
 }
 if (!js.includes('function validateExportAudioEnergy(') || !js.includes("throw new Error('export-silent-audio')")) {
   throw new Error('Audible export validation is missing')
@@ -281,18 +290,12 @@ const mediabunnyCandidates = [
   path.join(root,'node_modules','mediabunny','dist','bundles','mediabunny.cjs'),
   path.join(root,'public','vendor','mediabunny.min.cjs')
 ]
-const mediabunnyAacCandidates = [
-  path.join(root,'node_modules','@mediabunny','aac-encoder','dist','bundles','mediabunny-aac-encoder.min.js'),
-  path.join(root,'node_modules','@mediabunny','aac-encoder','dist','bundles','mediabunny-aac-encoder.js'),
-  path.join(root,'public','vendor','mediabunny-aac-encoder.min.js')
-]
 copyVendor(mediabunnyCandidates,path.join(vendorDir,'mediabunny.min.cjs'),'Mediabunny 1.56.2',1)
-copyVendor(mediabunnyAacCandidates,path.join(vendorDir,'mediabunny-aac-encoder.min.js'),'Mediabunny AAC encoder 1.56.2',1)
-for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md']) {
+for (const legal of ['LICENSE.md','LICENSE_SCOPE.md','NOTICE','THIRD_PARTY_NOTICES.md','OPEN_SOURCE_STACK.md','THIRD_PARTY_SOURCE_OFFER.md','PATENT_NOTICE.md','LEGAL_COMPLIANCE_LIBAV_AUDIO.md','LIBAV_RUNTIME_REPLACEMENT.md']) {
   const src=path.join(root,legal); if(fs.existsSync(src))fs.copyFileSync(src,path.join(dist,legal))
 }
 const thirdPartyLicenses=path.join(root,'THIRD_PARTY_LICENSES');if(fs.existsSync(thirdPartyLicenses))copyDir(thirdPartyLicenses,path.join(dist,'THIRD_PARTY_LICENSES'))
-for (const file of ['LICENSE.md', 'LICENSE_SCOPE.md', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'OPEN_SOURCE_STACK.md']) {
+for (const file of ['LICENSE.md', 'LICENSE_SCOPE.md', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'OPEN_SOURCE_STACK.md', 'THIRD_PARTY_SOURCE_OFFER.md', 'PATENT_NOTICE.md', 'LEGAL_COMPLIANCE_LIBAV_AUDIO.md', 'LIBAV_RUNTIME_REPLACEMENT.md']) {
   fs.copyFileSync(path.join(root, file), path.join(dist, file))
 }
 for (const filename of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
@@ -316,4 +319,11 @@ if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Mediabunny')) throw new Error('Mediabunny third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MEDIABUNNY-MPL-2.0.txt'))) throw new Error('Mediabunny MPL-2.0 license copy missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'FFMPEG-LGPL-2.1.txt'))) throw new Error('FFmpeg LGPL-2.1 license copy missing')
-console.log(`Built Edituno v2.8.2 -> ${dist}`)
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'LIBAVJS-LGPL-2.1.txt'))) throw new Error('libav.js LGPL-2.1 license copy missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'LIBAVJS-0BSD.txt'))) throw new Error('libav.js 0BSD wrapper notice copy missing')
+if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'EMFIBERTHREADS-0BSD.txt'))) throw new Error('emfiberthreads 0BSD license copy missing')
+if (!fs.readFileSync(path.join(dist, 'LIBAV_RUNTIME_REPLACEMENT.md'), 'utf8').includes('EDITUNO_LIBAV_BASE')) throw new Error('LibAV runtime replacement instructions missing')
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## libav.js / FFmpeg WASM audio engine')) throw new Error('libav.js third-party notice missing')
+if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_SOURCE_OFFER.md'), 'utf8').includes('libav.js v6.10.9.0')) throw new Error('LibAV corresponding-source notice missing')
+if (!fs.readFileSync(path.join(dist, 'PATENT_NOTICE.md'), 'utf8').includes('patent')) throw new Error('Patent notice missing')
+console.log(`Built Edituno v2.9.0 -> ${dist}`)

@@ -70,10 +70,15 @@ Edituno maps Konva transforms back into its own project properties. Text, overla
 Edituno supplies the deterministic frame clock, exact source seeking, Canvas/WebGL composition, OfflineAudioContext mix, audio/video timestamps and browser capability fallback.
 
 
-## Apple mobile export engine (v2.7.0)
+## Apple mobile export engine history
 
-- Mediabunny 1.56.2, MPL-2.0: MP4 output and browser media abstraction.
-- @mediabunny/aac-encoder 1.56.2, MPL-2.0: reliable AAC-LC encoding using a size-optimized FFmpeg/WASM encoder.
-- FFmpeg AAC encoder component: upstream license terms preserved separately.
+The earlier v2.7 experimental AAC encoder path is retained only as release history. The v2.9.0 Safari/iOS production path no longer distributes or depends on `@mediabunny/aac-encoder`; AAC decode, timeline audio processing and AAC encode for Safari/WebKit are handled by the separately built LibAV.js/FFmpeg runtime described below. Mediabunny 1.56.2 remains the MPL-2.0 MP4/container layer.
 
-On iPhone and iPad, Edituno intentionally registers the custom AAC encoder even when Safari reports native AAC encoding support. This avoids known WebKit AAC encoder metadata/silent-track failures.
+
+## Safari/iOS LibAV audio engine (v2.9.0)
+
+- libav.js 6.10.9.0 / FFmpeg 9.0, custom LGPL-only WebAssembly runtime.
+- Built in CI from exact source with GPL and nonfree FFmpeg modes rejected.
+- Uses FFmpeg built-in AAC decode/encode and built-in audio filters.
+- Corresponding source, including the pinned libav.js source, FFmpeg source, emfiberthreads source and build configuration, is distributed with the production site under `third-party-source/`.
+- Edituno first-party code remains PolyForm Noncommercial 1.0.0.

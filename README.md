@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.8.2**
+**Current release: v2.9.0**
 
 </div>
 
@@ -301,7 +301,8 @@ The installed version keeps the same local-first project workflow as the browser
 | Smart framing | Smartcrop.js |
 | Audio analysis | Meyda |
 | Canvas interaction | Konva |
-| MP4 muxing | mp4-muxer 5.2.2 |
+| Safari audio export | libav.js / FFmpeg WebAssembly |
+| MP4 muxing | Mediabunny + mp4-muxer compatibility path |
 | Storage | Browser local storage / IndexedDB-style local project storage |
 | App model | Progressive Web App |
 | Deployment | GitHub Pages + GitHub Actions |
@@ -483,6 +484,8 @@ Each third-party component keeps its original upstream license.
 See:
 
 - [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md)
+- [`THIRD_PARTY_SOURCE_OFFER.md`](./THIRD_PARTY_SOURCE_OFFER.md)
+- [`PATENT_NOTICE.md`](./PATENT_NOTICE.md)
 - [`THIRD_PARTY_LICENSES/`](./THIRD_PARTY_LICENSES/)
 - [`OPEN_SOURCE_STACK.md`](./OPEN_SOURCE_STACK.md)
 - [`LICENSE_SCOPE.md`](./LICENSE_SCOPE.md)
@@ -545,34 +548,11 @@ https://edituno.com/
 
 </div>
 
-### Mobile audio export reliability
+### Safari, iPhone and iPad production audio export
 
-On Apple mobile browsers, Edituno now unlocks the export audio graph directly from the user's Export action, prevents video-only MP4 files when a project is expected to contain audio, and uses the source media clock for the realtime compatibility path so embedded speech stays tied to the corresponding video frames.
+Safari/WebKit audible exports use a dedicated LibAV.js / FFmpeg WebAssembly audio backend instead of Safari's native AAC WebCodecs path. Embedded video speech, background music, A1 audio and audible overlays are decoded, trimmed, time-scaled, faded, mixed and AAC-encoded offline by the WASM runtime. The final AAC packets are combined with Edituno's deterministic H.264 video render through Mediabunny.
 
-### Safari audio export compatibility
+Source media is exposed to LibAV through seekable readahead files, so long inputs do not need to play in real time. Edituno does not use the old Safari realtime-audio workaround on the production v2.9.0 path. Windows/Chromium keeps the existing working export path.
 
-Edituno includes a dedicated Safari/iPhone audio compatibility path. If native Web Audio cannot decode an embedded AAC track from an MP4 or QuickTime source, Edituno can demux the local media container with MP4Box.js, decode AAC through WebCodecs, rebuild the PCM timeline mix and normalize AAC encoder metadata before the final MP4 mux. This is designed to prevent successful-looking but silent mobile exports.
+The LibAV.js / FFmpeg runtime remains a separate LGPL component and Mediabunny remains MPL-2.0. Edituno first-party code remains PolyForm Noncommercial 1.0.0. Exact corresponding source and reproducible build configuration are distributed with the production application. See `THIRD_PARTY_SOURCE_OFFER.md`, `LIBAV_RUNTIME_REPLACEMENT.md`, `LEGAL_COMPLIANCE_LIBAV_AUDIO.md` and `PATENT_NOTICE.md`.
 
-### iPhone source-audio passthrough
-
-For compatible Apple mobile projects where the original clip audio has not been modified, Edituno avoids Safari AAC re-encoding entirely. The original AAC access units are extracted from the local MP4/QuickTime source and remuxed into the rendered MP4 at timeline-correct timestamps. This preserves source audio quality and avoids Safari encoder-specific silent-audio failures.
-
-### Apple mobile WASM AAC export
-
-On iPhone and iPad, Edituno does not rely on Safari's native AAC encoder for final audio. The deterministic project audio mix is encoded with the Mediabunny AAC extension, which uses a dedicated FFmpeg/WASM AAC-LC encoder, and is written into the final MP4 by Mediabunny. This keeps audio generation independent from Safari's known native AAC encoder issues while preserving the same Edituno timeline and frame renderer.
-
-### iPhone/iPad compatible MOV export
-
-For Apple mobile devices, Edituno prioritizes reliable audio over container uniformity. Projects with audio are exported as QuickTime MOV with H.264 video and 48 kHz stereo 16-bit PCM audio. This avoids Safari's problematic AAC encoding path entirely. Desktop and other supported platforms continue to use the existing MP4/WebCodecs export paths.
-
-### Direct source audio on Apple mobile
-
-When an imported video already contains audio and that audio has not been modified, Edituno does not re-encode it on iPhone or iPad. The original AAC access units and decoder configuration are copied directly from the source media and remuxed into the newly rendered MP4 with timeline-adjusted timestamps. This keeps the exact source audio bitstream while Edituno renders a new video stream.
-
-### Safari full audio timeline mix
-
-On iPhone and iPad, Edituno can mix the embedded audio from video clips together with background music, additional A1 audio and audible video overlays. The Apple mobile path uses Safari's media playback engine for source decoding, mixes those sources through Web Audio, captures the result as PCM and only then packages the verified mix with the deterministic Edituno video render. This avoids relying on Safari's problematic AAC WebCodecs decode path for the source material.
-
-### Offline chunked audio export
-
-On iPhone and iPad, Edituno probes the actual media container instead of relying on the browser's `audioTracks` metadata. Audible sources are decoded through Mediabunny in small timeline ranges and mixed offline in 5-second blocks. Video speech, music, A1 audio and audible overlays can therefore be combined without real-time playback and without allocating the entire project's PCM audio in memory.

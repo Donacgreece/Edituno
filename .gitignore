@@ -4,3 +4,8 @@ node_modules/
 *.log
 .vscode/
 .idea/
+
+# CI-generated LibAV/FFmpeg WASM artifacts
+.cache/
+public/vendor/libav/
+public/third-party-source/

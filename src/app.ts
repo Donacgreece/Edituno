@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.8.2 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.0 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1614,7 +1614,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.8.2</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.0</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1622,7 +1622,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.8.2</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1659,7 +1659,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.8.2</div>
+      <div class="home-rail-version">v2.9.0</div>
     </aside>
 
     <div class="home-surface">
@@ -2426,7 +2426,7 @@ function bindAssetDragInteractions(){
 
 function renderExportModal() {
   const old=$('.modal-backdrop.export-modal'); if(old)old.remove()
-  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+state.preferences.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${isAppleMobileRuntime()?(state.language==='el'?'Σε iPhone/iPad ο ήχος του video, η μουσική και τα επιπλέον audio layers αποκωδικοποιούνται και μιξάρονται offline σε μικρά blocks, χωρίς realtime αναπαραγωγή.':'On iPhone/iPad, video audio, music and additional audio layers are decoded and mixed offline in small blocks without real-time playback.'):`${tr('browserLimit')} ${state.language==='el'?'Το 4K απαιτεί αρκετή μνήμη και η διαθεσιμότητα εξαρτάται από browser και συσκευή.':'4K needs substantial memory and availability depends on the browser and device.'}`}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
+  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+state.preferences.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${isAppleMobileRuntime()?(state.language==='el'?'Σε Safari/iPhone/iPad ο ήχος του video, η μουσική και τα επιπλέον audio layers επεξεργάζονται offline από ανεξάρτητο FFmpeg/WebAssembly audio engine, χωρίς realtime αναπαραγωγή.':'On Safari/iPhone/iPad, video audio, music and additional audio layers are processed offline by an independent FFmpeg/WebAssembly audio engine without real-time playback.'):`${tr('browserLimit')} ${state.language==='el'?'Το 4K απαιτεί αρκετή μνήμη και η διαθεσιμότητα εξαρτάται από browser και συσκευή.':'4K needs substantial memory and availability depends on the browser and device.'}`}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
 }
 
 function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); applyTheme(state.preferences.theme); if(state.view==='editor')renderEditor(); else if(state.view==='about')aboutPage(); else renderHome() }
@@ -2537,6 +2537,15 @@ function isAppleMobileRuntime(){
   const ua=navigator.userAgent||''
   return /iPad|iPhone|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)
 }
+function isSafariRuntime(){
+  const ua=navigator.userAgent||''
+  const vendor=navigator.vendor||''
+  if(isAppleMobileRuntime())return true
+  return /Safari/i.test(ua)&&/Apple/i.test(vendor)&&!/Chrome|Chromium|CriOS|Edg|OPR|FxiOS|Android/i.test(ua)
+}
+function shouldUseLibavAudioExport(project=state.project){
+  return Boolean(projectExpectsAudio(project)&&isSafariRuntime())
+}
 async function prewarmExportAudioContext(){
   const Ctx=window.AudioContext||window.webkitAudioContext
   if(!Ctx)return null
@@ -2567,7 +2576,7 @@ async function blobChunkContainsAscii(blob,text){
 }
 async function exportedBlobHasAudioTrack(blob,probe){
   try{
-    if(probe?.audioTracks&&typeof probe.audioTracks.length==='number')return probe.audioTracks.length>0
+    if(probe?.audioTracks&&typeof probe.audioTracks.length==='number'&&probe.audioTracks.length>0)return true
   }catch{}
   const type=blob.type||''
   if(type.includes('mp4')||type.includes('quicktime'))return await blobChunkContainsAscii(blob,'soun')
@@ -2716,7 +2725,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.8.2'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.0'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -3504,6 +3513,226 @@ async function exportProjectAppleRealtimeMix(quality,fps,onProgress,signal){
 }
 
 
+const EDITUNO_LIBAV_VERSION='6.10.9.0'
+const EDITUNO_LIBAV_VARIANT='edituno-audio-cli'
+const EDITUNO_LIBAV_DEFAULT_BASE='./vendor/libav/'
+let editunoLibavAudioFrontendPromise=null
+function editunoLibavBase(){
+  return String((window).EDITUNO_LIBAV_BASE||EDITUNO_LIBAV_DEFAULT_BASE)
+}
+function libavAudioRuntimeAvailable(){
+  return Boolean((window).LibAV?.LibAV)
+}
+async function loadEditunoLibavAudioFrontend(){
+  if(libavAudioRuntimeAvailable())return {wrapper:(window).LibAV,base:new URL(editunoLibavBase(),document.baseURI).toString()}
+  if(editunoLibavAudioFrontendPromise)return editunoLibavAudioFrontendPromise
+  editunoLibavAudioFrontendPromise=(async()=>{
+    const base=new URL(editunoLibavBase(),document.baseURI).toString()
+    const src=`${base}libav-${EDITUNO_LIBAV_VERSION}-${EDITUNO_LIBAV_VARIANT}.js`
+    await loadClassicScriptOnce(src,'edituno-libav-audio-6.10.9.0')
+    const wrapper=(window).LibAV
+    if(!wrapper?.LibAV)throw new Error('libav-runtime-missing')
+    wrapper.base=base
+    return {wrapper,base}
+  })()
+  return editunoLibavAudioFrontendPromise
+}
+function ffmpegNumber(value,places=6){
+  const number=Number(value)||0
+  return Number(number.toFixed(places)).toString()
+}
+function ffmpegAtempoChain(speed){
+  let value=clamp(Number(speed)||1,.05,16),parts=[]
+  while(value>2.000001){parts.push('atempo=2');value/=2}
+  while(value<.499999){parts.push('atempo=0.5');value/=.5}
+  if(Math.abs(value-1)>.000001)parts.push(`atempo=${ffmpegNumber(value,5)}`)
+  return parts
+}
+function libavAssetExtension(asset){
+  const name=String(asset?.name||'').toLowerCase()
+  const match=/\.([a-z0-9]{1,8})$/.exec(name)
+  if(match)return match[1]
+  const mime=String(asset?.mimeType||'').toLowerCase()
+  if(mime.includes('quicktime'))return 'mov'
+  if(mime.includes('mp4')||mime.includes('m4a'))return 'mp4'
+  if(mime.includes('mpeg')||mime.includes('mp3'))return 'mp3'
+  if(mime.includes('wav'))return 'wav'
+  if(mime.includes('flac'))return 'flac'
+  return asset?.type==='video'?'mp4':'m4a'
+}
+function createLibavAudioFilter(events,duration){
+  const labels=[]
+  const chains=[]
+  for(let i=0;i<events.length;i++){
+    const event=events[i],speed=Math.max(.05,Number(event.speed)||1)
+    const timelineDuration=Math.max(.001,Number(event.duration)||.001)
+    const sourceDuration=Math.max(.001,timelineDuration*speed)
+    const filters=[
+      'asetpts=PTS-STARTPTS',
+      `atrim=start=0:duration=${ffmpegNumber(sourceDuration)}`,
+      'asetpts=PTS-STARTPTS'
+    ]
+    filters.push(...ffmpegAtempoChain(speed))
+    filters.push('aresample=48000')
+    filters.push('aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo')
+    filters.push(`volume=${ffmpegNumber(Math.max(0,Number(event.volume)||0),5)}`)
+    const fadeIn=Math.min(timelineDuration,Math.max(0,Number(event.fadeIn)||0))
+    const fadeOut=Math.min(timelineDuration,Math.max(0,Number(event.fadeOut)||0))
+    if(fadeIn>.0005)filters.push(`afade=t=in:st=0:d=${ffmpegNumber(fadeIn)}`)
+    if(fadeOut>.0005)filters.push(`afade=t=out:st=${ffmpegNumber(Math.max(0,timelineDuration-fadeOut))}:d=${ffmpegNumber(fadeOut)}`)
+    filters.push(`atrim=duration=${ffmpegNumber(timelineDuration)}`)
+    const delay=Math.max(0,Math.round((Number(event.timelineStart)||0)*1000))
+    if(delay>0)filters.push(`adelay=${delay}|${delay}`)
+    const label=`a${i}`
+    labels.push(`[${label}]`)
+    chains.push(`[${i}:a:0]${filters.join(',')}[${label}]`)
+  }
+  const out='aout'
+  if(labels.length===1){
+    chains.push(`${labels[0]}apad=pad_dur=${ffmpegNumber(duration)},alimiter=limit=0.98,atrim=duration=${ffmpegNumber(duration)},asetpts=PTS-STARTPTS[${out}]`)
+  }else{
+    chains.push(`${labels.join('')}amix=inputs=${labels.length}:duration=longest:dropout_transition=0:normalize=0,apad=pad_dur=${ffmpegNumber(duration)},alimiter=limit=0.98,atrim=duration=${ffmpegNumber(duration)},asetpts=PTS-STARTPTS[${out}]`)
+  }
+  return {graph:chains.join(';'),outputLabel:out}
+}
+async function createEditunoLibavInstance(){
+  const {wrapper,base}=await loadEditunoLibavAudioFrontend()
+  return await wrapper.LibAV({base,nothreads:true})
+}
+async function mixProjectAudioWithLibav(project,signal,onProgress){
+  if(!project)throw new Error('empty')
+  const events=collectOfflineAudioEvents(project)
+  if(!events.length)throw new Error('audio-events-missing')
+  const duration=Math.max(.05,projectDuration(project))
+  const libav=await createEditunoLibavInstance()
+  const session=`edituno_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
+  const virtualFiles=new Map(),createdNames=[]
+  const outputName=`${session}_mix.aac`
+  const writes=[]
+  let aborted=false
+  const abort=()=>{aborted=true;try{libav.terminate()}catch{}}
+  signal?.addEventListener('abort',abort,{once:true})
+  try{
+    onProgress?.(.02)
+    for(let i=0;i<events.length;i++){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      const event=events[i]
+      if(virtualFiles.has(event.assetId))continue
+      const asset=getAsset(event.assetId,project),blob=await getBlob(event.assetId)
+      if(!blob)throw new Error('audio-source-missing')
+      const name=`${session}_${virtualFiles.size}.${libavAssetExtension(asset)}`
+      await libav.mkreadaheadfile(name,blob)
+      virtualFiles.set(event.assetId,name);createdNames.push(name)
+    }
+    await libav.mkstreamwriterdev(outputName)
+    libav.onwrite=(name,position,data)=>{
+      if(name!==outputName||!data?.length)return
+      writes.push({position:Number(position)||0,data:new Uint8Array(data)})
+    }
+    const args=[]
+    for(const event of events){
+      const speed=Math.max(.05,Number(event.speed)||1)
+      const sourceStart=Math.max(0,Number(event.sourceStart)||0)
+      const sourceDuration=Math.max(.05,(Number(event.duration)||.05)*speed+.12)
+      if(sourceStart>0)args.push('-ss',ffmpegNumber(sourceStart))
+      args.push('-t',ffmpegNumber(sourceDuration),'-i',virtualFiles.get(event.assetId))
+    }
+    const filter=createLibavAudioFilter(events,duration)
+    args.push('-filter_complex',filter.graph,'-map',`[${filter.outputLabel}]`,'-vn','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-f','adts','-y',outputName)
+    onProgress?.(.08)
+    const code=await libav.ffmpeg(...args)
+    if(aborted||signal?.aborted)throw new DOMException('Aborted','AbortError')
+    if(code!==0)throw new Error(`libav-ffmpeg-${code}`)
+    if(!writes.length)throw new Error('libav-audio-empty')
+    writes.sort((a,b)=>a.position-b.position)
+    let expected=0
+    const parts=[]
+    for(const chunk of writes){
+      if(chunk.position!==expected)throw new Error('libav-audio-nonsequential')
+      parts.push(chunk.data);expected+=chunk.data.byteLength
+    }
+    if(expected<128)throw new Error('libav-audio-empty')
+    onProgress?.(.30)
+    return {blob:new Blob(parts,{type:'audio/aac'}),duration,events:events.length,bytes:expected}
+  }catch(error){
+    if(aborted||signal?.aborted)throw new DOMException('Aborted','AbortError')
+    throw error
+  }finally{
+    signal?.removeEventListener('abort',abort)
+    if(!aborted){
+      for(const name of createdNames)try{await libav.unlinkreadaheadfile(name)}catch{}
+      try{await libav.unlink(outputName)}catch{}
+      try{libav.terminate()}catch{}
+    }
+  }
+}
+async function openLibavEncodedAudio(blob){
+  const M=mediabunnyRuntime()
+  if(!M?.Input||!M?.BlobSource||!M?.ALL_FORMATS||!M?.EncodedPacketSink)throw new Error('mediabunny-unavailable')
+  const input=new M.Input({source:new M.BlobSource(blob),formats:M.ALL_FORMATS})
+  try{
+    const track=await input.getPrimaryAudioTrack()
+    if(!track)throw new Error('libav-audio-track-missing')
+    const codec=await track.getCodec()
+    if(codec!=='aac')throw new Error(`libav-audio-codec-${codec||'unknown'}`)
+    const decoderConfig=await track.getDecoderConfig()
+    const channels=await track.getNumberOfChannels()
+    const sampleRate=await track.getSampleRate()
+    if(!decoderConfig||!channels||!sampleRate)throw new Error('libav-audio-config')
+    return {input,track,sink:new M.EncodedPacketSink(track),decoderConfig,channels,sampleRate}
+  }catch(error){try{input.dispose()}catch{};throw error}
+}
+async function exportProjectSafariLibavAudio(quality,fps,onProgress,signal){
+  const project=state.project,M=mediabunnyRuntime()
+  if(!project)throw new Error('empty')
+  if(!M?.Output||!M?.Mp4OutputFormat||!M?.BufferTarget||!M?.CanvasSource||!M?.EncodedAudioPacketSource||!M?.Quality)throw new Error('mediabunny-unavailable')
+  await refreshProjectAudioMetadata(project)
+  const mixed=await mixProjectAudioWithLibav(project,signal,p=>onProgress(Math.min(.30,p)))
+  const encoded=await openLibavEncodedAudio(mixed.blob)
+  const [w,h]=exportDimensions(project.ratio,quality),duration=Math.max(.05,projectDuration(project))
+  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h
+  const ctx=canvas.getContext('2d',{alpha:false,desynchronized:false})
+  const target=new M.BufferTarget()
+  const output=new M.Output({format:new M.Mp4OutputFormat({fastStart:'in-memory'}),target})
+  const videoSource=new M.CanvasSource(canvas,{codec:'avc',quality:new M.Quality({bitrate:exportBitrate(quality,fps)})})
+  output.addVideoTrack(videoSource,{frameRate:fps})
+  const audioSource=new M.EncodedAudioPacketSource('aac')
+  output.addAudioTrack(audioSource)
+  const sources=new Map(),frameCount=Math.max(1,Math.ceil(duration*fps)),frameDuration=1/Math.max(1,fps)
+  try{
+    await output.start()
+    for(let index=0;index<frameCount;index++){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      const time=Math.min(duration,index/fps),actualDuration=Math.max(.000001,Math.min(frameDuration,duration-time))
+      ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h)
+      await drawDeterministicPrimary(ctx,project,time,w,h,sources,signal)
+      await drawDeterministicOverlays(ctx,project,time,w,h,sources,signal)
+      drawElements(ctx,project,time,w,h);drawTexts(ctx,project,time,w,h)
+      await videoSource.add(time,actualDuration,{keyFrame:index===0||index%Math.max(1,Math.round(fps*2))===0})
+      onProgress(.30+(index+1)/frameCount*.60)
+    }
+    let audioPackets=0
+    for await(const packet of encoded.sink.packets()){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      await audioSource.add(packet,audioPackets===0?{decoderConfig:encoded.decoderConfig}:undefined)
+      audioPackets++
+    }
+    if(audioPackets<1)throw new Error('libav-audio-empty')
+    onProgress(.96)
+    await output.finalize();onProgress(.98)
+    if(!target.buffer||target.buffer.byteLength<4096)throw new Error('libav-export-empty')
+    const blob=new Blob([target.buffer],{type:'video/mp4'})
+    await validateExportBlob(blob,true)
+    const audioValid=await validateDirectAudioOutput(blob)
+    if(audioValid===false)throw new Error('libav-output-audio-invalid')
+    onProgress(1)
+    return {blob,extension:'mp4',mime:'video/mp4',audioMode:'libav-ffmpeg-wasm'}
+  }finally{
+    destroyDeterministicSources(sources)
+    try{encoded.input.dispose()}catch{}
+  }
+}
+
 function collectOfflineAudioEvents(project){
   const events=[]
   for(const row of clipTimeline(project)){
@@ -3985,14 +4214,13 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
   }
 }
 async function exportProjectLocal(quality,fps,onProgress,signal,prewarmedAudioContext=null){
-  if(isAppleMobileRuntime())await refreshProjectAudioMetadata(state.project)
-  const appleAudioProject=isAppleMobileRuntime()&&projectExpectsAudio(state.project)
-  if(appleAudioProject){
+  if(isSafariRuntime())await refreshProjectAudioMetadata(state.project)
+  if(shouldUseLibavAudioExport(state.project)){
     try{
-      return await exportProjectAppleOfflineChunks(quality,fps,onProgress,signal)
+      return await exportProjectSafariLibavAudio(quality,fps,onProgress,signal)
     }catch(error){
       if(error?.name==='AbortError')throw error
-      console.error('Apple offline chunked audio export failed.',error)
+      console.error('Safari LibAV/FFmpeg WASM audio export failed.',error)
       throw error
     }
   }
@@ -4179,14 +4407,14 @@ async function beginExport() {
   if(!state.project||((state.project.clips?.length||0)+(state.project.overlays?.length||0)+(state.project.elements?.length||0)===0)){toast(tr('emptyTimeline'),'error');return}
   const q=+$('#export-quality').value,fps=+$('#export-fps').value,wrap=$('#export-progress-wrap'),bar=$('#export-progress'),status=$('#export-status'),btn=$('[data-action="export-start"]')
   wrap.classList.remove('hidden');btn.disabled=true;btn.textContent=tr('exporting');state.exportController=new AbortController()
-  const prewarmedAudioContext=!isAppleMobileRuntime()&&projectExpectsAudio(state.project)?await prewarmExportAudioContext():null
+  const prewarmedAudioContext=!isSafariRuntime()&&projectExpectsAudio(state.project)?await prewarmExportAudioContext():null
   try{
     const result=await exportProjectLocal(q,fps,p=>{bar.style.width=`${Math.round(p*100)}%`;status.textContent=`${tr('exporting')} ${Math.round(p*100)}%`},state.exportController.signal,prewarmedAudioContext)
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){
     const codecError=e?.message==='offline-audio-codec'
-    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'||e?.message==='offline-audio-config'||e?.message==='audio-decoder-unavailable'
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'||e?.message==='offline-audio-config'||e?.message==='audio-decoder-unavailable'||e?.message==='libav-runtime-missing'||e?.message==='libav-audio-empty'||e?.message==='libav-output-audio-invalid'||String(e?.message||'').startsWith('libav-ffmpeg-')
     status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
     const codecDetails=codecError?`${e?.codec||'audio'} ${e?.sampleRate?`${e.sampleRate} Hz`:''} ${e?.channels?`${e.channels}ch`:''}`.trim():''
     const audioMessage=codecError
@@ -4407,7 +4635,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.8.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

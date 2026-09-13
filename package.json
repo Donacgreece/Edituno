@@ -1,6 +1,6 @@
 {
   "name": "edituno",
-  "version": "2.8.2",
+  "version": "2.9.0",
   "private": true,
   "description": "Free local video editor PWA with direct device install, optional PayPal support and mobile-first About experience",
   "scripts": {
@@ -26,7 +26,6 @@
     "konva": "10.5.0",
     "mp4-muxer": "5.2.2",
     "mp4box": "2.4.1",
-    "mediabunny": "1.56.2",
-    "@mediabunny/aac-encoder": "1.56.2"
+    "mediabunny": "1.56.2"
   }
 }

@@ -24,7 +24,6 @@ The following projects are documented as approved candidates or architectural re
 
 - Moveable: MIT
 - WaveSurfer.js: BSD-3-Clause
-- Mediabunny: MPL-2.0
 - OpenCut: MIT
 
 If any of these are integrated in a future release, their license and notice obligations must be preserved independently from the Edituno first-party license.
@@ -123,11 +122,26 @@ Edituno uses MP4Box.js only as a local ISO-BMFF/QuickTime demuxer fallback so Sa
 
 ## Mediabunny
 
-- Components: `mediabunny` 1.56.2 and `@mediabunny/aac-encoder` 1.56.2
+- Component: `mediabunny` 1.56.2
 - Upstream: https://github.com/Vanilagy/mediabunny
 - License: Mozilla Public License 2.0
 - License copy: `THIRD_PARTY_LICENSES/MEDIABUNNY-MPL-2.0.txt`
 
-Edituno uses Mediabunny on Apple mobile devices for deterministic MP4 writing and uses its AAC encoder extension to bypass Safari/WebKit's native AAC AudioEncoder path. Edituno does not modify Mediabunny source files. The Mediabunny components remain MPL-2.0 licensed and are not relicensed under Edituno's PolyForm license.
+Edituno uses Mediabunny 1.56.2 for local media parsing, deterministic media sources and final MP4 muxing. Edituno does not modify Mediabunny source files. Mediabunny remains MPL-2.0 licensed and is not relicensed under Edituno's PolyForm license. The exact upstream source corresponding to the bundled Mediabunny version is distributed under `third-party-source/mediabunny-1.56.2-source.tar.gz`.
 
-The `@mediabunny/aac-encoder` extension contains a size-optimized WebAssembly build of FFmpeg's AAC encoder. FFmpeg licensing information is preserved separately in `THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt`. Upstream FFmpeg source is available from https://ffmpeg.org/ and the exact Mediabunny build instructions are documented by the upstream AAC encoder package.
+
+## libav.js / FFmpeg WASM audio engine
+
+- Component: `libav.js` 6.10.9.0, custom `edituno-audio-cli` configuration
+- Upstream: https://github.com/Yahweasel/libav.js
+- FFmpeg source version used by the pinned libav.js release: 9.0
+- FFmpeg/compiled runtime license: GNU LGPL 2.1 terms as provided by the upstream build
+- libav.js JavaScript wrapper portions: upstream 0BSD-style permission notice
+- emfiberthreads build/runtime support: 0BSD
+- License copies: `THIRD_PARTY_LICENSES/LIBAVJS-LGPL-2.1.txt`, `THIRD_PARTY_LICENSES/LIBAVJS-0BSD.txt`, `THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt`, `THIRD_PARTY_LICENSES/EMFIBERTHREADS-0BSD.txt`
+- Corresponding source at runtime: `third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz`
+- Reproducible build recipe: `tools/build-libav-audio.sh` and `tools/libav-edituno-audio-config.json`
+
+Edituno uses this runtime as a separate, replaceable WebAssembly/Worker component for Safari/iOS audio demuxing, decoding, timeline filtering, mixing and AAC encoding. The runtime is not relicensed under PolyForm. Edituno's integration code, timeline model, UI and deterministic video renderer remain first-party Edituno material under `PolyForm-Noncommercial-1.0.0`.
+
+The custom build is verified in CI to exclude FFmpeg GPL and nonfree mode and to exclude external x264/x265, FDK-AAC, FAAC, LAME, libopus and libvorbis codec libraries. The Safari audio engine uses FFmpeg's built-in AAC implementation and built-in LGPL audio filters. The exact libav.js source, pristine FFmpeg source archive, emfiberthreads source archive, Edituno configuration, generated FFmpeg configuration and reproducible build recipe are distributed alongside the compiled runtime. `LIBAV_RUNTIME_REPLACEMENT.md` documents the separate runtime boundary and replacement mechanism.

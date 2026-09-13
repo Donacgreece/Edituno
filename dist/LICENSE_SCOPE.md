@@ -55,4 +55,16 @@ Konva 10.5.0 is a third-party MIT-licensed component and is not relicensed under
 
 ## Apple mobile production export engine
 
-Mediabunny 1.56.2 and `@mediabunny/aac-encoder` 1.56.2 are third-party MPL-2.0 components used by the Apple mobile export path. The AAC encoder extension includes an FFmpeg AAC encoder build whose upstream licensing remains separate. None of these components are relicensed under PolyForm. Edituno's timeline model, deterministic frame compositor, project audio mix, export selection logic, UI and integration code remain first-party Edituno material under `PolyForm-Noncommercial-1.0.0`.
+Mediabunny 1.56.2 is a third-party MPL-2.0 component used for local media parsing and MP4 muxing. It is not relicensed under PolyForm. Its exact upstream source is distributed with the production site. Edituno's timeline model, deterministic frame compositor, project audio mix, export selection logic, UI and integration code remain first-party Edituno material under `PolyForm-Noncommercial-1.0.0`.
+
+
+## Safari/iOS LibAV audio engine
+
+The Safari/iOS production audio backend uses a separately loaded `libav.js` 6.10.9.0 / FFmpeg 9.0 WebAssembly runtime. That runtime remains under its upstream LGPL terms and is not relicensed under PolyForm. It is distributed as replaceable files under `vendor/libav/`, while Edituno first-party integration, project/timeline logic and video rendering remain under `PolyForm-Noncommercial-1.0.0`.
+
+To preserve the intended LGPL component boundary, the production bundle provides the exact corresponding source and build configuration under `third-party-source/`, keeps the runtime separable from Edituno first-party code, provides a documented runtime replacement mechanism, and verifies in CI that GPL/nonfree FFmpeg configuration is disabled. On this architecture, Edituno does not relicense its first-party code under LGPL or GPL.
+
+PolyForm restrictions apply only to Edituno first-party material. They do not restrict recipients from exercising rights granted by the LGPL for the LibAV/FFmpeg runtime, including inspecting, modifying or replacing that separate runtime.
+
+
+See `LIBAV_RUNTIME_REPLACEMENT.md` for the runtime replacement mechanism and `PATENT_NOTICE.md` for the separate codec-patent issue.
