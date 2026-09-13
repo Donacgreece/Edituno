@@ -141,6 +141,12 @@ if (!css.includes('.theme-option-label') || !css.includes('.theme-option-check')
 if (!css.includes('.ffmpeg-compliance')) {
   throw new Error('Visible FFmpeg/LGPL notice styling is missing')
 }
+if (!css.includes('.panel-section .format-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))')) {
+  throw new Error('Symmetric four-column transform controls are missing')
+}
+if (!css.includes('.settings-header{height:68px;min-height:68px;padding:0 18px 10px 22px')) {
+  throw new Error('Mobile Settings header divider spacing fix is missing')
+}
 if (!js.includes("data-key=\"autoSave\"") || !js.includes('autoSave: true')) {
   throw new Error('Autosave preference setting is missing')
 }
@@ -349,4 +355,4 @@ if (!fs.readFileSync(path.join(dist, 'LIBAV_RUNTIME_REPLACEMENT.md'), 'utf8').in
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## libav.js / FFmpeg WASM audio engine')) throw new Error('libav.js third-party notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_SOURCE_OFFER.md'), 'utf8').includes('libav.js v6.10.9.0')) throw new Error('LibAV corresponding-source notice missing')
 if (!fs.readFileSync(path.join(dist, 'PATENT_NOTICE.md'), 'utf8').includes('patent')) throw new Error('Patent notice missing')
-console.log(`Built Edituno v2.9.4 -> ${dist}`)
+console.log(`Built Edituno v2.9.5 -> ${dist}`)

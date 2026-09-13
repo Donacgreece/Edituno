@@ -14,9 +14,18 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.9.4**
+**Current release: v2.9.5**
 
 </div>
+
+---
+
+## v2.9.5
+
+- Places Fill, Contain and both flip controls in one balanced four-column row on desktop and mobile.
+- Gives all four transform controls identical dimensions and spacing.
+- Keeps the mobile Settings title and close button safely above the divider.
+- Preserves the v2.9.4 licensing safeguards and the confirmed iPhone/Safari export behavior.
 
 ---
 

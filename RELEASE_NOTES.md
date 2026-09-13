@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.9.5
+
+Transform control and mobile Settings alignment polish.
+
+- Displays Fill, Contain, horizontal flip and vertical flip as four equal controls in one row.
+- Keeps the same arrangement on desktop and mobile, including narrow iPhone layouts.
+- Prevents the mobile Settings header from shrinking and moves its title and close control above the divider with balanced spacing.
+- Preserves all v2.9.4 licensing safeguards and the working Safari export pipeline.
+
 ## v2.9.4
 
 FFmpeg/LGPL compliance hardening release.

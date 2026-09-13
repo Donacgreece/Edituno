@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.9.4 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.5 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -126,7 +126,7 @@ const STRINGS = {
     open:'Open', delete:'Delete', edit:'Edit', export:'Export', media:'Media', text:'Text', audio:'Audio', effects:'Effects', elements:'Elements', canvas:'Canvas',
     addMedia:'Add media', addTimeline:'Add', soundtrack:'Soundtrack', useSoundtrack:'Use', remove:'Remove', captions:'Captions', importSrt:'Import SRT', fadeIn:'Fade in', fadeOut:'Fade out',
     addTitle:'Add title', addCaption:'Add caption', addSticker:'Add sticker', selectedClip:'Selected clip', clip:'Clip', trim:'Trim', transform:'Transform',
-    speed:'Speed', volume:'Volume', opacity:'Opacity', scale:'Scale', rotation:'Rotation', fit:'Fit', cover:'Cover', contain:'Contain', mirror:'Mirror',
+    speed:'Speed', volume:'Volume', opacity:'Opacity', scale:'Scale', rotation:'Rotation', fit:'Fit', cover:'Cover', contain:'Contain', mirror:'Mirror', flipHorizontal:'Horizontal', flipVertical:'Vertical',
     split:'Split', duplicate:'Duplicate', moveLeft:'Left', moveRight:'Right', brightness:'Brightness', contrast:'Contrast', saturation:'Saturation', exposure:'Exposure', temperature:'Temperature', vignette:'Vignette', grain:'Film grain',
     hue:'Hue', blur:'Blur', grayscale:'Grayscale', sepia:'Sepia', filter:'Filter', motion:'Motion', transition:'Transition', duration:'Duration',
     none:'None', fade:'Fade', flash:'Flash', zoom:'Zoom', panLeft:'Pan left', panRight:'Pan right', zoomOut:'Zoom out', shake:'Shake',
@@ -154,7 +154,7 @@ const STRINGS = {
     open:'Άνοιγμα', delete:'Διαγραφή', edit:'Επεξεργασία', export:'Export', media:'Media', text:'Κείμενο', audio:'Ήχος', effects:'Εφέ', elements:'Στοιχεία', canvas:'Καμβάς',
     addMedia:'Προσθήκη media', addTimeline:'Προσθήκη', soundtrack:'Μουσική', useSoundtrack:'Χρήση', remove:'Αφαίρεση', captions:'Υπότιτλοι', importSrt:'Εισαγωγή SRT', fadeIn:'Fade in', fadeOut:'Fade out',
     addTitle:'Προσθήκη τίτλου', addCaption:'Προσθήκη caption', addSticker:'Προσθήκη sticker', selectedClip:'Επιλεγμένο clip', clip:'Clip', trim:'Trim', transform:'Μετασχηματισμός',
-    speed:'Ταχύτητα', volume:'Ένταση', opacity:'Διαφάνεια', scale:'Μέγεθος', rotation:'Περιστροφή', fit:'Προσαρμογή', cover:'Γέμισμα', contain:'Ολόκληρο', mirror:'Καθρέφτης',
+    speed:'Ταχύτητα', volume:'Ένταση', opacity:'Διαφάνεια', scale:'Μέγεθος', rotation:'Περιστροφή', fit:'Προσαρμογή', cover:'Γέμισμα', contain:'Ολόκληρο', mirror:'Καθρέφτης', flipHorizontal:'Οριζόντια', flipVertical:'Κάθετα',
     split:'Κόψιμο', duplicate:'Αντιγραφή', moveLeft:'Αριστερά', moveRight:'Δεξιά', brightness:'Φωτεινότητα', contrast:'Αντίθεση', saturation:'Κορεσμός', exposure:'Έκθεση', temperature:'Θερμοκρασία', vignette:'Vignette', grain:'Film grain',
     hue:'Απόχρωση', blur:'Θόλωμα', grayscale:'Ασπρόμαυρο', sepia:'Σέπια', filter:'Φίλτρο', motion:'Κίνηση', transition:'Μετάβαση', duration:'Διάρκεια',
     none:'Καμία', fade:'Fade', flash:'Flash', zoom:'Zoom', panLeft:'Pan αριστερά', panRight:'Pan δεξιά', zoomOut:'Zoom out', shake:'Shake',
@@ -1619,7 +1619,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.4</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.5</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1628,7 +1628,7 @@ function aboutPage(){
       </section>
       ${ffmpegComplianceNotice()}
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.9.4</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.5</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1665,7 +1665,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.9.4</div>
+      <div class="home-rail-version">v2.9.5</div>
     </aside>
 
     <div class="home-surface">
@@ -2776,7 +2776,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.4'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.5'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -4763,7 +4763,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.4',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.5',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
