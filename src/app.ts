@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.9.2 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.3 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1614,7 +1614,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.2</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.3</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1622,7 +1622,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.9.2</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.3</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1659,7 +1659,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.9.2</div>
+      <div class="home-rail-version">v2.9.3</div>
     </aside>
 
     <div class="home-surface">
@@ -2646,9 +2646,20 @@ function waitDecodedExportFrame(video,signal,timeout=1200){
     let done=false
     const cleanup=()=>{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
     const abort=()=>{if(done)return;done=true;cleanup();reject(new DOMException('Aborted','AbortError'))}
-    const timer=setTimeout(()=>{if(done)return;done=true;cleanup();reject(new Error('export-video-frame-timeout'))},timeout)
+    const timer=setTimeout(()=>{if(done)return;done=true;cleanup();resolve(false)},timeout)
     signal?.addEventListener('abort',abort,{once:true})
-    video.requestVideoFrameCallback(()=>{if(done)return;done=true;cleanup();resolve()})
+    video.requestVideoFrameCallback(()=>{if(done)return;done=true;cleanup();resolve(true)})
+  })
+}
+async function settleExportFrameAfterSeek(video,signal){
+  if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+  if(video.readyState<2)await waitMediaEvent(video,'loadeddata',signal,5000)
+  await new Promise((resolve,reject)=>{
+    let frames=0,done=false
+    const cleanup=()=>signal?.removeEventListener('abort',abort)
+    const abort=()=>{if(done)return;done=true;cleanup();reject(new DOMException('Aborted','AbortError'))}
+    const tick=()=>{if(done)return;if(++frames>=3){done=true;cleanup();resolve()}else requestAnimationFrame(tick)}
+    signal?.addEventListener('abort',abort,{once:true});requestAnimationFrame(tick)
   })
 }
 async function primeDeterministicVideo(video,signal){
@@ -2659,6 +2670,7 @@ async function primeDeterministicVideo(video,signal){
     const frame=waitDecodedExportFrame(video,signal,1800)
     await video.play()
     await frame
+    await settleExportFrameAfterSeek(video,signal)
   }catch(error){
     if(error?.name==='AbortError')throw error
     throw new Error('export-video-prime-failed',{cause:error})
@@ -2676,22 +2688,7 @@ async function seekExportFrameExact(video,time,signal){
     video.currentTime=target
     if(video.seeking)await waitMediaEvent(video,'seeked',signal,2500)
   }
-  if(typeof video.requestVideoFrameCallback==='function'){
-    try{
-      await waitDecodedExportFrame(video,signal,700)
-    }catch(error){
-      if(error?.name==='AbortError')throw error
-      try{
-        const frame=waitDecodedExportFrame(video,signal,1400)
-        await video.play()
-        await frame
-      }finally{
-        try{video.pause()}catch{}
-      }
-    }
-  }else{
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))
-  }
+  await settleExportFrameAfterSeek(video,signal)
 }
 function destroyDeterministicSources(map){
   for(const value of map.values())if(value?.tagName==='VIDEO')cleanupExportMedia(value)
@@ -2773,7 +2770,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.2'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.3'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -4760,7 +4757,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.3',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

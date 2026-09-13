@@ -51,6 +51,7 @@ if (!html.includes('const $$ =')) {
 const safariVideoExportMarkers = [
   "'-nostdin'",
   'function waitDecodedExportFrame(',
+  'function settleExportFrameAfterSeek(',
   'function primeDeterministicVideo(',
   'export-video-black-frames'
 ]
@@ -339,4 +340,4 @@ if (!fs.readFileSync(path.join(dist, 'LIBAV_RUNTIME_REPLACEMENT.md'), 'utf8').in
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## libav.js / FFmpeg WASM audio engine')) throw new Error('libav.js third-party notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_SOURCE_OFFER.md'), 'utf8').includes('libav.js v6.10.9.0')) throw new Error('LibAV corresponding-source notice missing')
 if (!fs.readFileSync(path.join(dist, 'PATENT_NOTICE.md'), 'utf8').includes('patent')) throw new Error('Patent notice missing')
-console.log(`Built Edituno v2.9.2 -> ${dist}`)
+console.log(`Built Edituno v2.9.3 -> ${dist}`)

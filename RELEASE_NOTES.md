@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2.9.3
+
+Safari paused-frame synchronization fix.
+
+- Stops treating `requestVideoFrameCallback` as a mandatory decoder completion event during frame-by-frame export.
+- Uses the `seeked` event, media readiness and compositor settling before drawing each video frame.
+- Keeps the callback as a best-effort priming signal without allowing a missing presentation callback to abort valid iPhone exports.
+- Preserves FFmpeg `-nostdin`, active Safari compositing and black-frame output validation from v2.9.2.
+
 ## v2.9.2
 
 Safari visual-frame export fix.
