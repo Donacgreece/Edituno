@@ -90,6 +90,11 @@ const requiredRuntimeMarkers = [
   'application/ld+json',
   'application/ld+json',
   'function aboutPage()',
+  'function ffmpegComplianceNotice(',
+  'This software uses libraries from the FFmpeg project under the LGPLv2.1.',
+  'THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt',
+  'third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz',
+  'LIBAV_RUNTIME_REPLACEMENT.md',
   'function installEnvironment()',
   'PAYPAL_SUPPORT_URL',
   'appinstalled',
@@ -132,6 +137,9 @@ if (!template.includes('prefers-color-scheme: light')) {
 }
 if (!css.includes('.theme-option-label') || !css.includes('.theme-option-check')) {
   throw new Error('Theme selector spacing CSS is missing')
+}
+if (!css.includes('.ffmpeg-compliance')) {
+  throw new Error('Visible FFmpeg/LGPL notice styling is missing')
 }
 if (!js.includes("data-key=\"autoSave\"") || !js.includes('autoSave: true')) {
   throw new Error('Autosave preference setting is missing')
@@ -322,6 +330,7 @@ if (!fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes(siteUrl)) 
 if (!fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').includes(new URL('sitemap.xml', siteUrl).toString())) throw new Error('Dynamic robots sitemap URL injection failed')
 if (!fs.readFileSync(path.join(dist, 'LICENSE.md'), 'utf8').includes('PolyForm-Noncommercial-1.0.0')) throw new Error('Production license metadata missing')
 if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('Third-party material')) throw new Error('Production license scope missing')
+if (!fs.readFileSync(path.join(dist, 'LICENSE_SCOPE.md'), 'utf8').includes('does not prohibit reverse engineering, modification or replacement')) throw new Error('LGPL reverse-engineering and replacement rights statement missing')
 if (!fs.readFileSync(path.join(dist, 'NOTICE'), 'utf8').includes('Required Notice:')) throw new Error('Production required notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('Nothing in the Edituno license relicenses')) throw new Error('Production third-party license separation notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Konva')) throw new Error('Konva third-party notice missing')
@@ -340,4 +349,4 @@ if (!fs.readFileSync(path.join(dist, 'LIBAV_RUNTIME_REPLACEMENT.md'), 'utf8').in
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## libav.js / FFmpeg WASM audio engine')) throw new Error('libav.js third-party notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_SOURCE_OFFER.md'), 'utf8').includes('libav.js v6.10.9.0')) throw new Error('LibAV corresponding-source notice missing')
 if (!fs.readFileSync(path.join(dist, 'PATENT_NOTICE.md'), 'utf8').includes('patent')) throw new Error('Patent notice missing')
-console.log(`Built Edituno v2.9.3 -> ${dist}`)
+console.log(`Built Edituno v2.9.4 -> ${dist}`)

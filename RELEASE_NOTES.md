@@ -1,5 +1,15 @@
 # Release Notes
 
+## v2.9.4
+
+FFmpeg/LGPL compliance hardening release.
+
+- Adds the recommended FFmpeg/LGPL attribution to the About page and installation dialog.
+- Provides direct user-facing access to LGPL-2.1, exact corresponding source, notices and runtime replacement instructions.
+- Makes clear that Edituno does not prohibit modification, replacement or reverse engineering of the separate LGPL component to the extent required by LGPL-2.1.
+- Adds a direct FFmpeg changes record to the corresponding-source package and checks it in CI.
+- Leaves the confirmed v2.9.3 iPhone/Safari export implementation unchanged.
+
 ## v2.9.3
 
 Safari paused-frame synchronization fix.

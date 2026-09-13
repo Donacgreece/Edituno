@@ -1,7 +1,11 @@
-const CACHE = 'edituno-studio-v2.9.3'
+const CACHE = 'edituno-studio-v2.9.4'
 const CORE = [
   './',
   './manifest.webmanifest',
+  './THIRD_PARTY_NOTICES.md',
+  './THIRD_PARTY_SOURCE_OFFER.md',
+  './LIBAV_RUNTIME_REPLACEMENT.md',
+  './THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt',
   './vendor/pixi.min.js',
   './vendor/pixi-filters.min.js',
   './vendor/smartcrop.js',
@@ -62,7 +66,7 @@ self.addEventListener('fetch', event => {
     return
   }
 
-  if (url.pathname.includes('/icons/') || url.pathname.includes('/splash/') || url.pathname.endsWith('.webmanifest') || url.pathname.includes('/vendor/') || url.pathname.endsWith('.glsl')) {
+  if (url.pathname.includes('/icons/') || url.pathname.includes('/splash/') || url.pathname.endsWith('.webmanifest') || url.pathname.includes('/vendor/') || url.pathname.endsWith('.glsl') || url.pathname.endsWith('.md') || url.pathname.endsWith('.txt')) {
     event.respondWith(
       caches.match(event.request)
         .then(hit => hit || fetch(event.request).then(response => {

@@ -14,9 +14,19 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.9.3**
+**Current release: v2.9.4**
 
 </div>
+
+---
+
+## v2.9.4
+
+- Adds a visible FFmpeg/LGPL notice to the About page and installation dialog.
+- Links directly to the LGPL text, exact corresponding source, third-party notices and runtime replacement instructions.
+- Explicitly preserves modification, replacement and reverse-engineering rights for the separate LGPL component.
+- Adds a direct FFmpeg source-change record to the corresponding-source archive and CI validation.
+- Preserves the confirmed v2.9.3 iPhone/Safari audio and video export behavior unchanged.
 
 ---
 

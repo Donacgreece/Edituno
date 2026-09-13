@@ -8,6 +8,8 @@ Edituno first-party code remains licensed under `PolyForm-Noncommercial-1.0.0`.
 
 The LibAV/FFmpeg runtime is deliberately distributed as a separate, replaceable runtime under `vendor/libav/`. Edituno does not apply PolyForm terms to that runtime or to Mediabunny.
 
+The About page and installation dialog display the FFmpeg/LGPL notice and provide direct links to the LGPL text, exact corresponding source, third-party notices and replacement instructions.
+
 ## LibAV / FFmpeg runtime
 
 - libav.js release: `v6.10.9.0`
@@ -37,6 +39,8 @@ Every production deployment that serves the compiled LibAV/FFmpeg runtime also s
 
 That archive contains the exact pinned libav.js source, FFmpeg 9.0 source archive, custom variant configuration, generated FFmpeg configuration and the Edituno build recipe.
 
+It also contains `edituno-ffmpeg-changes.diff`, an explicit record of Edituno's direct FFmpeg source changes. Edituno applies no direct patch to FFmpeg; upstream libav.js patch/configuration material remains included in the exact libav.js source archive.
+
 Mediabunny 1.56.2 is separately provided with exact corresponding upstream source at:
 
 `third-party-source/mediabunny-1.56.2-source.tar.gz`
@@ -44,6 +48,8 @@ Mediabunny 1.56.2 is separately provided with exact corresponding upstream sourc
 ## Replaceability
 
 The runtime is lazy-loaded from `vendor/libav/` as separate JavaScript/WebAssembly files. A compatible modified build can replace these files without modifying or relicensing Edituno first-party source. The production app does not embed the LibAV WebAssembly bytes inside Edituno's first-party JavaScript bundle. `LIBAV_RUNTIME_REPLACEMENT.md` documents the replacement hook (`window.EDITUNO_LIBAV_BASE`) and expected filenames.
+
+Edituno does not prohibit inspection, modification, reverse engineering or replacement of this separate component to the extent required for recipients to exercise LGPL-2.1 rights.
 
 ## Patent separation
 
@@ -62,3 +68,4 @@ Before publishing a release that changes this engine:
 7. preserve LGPL, 0BSD and MPL license copies and notices;
 8. preserve the runtime replacement mechanism;
 9. review codec patent obligations separately from open-source licensing.
+10. keep the visible FFmpeg/LGPL notice and its source, license and replacement links available.

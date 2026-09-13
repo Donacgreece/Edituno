@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.9.3 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.4 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1604,6 +1604,11 @@ function installEntryHtml(kind='menu'){
   if(kind==='settings')return `<button class="settings-link ${installed?'installed-state':''}" data-action="install"><span>${svgIcon(icon,18)}</span><span><strong>${tr('installApp')}</strong><small>${status}</small></span>${installed?'<span class="installed-dot"></span>':svgIcon('right',16)}</button>`
   return `<button type="button" class="home-menu-row ${installed?'installed-state':''}" data-action="install"><span class="menu-row-icon">${svgIcon(icon,18)}</span><span><strong>${tr('install')}</strong><small>${status}</small></span>${installed?'<span class="installed-dot"></span>':svgIcon('right',16)}</button>`
 }
+function ffmpegComplianceNotice(compact=false){
+  const el=state.language==='el'
+  const copy=el?'Το LibAV/FFmpeg WebAssembly runtime είναι ανεξάρτητο και αντικαταστάσιμο. Ο ακριβής αντίστοιχος πηγαίος κώδικας, οι ρυθμίσεις build και τα κείμενα αδειών διανέμονται μαζί με την εφαρμογή. Επιτρέπεται η τροποποίηση, η αντικατάσταση και το reverse engineering του LGPL component στον βαθμό που απαιτεί η LGPL.':'The LibAV/FFmpeg WebAssembly runtime is separate and replaceable. Exact corresponding source, build configuration and license texts are distributed with the application. Modification, replacement and reverse engineering of the LGPL component are permitted to the extent required by the LGPL.'
+  return `<section class="ffmpeg-compliance ${compact?'compact':''}" aria-label="FFmpeg open-source notice"><span class="eyebrow">OPEN SOURCE</span><strong>This software uses libraries from the FFmpeg project under the LGPLv2.1.</strong><p>${copy}</p><nav aria-label="FFmpeg license resources"><a href="https://ffmpeg.org/" target="_blank" rel="noopener noreferrer">FFmpeg</a><a href="./THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt" target="_blank" rel="noopener noreferrer">LGPL v2.1</a><a href="./third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz" target="_blank" rel="noopener noreferrer">${el?'Πηγαίος κώδικας':'Source code'}</a><a href="./THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener noreferrer">${el?'Άδειες τρίτων':'Third-party notices'}</a><a href="./LIBAV_RUNTIME_REPLACEMENT.md" target="_blank" rel="noopener noreferrer">${el?'Αντικατάσταση runtime':'Replace runtime'}</a></nav></section>`
+}
 function aboutPage(){
   const el=state.language==='el', installed=isAppInstalled()
   document.body.classList.remove('editor-open')
@@ -1614,15 +1619,16 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.3</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.4</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
         <article>${svgIcon('video',20)}<strong>${el?'Πλήρες δημιουργικό workflow':'Complete creative workflow'}</strong><p>${el?'Timeline, captions, audio, effects, transitions, adjustments και export μέχρι 4K όταν το υποστηρίζει η συσκευή.':'Timeline, captions, audio, effects, transitions, adjustments and up to 4K export when supported.'}</p></article>
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
+      ${ffmpegComplianceNotice()}
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.9.3</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.4</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1659,7 +1665,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.9.3</div>
+      <div class="home-rail-version">v2.9.4</div>
     </aside>
 
     <div class="home-surface">
@@ -1775,7 +1781,7 @@ function settingsModal(){
 }
 function installModal(){
   const el=state.language==='el', env=installEnvironment(), installed=isAppInstalled(), promptReady=!!state.installPrompt
-  if(installed)return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal installed-install-modal"><div class="modal-head"><div><span class="eyebrow">EDITUNO APP</span><h2>${el?'Εγκατάσταση':'Installation'}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-success">${svgIcon('check',28)}<strong>${el?'Ήδη εγκατεστημένο':'Already installed'}</strong><p>${el?'Το Edituno είναι ήδη εγκατεστημένο σε αυτή τη συσκευή.':'Edituno is already installed on this device.'}</p></div></div></section></div>`
+  if(installed)return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal installed-install-modal"><div class="modal-head"><div><span class="eyebrow">EDITUNO APP</span><h2>${el?'Εγκατάσταση':'Installation'}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-success">${svgIcon('check',28)}<strong>${el?'Ήδη εγκατεστημένο':'Already installed'}</strong><p>${el?'Το Edituno είναι ήδη εγκατεστημένο σε αυτή τη συσκευή.':'Edituno is already installed on this device.'}</p></div>${ffmpegComplianceNotice(true)}</div></section></div>`
   let title='',copy='',steps=[],canPrompt=false,appleManual=false
   if(env.platform==='ios'){
     appleManual=true
@@ -1806,7 +1812,7 @@ function installModal(){
     }
   }
   const directArea=appleManual?`<div class="install-steps">${steps.map((step,i)=>`<div class="install-step"><b>${i+1}</b><span class="install-step-icon">${step[0]}</span><p>${step[1]}</p></div>`).join('')}</div>`:(canPrompt?`<button class="install-primary" data-action="install-confirm">${svgIcon('install',19)}<span>${el?'Εγκατάσταση τώρα':'Install now'}</span></button>`:`<div class="install-waiting">${svgIcon('install',22)}<span><strong>${el?'Η άμεση εγκατάσταση δεν είναι διαθέσιμη ακόμη':'Direct install is not available yet'}</strong><small>${el?'Σε Android, Windows και Chrome/Edge το κουμπί εγκατάστασης ενεργοποιείται αυτόματα μόλις ο browser το επιτρέψει.':'On Android, Windows and Chrome/Edge the install button activates automatically as soon as the browser allows it.'}</small></span></div>`)
-  return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}"><div class="modal-head"><div><span class="eyebrow">${escapeHtml(env.label.toUpperCase())}</span><h2>${title}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-device-card"><span class="install-device-icon">${svgIcon(appleManual?'share':env.platform==='windows'?'video':'install',24)}</span><span><strong>${escapeHtml(env.label)}</strong><small>${copy}</small></span></div>${directArea}<div class="install-privacy">${svgIcon('folder',17)}<span>${el?'Η εγκατάσταση δεν ανεβάζει τα projects σου. Παραμένουν τοπικά στη συσκευή.':'Installing does not upload your projects. They remain local on your device.'}</span></div></div></section></div>`
+  return `<div class="modal-backdrop" data-action="install-close"><section class="modal install-modal smart-install-modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}"><div class="modal-head"><div><span class="eyebrow">${escapeHtml(env.label.toUpperCase())}</span><h2>${title}</h2></div><button class="sheet-close" data-action="install-close" aria-label="${tr('close')}">${svgIcon('close',18)}</button></div><div class="modal-body"><div class="install-device-card"><span class="install-device-icon">${svgIcon(appleManual?'share':env.platform==='windows'?'video':'install',24)}</span><span><strong>${escapeHtml(env.label)}</strong><small>${copy}</small></span></div>${directArea}<div class="install-privacy">${svgIcon('folder',17)}<span>${el?'Η εγκατάσταση δεν ανεβάζει τα projects σου. Παραμένουν τοπικά στη συσκευή.':'Installing does not upload your projects. They remain local on your device.'}</span></div>${ffmpegComplianceNotice(true)}</div></section></div>`
 }
 
 const konvaRuntime={stage:null,layer:null,transformer:null,container:null,nodes:new Map(),interacting:false,historyPushed:false,visible:false,failed:false}
@@ -2770,7 +2776,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.3'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.4'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -4757,7 +4763,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.3',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.4',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

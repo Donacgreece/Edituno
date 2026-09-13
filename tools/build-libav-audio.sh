@@ -118,6 +118,18 @@ cp "$CONFIG_JSON" "$SOURCE_STAGE/edituno-libav-audio-config.json"
 cp -R "$CONFIG_DIR" "$SOURCE_STAGE/generated-${VARIANT}-config"
 cp "$WASM_CONFIG" "$SOURCE_STAGE/ffmpeg-config.mak"
 cp "$ROOT/tools/build-libav-audio.sh" "$SOURCE_STAGE/build-libav-audio.sh"
+cat > "$SOURCE_STAGE/edituno-ffmpeg-changes.diff" <<'EOF'
+# Edituno direct changes to FFmpeg 9.0
+#
+# Edituno applies no direct patch to the pristine FFmpeg 9.0 source archive.
+# Therefore this direct-change diff is intentionally empty.
+#
+# The exact pinned libav.js source archive included beside this file contains
+# all upstream libav.js patches, configuration generators and build machinery
+# used to compile FFmpeg for WebAssembly. Edituno's custom variant JSON,
+# generated configuration, final ffmpeg-config.mak and complete build recipe
+# are also included in this corresponding-source package.
+EOF
 cat > "$SOURCE_STAGE/README.txt" <<EOF
 Edituno LibAV/FFmpeg WASM Audio Engine corresponding source
 
@@ -128,6 +140,7 @@ Emscripten: 6.0.5 (pinned by Edituno GitHub Actions)
 
 This source bundle accompanies the separately loaded LGPL LibAV/FFmpeg runtime in Edituno.
 The build intentionally excludes GPL and nonfree components. It uses FFmpeg's built-in AAC decoder/encoder and built-in audio filters only.
+edituno-ffmpeg-changes.diff records that Edituno applies no direct patch to the pristine FFmpeg source archive.
 Run build-libav-audio.sh from the Edituno repository with Emscripten 6.0.5 available to reproduce the runtime.
 EOF
 

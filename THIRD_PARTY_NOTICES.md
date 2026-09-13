@@ -132,6 +132,8 @@ Edituno uses Mediabunny 1.56.2 for local media parsing, deterministic media sour
 
 ## libav.js / FFmpeg WASM audio engine
 
+**This software uses libraries from the FFmpeg project under the LGPLv2.1.**
+
 - Component: `libav.js` 6.10.9.0, custom `edituno-audio-cli` configuration
 - Upstream: https://github.com/Yahweasel/libav.js
 - FFmpeg source version used by the pinned libav.js release: 9.0
@@ -145,3 +147,5 @@ Edituno uses Mediabunny 1.56.2 for local media parsing, deterministic media sour
 Edituno uses this runtime as a separate, replaceable WebAssembly/Worker component for Safari/iOS audio demuxing, decoding, timeline filtering, mixing and AAC encoding. The runtime is not relicensed under PolyForm. Edituno's integration code, timeline model, UI and deterministic video renderer remain first-party Edituno material under `PolyForm-Noncommercial-1.0.0`.
 
 The custom build is verified in CI to exclude FFmpeg GPL and nonfree mode and to exclude external x264/x265, FDK-AAC, FAAC, LAME, libopus and libvorbis codec libraries. The Safari audio engine uses FFmpeg's built-in AAC implementation and built-in LGPL audio filters. The exact libav.js source, pristine FFmpeg source archive, emfiberthreads source archive, Edituno configuration, generated FFmpeg configuration and reproducible build recipe are distributed alongside the compiled runtime. `LIBAV_RUNTIME_REPLACEMENT.md` documents the separate runtime boundary and replacement mechanism.
+
+Recipients may inspect, modify, reverse engineer and replace the separate LibAV/FFmpeg runtime to the extent required by LGPL-2.1. The corresponding-source archive also contains `edituno-ffmpeg-changes.diff`, which records Edituno's direct FFmpeg source changes.

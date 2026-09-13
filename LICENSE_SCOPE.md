@@ -66,5 +66,7 @@ To preserve the intended LGPL component boundary, the production bundle provides
 
 PolyForm restrictions apply only to Edituno first-party material. They do not restrict recipients from exercising rights granted by the LGPL for the LibAV/FFmpeg runtime, including inspecting, modifying or replacing that separate runtime.
 
+Edituno does not prohibit reverse engineering, modification or replacement of the separate LibAV/FFmpeg component to the extent those activities are required to exercise rights granted by LGPL-2.1. No Edituno license term, product term or technical measure limits those LGPL rights. Any conflicting restriction applying to Edituno first-party material does not apply to them.
+
 
 See `LIBAV_RUNTIME_REPLACEMENT.md` for the runtime replacement mechanism and `PATENT_NOTICE.md` for the separate codec-patent issue.

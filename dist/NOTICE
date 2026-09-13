@@ -1,1 +1,8 @@
 Required Notice: Copyright 2026 Dimitris Galatsanos. Edituno.
+
+This software uses libraries from the FFmpeg project under the LGPLv2.1.
+
+FFmpeg license: THIRD_PARTY_LICENSES/FFMPEG-LGPL-2.1.txt
+Exact corresponding source: third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz
+Third-party notices: THIRD_PARTY_NOTICES.md
+Runtime replacement instructions: LIBAV_RUNTIME_REPLACEMENT.md

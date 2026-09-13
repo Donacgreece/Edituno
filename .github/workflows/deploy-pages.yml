@@ -102,7 +102,7 @@ jobs:
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: .cache/libav-edituno-audio
-          key: libav-audio-v4-6.10.9.0-ffmpeg9.0-emscripten6.0.5-${{ runner.os }}
+          key: libav-audio-v5-6.10.9.0-ffmpeg9.0-emscripten6.0.5-${{ runner.os }}
 
       - name: Setup pinned Emscripten for LibAV
         if: steps.libav-cache.outputs.cache-hit != 'true'
@@ -125,6 +125,7 @@ jobs:
           test -s public/third-party-source/mediabunny-1.56.2-source.tar.gz
           tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -F 'ffmpeg-9.0.tar.xz' > /dev/null
           tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -F 'emfiberthreads-' > /dev/null
+          tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -F 'edituno-ffmpeg-changes.diff' > /dev/null
           tar -tzf public/third-party-source/mediabunny-1.56.2-source.tar.gz | grep -F 'mediabunny-v1.56.2/' > /dev/null
 
       - name: Build production bundle
@@ -199,6 +200,7 @@ jobs:
           test -s dist/vendor/libav/libav-6.10.9.0-edituno-audio-cli.wasm.wasm
           test -s dist/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz
           test -s dist/third-party-source/mediabunny-1.56.2-source.tar.gz
+          tar -tJf dist/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -F 'edituno-ffmpeg-changes.diff' > /dev/null
           grep -Fq 'vendor/smartcrop.js' dist/index.html
           grep -Fq 'vendor/meyda.min.js' dist/index.html
           grep -Fq 'vendor/konva.min.js' dist/index.html
@@ -212,6 +214,10 @@ jobs:
           grep -Fq 'function mixProjectAudioWithLibav(' dist/index.html
           grep -Fq 'libav-ffmpeg-wasm' dist/index.html
           grep -Fq 'libav.js v6.10.9.0' dist/THIRD_PARTY_SOURCE_OFFER.md
+          grep -Fq 'This software uses libraries from the FFmpeg project under the LGPLv2.1.' dist/index.html
+          grep -Fq 'This software uses libraries from the FFmpeg project under the LGPLv2.1.' dist/NOTICE
+          grep -Fq 'does not prohibit reverse engineering, modification or replacement' dist/LICENSE_SCOPE.md
+          grep -Fq 'third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz' dist/index.html
           grep -Fqi 'patent' dist/PATENT_NOTICE.md
           grep -Fq '## libav.js / FFmpeg WASM audio engine' dist/THIRD_PARTY_NOTICES.md
           grep -Fq 'function exportProjectAppleMediabunny(' dist/index.html

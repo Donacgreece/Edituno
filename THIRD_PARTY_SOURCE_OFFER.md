@@ -18,6 +18,8 @@ The same production site that serves the compiled runtime also serves:
 
 The archive contains the exact libav.js tagged source, the FFmpeg 9.0 source archive used by the build, the emfiberthreads source archive used by LibAV.js, Edituno's custom variant configuration, generated FFmpeg configuration and the reproducible build script.
 
+The archive includes `edituno-ffmpeg-changes.diff`, which records Edituno's direct changes to FFmpeg source. The file states that Edituno applies no direct FFmpeg patch and identifies where the upstream libav.js patch and configuration material is preserved.
+
 The runtime files under `vendor/libav/` are deliberately separate and replaceable. A compatible modified build can replace those files without relicensing Edituno first-party code. See `LIBAV_RUNTIME_REPLACEMENT.md` for the documented base-path override and replacement process.
 
 The build script rejects FFmpeg GPL and nonfree mode and rejects external x264/x265, FDK-AAC, FAAC, LAME, libopus and libvorbis libraries.
