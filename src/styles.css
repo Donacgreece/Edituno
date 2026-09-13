@@ -320,6 +320,9 @@ html[data-theme="light"] .ffmpeg-compliance{background:linear-gradient(145deg,#e
 @media(max-width:699px){.settings-grabber{flex:0 0 auto}.settings-header{height:68px;min-height:68px;padding:0 18px 10px 22px;box-sizing:border-box}.settings-header .round-icon{flex:0 0 38px}.settings-scroll{min-height:0}}
 @media(max-width:360px){.panel-section .format-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.panel-section .format-grid .format-btn{min-height:44px;padding-inline:3px;font-size:9px}}
 
+/* v2.9.6 force matching text arrows instead of iOS emoji glyphs. */
+.panel-section .format-grid .format-btn:nth-child(3),.panel-section .format-grid .format-btn:nth-child(4){font-size:0;font-family:Arial,"Helvetica Neue",sans-serif}.panel-section .format-grid .format-btn:nth-child(3)::before,.panel-section .format-grid .format-btn:nth-child(4)::before{display:block;font-size:18px;line-height:1;font-family:Arial,"Helvetica Neue",sans-serif;font-weight:400;color:currentColor}.panel-section .format-grid .format-btn:nth-child(3)::before{content:"\2194\FE0E"}.panel-section .format-grid .format-btn:nth-child(4)::before{content:"\2195\FE0E"}
+
 
 /* v2.2.15 autosave setting and theme selector spacing polish. */
 .theme-segment{grid-template-columns:repeat(3,minmax(0,1fr))}.theme-segment button{display:grid;grid-template-columns:16px minmax(0,1fr) 16px;gap:6px;align-items:center;padding:0 7px;text-align:left}.theme-option-icon,.theme-option-check{display:grid;place-items:center;min-width:0}.theme-option-icon .ui-icon{opacity:.82}.theme-option-label{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.theme-option-check{justify-self:end;color:currentColor}

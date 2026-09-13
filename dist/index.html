@@ -37,15 +37,15 @@
   <script>
   (()=>{try{const saved=JSON.parse(localStorage.getItem('edituno-preferences')||'{}');const pref=['system','dark','light'].includes(saved.theme)?saved.theme:'system';const theme=pref==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):pref;document.documentElement.dataset.theme=theme;document.documentElement.dataset.themePreference=pref;document.documentElement.style.colorScheme=theme;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='light'?'#F4F6FA':'#08090D'}catch{document.documentElement.dataset.theme='dark'}})();
   </script>
-  <link rel="manifest" href="./manifest.webmanifest?v=2.9.5" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.9.5" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.9.5" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.9.5" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.9.5" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.9.5" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.9.5" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.9.5" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.9.5" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.9.6" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.9.6" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.9.6" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.9.6" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.9.6" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.9.6" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.9.6" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.9.6" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.9.6" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno | Free local video editor</title>
   <script type="application/ld+json">
   {
@@ -396,6 +396,9 @@ html[data-theme="light"] .ffmpeg-compliance{background:linear-gradient(145deg,#e
 @media(max-width:699px){.settings-grabber{flex:0 0 auto}.settings-header{height:68px;min-height:68px;padding:0 18px 10px 22px;box-sizing:border-box}.settings-header .round-icon{flex:0 0 38px}.settings-scroll{min-height:0}}
 @media(max-width:360px){.panel-section .format-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.panel-section .format-grid .format-btn{min-height:44px;padding-inline:3px;font-size:9px}}
 
+/* v2.9.6 force matching text arrows instead of iOS emoji glyphs. */
+.panel-section .format-grid .format-btn:nth-child(3),.panel-section .format-grid .format-btn:nth-child(4){font-size:0;font-family:Arial,"Helvetica Neue",sans-serif}.panel-section .format-grid .format-btn:nth-child(3)::before,.panel-section .format-grid .format-btn:nth-child(4)::before{display:block;font-size:18px;line-height:1;font-family:Arial,"Helvetica Neue",sans-serif;font-weight:400;color:currentColor}.panel-section .format-grid .format-btn:nth-child(3)::before{content:"\2194\FE0E"}.panel-section .format-grid .format-btn:nth-child(4)::before{content:"\2195\FE0E"}
+
 
 /* v2.2.15 autosave setting and theme selector spacing polish. */
 .theme-segment{grid-template-columns:repeat(3,minmax(0,1fr))}.theme-segment button{display:grid;grid-template-columns:16px minmax(0,1fr) 16px;gap:6px;align-items:center;padding:0 7px;text-align:left}.theme-option-icon,.theme-option-check{display:grid;place-items:center;min-width:0}.theme-option-icon .ui-icon{opacity:.82}.theme-option-label{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.theme-option-check{justify-self:end;color:currentColor}
@@ -556,13 +559,13 @@ html[data-theme="light"] .konva-hint-mark{background:#EAF0FF;color:#3F62D2;borde
 
 
 
-  <script src="./vendor/pixi.min.js?v=2.9.5"></script>
-  <script src="./vendor/pixi-filters.min.js?v=2.9.5"></script>
-  <script src="./vendor/smartcrop.js?v=2.9.5"></script>
-  <script src="./vendor/meyda.min.js?v=2.9.5"></script>
-  <script src="./vendor/konva.min.js?v=2.9.5"></script>
-  <script src="./vendor/mediabunny.min.cjs?v=2.9.5"></script>
-  <script src="./vendor/mp4-muxer.js?v=2.9.5"></script>
+  <script src="./vendor/pixi.min.js?v=2.9.6"></script>
+  <script src="./vendor/pixi-filters.min.js?v=2.9.6"></script>
+  <script src="./vendor/smartcrop.js?v=2.9.6"></script>
+  <script src="./vendor/meyda.min.js?v=2.9.6"></script>
+  <script src="./vendor/konva.min.js?v=2.9.6"></script>
+  <script src="./vendor/mediabunny.min.cjs?v=2.9.6"></script>
+  <script src="./vendor/mp4-muxer.js?v=2.9.6"></script>
 
   <script>
     window.__dismissEditunoSplash = function () {};
@@ -594,7 +597,7 @@ html[data-theme="light"] .konva-hint-mark{background:#EAF0FF;color:#3F62D2;borde
 
       try {
 // @ts-nocheck
-/* Edituno v2.9.5 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.6 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -3204,7 +3207,7 @@ function aboutPage() {
     $('#app').innerHTML = `<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back', 18)}<span>${el ? 'Αρχική' : 'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language === 'el' ? 'active' : ''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language === 'en' ? 'active' : ''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta ? `<div class="about-hero-actions">${installCta}</div>` : ''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el ? 'Create locally. Edit freely.' : 'Create locally. Edit freely.'}</span><div class="about-version">v2.9.5</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta ? `<div class="about-hero-actions">${installCta}</div>` : ''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el ? 'Create locally. Edit freely.' : 'Create locally. Edit freely.'}</span><div class="about-version">v2.9.6</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder', 20)}<strong>${el ? 'Τοπικά και ιδιωτικά' : 'Local and private'}</strong><p>${el ? 'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.' : 'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install', 20)}<strong>${el ? 'Εγκαθίσταται σαν app' : 'Installs like an app'}</strong><p>${el ? 'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.' : 'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -3213,7 +3216,7 @@ function aboutPage() {
       </section>
       ${ffmpegComplianceNotice()}
       <section class="support-section"><div><span class="eyebrow">${el ? 'SUPPORT' : 'SUPPORT'}</span><h2>${el ? 'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.' : 'Help Edituno keep getting better.'}</h2><p>${el ? 'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.' : 'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el ? 'Υποστήριξη ανάπτυξης' : 'Support development'}</strong>${svgIcon('right', 18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.9.5</span><span>${el ? 'Local-first video editor' : 'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.6</span><span>${el ? 'Local-first video editor' : 'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen ? installModal() : ''}`;
 }
@@ -3250,7 +3253,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings', 18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart', 18)}<span>${el ? 'Υποστήριξη' : 'Support'}</span></button>
-      <div class="home-rail-version">v2.9.5</div>
+      <div class="home-rail-version">v2.9.6</div>
     </aside>
 
     <div class="home-surface">
@@ -4883,7 +4886,7 @@ function normalizedAacEncoderMetadata(meta, sampleRate = 48000, numberOfChannels
 }
 async function loadMp4boxModule() {
     if (!mp4boxModulePromise) {
-        const moduleUrl = './vendor/mp4box.all.mjs?v=2.9.5';
+        const moduleUrl = './vendor/mp4box.all.mjs?v=2.9.6';
         mp4boxModulePromise = import(moduleUrl);
     }
     return mp4boxModulePromise;
@@ -7839,7 +7842,7 @@ async function init() {
         if (!state.fluentCatalog.length)
             setTimeout(() => ensureFluentCatalog(), 900);
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            const register = () => navigator.serviceWorker.register('./sw.js?v=2.9.5', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
+            const register = () => navigator.serviceWorker.register('./sw.js?v=2.9.6', { updateViaCache: 'none' }).then(reg => reg.update().catch(() => { })).catch(error => console.warn('Service worker registration failed:', error));
             if (document.readyState === 'complete')
                 register();
             else

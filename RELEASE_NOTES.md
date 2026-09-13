@@ -1,5 +1,13 @@
 # Release Notes
 
+## v2.9.6
+
+iPhone transform-arrow consistency fix.
+
+- Forces the horizontal and vertical flip arrows to use matching text glyphs instead of iOS emoji rendering.
+- Keeps both arrows identical in weight, size, color and alignment on mobile Safari.
+- Leaves the desktop appearance, transform behavior, export pipeline and licensing safeguards unchanged.
+
 ## v2.9.5
 
 Transform control and mobile Settings alignment polish.

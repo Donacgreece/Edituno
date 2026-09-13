@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.9.5**
+**Current release: v2.9.6**
 
 [Release history and changelog](./RELEASE_NOTES.md)
 
