@@ -1,5 +1,18 @@
 # Release Notes
 
+## v2.8.1
+
+Offline chunked Safari audio export and reliable embedded-audio detection.
+
+- Replaces the realtime iPhone/iPad audio pass with an offline block mixer built on Mediabunny `AudioBufferSink`.
+- Audio is decoded in 5-second timeline blocks, mixed at 48 kHz stereo and immediately passed to the AAC encoder. A two-hour project therefore does not need to play for two hours just to mix audio.
+- Video speech, background music, A1 tracks and audible video overlays are mixed together with Edituno volume, speed and fade settings.
+- Source audio at 44.1 kHz or other supported rates is resampled by the offline audio graph into the 48 kHz export mix.
+- Import no longer trusts `HTMLMediaElement.audioTracks.length` as the primary way to decide whether a video contains audio. Edituno now demuxes the file with Mediabunny and records the actual audio codec, sample rate, channel count and decodability.
+- Existing projects are re-probed before Apple mobile export, so a clip that was previously saved with a false `hasAudio=false` flag can recover without being re-imported.
+- The supplied regression sample `IMG_6014.mp4` was identified as standard AAC-LC, 44.1 kHz, stereo audio with a valid AudioSpecificConfig. The source file itself is not silent or corrupt.
+- Desktop export remains unchanged.
+
 ## v2.8.0
 
 Full Safari/iPhone audio timeline mixer.

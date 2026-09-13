@@ -37,15 +37,15 @@
   <script>
   (()=>{try{const saved=JSON.parse(localStorage.getItem('edituno-preferences')||'{}');const pref=['system','dark','light'].includes(saved.theme)?saved.theme:'system';const theme=pref==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):pref;document.documentElement.dataset.theme=theme;document.documentElement.dataset.themePreference=pref;document.documentElement.style.colorScheme=theme;const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='light'?'#F4F6FA':'#08090D'}catch{document.documentElement.dataset.theme='dark'}})();
   </script>
-  <link rel="manifest" href="./manifest.webmanifest?v=2.8.0" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.8.0" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.8.0" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.8.0" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.8.0" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.8.0" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.8.0" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.8.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
-  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.8.0" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="manifest" href="./manifest.webmanifest?v=2.8.1" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=2.8.1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=2.8.1" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1179x2556.png?v=2.8.1" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1290x2796.png?v=2.8.1" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1170x2532.png?v=2.8.1" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1125x2436.png?v=2.8.1" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-1242x2688.png?v=2.8.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="./splash/iphone-828x1792.png?v=2.8.1" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
   <title>Edituno | Free local video editor</title>
   <script type="application/ld+json">
   {
@@ -94,14 +94,14 @@ __EDITUNO_CSS__
 
 
 
-  <script src="./vendor/pixi.min.js?v=2.8.0"></script>
-  <script src="./vendor/pixi-filters.min.js?v=2.8.0"></script>
-  <script src="./vendor/smartcrop.js?v=2.8.0"></script>
-  <script src="./vendor/meyda.min.js?v=2.8.0"></script>
-  <script src="./vendor/konva.min.js?v=2.8.0"></script>
-  <script src="./vendor/mediabunny.min.cjs?v=2.8.0"></script>
-  <script src="./vendor/mediabunny-aac-encoder.min.js?v=2.8.0"></script>
-  <script src="./vendor/mp4-muxer.js?v=2.8.0"></script>
+  <script src="./vendor/pixi.min.js?v=2.8.1"></script>
+  <script src="./vendor/pixi-filters.min.js?v=2.8.1"></script>
+  <script src="./vendor/smartcrop.js?v=2.8.1"></script>
+  <script src="./vendor/meyda.min.js?v=2.8.1"></script>
+  <script src="./vendor/konva.min.js?v=2.8.1"></script>
+  <script src="./vendor/mediabunny.min.cjs?v=2.8.1"></script>
+  <script src="./vendor/mediabunny-aac-encoder.min.js?v=2.8.1"></script>
+  <script src="./vendor/mp4-muxer.js?v=2.8.1"></script>
 
   <script>
     window.__dismissEditunoSplash = function () {};

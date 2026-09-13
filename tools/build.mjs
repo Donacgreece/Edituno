@@ -161,6 +161,15 @@ if (!js.includes('function exportProjectAppleDirectAudio(') || !js.includes('fun
 if (!js.includes('function exportProjectAppleRealtimeMix(') || !js.includes('function recordAppleTimelinePcmMix(') || !js.includes("audio/mp4;codecs=pcm")) {
   throw new Error('Apple realtime PCM timeline mixer is missing')
 }
+if (!js.includes('function exportProjectAppleOfflineChunks(') || !js.includes('function mixOfflineAudioBlock(') || !js.includes('new M.AudioBufferSink')) {
+  throw new Error('Apple offline chunked audio engine is missing')
+}
+if (!js.includes('function probeBlobAudioTrack(') || !js.includes('function refreshProjectAudioMetadata(')) {
+  throw new Error('Demux-based audio metadata probing is missing')
+}
+if (!js.includes("offline-chunked-mediabunny")) {
+  throw new Error('Offline chunked export result marker is missing')
+}
 if (!js.includes('function decodeAppleRecordedMix(') || !js.includes('function renderAppleFinalOutput(')) {
   throw new Error('Apple PCM mix finalization engine is missing')
 }
@@ -304,4 +313,4 @@ if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Mediabunny')) throw new Error('Mediabunny third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MEDIABUNNY-MPL-2.0.txt'))) throw new Error('Mediabunny MPL-2.0 license copy missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'FFMPEG-LGPL-2.1.txt'))) throw new Error('FFmpeg LGPL-2.1 license copy missing')
-console.log(`Built Edituno v2.8.0 -> ${dist}`)
+console.log(`Built Edituno v2.8.1 -> ${dist}`)

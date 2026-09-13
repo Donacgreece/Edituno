@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.8.0**
+**Current release: v2.8.1**
 
 </div>
 
@@ -572,3 +572,7 @@ When an imported video already contains audio and that audio has not been modifi
 ### Safari full audio timeline mix
 
 On iPhone and iPad, Edituno can mix the embedded audio from video clips together with background music, additional A1 audio and audible video overlays. The Apple mobile path uses Safari's media playback engine for source decoding, mixes those sources through Web Audio, captures the result as PCM and only then packages the verified mix with the deterministic Edituno video render. This avoids relying on Safari's problematic AAC WebCodecs decode path for the source material.
+
+### Offline chunked audio export
+
+On iPhone and iPad, Edituno probes the actual media container instead of relying on the browser's `audioTracks` metadata. Audible sources are decoded through Mediabunny in small timeline ranges and mixed offline in 5-second blocks. Video speech, music, A1 audio and audible overlays can therefore be combined without real-time playback and without allocating the entire project's PCM audio in memory.

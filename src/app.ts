@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.8.0 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.8.1 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1069,6 +1069,54 @@ function mutate(fn, {rerender=true}={}) {
 function undo() { if(!state.history.length||!state.project)return; state.future.push(clone(state.project)); state.project=state.history.pop(); queueSave(); renderEditor() }
 function redo() { if(!state.future.length||!state.project)return; state.history.push(clone(state.project)); state.project=state.future.pop(); queueSave(); renderEditor() }
 
+
+async function probeBlobAudioTrack(blob){
+  const M=(window).Mediabunny
+  if(!M?.Input||!M?.BlobSource||!M?.ALL_FORMATS)return null
+  const input=new M.Input({source:new M.BlobSource(blob),formats:M.ALL_FORMATS})
+  try{
+    const track=await input.getPrimaryAudioTrack()
+    if(!track)return {hasAudio:false,audioCodec:null,audioSampleRate:null,audioChannels:null,audioDecodable:false}
+    const [codec,sampleRate,channels,decodable]=await Promise.all([
+      track.getCodec().catch(()=>null),
+      track.getSampleRate().catch(()=>null),
+      track.getNumberOfChannels().catch(()=>null),
+      track.canDecode().catch(()=>false)
+    ])
+    return {
+      hasAudio:true,
+      audioCodec:codec||null,
+      audioSampleRate:Number(sampleRate)||null,
+      audioChannels:Number(channels)||null,
+      audioDecodable:Boolean(decodable)
+    }
+  }finally{
+    try{input.dispose()}catch{}
+  }
+}
+async function refreshProjectAudioMetadata(project){
+  if(!project)return
+  let changed=false
+  for(const asset of project.assets||[]){
+    if(asset.type!=='video'&&asset.type!=='audio')continue
+    const blob=await getBlob(asset.id)
+    if(!blob)continue
+    try{
+      const info=await probeBlobAudioTrack(blob)
+      if(!info)continue
+      for(const key of ['hasAudio','audioCodec','audioSampleRate','audioChannels','audioDecodable']){
+        if(asset[key]!==info[key]){asset[key]=info[key];changed=true}
+      }
+    }catch(error){
+      console.warn('Audio metadata probe failed for asset',asset.id,error)
+    }
+  }
+  if(changed){
+    project.updatedAt=Date.now()
+    queueSave()
+  }
+}
+
 async function mediaMetadata(file) {
   const type=file.type.startsWith('video/')?'video':file.type.startsWith('image/')?'image':file.type.startsWith('audio/')?'audio':null
   if(!type) throw new Error('unsupported')
@@ -1077,10 +1125,22 @@ async function mediaMetadata(file) {
     if(type==='image') {
       const img=await loadImage(url); return {type,duration:4,width:img.naturalWidth,height:img.naturalHeight}
     }
-    const media=document.createElement(type==='video'?'video':'audio'); media.preload='metadata'; media.src=url
-    await new Promise((resolve,reject)=>{ media.onloadedmetadata=resolve; media.onerror=reject })
-    const audioTracks=type==='video'&&media.audioTracks&&typeof media.audioTracks.length==='number'?media.audioTracks.length:undefined
-    return {type,duration:Number.isFinite(media.duration)?media.duration:0,width:type==='video'?media.videoWidth:undefined,height:type==='video'?media.videoHeight:undefined,hasAudio:type==='audio'?true:(audioTracks===undefined?undefined:audioTracks>0)}
+    const media=document.createElement(type==='video'?'video':'audio');media.preload='metadata';media.src=url
+    await new Promise((resolve,reject)=>{media.onloadedmetadata=resolve;media.onerror=reject})
+    const probe=await probeBlobAudioTrack(file).catch(()=>null)
+    const fallbackTracks=type==='video'&&media.audioTracks&&typeof media.audioTracks.length==='number'?media.audioTracks.length:undefined
+    const fallbackHasAudio=type==='audio'?true:(fallbackTracks===undefined?undefined:fallbackTracks>0)
+    return {
+      type,
+      duration:Number.isFinite(media.duration)?media.duration:0,
+      width:type==='video'?media.videoWidth:undefined,
+      height:type==='video'?media.videoHeight:undefined,
+      hasAudio:probe?.hasAudio??fallbackHasAudio,
+      audioCodec:probe?.audioCodec??null,
+      audioSampleRate:probe?.audioSampleRate??null,
+      audioChannels:probe?.audioChannels??null,
+      audioDecodable:probe?.audioDecodable??null
+    }
   } finally { URL.revokeObjectURL(url) }
 }
 async function buildWaveform(file,points=72) {
@@ -1554,7 +1614,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.8.0</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.8.1</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1562,7 +1622,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.8.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.8.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1599,7 +1659,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.8.0</div>
+      <div class="home-rail-version">v2.8.1</div>
     </aside>
 
     <div class="home-surface">
@@ -2366,7 +2426,7 @@ function bindAssetDragInteractions(){
 
 function renderExportModal() {
   const old=$('.modal-backdrop.export-modal'); if(old)old.remove()
-  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+state.preferences.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${isAppleMobileRuntime()?(state.language==='el'?'Σε iPhone/iPad ο ήχος του video, η μουσική και τα επιπλέον audio layers μιξάρονται από το Safari playback engine και καταγράφονται πρώτα σε PCM για αξιόπιστη εξαγωγή.':'On iPhone/iPad, video audio, music and additional audio layers are mixed by the Safari media playback engine and captured to PCM before final export.'):`${tr('browserLimit')} ${state.language==='el'?'Το 4K απαιτεί αρκετή μνήμη και η διαθεσιμότητα εξαρτάται από browser και συσκευή.':'4K needs substantial memory and availability depends on the browser and device.'}`}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
+  const el=document.createElement('div');el.className='modal-backdrop export-modal';el.innerHTML=`<section class="modal"><div class="modal-head"><h2>${tr('exportTitle')}</h2><button class="sheet-close" data-action="export-close">×</button></div><div class="modal-body"><div class="panel-grid"><div class="panel-section"><div class="field-grid two"><label class="field"><span>${tr('quality')}</span><select id="export-quality"><option value="720" ${+state.preferences.defaultQuality===720?'selected':''}>720p</option><option value="1080" ${+state.preferences.defaultQuality===1080?'selected':''}>1080p</option><option value="2160" ${+state.preferences.defaultQuality===2160?'selected':''}>4K · 2160p</option></select></label><label class="field"><span>${tr('frameRate')}</span><select id="export-fps"><option ${+state.preferences.defaultFps===24?'selected':''}>24</option><option ${+state.preferences.defaultFps===30?'selected':''}>30</option><option ${+state.preferences.defaultFps===60?'selected':''}>60</option></select></label></div><p class="helper">${isAppleMobileRuntime()?(state.language==='el'?'Σε iPhone/iPad ο ήχος του video, η μουσική και τα επιπλέον audio layers αποκωδικοποιούνται και μιξάρονται offline σε μικρά blocks, χωρίς realtime αναπαραγωγή.':'On iPhone/iPad, video audio, music and additional audio layers are decoded and mixed offline in small blocks without real-time playback.'):`${tr('browserLimit')} ${state.language==='el'?'Το 4K απαιτεί αρκετή μνήμη και η διαθεσιμότητα εξαρτάται από browser και συσκευή.':'4K needs substantial memory and availability depends on the browser and device.'}`}</p></div><div class="install-card"><strong>${tr('exportLocal')}</strong><p>${tr('free')}</p></div><div id="export-progress-wrap" class="hidden"><div class="export-progress"><span id="export-progress"></span></div><div class="export-status" id="export-status">${tr('ready')}</div></div><div id="export-result" class="hidden"></div><button class="primary-btn full" data-action="export-start">${tr('startExport')}</button></div></div></section>`;document.body.append(el)
 }
 
 function render() { document.documentElement.lang=state.language; safeSetLanguage(state.language); applyTheme(state.preferences.theme); if(state.view==='editor')renderEditor(); else if(state.view==='about')aboutPage(); else renderHome() }
@@ -2656,7 +2716,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.8.0'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.8.1'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -3443,6 +3503,181 @@ async function exportProjectAppleRealtimeMix(quality,fps,onProgress,signal){
   }
 }
 
+
+function collectOfflineAudioEvents(project){
+  const events=[]
+  for(const row of clipTimeline(project)){
+    const clip=row.clip,asset=getAsset(clip.assetId,project)
+    if(!asset||asset.type!=='video'||asset.hasAudio===false||(clip.volume??1)<=0)continue
+    events.push({assetId:asset.id,timelineStart:row.start,duration:row.duration,sourceStart:clip.start||0,speed:clip.speed||1,volume:clip.volume??1,fadeIn:clip.audioFadeIn||0,fadeOut:clip.audioFadeOut||0})
+  }
+  for(const clip of project.overlays||[]){
+    const asset=getAsset(clip.assetId,project)
+    if(!asset||asset.type!=='video'||asset.hasAudio===false||(clip.volume??0)<=0)continue
+    events.push({assetId:asset.id,timelineStart:clip.timelineStart||0,duration:overlayDuration(clip),sourceStart:clip.start||0,speed:clip.speed||1,volume:clip.volume??0,fadeIn:0,fadeOut:0})
+  }
+  for(const clip of project.audioClips||[]){
+    const asset=getAsset(clip.assetId,project)
+    if(!asset||clip.muted||(clip.volume??.8)<=0)continue
+    events.push({assetId:asset.id,timelineStart:clip.timelineStart||0,duration:audioClipDuration(clip),sourceStart:clip.sourceStart||0,speed:clip.speed||1,volume:clip.volume??.8,fadeIn:clip.fadeIn||0,fadeOut:clip.fadeOut||0})
+  }
+  return events.sort((a,b)=>a.timelineStart-b.timelineStart)
+}
+async function createOfflineAudioHandle(assetId){
+  const M=mediabunnyRuntime()
+  if(!M?.Input||!M?.BlobSource||!M?.ALL_FORMATS||!M?.AudioBufferSink)throw new Error('mediabunny-unavailable')
+  const blob=await getBlob(assetId)
+  if(!blob)throw new Error('audio-source-missing')
+  const input=new M.Input({source:new M.BlobSource(blob),formats:M.ALL_FORMATS})
+  try{
+    const track=await input.getPrimaryAudioTrack()
+    if(!track)throw new Error('audio-track-missing')
+    const codec=await track.getCodec().catch(()=>null)
+    const sampleRate=await track.getSampleRate().catch(()=>null)
+    const channels=await track.getNumberOfChannels().catch(()=>null)
+    const decodable=await track.canDecode().catch(()=>false)
+    if(!decodable){
+      const error=new Error('offline-audio-codec')
+      error.codec=codec;error.sampleRate=sampleRate;error.channels=channels
+      throw error
+    }
+    return {assetId,input,track,sink:new M.AudioBufferSink(track),codec,sampleRate,channels}
+  }catch(error){
+    try{input.dispose()}catch{}
+    throw error
+  }
+}
+async function ensureOfflineAudioHandles(events){
+  const handles=new Map()
+  try{
+    for(const event of events){
+      if(handles.has(event.assetId))continue
+      handles.set(event.assetId,await createOfflineAudioHandle(event.assetId))
+    }
+    return handles
+  }catch(error){
+    for(const handle of handles.values())try{handle.input.dispose()}catch{}
+    throw error
+  }
+}
+function closeOfflineAudioHandles(handles){
+  if(!handles)return
+  for(const handle of handles.values())try{handle.input.dispose()}catch{}
+}
+function scheduleOfflineGain(gain,event,globalStart,globalEnd,when,duration){
+  const localStart=Math.max(0,globalStart-event.timelineStart),localEnd=Math.max(0,globalEnd-event.timelineStart)
+  const g0=eventGainAt(event,localStart),g1=eventGainAt(event,localEnd)
+  gain.gain.setValueAtTime(g0,Math.max(0,when))
+  if(duration>.0001)gain.gain.linearRampToValueAtTime(g1,Math.max(0,when+duration))
+}
+async function mixOfflineAudioBlock(project,events,handles,blockStart,blockDuration,sampleRate=48000){
+  const frames=Math.max(1,Math.round(blockDuration*sampleRate)),Ctx=window.OfflineAudioContext||window.webkitOfflineAudioContext
+  if(!Ctx)throw new Error('offline-audio-context')
+  const ctx=new Ctx(2,frames,sampleRate),master=ctx.createDynamicsCompressor()
+  master.threshold.value=-2;master.knee.value=8;master.ratio.value=4;master.attack.value=.003;master.release.value=.15
+  master.connect(ctx.destination)
+  let scheduled=0
+
+  for(const event of events){
+    const eventEnd=event.timelineStart+event.duration,blockEnd=blockStart+blockDuration
+    const timelineStart=Math.max(blockStart,event.timelineStart),timelineEnd=Math.min(blockEnd,eventEnd)
+    if(timelineEnd<=timelineStart+.000001)continue
+
+    const handle=handles.get(event.assetId)
+    if(!handle)continue
+    const speed=Math.max(.05,event.speed||1)
+    const sourceStart=event.sourceStart+(timelineStart-event.timelineStart)*speed
+    const sourceEnd=event.sourceStart+(timelineEnd-event.timelineStart)*speed
+    const readStart=Math.max(0,sourceStart-.08),readEnd=Math.max(readStart+.001,sourceEnd+.08)
+
+    for await (const wrapped of handle.sink.buffers(readStart,readEnd)){
+      const buffer=wrapped.buffer,timestamp=wrapped.timestamp
+      const bufferTimelineStart=event.timelineStart+(timestamp-event.sourceStart)/speed
+      const bufferTimelineEnd=bufferTimelineStart+buffer.duration/speed
+      const visibleStart=Math.max(timelineStart,bufferTimelineStart),visibleEnd=Math.min(timelineEnd,bufferTimelineEnd)
+      if(visibleEnd<=visibleStart+.000001)continue
+
+      const when=visibleStart-blockStart
+      const sourceOffset=Math.max(0,(visibleStart-bufferTimelineStart)*speed)
+      const sourceDuration=Math.min(Math.max(0,buffer.duration-sourceOffset),Math.max(.000001,(visibleEnd-visibleStart)*speed))
+      if(sourceDuration<=.000001)continue
+
+      const node=ctx.createBufferSource(),gain=ctx.createGain()
+      node.buffer=buffer;node.playbackRate.value=speed
+      node.connect(gain);gain.connect(master)
+      scheduleOfflineGain(gain,event,visibleStart,visibleEnd,when,visibleEnd-visibleStart)
+      node.start(Math.max(0,when),sourceOffset,sourceDuration)
+      scheduled++
+    }
+  }
+
+  const rendered=await ctx.startRendering()
+  return {buffer:rendered,scheduled,rms:audioBufferRms(rendered)}
+}
+async function exportProjectAppleOfflineChunks(quality,fps,onProgress,signal){
+  const project=state.project,M=mediabunnyRuntime(),A=mediabunnyAacRuntime()
+  if(!project)throw new Error('empty')
+  if(!M?.Output||!M?.Mp4OutputFormat||!M?.BufferTarget||!M?.CanvasSource||!M?.AudioBufferSource||!M?.Quality||!A?.registerAacEncoder)throw new Error('mediabunny-unavailable')
+
+  await refreshProjectAudioMetadata(project)
+  const events=collectOfflineAudioEvents(project)
+  if(projectExpectsAudio(project)&&!events.length)throw new Error('audio-events-missing')
+  const handles=await ensureOfflineAudioHandles(events)
+  A.registerAacEncoder()
+
+  const [w,h]=exportDimensions(project.ratio,quality),duration=Math.max(.05,projectDuration(project))
+  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h
+  const ctx=canvas.getContext('2d',{alpha:false,desynchronized:false})
+  const target=new M.BufferTarget()
+  const output=new M.Output({format:new M.Mp4OutputFormat({fastStart:'in-memory'}),target})
+  const videoSource=new M.CanvasSource(canvas,{codec:'avc',quality:new M.Quality({bitrate:exportBitrate(quality,fps)})})
+  output.addVideoTrack(videoSource,{frameRate:fps})
+  const audioSource=new M.AudioBufferSource({
+    codec:'aac',fullCodecString:'mp4a.40.2',quality:new M.Quality({bitrate:192000}),
+    transform:{numberOfChannels:2,sampleRate:48000}
+  })
+  output.addAudioTrack(audioSource)
+
+  const sources=new Map(),frameCount=Math.max(1,Math.ceil(duration*fps)),frameDuration=1/Math.max(1,fps),blockSize=5
+  const totalBlocks=Math.max(1,Math.ceil(duration/blockSize))
+  let audibleBlocks=0
+
+  try{
+    await output.start()
+
+    for(let index=0;index<frameCount;index++){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      const time=Math.min(duration,index/fps),actualDuration=Math.max(.000001,Math.min(frameDuration,duration-time))
+      ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h)
+      await drawDeterministicPrimary(ctx,project,time,w,h,sources,signal)
+      await drawDeterministicOverlays(ctx,project,time,w,h,sources,signal)
+      drawElements(ctx,project,time,w,h);drawTexts(ctx,project,time,w,h)
+      await videoSource.add(time,actualDuration,{keyFrame:index===0||index%Math.max(1,Math.round(fps*2))===0})
+      onProgress((index+1)/frameCount*.68)
+    }
+
+    for(let block=0;block<totalBlocks;block++){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      const start=block*blockSize,dur=Math.min(blockSize,duration-start)
+      const mixed=await mixOfflineAudioBlock(project,events,handles,start,dur,48000)
+      if(mixed.rms>.000015)audibleBlocks++
+      await audioSource.add(mixed.buffer)
+      onProgress(.68+(block+1)/totalBlocks*.27)
+    }
+
+    if(projectExpectsAudio(project)&&audibleBlocks<1)throw new Error('export-silent-audio')
+    await output.finalize();onProgress(.98)
+    if(!target.buffer||target.buffer.byteLength<4096)throw new Error('offline-export-empty')
+    const blob=new Blob([target.buffer],{type:'video/mp4'})
+    await validateExportBlob(blob,projectExpectsAudio(project))
+    onProgress(1)
+    return {blob,extension:'mp4',mime:'video/mp4',audioMode:'offline-chunked-mediabunny'}
+  }finally{
+    destroyDeterministicSources(sources)
+    closeOfflineAudioHandles(handles)
+  }
+}
+
 function mediabunnyApplePcmAvailable(){
   const M=mediabunnyRuntime()
   return Boolean(M?.Output&&M?.MovOutputFormat&&M?.BufferTarget&&M?.CanvasSource&&M?.AudioBufferSource&&M?.Quality)
@@ -3679,13 +3914,14 @@ async function exportProjectWebCodecs(quality,fps,onProgress,signal){
   }
 }
 async function exportProjectLocal(quality,fps,onProgress,signal,prewarmedAudioContext=null){
+  if(isAppleMobileRuntime())await refreshProjectAudioMetadata(state.project)
   const appleAudioProject=isAppleMobileRuntime()&&projectExpectsAudio(state.project)
   if(appleAudioProject){
     try{
-      return await exportProjectAppleRealtimeMix(quality,fps,onProgress,signal)
+      return await exportProjectAppleOfflineChunks(quality,fps,onProgress,signal)
     }catch(error){
       if(error?.name==='AbortError')throw error
-      console.error('Apple realtime audio-mix export failed.',error)
+      console.error('Apple offline chunked audio export failed.',error)
       throw error
     }
   }
@@ -3872,15 +4108,20 @@ async function beginExport() {
   if(!state.project||((state.project.clips?.length||0)+(state.project.overlays?.length||0)+(state.project.elements?.length||0)===0)){toast(tr('emptyTimeline'),'error');return}
   const q=+$('#export-quality').value,fps=+$('#export-fps').value,wrap=$('#export-progress-wrap'),bar=$('#export-progress'),status=$('#export-status'),btn=$('[data-action="export-start"]')
   wrap.classList.remove('hidden');btn.disabled=true;btn.textContent=tr('exporting');state.exportController=new AbortController()
-  const prewarmedAudioContext=projectExpectsAudio(state.project)&&!isAppleMobileRuntime()?await prewarmExportAudioContext():null
+  const prewarmedAudioContext=!isAppleMobileRuntime()&&projectExpectsAudio(state.project)?await prewarmExportAudioContext():null
   try{
     const result=await exportProjectLocal(q,fps,p=>{bar.style.width=`${Math.round(p*100)}%`;status.textContent=`${tr('exporting')} ${Math.round(p*100)}%`},state.exportController.signal,prewarmedAudioContext)
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){
-    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'
+    const codecError=e?.message==='offline-audio-codec'
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'
     status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
-    toast(missingAudio?(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.'):tr('exportFailed'),'error')
+    const codecDetails=codecError?`${e?.codec||'audio'} ${e?.sampleRate?`${e.sampleRate} Hz`:''} ${e?.channels?`${e.channels}ch`:''}`.trim():''
+    const audioMessage=codecError
+      ?(state.language==='el'?`Το Safari δεν μπορεί να αποκωδικοποιήσει offline αυτό το audio track (${codecDetails}).`:`Safari cannot offline-decode this audio track (${codecDetails}).`)
+      :(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.')
+    toast(missingAudio?audioMessage:tr('exportFailed'),'error')
     console.error(e)
   }finally{
     if(prewarmedAudioContext&&prewarmedAudioContext.state!=='closed')await prewarmedAudioContext.close().catch(()=>{})
@@ -4095,7 +4336,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.8.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.8.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
