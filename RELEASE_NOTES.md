@@ -1,5 +1,16 @@
 # Release Notes
 
+## v2.9.2
+
+Safari visual-frame export fix.
+
+- Passes `-nostdin` to FFmpeg so Emscripten never opens the native iPhone `Input:` prompt during audio extraction.
+- Keeps deterministic source-video elements in Safari's active compositing path instead of reducing them to effectively hidden 2-pixel elements.
+- Primes muted source playback and waits for decoded frames before drawing, including after timeline seeks.
+- Converts media-load and frame-decode timeouts into explicit diagnostic errors.
+- Detects missing visual frame output and stops the export rather than returning a black video containing only audio.
+- Preserves the v2.9.1 LibAV direct, single-thread audio path and the existing Windows/Chromium export path.
+
 ## v2.9.1
 
 Safari LibAV runtime startup fix.

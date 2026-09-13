@@ -48,6 +48,16 @@ if (!html.includes('const $$ =')) {
   throw new Error('Generated bundle validation failed: literal $$ was corrupted during HTML assembly')
 }
 
+const safariVideoExportMarkers = [
+  "'-nostdin'",
+  'function waitDecodedExportFrame(',
+  'function primeDeterministicVideo(',
+  'export-video-black-frames'
+]
+for (const marker of safariVideoExportMarkers) {
+  if (!js.includes(marker)) throw new Error(`Safari video export validation failed: ${marker} missing`)
+}
+
 const requiredRuntimeMarkers = [
   'function audioClipPanel()',
   'function bindTimelineInteractions()',
@@ -329,4 +339,4 @@ if (!fs.readFileSync(path.join(dist, 'LIBAV_RUNTIME_REPLACEMENT.md'), 'utf8').in
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## libav.js / FFmpeg WASM audio engine')) throw new Error('libav.js third-party notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_SOURCE_OFFER.md'), 'utf8').includes('libav.js v6.10.9.0')) throw new Error('LibAV corresponding-source notice missing')
 if (!fs.readFileSync(path.join(dist, 'PATENT_NOTICE.md'), 'utf8').includes('patent')) throw new Error('Patent notice missing')
-console.log(`Built Edituno v2.9.1 -> ${dist}`)
+console.log(`Built Edituno v2.9.2 -> ${dist}`)

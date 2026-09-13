@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.9.1 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.2 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1614,7 +1614,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.1</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.2</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1622,7 +1622,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.9.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.2</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1659,7 +1659,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.9.1</div>
+      <div class="home-rail-version">v2.9.2</div>
     </aside>
 
     <div class="home-surface">
@@ -2624,35 +2624,71 @@ function waitEncoderQueue(encoder,max=5){
 }
 function createDeterministicVideoElement(url){
   const video=document.createElement('video')
-  video.preload='auto';video.muted=true;video.playsInline=true;video.setAttribute('playsinline','')
-  Object.assign(video.style,{position:'fixed',left:'-8px',top:'-8px',width:'2px',height:'2px',opacity:'0.001',pointerEvents:'none',zIndex:'-1'})
+  video.preload='auto';video.muted=true;video.defaultMuted=true;video.playsInline=true
+  video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');video.setAttribute('muted','')
+  Object.assign(video.style,{position:'fixed',left:'0',top:'0',width:'160px',height:'90px',opacity:'0.01',pointerEvents:'none',zIndex:'0'})
   video.src=url;document.body.append(video);video.load();return video
 }
 function waitMediaEvent(media,name,signal,timeout=4000){
   return new Promise((resolve,reject)=>{
     let done=false
-    const finish=()=>{if(done)return;done=true;clearTimeout(timer);media.removeEventListener(name,finish);signal?.removeEventListener('abort',abort);resolve()}
-    const abort=()=>{if(done)return;done=true;clearTimeout(timer);media.removeEventListener(name,finish);reject(new DOMException('Aborted','AbortError'))}
-    const timer=setTimeout(finish,timeout)
-    media.addEventListener(name,finish,{once:true});signal?.addEventListener('abort',abort,{once:true})
+    const cleanup=()=>{clearTimeout(timer);media.removeEventListener(name,finish);media.removeEventListener('error',failed);signal?.removeEventListener('abort',abort)}
+    const finish=()=>{if(done)return;done=true;cleanup();resolve()}
+    const failed=()=>{if(done)return;done=true;cleanup();reject(new Error(`export-video-${name}-failed`))}
+    const abort=()=>{if(done)return;done=true;cleanup();reject(new DOMException('Aborted','AbortError'))}
+    const timer=setTimeout(()=>{if(done)return;done=true;cleanup();reject(new Error(`export-video-${name}-timeout`))},timeout)
+    media.addEventListener(name,finish,{once:true});media.addEventListener('error',failed,{once:true});signal?.addEventListener('abort',abort,{once:true})
   })
+}
+function waitDecodedExportFrame(video,signal,timeout=1200){
+  if(typeof video.requestVideoFrameCallback!=='function')return new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))
+  return new Promise((resolve,reject)=>{
+    let done=false
+    const cleanup=()=>{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
+    const abort=()=>{if(done)return;done=true;cleanup();reject(new DOMException('Aborted','AbortError'))}
+    const timer=setTimeout(()=>{if(done)return;done=true;cleanup();reject(new Error('export-video-frame-timeout'))},timeout)
+    signal?.addEventListener('abort',abort,{once:true})
+    video.requestVideoFrameCallback(()=>{if(done)return;done=true;cleanup();resolve()})
+  })
+}
+async function primeDeterministicVideo(video,signal){
+  if(video.dataset.editunoExportPrimed==='true')return
+  if(video.readyState<2)await waitMediaEvent(video,'loadeddata',signal,8000)
+  if(!video.videoWidth||!video.videoHeight)throw new Error('export-video-no-frame')
+  try{
+    const frame=waitDecodedExportFrame(video,signal,1800)
+    await video.play()
+    await frame
+  }catch(error){
+    if(error?.name==='AbortError')throw error
+    throw new Error('export-video-prime-failed',{cause:error})
+  }finally{
+    try{video.pause()}catch{}
+  }
+  video.dataset.editunoExportPrimed='true'
 }
 async function seekExportFrameExact(video,time,signal){
   if(signal?.aborted)throw new DOMException('Aborted','AbortError')
   if(video.readyState<1)await waitMediaEvent(video,'loadedmetadata',signal,5000)
+  await primeDeterministicVideo(video,signal)
   const maxTime=Math.max(0,(Number.isFinite(video.duration)?video.duration:time)-.015),target=clamp(time,0,maxTime)
   if(Math.abs((video.currentTime||0)-target)>.001||video.readyState<2){
     video.currentTime=target
     if(video.seeking)await waitMediaEvent(video,'seeked',signal,2500)
   }
   if(typeof video.requestVideoFrameCallback==='function'){
-    await new Promise((resolve,reject)=>{
-      let done=false
-      const timer=setTimeout(()=>{if(!done){done=true;resolve()}},180)
-      const abort=()=>{if(done)return;done=true;clearTimeout(timer);reject(new DOMException('Aborted','AbortError'))}
-      signal?.addEventListener('abort',abort,{once:true})
-      video.requestVideoFrameCallback(()=>{if(done)return;done=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);resolve()})
-    })
+    try{
+      await waitDecodedExportFrame(video,signal,700)
+    }catch(error){
+      if(error?.name==='AbortError')throw error
+      try{
+        const frame=waitDecodedExportFrame(video,signal,1400)
+        await video.play()
+        await frame
+      }finally{
+        try{video.pause()}catch{}
+      }
+    }
   }else{
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))
   }
@@ -2668,7 +2704,7 @@ async function deterministicSourceFor(clip,asset,key,sources,signal){
     return sources.get(key)
   }
   let video=sources.get(key)
-  if(!video){video=createDeterministicVideoElement(url);sources.set(key,video);await waitMediaEvent(video,'loadeddata',signal,5000)}
+  if(!video){video=createDeterministicVideoElement(url);sources.set(key,video);await waitMediaEvent(video,'loadeddata',signal,8000);await primeDeterministicVideo(video,signal)}
   return video
 }
 async function drawDeterministicPrimary(ctx,project,time,w,h,sources,signal){
@@ -2708,6 +2744,18 @@ async function drawDeterministicOverlays(ctx,project,time,w,h,sources,signal){
     await drawVisualWithEffects(ctx,source,asset,clip,w,h,progress,1)
   }
 }
+function sampleExportCanvas(ctx,w,h){
+  try{
+    const points=[[.2,.2],[.5,.2],[.8,.2],[.2,.5],[.5,.5],[.8,.5],[.2,.8],[.5,.8],[.8,.8]]
+    return points.flatMap(([x,y])=>Array.from(ctx.getImageData(Math.max(0,Math.min(w-1,Math.round(w*x))),Math.max(0,Math.min(h-1,Math.round(h*y))),1,1).data))
+  }catch{return null}
+}
+function exportCanvasChanged(before,after){
+  if(!before||!after||before.length!==after.length)return true
+  let difference=0
+  for(let i=0;i<before.length;i+=4)difference+=Math.abs(before[i]-after[i])+Math.abs(before[i+1]-after[i+1])+Math.abs(before[i+2]-after[i+2])
+  return difference>54
+}
 
 let mp4boxModulePromise=null
 function aacFrequencyIndex(sampleRate){
@@ -2725,7 +2773,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.1'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.2'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -3678,7 +3726,7 @@ async function mixProjectAudioWithLibav(project,signal,onProgress){
       if(name!==outputName||!data?.length)return
       writes.push({position:Number(position)||0,data:new Uint8Array(data)})
     }
-    const args=[]
+    const args=['-nostdin','-hide_banner','-loglevel','error']
     for(const event of events){
       const speed=Math.max(.05,Number(event.speed)||1)
       const sourceStart=Math.max(0,Number(event.sourceStart)||0)
@@ -3755,18 +3803,24 @@ async function exportProjectSafariLibavAudio(quality,fps,onProgress,signal){
   const audioSource=new M.EncodedAudioPacketSource('aac')
   output.addAudioTrack(audioSource)
   const sources=new Map(),frameCount=Math.max(1,Math.ceil(duration*fps)),frameDuration=1/Math.max(1,fps)
+  const expectsVideo=(project.clips||[]).some(clip=>getAsset(clip.assetId,project)?.type==='video')
+  let decodedVideoSignal=!expectsVideo
   try{
     await output.start()
     for(let index=0;index<frameCount;index++){
       if(signal?.aborted)throw new DOMException('Aborted','AbortError')
       const time=Math.min(duration,index/fps),actualDuration=Math.max(.000001,Math.min(frameDuration,duration-time))
       ctx.fillStyle=project.background||'#0b0d12';ctx.fillRect(0,0,w,h)
+      const activePrimary=activeAt(time,project),activePrimaryAsset=activePrimary?getAsset(activePrimary.clip.assetId,project):null
+      const beforePrimary=!decodedVideoSignal&&activePrimaryAsset?.type==='video'?sampleExportCanvas(ctx,w,h):null
       await drawDeterministicPrimary(ctx,project,time,w,h,sources,signal)
+      if(beforePrimary&&!decodedVideoSignal)decodedVideoSignal=exportCanvasChanged(beforePrimary,sampleExportCanvas(ctx,w,h))
       await drawDeterministicOverlays(ctx,project,time,w,h,sources,signal)
       drawElements(ctx,project,time,w,h);drawTexts(ctx,project,time,w,h)
       await videoSource.add(time,actualDuration,{keyFrame:index===0||index%Math.max(1,Math.round(fps*2))===0})
       onProgress(.30+(index+1)/frameCount*.60)
     }
+    if(!decodedVideoSignal)throw new Error('export-video-black-frames')
     let audioPackets=0
     for await(const packet of encoded.sink.packets()){
       if(signal?.aborted)throw new DOMException('Aborted','AbortError')
@@ -4471,8 +4525,9 @@ async function beginExport() {
   }catch(e){
     const errorCode=String(e?.message||'export-unknown')
     const codecError=e?.message==='offline-audio-codec'
+    const videoError=errorCode.startsWith('export-video-')
     const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'||e?.message==='offline-audio-config'||e?.message==='audio-decoder-unavailable'||e?.message==='libav-runtime-missing'||e?.message==='libav-audio-empty'||e?.message==='libav-output-audio-invalid'||errorCode.startsWith('libav-')
-    status.textContent=`${missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')} (${errorCode})`
+    status.textContent=`${videoError?(state.language==='el'?'Αποτυχία εικόνας στο export':'Export video failed'):(missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed'))} (${errorCode})`
     const codecDetails=codecError?`${e?.codec||'audio'} ${e?.sampleRate?`${e.sampleRate} Hz`:''} ${e?.channels?`${e.channels}ch`:''}`.trim():''
     const libavMessages={
       'libav-frontend-load':state.language==='el'?'Δεν φορτώθηκε το LibAV runtime. Κάνε ανανέωση και δοκίμασε ξανά.':'The LibAV runtime did not load. Refresh and try again.',
@@ -4483,7 +4538,14 @@ async function beginExport() {
     const audioMessage=libavMessages[errorCode]||(codecError
       ?(state.language==='el'?`Το Safari δεν μπορεί να αποκωδικοποιήσει offline αυτό το audio track (${codecDetails}).`:`Safari cannot offline-decode this audio track (${codecDetails}).`)
       :(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.'))
-    toast(`${missingAudio?audioMessage:tr('exportFailed')} [${errorCode}]`,'error')
+    const videoMessages={
+      'export-video-black-frames':state.language==='el'?'Το Safari δεν επέστρεψε έγκυρα καρέ εικόνας από το αρχικό video. Το export σταμάτησε για να μη δημιουργηθεί μαύρο video.':'Safari did not return valid image frames from the source video. Export stopped to prevent a black video.',
+      'export-video-no-frame':state.language==='el'?'Το Safari δεν μπόρεσε να ανοίξει την εικόνα του αρχικού video.':'Safari could not open the source video image.',
+      'export-video-prime-failed':state.language==='el'?'Το Safari δεν μπόρεσε να ξεκινήσει την αποκωδικοποίηση των καρέ του video.':'Safari could not start decoding the video frames.',
+      'export-video-frame-timeout':state.language==='el'?'Η αποκωδικοποίηση καρέ του Safari καθυστέρησε υπερβολικά.':'Safari video frame decoding timed out.'
+    }
+    const videoMessage=videoMessages[errorCode]||(state.language==='el'?'Το Safari δεν μπόρεσε να αποκωδικοποιήσει σωστά την εικόνα του video.':'Safari could not decode the video image correctly.')
+    toast(`${videoError?videoMessage:(missingAudio?audioMessage:tr('exportFailed'))} [${errorCode}]`,'error')
     console.error(e)
   }finally{
     if(prewarmedAudioContext&&prewarmedAudioContext.state!=='closed')await prewarmedAudioContext.close().catch(()=>{})
@@ -4698,7 +4760,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
