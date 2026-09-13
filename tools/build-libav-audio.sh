@@ -108,7 +108,7 @@ mkdir -p "$SOURCE_STAGE"
 git archive --format=tar.gz --prefix="libav.js-${LIBAV_TAG}/" HEAD > "$SOURCE_STAGE/libav.js-${LIBAV_TAG}.tar.gz"
 test -s "$SRC/build/ffmpeg-${FFMPEG_VERSION}.tar.xz"
 cp "$SRC/build/ffmpeg-${FFMPEG_VERSION}.tar.xz" "$SOURCE_STAGE/ffmpeg-${FFMPEG_VERSION}.tar.xz"
-EMFIBER_SOURCE="$(find "$SRC/build" -maxdepth 1 -type f -name 'emfiberthreads-*.tar.*' | head -1)"
+EMFIBER_SOURCE="$(find "$SRC/build" -maxdepth 1 -type f -name 'emfiberthreads-*.tar.*' -print -quit)"
 if [ -z "$EMFIBER_SOURCE" ] || [ ! -s "$EMFIBER_SOURCE" ]; then
   echo "emfiberthreads corresponding source archive was not produced by the LibAV build." >&2
   exit 1

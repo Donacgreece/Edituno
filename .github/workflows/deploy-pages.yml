@@ -25,10 +25,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
 
@@ -99,10 +99,10 @@ jobs:
 
       - name: Restore pinned LibAV audio runtime cache
         id: libav-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: .cache/libav-edituno-audio
-          key: libav-audio-v3-6.10.9.0-ffmpeg9.0-emscripten6.0.5-${{ runner.os }}
+          key: libav-audio-v4-6.10.9.0-ffmpeg9.0-emscripten6.0.5-${{ runner.os }}
 
       - name: Setup pinned Emscripten for LibAV
         if: steps.libav-cache.outputs.cache-hit != 'true'
@@ -123,9 +123,9 @@ jobs:
           test -s public/vendor/libav/libav-6.10.9.0-edituno-audio-cli.wasm.wasm
           test -s public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz
           test -s public/third-party-source/mediabunny-1.56.2-source.tar.gz
-          tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -Fq 'ffmpeg-9.0.tar.xz'
-          tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -Fq 'emfiberthreads-'
-          tar -tzf public/third-party-source/mediabunny-1.56.2-source.tar.gz | grep -Fq 'mediabunny-v1.56.2/'
+          tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -F 'ffmpeg-9.0.tar.xz' > /dev/null
+          tar -tJf public/third-party-source/libavjs-6.10.9.0-edituno-audio-source.tar.xz | grep -F 'emfiberthreads-' > /dev/null
+          tar -tzf public/third-party-source/mediabunny-1.56.2-source.tar.gz | grep -F 'mediabunny-v1.56.2/' > /dev/null
 
       - name: Build production bundle
         run: npm run build
