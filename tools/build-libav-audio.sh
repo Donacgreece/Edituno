@@ -51,6 +51,8 @@ git init "$SRC"
 cd "$SRC"
 git remote add origin https://github.com/Yahweasel/libav.js.git
 git fetch --depth 1 origin "$LIBAV_COMMIT"
+git fetch --depth 1 origin "refs/tags/${LIBAV_TAG}:refs/tags/${LIBAV_TAG}"
+test "$(git rev-list -n 1 "$LIBAV_TAG")" = "$LIBAV_COMMIT"
 git checkout --detach FETCH_HEAD
 test "$(git rev-parse HEAD)" = "$LIBAV_COMMIT"
 npm ci --no-audit --no-fund
