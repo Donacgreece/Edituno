@@ -2,12 +2,12 @@
 
 <img src="./public/og/edituno-share.png" alt="Edituno - Local Video Editor" width="100%">
 
-# Edituno
+# Edituno, Free Browser Video Editor
 
-### A local-first video editor for the web
+### Privacy-first video editing for mobile and desktop
 
-**Edit video, audio, text, overlays, effects and transitions directly on your device.  
-No uploads. No watermark. Installable as a PWA.**
+**Edit video, audio, text, overlays, effects and transitions directly in your browser.  
+No uploads. No account. No watermark. Installable as a Progressive Web App.**
 
 [![Live App](https://img.shields.io/badge/Live_App-Open_Edituno-2455F5?style=for-the-badge)](https://donacgreece.github.io/Edituno/)
 [![PWA](https://img.shields.io/badge/PWA-Installable-111827?style=for-the-badge)](https://donacgreece.github.io/Edituno/)
@@ -22,15 +22,30 @@ No uploads. No watermark. Installable as a PWA.**
 
 ---
 
-## What is Edituno?
+## Free local video editing in your browser
 
-Edituno is a browser-based video editor designed around a simple principle:
+Edituno is a free, privacy-first browser video editor and installable PWA for iPhone, iPad, Android, macOS, Windows and Linux. It provides a mobile video editor and desktop timeline without requiring media uploads, an account or a watermark.
+
+Edituno is designed around a simple principle:
 
 > **Your media should stay on your device.**
 
 Instead of uploading footage to a remote editing service, Edituno runs the editing workflow locally in the browser. Projects, previews, smart analysis and export are handled on-device whenever the browser supports the required capabilities.
 
-The goal is to bring together the speed of a lightweight mobile editor with the control of a desktop timeline, while keeping the experience installable, private and easy to use.
+The goal is to combine the speed of a lightweight online video editor with the control of a desktop timeline, while keeping editing and export local to the user's device.
+
+### At a glance
+
+| Capability | Edituno |
+|---|---|
+| Browser-based video editor | Yes |
+| Mobile and desktop interface | Yes |
+| Local, on-device processing | Yes |
+| Mandatory upload | No |
+| Mandatory account | No |
+| Export watermark | No |
+| Installable PWA | Yes |
+| Safari and iPhone export | Yes |
 
 ---
 
