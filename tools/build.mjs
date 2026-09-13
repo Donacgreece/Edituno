@@ -143,8 +143,11 @@ if (!js.includes('function exportProjectWebCodecs(') || !js.includes('function r
 if (!js.includes('function exportProjectSafariLibavAudio(') || !js.includes('function mixProjectAudioWithLibav(') || !js.includes('EDITUNO_LIBAV_VERSION')) {
   throw new Error('LibAV Safari audio export engine is missing')
 }
-if (!js.includes('function loadEditunoLibavAudioFrontend()') || !js.includes('EDITUNO_LIBAV_DEFAULT_BASE') || !js.includes('edituno-audio-cli')) {
+if (!js.includes('function loadClassicScriptOnce(') || !js.includes('function loadEditunoLibavAudioFrontend()') || !js.includes('EDITUNO_LIBAV_DEFAULT_BASE') || !js.includes('edituno-audio-cli')) {
   throw new Error('Lazy, replaceable LibAV audio runtime loader is missing')
+}
+if (!js.includes('noworker:isSafariRuntime()') && !js.includes('noworker: isSafariRuntime()')) {
+  throw new Error('Safari direct LibAV runtime mode is missing')
 }
 if (!js.includes("audioMode:'libav-ffmpeg-wasm'") && !js.includes("audioMode: 'libav-ffmpeg-wasm'")) {
   throw new Error('LibAV Safari audio result marker is missing')
@@ -326,4 +329,4 @@ if (!fs.readFileSync(path.join(dist, 'LIBAV_RUNTIME_REPLACEMENT.md'), 'utf8').in
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## libav.js / FFmpeg WASM audio engine')) throw new Error('libav.js third-party notice missing')
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_SOURCE_OFFER.md'), 'utf8').includes('libav.js v6.10.9.0')) throw new Error('LibAV corresponding-source notice missing')
 if (!fs.readFileSync(path.join(dist, 'PATENT_NOTICE.md'), 'utf8').includes('patent')) throw new Error('Patent notice missing')
-console.log(`Built Edituno v2.9.0 -> ${dist}`)
+console.log(`Built Edituno v2.9.1 -> ${dist}`)

@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.9.0 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.9.1 LibAV Audio Engine release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1614,7 +1614,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.0</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.9.1</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1622,7 +1622,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.9.0</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.9.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1659,7 +1659,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.9.0</div>
+      <div class="home-rail-version">v2.9.1</div>
     </aside>
 
     <div class="home-surface">
@@ -2725,7 +2725,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.0'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.9.1'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -3516,7 +3516,39 @@ async function exportProjectAppleRealtimeMix(quality,fps,onProgress,signal){
 const EDITUNO_LIBAV_VERSION='6.10.9.0'
 const EDITUNO_LIBAV_VARIANT='edituno-audio-cli'
 const EDITUNO_LIBAV_DEFAULT_BASE='./vendor/libav/'
+const editunoClassicScriptLoads=new Map()
 let editunoLibavAudioFrontendPromise=null
+function loadClassicScriptOnce(src,key=src,timeoutMs=20000){
+  const cacheKey=String(key||src)
+  if(editunoClassicScriptLoads.has(cacheKey))return editunoClassicScriptLoads.get(cacheKey)
+  const promise=new Promise((resolve,reject)=>{
+    const script=document.createElement('script')
+    let settled=false
+    const finish=(error)=>{
+      if(settled)return
+      settled=true
+      clearTimeout(timer)
+      script.onload=null
+      script.onerror=null
+      if(error){
+        try{script.remove()}catch{}
+        reject(error)
+      }else resolve()
+    }
+    const timer=setTimeout(()=>finish(new Error('libav-frontend-timeout')),timeoutMs)
+    script.async=true
+    script.src=src
+    script.dataset.editunoRuntime=cacheKey
+    script.onload=()=>finish()
+    script.onerror=()=>finish(new Error('libav-frontend-network'))
+    document.head.appendChild(script)
+  }).catch(error=>{
+    editunoClassicScriptLoads.delete(cacheKey)
+    throw error
+  })
+  editunoClassicScriptLoads.set(cacheKey,promise)
+  return promise
+}
 function editunoLibavBase(){
   return String((window).EDITUNO_LIBAV_BASE||EDITUNO_LIBAV_DEFAULT_BASE)
 }
@@ -3534,7 +3566,12 @@ async function loadEditunoLibavAudioFrontend(){
     if(!wrapper?.LibAV)throw new Error('libav-runtime-missing')
     wrapper.base=base
     return {wrapper,base}
-  })()
+  })().catch(error=>{
+    editunoLibavAudioFrontendPromise=null
+    const wrapped=new Error('libav-frontend-load')
+    wrapped.cause=error
+    throw wrapped
+  })
   return editunoLibavAudioFrontendPromise
 }
 function ffmpegNumber(value,places=6){
@@ -3597,7 +3634,13 @@ function createLibavAudioFilter(events,duration){
 }
 async function createEditunoLibavInstance(){
   const {wrapper,base}=await loadEditunoLibavAudioFrontend()
-  return await wrapper.LibAV({base,nothreads:true})
+  try{
+    return await wrapper.LibAV({base,nothreads:true,noworker:isSafariRuntime()})
+  }catch(error){
+    const wrapped=new Error('libav-instance-init')
+    wrapped.cause=error
+    throw wrapped
+  }
 }
 async function mixProjectAudioWithLibav(project,signal,onProgress){
   if(!project)throw new Error('empty')
@@ -3621,7 +3664,13 @@ async function mixProjectAudioWithLibav(project,signal,onProgress){
       const asset=getAsset(event.assetId,project),blob=await getBlob(event.assetId)
       if(!blob)throw new Error('audio-source-missing')
       const name=`${session}_${virtualFiles.size}.${libavAssetExtension(asset)}`
-      await libav.mkreadaheadfile(name,blob)
+      try{
+        await libav.mkreadaheadfile(name,blob)
+      }catch(error){
+        const wrapped=new Error('libav-input-mount')
+        wrapped.cause=error
+        throw wrapped
+      }
       virtualFiles.set(event.assetId,name);createdNames.push(name)
     }
     await libav.mkstreamwriterdev(outputName)
@@ -3640,7 +3689,14 @@ async function mixProjectAudioWithLibav(project,signal,onProgress){
     const filter=createLibavAudioFilter(events,duration)
     args.push('-filter_complex',filter.graph,'-map',`[${filter.outputLabel}]`,'-vn','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-f','adts','-y',outputName)
     onProgress?.(.08)
-    const code=await libav.ffmpeg(...args)
+    let code
+    try{
+      code=await libav.ffmpeg(...args)
+    }catch(error){
+      const wrapped=new Error('libav-ffmpeg-exception')
+      wrapped.cause=error
+      throw wrapped
+    }
     if(aborted||signal?.aborted)throw new DOMException('Aborted','AbortError')
     if(code!==0)throw new Error(`libav-ffmpeg-${code}`)
     if(!writes.length)throw new Error('libav-audio-empty')
@@ -4413,14 +4469,21 @@ async function beginExport() {
     state.exportResult=result;if(state.exportUrl)URL.revokeObjectURL(state.exportUrl);state.exportUrl=URL.createObjectURL(result.blob);status.textContent=tr('exportDone');toast(tr('exportDone'),'success')
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){
+    const errorCode=String(e?.message||'export-unknown')
     const codecError=e?.message==='offline-audio-codec'
-    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'||e?.message==='offline-audio-config'||e?.message==='audio-decoder-unavailable'||e?.message==='libav-runtime-missing'||e?.message==='libav-audio-empty'||e?.message==='libav-output-audio-invalid'||String(e?.message||'').startsWith('libav-ffmpeg-')
-    status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'||e?.message==='offline-audio-config'||e?.message==='audio-decoder-unavailable'||e?.message==='libav-runtime-missing'||e?.message==='libav-audio-empty'||e?.message==='libav-output-audio-invalid'||errorCode.startsWith('libav-')
+    status.textContent=`${missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')} (${errorCode})`
     const codecDetails=codecError?`${e?.codec||'audio'} ${e?.sampleRate?`${e.sampleRate} Hz`:''} ${e?.channels?`${e.channels}ch`:''}`.trim():''
-    const audioMessage=codecError
+    const libavMessages={
+      'libav-frontend-load':state.language==='el'?'Δεν φορτώθηκε το LibAV runtime. Κάνε ανανέωση και δοκίμασε ξανά.':'The LibAV runtime did not load. Refresh and try again.',
+      'libav-instance-init':state.language==='el'?'Το Safari δεν μπόρεσε να ξεκινήσει το LibAV WebAssembly.':'Safari could not start the LibAV WebAssembly runtime.',
+      'libav-input-mount':state.language==='el'?'Το LibAV δεν μπόρεσε να ανοίξει το αρχικό αρχείο video.':'LibAV could not open the source video file.',
+      'libav-ffmpeg-exception':state.language==='el'?'Το LibAV σταμάτησε κατά την επεξεργασία του audio.':'LibAV stopped while processing the audio.'
+    }
+    const audioMessage=libavMessages[errorCode]||(codecError
       ?(state.language==='el'?`Το Safari δεν μπορεί να αποκωδικοποιήσει offline αυτό το audio track (${codecDetails}).`:`Safari cannot offline-decode this audio track (${codecDetails}).`)
-      :(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.')
-    toast(missingAudio?audioMessage:tr('exportFailed'),'error')
+      :(state.language==='el'?'Το export σταμάτησε γιατί δεν δημιουργήθηκε έγκυρο audio track.':'Export stopped because a valid audio track was not created.'))
+    toast(`${missingAudio?audioMessage:tr('exportFailed')} [${errorCode}]`,'error')
     console.error(e)
   }finally{
     if(prewarmedAudioContext&&prewarmedAudioContext.state!=='closed')await prewarmedAudioContext.close().catch(()=>{})
@@ -4635,7 +4698,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.0',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.9.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {

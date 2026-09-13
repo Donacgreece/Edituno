@@ -1,5 +1,15 @@
 # Release Notes
 
+## v2.9.1
+
+Safari LibAV runtime startup fix.
+
+- Adds the missing `loadClassicScriptOnce()` implementation that previously caused Safari export to fail immediately with a runtime `ReferenceError`.
+- Runs LibAV in direct, single-thread WebAssembly mode on Safari and iOS, avoiding the unnecessary Worker boundary while preserving the seekable, offline audio extraction path.
+- Adds retry-safe runtime loading with timeout and explicit failure codes for frontend loading, WebAssembly initialization, source mounting and FFmpeg processing.
+- Bumps the application and service-worker cache version so installed iPhone and iPad PWAs receive the corrected production bundle.
+- Adds production build guards that reject releases missing the loader definition or Safari direct-mode configuration.
+
 ## v2.9.0
 
 LibAV/FFmpeg WASM Safari Audio Engine.

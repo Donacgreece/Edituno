@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.9.0**
+**Current release: v2.9.1**
 
 </div>
 
@@ -552,7 +552,7 @@ https://edituno.com/
 
 Safari/WebKit audible exports use a dedicated LibAV.js / FFmpeg WebAssembly audio backend instead of Safari's native AAC WebCodecs path. Embedded video speech, background music, A1 audio and audible overlays are decoded, trimmed, time-scaled, faded, mixed and AAC-encoded offline by the WASM runtime. The final AAC packets are combined with Edituno's deterministic H.264 video render through Mediabunny.
 
-Source media is exposed to LibAV through seekable readahead files, so long inputs do not need to play in real time. Edituno does not use the old Safari realtime-audio workaround on the production v2.9.0 path. Windows/Chromium keeps the existing working export path.
+Source media is exposed to LibAV through seekable readahead files, so long inputs do not need to play in real time. Edituno does not use the old Safari realtime-audio workaround on the production v2.9.1 path. Windows/Chromium keeps the existing working export path.
 
 The LibAV.js / FFmpeg runtime remains a separate LGPL component and Mediabunny remains MPL-2.0. Edituno first-party code remains PolyForm Noncommercial 1.0.0. Exact corresponding source and reproducible build configuration are distributed with the production application. See `THIRD_PARTY_SOURCE_OFFER.md`, `LIBAV_RUNTIME_REPLACEMENT.md`, `LEGAL_COMPLIANCE_LIBAV_AUDIO.md` and `PATENT_NOTICE.md`.
 
