@@ -16,44 +16,9 @@ No uploads. No watermark. Installable as a PWA.**
 
 **Current release: v2.9.5**
 
+[Release history and changelog](./RELEASE_NOTES.md)
+
 </div>
-
----
-
-## v2.9.5
-
-- Places Fill, Contain and both flip controls in one balanced four-column row on desktop and mobile.
-- Gives all four transform controls identical dimensions and spacing.
-- Keeps the mobile Settings title and close button safely above the divider.
-- Preserves the v2.9.4 licensing safeguards and the confirmed iPhone/Safari export behavior.
-
----
-
-## v2.9.4
-
-- Adds a visible FFmpeg/LGPL notice to the About page and installation dialog.
-- Links directly to the LGPL text, exact corresponding source, third-party notices and runtime replacement instructions.
-- Explicitly preserves modification, replacement and reverse-engineering rights for the separate LGPL component.
-- Adds a direct FFmpeg source-change record to the corresponding-source archive and CI validation.
-- Preserves the confirmed v2.9.3 iPhone/Safari audio and video export behavior unchanged.
-
----
-
-## v2.9.3
-
-- Treats `requestVideoFrameCallback` as an optional presentation signal on Safari instead of a mandatory decode gate.
-- Uses `seeked`, media readiness and three compositor frames before drawing each exported video frame.
-- Prevents valid paused iPhone video frames from failing with `export-video-frame-timeout`.
-- Retains the v2.9.2 FFmpeg stdin fix and black-frame output protection.
-
----
-
-## v2.9.2
-
-- Prevents the native `Input:` prompt during iPhone/iPad export by disabling FFmpeg stdin.
-- Keeps Safari source-video elements in the active compositing path and primes frame decoding before deterministic export.
-- Waits for decoded frames after seeks instead of silently continuing after a timeout.
-- Detects missing visual frame output and stops with a specific diagnostic instead of returning a black video with audio.
 
 ---
 

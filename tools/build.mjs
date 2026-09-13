@@ -23,12 +23,15 @@ const packageMeta = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 
 const template = fs.readFileSync(path.join(root, 'src', 'index.template.html'), 'utf8')
 const css = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8')
 const js = fs.readFileSync(path.join(root, '.build', 'app.js'), 'utf8')
+const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8')
 
 // Fail the build if the compiled application is not valid classic-script JavaScript.
 // This catches startup-breaking issues before they can reach GitHub Pages.
 new Function(js)
 
 if (packageMeta.license !== 'PolyForm-Noncommercial-1.0.0') throw new Error('Edituno SPDX license metadata is missing or incorrect')
+if (/^## v\d+/m.test(readme)) throw new Error('Release history belongs in RELEASE_NOTES.md, not README.md')
+if (!readme.includes('[Release history and changelog](./RELEASE_NOTES.md)')) throw new Error('README release-notes link is missing')
 for (const file of ['LICENSE.md', 'LICENSE_SCOPE.md', 'NOTICE', 'THIRD_PARTY_NOTICES.md']) {
   if (!fs.existsSync(path.join(root, file))) throw new Error(`Required legal file missing: ${file}`)
 }
