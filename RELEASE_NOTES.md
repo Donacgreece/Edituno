@@ -1,6 +1,8 @@
-# Release Notes
+# Pre-1.0 Release Notes
 
-## v2.9.6
+All releases listed here belong to Edituno's pre-1.0 development cycle. Version `1.0.0` is reserved for the first release declared stable for general use.
+
+## v0.9.6
 
 iPhone transform-arrow consistency fix.
 
@@ -8,16 +10,16 @@ iPhone transform-arrow consistency fix.
 - Keeps both arrows identical in weight, size, color and alignment on mobile Safari.
 - Leaves the desktop appearance, transform behavior, export pipeline and licensing safeguards unchanged.
 
-## v2.9.5
+## v0.9.5
 
 Transform control and mobile Settings alignment polish.
 
 - Displays Fill, Contain, horizontal flip and vertical flip as four equal controls in one row.
 - Keeps the same arrangement on desktop and mobile, including narrow iPhone layouts.
 - Prevents the mobile Settings header from shrinking and moves its title and close control above the divider with balanced spacing.
-- Preserves all v2.9.4 licensing safeguards and the working Safari export pipeline.
+- Preserves all v0.9.4 licensing safeguards and the working Safari export pipeline.
 
-## v2.9.4
+## v0.9.4
 
 FFmpeg/LGPL compliance hardening release.
 
@@ -25,18 +27,18 @@ FFmpeg/LGPL compliance hardening release.
 - Provides direct user-facing access to LGPL-2.1, exact corresponding source, notices and runtime replacement instructions.
 - Makes clear that Edituno does not prohibit modification, replacement or reverse engineering of the separate LGPL component to the extent required by LGPL-2.1.
 - Adds a direct FFmpeg changes record to the corresponding-source package and checks it in CI.
-- Leaves the confirmed v2.9.3 iPhone/Safari export implementation unchanged.
+- Leaves the confirmed v0.9.3 iPhone/Safari export implementation unchanged.
 
-## v2.9.3
+## v0.9.3
 
 Safari paused-frame synchronization fix.
 
 - Stops treating `requestVideoFrameCallback` as a mandatory decoder completion event during frame-by-frame export.
 - Uses the `seeked` event, media readiness and compositor settling before drawing each video frame.
 - Keeps the callback as a best-effort priming signal without allowing a missing presentation callback to abort valid iPhone exports.
-- Preserves FFmpeg `-nostdin`, active Safari compositing and black-frame output validation from v2.9.2.
+- Preserves FFmpeg `-nostdin`, active Safari compositing and black-frame output validation from v0.9.2.
 
-## v2.9.2
+## v0.9.2
 
 Safari visual-frame export fix.
 
@@ -45,9 +47,9 @@ Safari visual-frame export fix.
 - Primes muted source playback and waits for decoded frames before drawing, including after timeline seeks.
 - Converts media-load and frame-decode timeouts into explicit diagnostic errors.
 - Detects missing visual frame output and stops the export rather than returning a black video containing only audio.
-- Preserves the v2.9.1 LibAV direct, single-thread audio path and the existing Windows/Chromium export path.
+- Preserves the v0.9.1 LibAV direct, single-thread audio path and the existing Windows/Chromium export path.
 
-## v2.9.1
+## v0.9.1
 
 Safari LibAV runtime startup fix.
 
@@ -57,7 +59,7 @@ Safari LibAV runtime startup fix.
 - Bumps the application and service-worker cache version so installed iPhone and iPad PWAs receive the corrected production bundle.
 - Adds production build guards that reject releases missing the loader definition or Safari direct-mode configuration.
 
-## v2.9.0
+## v0.9.0
 
 LibAV/FFmpeg WASM Safari Audio Engine.
 
@@ -70,22 +72,22 @@ LibAV/FFmpeg WASM Safari Audio Engine.
 - The first-party Edituno license remains PolyForm Noncommercial 1.0.0. The LibAV/FFmpeg runtime remains a separate LGPL component with corresponding source distributed alongside the production build.
 - CI rejects GPL/nonfree FFmpeg configuration and external x264/x265, FDK-AAC, FAAC, LAME, libopus and libvorbis libraries for this runtime.
 - A separate patent notice documents that codec patent questions are independent of open-source copyright licensing.
-- The older `@mediabunny/aac-encoder` runtime is no longer distributed by v2.9.0; the pinned LibAV/FFmpeg build now owns both AAC decoding and AAC encoding on Safari/WebKit.
+- The older `@mediabunny/aac-encoder` runtime is no longer distributed by v0.9.0; the pinned LibAV/FFmpeg build now owns both AAC decoding and AAC encoding on Safari/WebKit.
 - The LibAV runtime is lazy-loaded as separate files and supports a documented compatible-runtime base-path override.
 - The corresponding-source archive includes libav.js, pristine FFmpeg 9.0, emfiberthreads source, generated configuration and the reproducible build recipe.
 
-## v2.8.2
+## v0.8.2
 
 Safari AAC decoder regression fix.
 
-- Removes the v2.8.1 hard dependency on `InputTrack.canDecode()`. Safari can report AAC as unsupported through the capability probe even when the underlying decoder can handle the source. That gate caused previously working iPhone videos to fail immediately.
+- Removes the v0.8.1 hard dependency on `InputTrack.canDecode()`. Safari can report AAC as unsupported through the capability probe even when the underlying decoder can handle the source. That gate caused previously working iPhone videos to fail immediately.
 - The offline Apple mixer now reads encoded audio packets directly with Mediabunny and feeds them to `AudioDecoder` without the unreliable `canDecode()` preflight.
 - AAC source configuration is normalized to a standard AudioSpecificConfig before decoder configuration, including 44.1 kHz stereo AAC-LC such as the supplied `IMG_6014.mp4`.
 - Decoding remains range-based and block-based, so the normal path still does not need realtime playback and does not decode a two-hour project into one giant PCM buffer.
 - If direct range decoding genuinely fails for a source, Edituno falls back per asset to the older native `decodeAudioData()` / explicit MP4 WebCodecs decoder path instead of failing the entire project at capability detection time.
-- Demux-based embedded-audio detection from v2.8.1 is preserved, so existing projects with a previously incorrect `hasAudio=false` value are repaired before export.
+- Demux-based embedded-audio detection from v0.8.1 is preserved, so existing projects with a previously incorrect `hasAudio=false` value are repaired before export.
 
-## v2.8.1
+## v0.8.1
 
 Offline chunked Safari audio export and reliable embedded-audio detection.
 
@@ -98,7 +100,7 @@ Offline chunked Safari audio export and reliable embedded-audio detection.
 - The supplied regression sample `IMG_6014.mp4` was identified as standard AAC-LC, 44.1 kHz, stereo audio with a valid AudioSpecificConfig. The source file itself is not silent or corrupt.
 - Desktop export remains unchanged.
 
-## v2.8.0
+## v0.8.0
 
 Full Safari/iPhone audio timeline mixer.
 
@@ -111,7 +113,7 @@ Full Safari/iPhone audio timeline mixer.
 - The audio pass is realtime on iPhone/iPad, so export can take at least the duration of the project plus video rendering time. This is intentional for reliability.
 - Desktop export remains unchanged.
 
-## v2.7.2
+## v0.7.2
 
 Direct embedded-audio passthrough for iPhone/iPad.
 
@@ -123,7 +125,7 @@ Direct embedded-audio passthrough for iPhone/iPad.
 - If the project changes audio volume, speed, fades, adds A1 audio or audible video overlays, Edituno falls back to the mixed-audio Apple path.
 - Desktop export remains unchanged.
 
-## v2.7.1
+## v0.7.1
 
 iPhone/iPad MOV + PCM compatibility export.
 
@@ -135,7 +137,7 @@ iPhone/iPad MOV + PCM compatibility export.
 - Desktop and non-Apple export behavior remains unchanged.
 - No new third-party dependency was added.
 
-## v2.7.0
+## v0.7.0
 
 Apple mobile export engine replacement.
 
@@ -144,10 +146,10 @@ Apple mobile export engine replacement.
 - The Edituno renderer remains deterministic: every output frame is rendered at an explicit project timestamp.
 - Audio is rendered once as a 48 kHz stereo timeline mix, then encoded by the WASM AAC encoder independently of Safari's native AAC implementation.
 - Apple mobile projects with expected audio will no longer silently fall back to the known-bad Safari MediaRecorder/native AAC path if the new engine fails.
-- Desktop export keeps the existing v2.6 deterministic WebCodecs path to avoid changing a workflow that is already producing audio.
+- Desktop export keeps the existing v0.6 deterministic WebCodecs path to avoid changing a workflow that is already producing audio.
 - Existing GPU effects, Smart Tools, Konva manipulation, light mode, autosave and licensing remain intact.
 
-## v2.6.3
+## v0.6.3
 
 iPhone original-audio passthrough export.
 
@@ -159,7 +161,7 @@ iPhone original-audio passthrough export.
 - Adds a post-export audible-energy probe on Apple mobile. A file that contains an audio track but decodes to silence is rejected instead of being offered as a successful export.
 - Projects that change audio speed, volume, fades, overlay audio or add A1 tracks still use the mixed-audio path and compatibility fallback.
 
-## v2.6.2
+## v0.6.2
 
 Safari/iPhone audio export repair.
 
@@ -167,10 +169,10 @@ Safari/iPhone audio export repair.
 - Extracted AAC access units are decoded through WebCodecs `AudioDecoder` and rebuilt as PCM before Edituno performs its deterministic timeline audio mix.
 - Added explicit AAC `AudioSpecificConfig` generation for common AAC-LC tracks.
 - Repairs Safari/WebKit AAC `AudioEncoder` metadata before mp4-muxer receives it, avoiding the known WebKit behavior where the encoder can expose an `esds`-style description instead of the required AudioSpecificConfig and create silent MP4 audio tracks.
-- Retains the iOS audio-context unlock, realtime compatibility path and audio-track validation from v2.6.1.
+- Retains the iOS audio-context unlock, realtime compatibility path and audio-track validation from v0.6.1.
 - Does not change the editor interface, GPU effects, Smart Tools or Konva editing.
 
-## v2.6.1
+## v0.6.1
 
 Mobile audio export reliability hotfix.
 
@@ -183,7 +185,7 @@ Mobile audio export reliability hotfix.
 - Stores video audio-track presence on new imports when the browser exposes that metadata.
 - Phase 1 GPU effects, Phase 2 Smart Tools, Phase 3 Konva and the deterministic WebCodecs export path remain intact.
 
-## v2.6.0
+## v0.6.0
 
 Production Export Engine.
 
@@ -194,15 +196,15 @@ Production Export Engine.
 - Audio is encoded as AAC and video as AVC/H.264 with explicit timestamps before MP4 muxing.
 - 1080p bitrate is raised substantially for upload-ready quality, with higher targets for 60 fps and 4K.
 - Adds periodic keyframes and quality-oriented WebCodecs configuration.
-- Keeps the v2.5.1 MediaRecorder exporter as a compatibility fallback for browsers without the required WebCodecs codecs.
+- Keeps the v0.5.1 MediaRecorder exporter as a compatibility fallback for browsers without the required WebCodecs codecs.
 - Adds pinned mp4-muxer 5.2.2 under its original MIT license.
 - Preserves GPU effects, shader transitions, Smart Tools, Konva direct manipulation, themes and PWA behavior.
 
-## v2.5.1
+## v0.5.1
 
 ### Deployment verification hotfix
 
-- Fixed the GitHub Pages verification step that was still hard-coded to the old `edituno-studio-v2.5.0` cache name after the v2.5.1 export-engine release.
+- Fixed the GitHub Pages verification step that was still hard-coded to the old `edituno-studio-v0.5.0` cache name after the v0.5.1 export-engine release.
 - Deployment verification now reads the version directly from `package.json`, so future version bumps cannot fail for this same reason.
 - The manifest version is now verified dynamically as well.
 - No application feature or export code changed in this hotfix.
@@ -218,7 +220,7 @@ Export Engine reliability hotfix.
 - Adds a post-export validation pass before download.
 - Phase 1 GPU effects, Phase 2 Smart Tools and Phase 3 Konva manipulation remain unchanged.
 
-## v2.5.0
+## v0.5.0
 
 Konva direct canvas editing.
 
@@ -234,16 +236,16 @@ Konva direct canvas editing.
 - Replaced fragile smart-engine byte-size assumptions in CI with exact package-version and non-empty browser-bundle verification.
 - Added Konva MIT notice, license copy and license-scope separation.
 
-## v2.4.1
+## v0.4.1
 
 Phase 2 deployment hotfix.
 
 - Fixed the GitHub Actions smart-engine verification threshold for the official Meyda 5.6.3 minified browser bundle.
 - Meyda 5.6.3 `dist/web/meyda.min.js` is intentionally compact, so CI now validates it with an appropriate minimum size instead of rejecting the legitimate package.
 - The same corrected threshold is used by the production vendor copy guard.
-- Auto Reframe, silence detection, beat detection, timeline smart guides and beat-driven cuts from v2.4.0 remain unchanged.
+- Auto Reframe, silence detection, beat detection, timeline smart guides and beat-driven cuts from v0.4.0 remain unchanged.
 
-## v2.4.0
+## v0.4.0
 
 Smart editing Phase 2.
 
@@ -256,9 +258,9 @@ Smart editing Phase 2.
 - Added configurable beat density and one-click V1 cuts driven by detected audio beats.
 - Added safe reset, clear-analysis and re-analysis flows.
 - Added MIT license copies and third-party notices for Smartcrop.js and Meyda.
-- Preserved the v2.3.1 pinned GPU vendor pipeline, GPU effects, shader transitions, light mode, autosave and existing editor layout.
+- Preserved the v0.3.1 pinned GPU vendor pipeline, GPU effects, shader transitions, light mode, autosave and existing editor layout.
 
-## v2.3.1
+## v0.3.1
 
 GPU vendor pipeline hotfix.
 
@@ -267,7 +269,7 @@ GPU vendor pipeline hotfix.
 - Both browser bundles are SHA-256 verified before the production build runs.
 - Phase 1 effects, transitions, export integration and MIT third-party notices remain unchanged.
 
-## v2.3.0
+## v0.3.0
 
 GPU Effects and Shader Transitions release.
 
@@ -278,7 +280,7 @@ GPU Effects and Shader Transitions release.
 - Added offline caching for GPU vendor bundles and transition shaders.
 - Expanded third-party notices and preserved PolyForm scope separation.
 
-## v2.2.16
+## v0.2.16
 
 Licensing and third-party scope release.
 
@@ -289,7 +291,7 @@ Licensing and third-party scope release.
 - Added licensing metadata to `package.json`, the source headers and `llms.txt`.
 - Production builds now publish the legal files alongside the web application.
 
-## v2.2.15
+## v0.2.15
 
 Settings symmetry and preference polish release.
 
@@ -299,7 +301,7 @@ Settings symmetry and preference polish release.
 - Rebuilt the System / Dark / Light selector layout so the active checkmark has a dedicated column and cannot overlap the theme label.
 - Preserved the adaptive theme system, expanded preview, support navigation, SEO, sitemap and PWA behavior.
 
-## v2.2.14
+## v0.2.14
 
 Adaptive Theme System release.
 
@@ -309,9 +311,9 @@ Adaptive Theme System release.
 - Added dynamic browser/PWA theme-color updates.
 - Added an early theme bootstrap to prevent a dark flash when launching in Light mode.
 - Added a comprehensive Light palette across Home, Settings, editor, timeline, Inspector, mobile sheets, install flow and Support page.
-- Preserved all v2.2.13 behavior, expanded preview sizing, startup stability, SEO, sitemap and Support navigation.
+- Preserved all v0.2.13 behavior, expanded preview sizing, startup stability, SEO, sitemap and Support navigation.
 
-## v2.2.13
+## v0.2.13
 
 Mobile Support dock polish release.
 
@@ -320,7 +322,7 @@ Mobile Support dock polish release.
 - Kept the same internal destination, so the button still opens the Support page.
 - Preserved the expanded preview layout, editor startup fix, header cleanup and support navigation improvements.
 
-## v2.2.12
+## v0.2.12
 
 Expanded preview release.
 
@@ -328,31 +330,31 @@ Expanded preview release.
 - Removed the oversized internal preview insets that wasted usable space.
 - Optimized preview padding separately for desktop and mobile.
 - Applied the improvement consistently to 16:9, 9:16, 1:1 and 4:5 formats.
-- Preserved the v2.2.11 header/nav cleanup and v2.2.10 editor startup hotfix.
+- Preserved the v0.2.11 header/nav cleanup and v0.2.10 editor startup hotfix.
 
-## v2.2.11
+## v0.2.11
 
 Editor header and home rail cleanup release.
 
 - Removed the Edituno logo from the editor header for a cleaner workspace.
 - Removed the duplicate About entry from the desktop left rail.
 - Kept Support available from the dedicated Support button and from Settings.
-- Preserved the v2.2.10 editor startup hotfix and all Support, Install, SEO, sitemap and social metadata improvements.
+- Preserved the v0.2.10 editor startup hotfix and all Support, Install, SEO, sitemap and social metadata improvements.
 
-## v2.2.10
+## v0.2.10
 
 Editor startup stability hotfix.
 
 - Restored the missing `selectedTransformTarget()` helper required by preview interactions.
 - Fixed the editor crash that could occur immediately after opening a project on desktop and mobile.
 - Added a production build guard so this helper cannot silently disappear again.
-- Preserved v2.2.9 Support navigation, smart install, auto-domain SEO, sitemap and social metadata.
+- Preserved v0.2.9 Support navigation, smart install, auto-domain SEO, sitemap and social metadata.
 
-## v2.2.9
+## v0.2.9
 
 Support navigation polish. The desktop Support control and menu Support entries now open the internal Edituno support/about page. PayPal is only opened from the dedicated PayPal CTA inside that page.
 
-## v2.2.8
+## v0.2.8
 
 - Desktop home rail now shows Support instead of Installation.
 - Installed state no longer occupies a separate About or home rail card.
@@ -361,7 +363,7 @@ Support navigation polish. The desktop Support control and menu Support entries 
 - About is fully scrollable on mobile so all information remains accessible.
 
 
-## v2.2.7
+## v0.2.7
 
 About, Support and Smart Install release.
 
@@ -374,7 +376,7 @@ About, Support and Smart Install release.
 - Added appinstalled handling and standalone-mode detection.
 
 
-## v2.2.6
+## v0.2.6
 
 Automatic domain awareness release.
 
@@ -384,7 +386,7 @@ Automatic domain awareness release.
 - Scheduled domain sync runs every six hours, so connecting `edituno.com` later requires no source-code edits.
 - Social thumbnail remains at `public/og/edituno-share.png` and automatically receives the correct absolute public URL.
 
-## v2.2.5
+## v0.2.5
 
 Temporary GitHub Pages social-sharing fix.
 
@@ -393,7 +395,7 @@ Temporary GitHub Pages social-sharing fix.
 - The share image remains at `og/edituno-share.png`, now referenced through a publicly reachable absolute URL.
 - `edituno.com` remains documented as the planned custom domain and can replace the temporary URLs when DNS is connected.
 
-## v2.2.4
+## v0.2.4
 
 SEO, social sharing and discoverability release.
 
@@ -412,11 +414,11 @@ SEO, social sharing and discoverability release.
 - PWA cache versioning and asset cache busting
 - GitHub Pages workflow checks for SEO and social assets
 
-## v2.2.3
+## v0.2.3
 
 Desktop UI symmetry release. The nine editor tools use a 3 x 3 layout, desktop clip controls are owned by the right Inspector, Motion and Transitions fill complete 3-column grids, and Adjustments and Settings were visually rebuilt.
 
-## v2.2.2
+## v0.2.2
 
 - Desktop sidebars repacked for safer widths and cleaner tool layout.
 - Timeline clips, audio, overlays and elements expose resize handles.
