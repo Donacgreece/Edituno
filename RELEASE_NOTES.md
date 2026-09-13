@@ -1,5 +1,16 @@
 # Release Notes
 
+## v2.8.2
+
+Safari AAC decoder regression fix.
+
+- Removes the v2.8.1 hard dependency on `InputTrack.canDecode()`. Safari can report AAC as unsupported through the capability probe even when the underlying decoder can handle the source. That gate caused previously working iPhone videos to fail immediately.
+- The offline Apple mixer now reads encoded audio packets directly with Mediabunny and feeds them to `AudioDecoder` without the unreliable `canDecode()` preflight.
+- AAC source configuration is normalized to a standard AudioSpecificConfig before decoder configuration, including 44.1 kHz stereo AAC-LC such as the supplied `IMG_6014.mp4`.
+- Decoding remains range-based and block-based, so the normal path still does not need realtime playback and does not decode a two-hour project into one giant PCM buffer.
+- If direct range decoding genuinely fails for a source, Edituno falls back per asset to the older native `decodeAudioData()` / explicit MP4 WebCodecs decoder path instead of failing the entire project at capability detection time.
+- Demux-based embedded-audio detection from v2.8.1 is preserved, so existing projects with a previously incorrect `hasAudio=false` value are repaired before export.
+
 ## v2.8.1
 
 Offline chunked Safari audio export and reliable embedded-audio detection.

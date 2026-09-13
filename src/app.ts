@@ -1,5 +1,5 @@
 // @ts-nocheck
-/* Edituno v2.8.1 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
+/* Edituno v2.8.2 Konva Canvas release. TypeScript is canonical; dist is prebuilt for GitHub Pages.
  * Edituno first-party code: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
  * Third-party materials retain their original licenses; see THIRD_PARTY_NOTICES.md.
  */
@@ -1077,18 +1077,18 @@ async function probeBlobAudioTrack(blob){
   try{
     const track=await input.getPrimaryAudioTrack()
     if(!track)return {hasAudio:false,audioCodec:null,audioSampleRate:null,audioChannels:null,audioDecodable:false}
-    const [codec,sampleRate,channels,decodable]=await Promise.all([
+    const [codec,sampleRate,channels,decoderConfig]=await Promise.all([
       track.getCodec().catch(()=>null),
       track.getSampleRate().catch(()=>null),
       track.getNumberOfChannels().catch(()=>null),
-      track.canDecode().catch(()=>false)
+      track.getDecoderConfig().catch(()=>null)
     ])
     return {
       hasAudio:true,
       audioCodec:codec||null,
       audioSampleRate:Number(sampleRate)||null,
       audioChannels:Number(channels)||null,
-      audioDecodable:Boolean(decodable)
+      audioDecodable:decoderConfig?true:null
     }
   }finally{
     try{input.dispose()}catch{}
@@ -1614,7 +1614,7 @@ function aboutPage(){
   $('#app').innerHTML=`<div class="about-page">
     <header class="about-topbar"><button class="about-back" data-action="about-home">${svgIcon('back',18)}<span>${el?'Αρχική':'Home'}</span></button>${renderLogo()}<div class="mini-segment"><button type="button" class="${state.language==='el'?'active':''}" data-action="set-lang" data-value="el">ΕΛ</button><button type="button" class="${state.language==='en'?'active':''}" data-action="set-lang" data-value="en">EN</button></div></header>
     <main class="about-main">
-      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.8.1</div></div></section>
+      <section class="about-hero"><div class="about-hero-copy"><span class="eyebrow">EDITUNO</span><h1>${title}</h1><p>${intro}</p>${installCta?`<div class="about-hero-actions">${installCta}</div>`:''}</div><div class="about-brand-card"><img src="${EDITUNO_ICON}" alt="Edituno"><strong>Edituno</strong><span>${el?'Create locally. Edit freely.':'Create locally. Edit freely.'}</span><div class="about-version">v2.8.2</div></div></section>
       <section class="about-grid">
         <article>${svgIcon('folder',20)}<strong>${el?'Τοπικά και ιδιωτικά':'Local and private'}</strong><p>${el?'Τα media σου δεν χρειάζεται να ανέβουν σε server για να επεξεργαστείς το video.':'Your media does not need to be uploaded to a server to edit your video.'}</p></article>
         <article>${svgIcon('install',20)}<strong>${el?'Εγκαθίσταται σαν app':'Installs like an app'}</strong><p>${el?'Άμεση εγκατάσταση σε Android και Windows όταν την υποστηρίζει ο browser. Σε Apple συσκευές εμφανίζονται μόνο τα απαραίτητα βήματα.':'Direct install on Android and Windows when supported by the browser. Apple devices show only the required manual steps.'}</p></article>
@@ -1622,7 +1622,7 @@ function aboutPage(){
         <article>${svgIcon('check',20)}<strong>${el?'Δωρεάν, χωρίς watermark':'Free, no watermark'}</strong><p>${el?'Χωρίς account και χωρίς υποχρεωτική συνδρομή. Η υποστήριξη μέσω PayPal είναι απολύτως προαιρετική.':'No account and no required subscription. PayPal support is completely optional.'}</p></article>
       </section>
       <section class="support-section"><div><span class="eyebrow">${el?'SUPPORT':'SUPPORT'}</span><h2>${el?'Βοήθησε το Edituno να συνεχίσει να εξελίσσεται.':'Help Edituno keep getting better.'}</h2><p>${el?'Αν το Edituno σου είναι χρήσιμο, μπορείς προαιρετικά να υποστηρίξεις την ανάπτυξή του μέσω PayPal. Η εφαρμογή παραμένει δωρεάν.':'If Edituno is useful to you, you can optionally support its development through PayPal. The app remains free.'}</p></div><a class="paypal-btn" href="${PAYPAL_SUPPORT_URL}" target="_blank" rel="noopener noreferrer"><span>PayPal</span><strong>${el?'Υποστήριξη ανάπτυξης':'Support development'}</strong>${svgIcon('right',18)}</a></section>
-      <footer class="about-footer"><span>Edituno v2.8.1</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
+      <footer class="about-footer"><span>Edituno v2.8.2</span><span>${el?'Local-first video editor':'Local-first video editor'}</span></footer>
     </main>
   </div><div class="toast-stack" id="toasts"></div>${state.installOpen?installModal():''}`
 }
@@ -1659,7 +1659,7 @@ function renderHome() {
       <div class="home-rail-spacer"></div>
       <button class="home-rail-link" data-action="settings">${svgIcon('settings',18)}<span>${tr('settings')}</span></button>
       <button class="home-rail-link home-rail-support" data-action="about">${svgIcon('heart',18)}<span>${el?'Υποστήριξη':'Support'}</span></button>
-      <div class="home-rail-version">v2.8.1</div>
+      <div class="home-rail-version">v2.8.2</div>
     </aside>
 
     <div class="home-surface">
@@ -2716,7 +2716,7 @@ function normalizedAacEncoderMetadata(meta,sampleRate=48000,numberOfChannels=2){
 }
 async function loadMp4boxModule(){
   if(!mp4boxModulePromise){
-    const moduleUrl='./vendor/mp4box.all.mjs?v=2.8.1'
+    const moduleUrl='./vendor/mp4box.all.mjs?v=2.8.2'
     mp4boxModulePromise=import(moduleUrl)
   }
   return mp4boxModulePromise
@@ -3525,7 +3525,7 @@ function collectOfflineAudioEvents(project){
 }
 async function createOfflineAudioHandle(assetId){
   const M=mediabunnyRuntime()
-  if(!M?.Input||!M?.BlobSource||!M?.ALL_FORMATS||!M?.AudioBufferSink)throw new Error('mediabunny-unavailable')
+  if(!M?.Input||!M?.BlobSource||!M?.ALL_FORMATS||!M?.EncodedPacketSink)throw new Error('mediabunny-unavailable')
   const blob=await getBlob(assetId)
   if(!blob)throw new Error('audio-source-missing')
   const input=new M.Input({source:new M.BlobSource(blob),formats:M.ALL_FORMATS})
@@ -3535,16 +3535,69 @@ async function createOfflineAudioHandle(assetId){
     const codec=await track.getCodec().catch(()=>null)
     const sampleRate=await track.getSampleRate().catch(()=>null)
     const channels=await track.getNumberOfChannels().catch(()=>null)
-    const decodable=await track.canDecode().catch(()=>false)
-    if(!decodable){
-      const error=new Error('offline-audio-codec')
-      error.codec=codec;error.sampleRate=sampleRate;error.channels=channels
-      throw error
-    }
-    return {assetId,input,track,sink:new M.AudioBufferSink(track),codec,sampleRate,channels}
+    const decoderConfig=await track.getDecoderConfig().catch(()=>null)
+    if(!decoderConfig)throw new Error('offline-audio-config')
+    return {assetId,input,track,packetSink:new M.EncodedPacketSink(track),codec,sampleRate,channels,decoderConfig,directDecoderBroken:false}
   }catch(error){
     try{input.dispose()}catch{}
     throw error
+  }
+}
+function normalizedSourceAudioDecoderConfig(handle){
+  const source={...(handle.decoderConfig||{})}
+  const codec=String(source.codec||handle.codec||'')
+  const sampleRate=Number(source.sampleRate||handle.sampleRate)||48000
+  const numberOfChannels=Math.max(1,Number(source.numberOfChannels||handle.channels)||2)
+  if(codec.startsWith('mp4a.')){
+    const description=aacAudioSpecificConfig(sampleRate,numberOfChannels,codec)
+    if(description)source.description=description
+    if(!source.codec)source.codec='mp4a.40.2'
+  }
+  source.sampleRate=sampleRate
+  source.numberOfChannels=numberOfChannels
+  return source
+}
+function audioDataToBuffer(ctx,data){
+  const channels=Math.max(1,Math.min(2,data.numberOfChannels||1)),frames=Math.max(1,data.numberOfFrames||0),sampleRate=data.sampleRate||48000
+  const buffer=ctx.createBuffer(channels,frames,sampleRate)
+  for(let channel=0;channel<channels;channel++){
+    const plane=new Float32Array(frames)
+    data.copyTo(plane,{planeIndex:Math.min(channel,(data.numberOfChannels||1)-1),format:'f32-planar'})
+    buffer.getChannelData(channel).set(plane)
+  }
+  return buffer
+}
+async function decodeAudioRangeDirect(handle,start,end,ctx,signal){
+  const Decoder=window.AudioDecoder
+  if(!Decoder||!window.EncodedAudioChunk)throw new Error('audio-decoder-unavailable')
+  const config=normalizedSourceAudioDecoderConfig(handle),decoded=[]
+  let decoderError=null
+  const decoder=new Decoder({output:data=>decoded.push(data),error:error=>{decoderError=error}})
+  try{
+    decoder.configure(config)
+    const readStart=Math.max(0,start-.16),readEnd=Math.max(readStart+.001,end+.16)
+    let packetCount=0
+    for await (const packet of handle.packetSink.packets(readStart,readEnd)){
+      if(signal?.aborted)throw new DOMException('Aborted','AbortError')
+      decoder.decode(packet.toEncodedAudioChunk())
+      packetCount++
+      if((decoder.decodeQueueSize||0)>48)await new Promise(resolve=>setTimeout(resolve,0))
+    }
+    if(packetCount<1)throw new Error('audio-range-empty')
+    await decoder.flush()
+    if(decoderError)throw decoderError
+    if(!decoded.length)throw new Error('audio-range-empty')
+    decoded.sort((a,b)=>a.timestamp-b.timestamp)
+    return decoded.map(data=>{
+      const wrapped={buffer:audioDataToBuffer(ctx,data),timestamp:(data.timestamp||0)/1e6}
+      try{data.close()}catch{}
+      return wrapped
+    })
+  }catch(error){
+    for(const data of decoded)try{data.close()}catch{}
+    throw error
+  }finally{
+    try{decoder.close()}catch{}
   }
 }
 async function ensureOfflineAudioHandles(events){
@@ -3570,7 +3623,7 @@ function scheduleOfflineGain(gain,event,globalStart,globalEnd,when,duration){
   gain.gain.setValueAtTime(g0,Math.max(0,when))
   if(duration>.0001)gain.gain.linearRampToValueAtTime(g1,Math.max(0,when+duration))
 }
-async function mixOfflineAudioBlock(project,events,handles,blockStart,blockDuration,sampleRate=48000){
+async function mixOfflineAudioBlock(project,events,handles,blockStart,blockDuration,sampleRate=48000,fallbackCache=new Map(),signal=null){
   const frames=Math.max(1,Math.round(blockDuration*sampleRate)),Ctx=window.OfflineAudioContext||window.webkitOfflineAudioContext
   if(!Ctx)throw new Error('offline-audio-context')
   const ctx=new Ctx(2,frames,sampleRate),master=ctx.createDynamicsCompressor()
@@ -3579,6 +3632,7 @@ async function mixOfflineAudioBlock(project,events,handles,blockStart,blockDurat
   let scheduled=0
 
   for(const event of events){
+    if(signal?.aborted)throw new DOMException('Aborted','AbortError')
     const eventEnd=event.timelineStart+event.duration,blockEnd=blockStart+blockDuration
     const timelineStart=Math.max(blockStart,event.timelineStart),timelineEnd=Math.min(blockEnd,eventEnd)
     if(timelineEnd<=timelineStart+.000001)continue
@@ -3588,9 +3642,25 @@ async function mixOfflineAudioBlock(project,events,handles,blockStart,blockDurat
     const speed=Math.max(.05,event.speed||1)
     const sourceStart=event.sourceStart+(timelineStart-event.timelineStart)*speed
     const sourceEnd=event.sourceStart+(timelineEnd-event.timelineStart)*speed
-    const readStart=Math.max(0,sourceStart-.08),readEnd=Math.max(readStart+.001,sourceEnd+.08)
+    let wrappedBuffers=null
 
-    for await (const wrapped of handle.sink.buffers(readStart,readEnd)){
+    if(!handle.directDecoderBroken){
+      try{
+        wrappedBuffers=await decodeAudioRangeDirect(handle,sourceStart,sourceEnd,ctx,signal)
+      }catch(error){
+        if(error?.name==='AbortError')throw error
+        handle.directDecoderBroken=true
+        console.warn('Direct WebCodecs source decode failed; using native full-asset fallback.',error)
+      }
+    }
+
+    if(!wrappedBuffers){
+      const decoded=await decodeOfflineAudio(event.assetId,ctx,fallbackCache)
+      if(!decoded)throw new Error('offline-audio-decode')
+      wrappedBuffers=[{buffer:decoded,timestamp:0}]
+    }
+
+    for(const wrapped of wrappedBuffers){
       const buffer=wrapped.buffer,timestamp=wrapped.timestamp
       const bufferTimelineStart=event.timelineStart+(timestamp-event.sourceStart)/speed
       const bufferTimelineEnd=bufferTimelineStart+buffer.duration/speed
@@ -3641,6 +3711,7 @@ async function exportProjectAppleOfflineChunks(quality,fps,onProgress,signal){
   const sources=new Map(),frameCount=Math.max(1,Math.ceil(duration*fps)),frameDuration=1/Math.max(1,fps),blockSize=5
   const totalBlocks=Math.max(1,Math.ceil(duration/blockSize))
   let audibleBlocks=0
+  const fallbackCache=new Map()
 
   try{
     await output.start()
@@ -3659,7 +3730,7 @@ async function exportProjectAppleOfflineChunks(quality,fps,onProgress,signal){
     for(let block=0;block<totalBlocks;block++){
       if(signal?.aborted)throw new DOMException('Aborted','AbortError')
       const start=block*blockSize,dur=Math.min(blockSize,duration-start)
-      const mixed=await mixOfflineAudioBlock(project,events,handles,start,dur,48000)
+      const mixed=await mixOfflineAudioBlock(project,events,handles,start,dur,48000,fallbackCache,signal)
       if(mixed.rms>.000015)audibleBlocks++
       await audioSource.add(mixed.buffer)
       onProgress(.68+(block+1)/totalBlocks*.27)
@@ -4115,7 +4186,7 @@ async function beginExport() {
     const resultBox=$('#export-result');resultBox.classList.remove('hidden');resultBox.innerHTML=`<div class="action-row"><button class="sheet-action" data-action="download-export"><i>${svgIcon('export',19)}</i>${tr('download')}</button><button class="sheet-action" data-action="share-export"><i>${svgIcon('share',19)}</i>${tr('share')}</button><button class="sheet-action" data-action="export-close"><i>${svgIcon('check',19)}</i>${tr('close')}</button></div>`
   }catch(e){
     const codecError=e?.message==='offline-audio-codec'
-    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'
+    const missingAudio=e?.message==='export-no-audio-track'||e?.message==='offline-audio-decode'||e?.message==='export-silent-audio'||e?.message==='aac-passthrough-empty'||e?.message==='mediabunny-unavailable'||e?.message==='mediabunny-empty'||e?.message==='apple-pcm-empty'||e?.message==='apple-pcm-container'||e?.message==='apple-pcm-track'||e?.message==='direct-audio-unavailable'||e?.message==='direct-audio-empty'||e?.message==='direct-audio-invalid'||e?.message==='apple-pcm-recorder-unsupported'||e?.message==='apple-mix-no-events'||e?.message==='apple-mix-no-track'||e?.message==='apple-pcm-record-empty'||e?.message==='apple-pcm-no-audio-track'||codecError||e?.message==='audio-track-missing'||e?.message==='audio-events-missing'||e?.message==='offline-audio-config'||e?.message==='audio-decoder-unavailable'
     status.textContent=missingAudio?(state.language==='el'?'Αποτυχία ήχου στο export':'Export audio failed'):tr('exportFailed')
     const codecDetails=codecError?`${e?.codec||'audio'} ${e?.sampleRate?`${e.sampleRate} Hz`:''} ${e?.channels?`${e.channels}ch`:''}`.trim():''
     const audioMessage=codecError
@@ -4336,7 +4407,7 @@ async function init() {
     if(!state.fluentCatalog.length) setTimeout(()=>ensureFluentCatalog(),900)
 
     if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.8.1',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
+      const register=()=>navigator.serviceWorker.register('./sw.js?v=2.8.2',{updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(error=>console.warn('Service worker registration failed:',error))
       if(document.readyState==='complete')register();else window.addEventListener('load',register,{once:true})
     }
   } catch(error) {
