@@ -70,13 +70,29 @@ make -j2 \
   "dist/libav-${LIBAV_VERSION}-${VARIANT}.wasm.js"
 
 WASM_CONFIG="$SRC/build/ffmpeg-${FFMPEG_VERSION}/build-base-${VARIANT}/ffbuild/config.mak"
-test -f "$WASM_CONFIG"
-grep -Eq '^CONFIG_GPL=(no|0)$' "$WASM_CONFIG"
-grep -Eq '^CONFIG_NONFREE=(no|0)$' "$WASM_CONFIG"
-grep -Eq '^CONFIG_AAC_DECODER=(yes|1)$' "$WASM_CONFIG"
-grep -Eq '^CONFIG_AAC_ENCODER=(yes|1)$' "$WASM_CONFIG"
-grep -Eq '^CONFIG_MOV_DEMUXER=(yes|1)$' "$WASM_CONFIG"
-grep -Eq '^CONFIG_ADTS_MUXER=(yes|1)$' "$WASM_CONFIG"
+if [ ! -f "$WASM_CONFIG" ]; then
+  echo "FFmpeg configuration record was not produced by the LibAV build." >&2
+  exit 1
+fi
+if grep -Eq '^CONFIG_GPL=(yes|1)$' "$WASM_CONFIG"; then
+  echo "GPL mode is active in the LibAV/FFmpeg build. Deployment rejected." >&2
+  exit 1
+fi
+if grep -Eq '^CONFIG_NONFREE=(yes|1)$' "$WASM_CONFIG"; then
+  echo "Nonfree mode is active in the LibAV/FFmpeg build. Deployment rejected." >&2
+  exit 1
+fi
+for required_config in \
+  CONFIG_AAC_DECODER \
+  CONFIG_AAC_ENCODER \
+  CONFIG_MOV_DEMUXER \
+  CONFIG_ADTS_MUXER; do
+  if ! grep -Eq "^${required_config}=(yes|1)$" "$WASM_CONFIG"; then
+    echo "Required LGPL FFmpeg component is not active: ${required_config}" >&2
+    exit 1
+  fi
+done
+echo "FFmpeg LGPL configuration guards passed."
 if grep -Eq '^CONFIG_(LIBX264|LIBX265|LIBFDK_AAC|LIBFAAC|LIBMP3LAME|LIBOPUS|LIBVORBIS)=(yes|1)$' "$WASM_CONFIG"; then
   echo "Forbidden external/GPL/nonfree codec library detected in LibAV build." >&2
   exit 1
