@@ -14,7 +14,7 @@ No uploads. No watermark. Installable as a PWA.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current release: v2.7.1**
+**Current release: v2.8.0**
 
 </div>
 
@@ -564,3 +564,11 @@ On iPhone and iPad, Edituno does not rely on Safari's native AAC encoder for fin
 ### iPhone/iPad compatible MOV export
 
 For Apple mobile devices, Edituno prioritizes reliable audio over container uniformity. Projects with audio are exported as QuickTime MOV with H.264 video and 48 kHz stereo 16-bit PCM audio. This avoids Safari's problematic AAC encoding path entirely. Desktop and other supported platforms continue to use the existing MP4/WebCodecs export paths.
+
+### Direct source audio on Apple mobile
+
+When an imported video already contains audio and that audio has not been modified, Edituno does not re-encode it on iPhone or iPad. The original AAC access units and decoder configuration are copied directly from the source media and remuxed into the newly rendered MP4 with timeline-adjusted timestamps. This keeps the exact source audio bitstream while Edituno renders a new video stream.
+
+### Safari full audio timeline mix
+
+On iPhone and iPad, Edituno can mix the embedded audio from video clips together with background music, additional A1 audio and audible video overlays. The Apple mobile path uses Safari's media playback engine for source decoding, mixes those sources through Web Audio, captures the result as PCM and only then packages the verified mix with the deterministic Edituno video render. This avoids relying on Safari's problematic AAC WebCodecs decode path for the source material.

@@ -1,5 +1,30 @@
 # Release Notes
 
+## v2.8.0
+
+Full Safari/iPhone audio timeline mixer.
+
+- Replaces the Apple mobile direct-audio shortcut with a complete timeline mix that supports original video speech plus background music and additional audio layers at the same time.
+- Safari's normal HTMLMediaElement playback engine is used to decode each source because it can play the user's local media even when WebCodecs `AudioDecoder` cannot decode the same AAC track.
+- Video audio, audible overlays and A1 music/audio clips are routed through one Web Audio graph with Edituno volume, speed and fade settings.
+- The mixed Web Audio stream is captured as PCM using Safari's MediaRecorder PCM support. AAC is not used during the source decode/mix stage.
+- The recorded PCM mix is decoded through Mediabunny's built-in PCM path, trimmed to the Edituno timeline and checked for real non-zero audio energy.
+- Final export first attempts universal H.264 + AAC MP4 using the existing FFmpeg/WASM AAC encoder. If final AAC packaging fails, Edituno automatically falls back to H.264 + PCM QuickTime MOV using the exact same verified mix.
+- The audio pass is realtime on iPhone/iPad, so export can take at least the duration of the project plus video rendering time. This is intentional for reliability.
+- Desktop export remains unchanged.
+
+## v2.7.2
+
+Direct embedded-audio passthrough for iPhone/iPad.
+
+- For the normal editing case where the original video audio has not been changed, Edituno no longer decodes, mixes or re-encodes that audio on Apple mobile.
+- The original AAC packets are read directly from the imported source file and copied bit-for-bit into the final rendered MP4.
+- Edituno preserves the source track's original decoder configuration instead of reconstructing AAC metadata.
+- Audio packet timestamps are remapped to the Edituno timeline, so cuts and trims remain synchronized with the newly rendered video.
+- The final output is parsed again with Mediabunny before download and must contain a real AAC track, valid channel count, sample rate, decoder configuration and encoded packets.
+- If the project changes audio volume, speed, fades, adds A1 audio or audible video overlays, Edituno falls back to the mixed-audio Apple path.
+- Desktop export remains unchanged.
+
 ## v2.7.1
 
 iPhone/iPad MOV + PCM compatibility export.

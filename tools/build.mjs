@@ -155,6 +155,21 @@ if (!js.includes('function exportProjectAppleMediabunny(') || !js.includes('Medi
 if (!js.includes('function exportProjectAppleMovPcm(') || !js.includes("new M.MovOutputFormat") || !js.includes("codec: 'pcm-s16'") || !js.includes("type: 'video/quicktime'")) {
   throw new Error('Apple MOV/PCM compatibility export engine is missing')
 }
+if (!js.includes('function exportProjectAppleDirectAudio(') || !js.includes('function prepareDirectEmbeddedAudio(') || !js.includes('new M.EncodedAudioPacketSource')) {
+  throw new Error('Apple direct embedded-audio passthrough engine is missing')
+}
+if (!js.includes('function exportProjectAppleRealtimeMix(') || !js.includes('function recordAppleTimelinePcmMix(') || !js.includes("audio/mp4;codecs=pcm")) {
+  throw new Error('Apple realtime PCM timeline mixer is missing')
+}
+if (!js.includes('function decodeAppleRecordedMix(') || !js.includes('function renderAppleFinalOutput(')) {
+  throw new Error('Apple PCM mix finalization engine is missing')
+}
+if (!js.includes('realtime-pcm-mix-wasm-aac') || !js.includes('realtime-pcm-mix-pcm')) {
+  throw new Error('Apple mixed-audio export result mode is missing')
+}
+if (!js.includes('function validateDirectAudioOutput(') || !js.includes("audioMode: 'source-bitstream-copy'")) {
+  throw new Error('Direct source-audio output validation is missing')
+}
 if (!js.includes('function validateApplePcmMov(') || !js.includes("blobChunkContainsAscii(blob, 'sowt')")) {
   throw new Error('Apple PCM MOV structural validation is missing')
 }
@@ -289,4 +304,4 @@ if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MP4BOX-BSD-3-CLAUSE.
 if (!fs.readFileSync(path.join(dist, 'THIRD_PARTY_NOTICES.md'), 'utf8').includes('## Mediabunny')) throw new Error('Mediabunny third-party notice missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'MEDIABUNNY-MPL-2.0.txt'))) throw new Error('Mediabunny MPL-2.0 license copy missing')
 if (!fs.existsSync(path.join(dist, 'THIRD_PARTY_LICENSES', 'FFMPEG-LGPL-2.1.txt'))) throw new Error('FFmpeg LGPL-2.1 license copy missing')
-console.log(`Built Edituno v2.7.1 -> ${dist}`)
+console.log(`Built Edituno v2.8.0 -> ${dist}`)

@@ -3,7 +3,7 @@
   "short_name": "Edituno",
   "description": "Free local video editor for fast edits, captions, effects and exports directly on your device. No upload. No watermark.",
   "id": "./",
-  "start_url": "./?app=2.7.1",
+  "start_url": "./?app=2.8.0",
   "scope": "./",
   "display": "standalone",
   "display_override": [
