@@ -342,14 +342,15 @@ html[data-theme="light"] .home-topbar{background:linear-gradient(to bottom,rgba(
 html[data-theme="light"] .round-icon{background:rgba(15,23,42,.045);color:#505966}
 html[data-theme="light"] .round-icon:hover{background:#fff;color:#1F2937}
 html[data-theme="light"] .topbar-resume,html[data-theme="light"] .import-main,html[data-theme="light"] .studio-format-card,html[data-theme="light"] .studio-project-card{background:rgba(255,255,255,.78);color:var(--text);box-shadow:0 8px 24px rgba(44,57,82,.04)}
-html[data-theme="light"] .import-main-icon,html[data-theme="light"] .create-main-icon{color:#667085}
+html[data-theme="light"] .import-main-icon{color:#667085}
+html[data-theme="light"] .create-main .create-main-icon{background:rgba(255,255,255,.22);color:#fff}
 html[data-theme="light"] .studio-format-card:hover,html[data-theme="light"] .studio-project-card:hover{background:#fff;border-color:rgba(31,41,55,.14)}
 html[data-theme="light"] .format-preview,html[data-theme="light"] .project-poster{background:linear-gradient(145deg,#F5F7FB,#E9EEF7)}
 html[data-theme="light"] .format-symbol{border-color:rgba(31,41,55,.56)}
 html[data-theme="light"] .format-preview b{color:#7B8492}
 html[data-theme="light"] .empty-library,html[data-theme="light"] .resume-strip button{background:rgba(255,255,255,.72)}
 html[data-theme="light"] .mobile-dock{background:rgba(250,251,253,.92);box-shadow:0 18px 60px rgba(39,52,77,.18)}
-html[data-theme="light"] .mobile-dock button{color:#747D8B}html[data-theme="light"] .mobile-dock button.active{color:#263245}
+html[data-theme="light"] .mobile-dock button{color:#747D8B}html[data-theme="light"] .mobile-dock button.active{color:#263245}html[data-theme="light"] .mobile-dock .dock-create{color:#fff}
 html[data-theme="light"] .home-menu-scrim,html[data-theme="light"] .modal-backdrop,html[data-theme="light"] .sheet-backdrop,html[data-theme="light"] .project-hub-backdrop{background:rgba(37,47,65,.26)}
 html[data-theme="light"] .home-menu-popover{background:rgba(255,255,255,.96);border-color:var(--line-strong)}
 html[data-theme="light"] .home-menu-language{color:#364152}

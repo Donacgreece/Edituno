@@ -14,7 +14,7 @@ No uploads. No account. No watermark. Installable as a Progressive Web App.**
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-PolyForm_Noncommercial-7C3AED?style=for-the-badge)](./LICENSE.md)
 
-**Current pre-release: v0.9.6**
+**Current pre-release: v0.9.7**
 
 [Release history and changelog](./RELEASE_NOTES.md)
 

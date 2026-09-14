@@ -2,6 +2,14 @@
 
 All releases listed here belong to Edituno's pre-1.0 development cycle. Version `1.0.0` is reserved for the first release declared stable for general use.
 
+## v0.9.7
+
+Light-mode plus-icon contrast fix.
+
+- Keeps the plus icon on the blue New project card white and increases its local background contrast.
+- Keeps the central plus icon in the mobile navigation dock white in light mode.
+- Leaves project behavior, export engines and licensing safeguards unchanged.
+
 ## v0.9.6
 
 iPhone transform-arrow consistency fix.
